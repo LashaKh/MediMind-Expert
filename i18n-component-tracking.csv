@@ -1,0 +1,54 @@
+Component Path,Component Type,Translation Status,Medical Content,Priority Level,English Keys,Georgian Keys,Russian Keys,Implementation Date,Medical Review Status,Testing Status
+src/App.tsx,Core Navigation,Not Implemented,No,Critical,0,0,0,,Not Applicable,Pending
+src/components/ui/DocumentProgressTracker.tsx,UI Component,Not Implemented,No,High,0,0,0,,Not Applicable,Pending
+src/components/ui/card.tsx,UI Component,Not Implemented,No,Low,0,0,0,,Not Applicable,Pending
+src/components/ui/tooltip.tsx,UI Component,Not Implemented,No,Low,0,0,0,,Not Applicable,Pending
+src/components/ui/SpecialtyIndicator.tsx,UI Component,Not Implemented,Yes,Medium,0,0,0,,Pending,Pending
+src/components/ui/RetryComponents.tsx,UI Component,Not Implemented,No,Medium,0,0,0,,Not Applicable,Pending
+src/components/ui/badge.tsx,UI Component,Not Implemented,No,Low,0,0,0,,Not Applicable,Pending
+src/components/ui/button.tsx,UI Component,Not Implemented,No,Low,0,0,0,,Not Applicable,Pending
+src/components/ui/ErrorBoundary.tsx,Error Handling,Not Implemented,No,High,0,0,0,,Not Applicable,Pending
+src/components/Landing/HeroSection.tsx,Landing Page,Not Implemented,No,Medium,0,0,0,,Not Applicable,Pending
+src/components/Landing/FeaturesSection.tsx,Landing Page,Not Implemented,No,Medium,0,0,0,,Not Applicable,Pending
+src/components/Landing/FeatureCard.tsx,Landing Page,Not Implemented,No,Medium,0,0,0,,Not Applicable,Pending
+src/components/Auth/ProtectedRoute.tsx,Authentication,Not Implemented,No,Critical,0,0,0,,Not Applicable,Pending
+src/components/Auth/SpecialtyGuard.tsx,Authentication,Not Implemented,Yes,Critical,0,0,0,,Pending,Pending
+src/components/Layout/PageContainer.tsx,Layout,Not Implemented,No,Medium,0,0,0,,Not Applicable,Pending
+src/components/Layout/Footer.tsx,Layout,Not Implemented,No,Low,0,0,0,,Not Applicable,Pending
+src/components/Layout/LayoutDebug.tsx,Layout,Not Implemented,No,Low,0,0,0,,Not Applicable,Pending
+src/components/AICopilot/AICopilot.tsx,AI Interface,Not Implemented,Yes,Critical,0,0,0,,Pending,Pending
+src/components/AICopilot/KnowledgeBaseSelector.tsx,AI Interface,Not Implemented,Yes,High,0,0,0,,Pending,Pending
+src/components/AICopilot/ClinicalPathways.tsx,AI Interface,Not Implemented,Yes,High,0,0,0,,Pending,Pending
+src/components/KnowledgeBase/DocumentItem.tsx,Knowledge Base,Not Implemented,No,Medium,0,0,0,,Not Applicable,Pending
+src/components/KnowledgeBase/DocumentSearch.tsx,Knowledge Base,Not Implemented,No,Medium,0,0,0,,Not Applicable,Pending
+src/components/Calculators/ComingSoonCard.tsx,Calculator UI,Not Implemented,Yes,High,0,0,0,,Pending,Pending
+src/components/Landing.tsx,Landing Page,Not Implemented,No,Medium,0,0,0,,Not Applicable,Pending
+src/components/Help/HelpTooltip.tsx,Help System,Not Implemented,No,Medium,0,0,0,,Not Applicable,Pending
+src/components/Calculators/CervicalCancerRiskCalculator.tsx,Medical Calculator,Not Implemented,Yes,Critical,0,0,0,,Pending,Pending
+src/components/Calculators/CalculatorResultShare.tsx,Calculator UI,Not Implemented,Yes,High,0,0,0,,Pending,Pending
+src/components/Calculators/OvarianCancerRiskCalculator.tsx,Medical Calculator,Not Implemented,Yes,Critical,0,0,0,,Pending,Pending
+src/components/Calculators/GWTGHFCalculator.tsx,Medical Calculator,Not Implemented,Yes,Critical,0,0,0,,Pending,Pending
+src/components/Calculators/TIMIRiskCalculator.tsx,Medical Calculator,Not Implemented,Yes,Critical,0,0,0,,Pending,Pending
+src/components/Calculators/PretermBirthRiskCalculator.tsx,Medical Calculator,Not Implemented,Yes,Critical,0,0,0,,Pending,Pending
+src/components/Calculators/AtrialFibrillationCalculators.tsx,Medical Calculator,Not Implemented,Yes,Critical,0,0,0,,Pending,Pending
+src/components/Calculators/SHFMCalculator.tsx,Medical Calculator,Not Implemented,Yes,Critical,0,0,0,,Pending,Pending
+src/components/Calculators/EuroSCOREIICalculator.tsx,Medical Calculator,Not Implemented,Yes,Critical,0,0,0,,Pending,Pending
+src/components/Calculators/MAGGICCalculator.tsx,Medical Calculator,Not Implemented,Yes,Critical,0,0,0,,Pending,Pending
+src/components/Calculators/STSCalculator.tsx,Medical Calculator,Not Implemented,Yes,Critical,0,0,0,,Pending,Pending
+src/components/Calculators/OvarianReserveCalculator.tsx,Medical Calculator,Not Implemented,Yes,Critical,0,0,0,,Pending,Pending
+src/components/Calculators/Calculators.tsx,Calculator UI,Partial,Yes,Critical,15,8,0,,Pending,Pending
+src/components/Calculators/PRECISEDAPTCalculator.tsx,Medical Calculator,Not Implemented,Yes,Critical,0,0,0,,Pending,Pending
+src/components/AICopilot/ChatWindow.tsx,AI Interface,Implemented,Yes,Critical,25,20,0,,Complete,Complete
+src/components/AICopilot/NewCaseButton.tsx,Case Management,Implemented,Yes,High,8,6,0,,Complete,Complete
+src/components/Layout/Sidebar.tsx,Navigation,Implemented,Yes,Critical,20,15,0,,Complete,Complete
+src/components/AICopilot/TypingIndicator.tsx,AI Interface,Implemented,No,Medium,5,4,0,,Complete,Complete
+src/components/AICopilot/CaseForm.tsx,Case Management,Implemented,Yes,High,18,12,0,,Complete,Complete
+src/components/AICopilot/CaseListModal.tsx,Case Management,Implemented,Yes,High,12,8,0,,Complete,Complete
+src/components/AICopilot/CaseIndicator.tsx,Case Management,Implemented,Yes,High,8,6,0,,Complete,Complete
+src/components/AICopilot/SourceReferences.tsx,AI Interface,Implemented,Yes,High,10,7,0,,Complete,Complete
+src/components/AICopilot/CaseCreationModal.tsx,Case Management,Implemented,Yes,High,15,10,0,,Complete,Complete
+src/components/KnowledgeBase/KnowledgeBase.tsx,Knowledge Base,Implemented,No,High,12,8,0,,Complete,Complete
+src/components/AICopilot/FlowiseChatWindow.tsx,AI Interface,Implemented,Yes,Critical,20,15,0,,Complete,Complete
+src/components/AICopilot/MessageInput.tsx,AI Interface,Implemented,No,High,8,6,0,,Complete,Complete
+src/components/Profile/Profile.tsx,User Profile,Implemented,No,Medium,15,10,0,,Complete,Complete
+src/components/Layout/Header.tsx,Navigation,Implemented,No,Critical,12,8,0,,Complete,Complete 

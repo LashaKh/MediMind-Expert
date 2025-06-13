@@ -1,29 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Stethoscope } from 'lucide-react';
-import { useAuthStore } from '../../store/useAuthStore';
+import { useTranslation } from '../../hooks/useTranslation';
 
 export const HeroSection: React.FC = () => {
-  const { user } = useAuthStore();
   const navigate = useNavigate();
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const { t } = useTranslation();
 
   const handleTrialClick = () => {
-    if (user) {
-      navigate('/chat');
-    } else {
-      navigate('/signup');
-    }
+    navigate('/signup'); // Always navigate to signup as auth is removed
   };
 
   return (
@@ -52,7 +38,7 @@ export const HeroSection: React.FC = () => {
           >
             <Stethoscope className="w-8 h-8 md:w-12 md:h-12 text-white" />
             <h1 className="text-4xl md:text-7xl font-bold tracking-tight text-white bg-clip-text">
-              MediMind
+              MediMind Expert
             </h1>
           </motion.div>
           <motion.h2 
@@ -61,7 +47,7 @@ export const HeroSection: React.FC = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Intelligent Hospital Management & Patient Care Platform
+            {t('landing.heroTitle')}
           </motion.h2>
           <motion.p 
             className="text-base md:text-xl leading-relaxed text-gray-100 px-4 md:px-0"
@@ -69,9 +55,7 @@ export const HeroSection: React.FC = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            Streamline patient care with AI-powered medical assistance, real-time bed management, 
-            voice-enabled note-taking, and seamless shift handovers. Your complete medical CRM solution 
-            for enhanced healthcare delivery.
+            {t('landing.heroSubtitle')}
           </motion.p>
           <motion.div 
             className="flex flex-col sm:flex-row items-center justify-center gap-x-6 gap-y-4 px-4 md:px-0"
@@ -85,7 +69,7 @@ export const HeroSection: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              Start Free Trial
+              {t('landing.getStarted')}
               <ArrowRight className="inline-block ml-2 w-4 h-4 md:w-5 md:h-5" />
             </motion.button>
           </motion.div>

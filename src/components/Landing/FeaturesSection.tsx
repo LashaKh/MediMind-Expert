@@ -3,72 +3,39 @@ import { motion } from 'framer-motion';
 import { 
   Brain, 
   Shield, 
-  MessageSquare, 
-  Clock, 
   Database, 
-  BedDouble,
-  Mic,
-  UsersRound,
-  Stethoscope,
-  ClipboardList
+  Stethoscope
 } from 'lucide-react';
 import { FeatureCard } from './FeatureCard';
+import { useTranslation } from '../../hooks/useTranslation';
 
 export const FeaturesSection: React.FC = () => {
+  const { t } = useTranslation();
+  
   const features = [
     {
-      icon: BedDouble,
-      title: "Real-time Bed Management",
-      description: "Track and manage hospital bed occupancy in real-time with an intuitive interface for efficient patient distribution",
-      variant: 'large' as const
-    },
-    {
       icon: Brain,
-      title: "AI Medical Assistant",
-      description: "Get instant AI-powered medical insights and recommendations based on patient data and clinical guidelines",
-      variant: 'medium' as const
-    },
-    {
-      icon: Mic,
-      title: "Voice-Enabled Notes",
-      description: "Capture patient notes hands-free with advanced voice recognition and automatic transcription",
-      variant: 'medium' as const
-    },
-    {
-      icon: UsersRound,
-      title: "Shift Handover System",
-      description: "Seamlessly transfer patient information between medical staff with structured digital handovers",
+      title: t('landing.features.aiCoPilot.title'),
+      description: t('landing.features.aiCoPilot.description'),
       variant: 'large' as const
-    },
-    {
-      icon: ClipboardList,
-      title: "Patient Tracking",
-      description: "Monitor patient conditions, treatments, and progress with comprehensive digital records",
-      variant: 'medium' as const
-    },
-    {
-      icon: Shield,
-      title: "Secure Data Sharing",
-      description: "Share patient information securely between authorized healthcare providers with end-to-end encryption",
-      variant: 'small' as const
     },
     {
       icon: Database,
-      title: "Medical Records",
-      description: "Centralized storage and easy access to patient histories, test results, and treatment plans",
-      variant: 'small' as const
+      title: t('landing.features.knowledgeAccess.title'),
+      description: t('landing.features.knowledgeAccess.description'),
+      variant: 'large' as const
     },
     {
-      icon: Clock,
-      title: "Real-time Updates",
-      description: "Instant notifications and updates on patient status changes and critical events",
-      variant: 'small' as const
+      icon: Shield,
+      title: t('landing.features.personalKB.title'),
+      description: t('landing.features.personalKB.description'),
+      variant: 'medium' as const
     },
     {
       icon: Stethoscope,
-      title: "Clinical Support",
-      description: "Evidence-based recommendations and alerts to support clinical decision-making",
-      variant: 'small' as const
+      title: t('landing.features.specialtyTools.title'),
+      description: t('landing.features.specialtyTools.description'),
+      variant: 'medium' as const
     }
   ];
 
@@ -82,10 +49,10 @@ export const FeaturesSection: React.FC = () => {
           viewport={{ once: true }}
         >
           <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">
-            Comprehensive Healthcare Management
+            {t('landing.features.title')}
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-400">
-            Streamline your medical practice with our integrated suite of tools
+            {t('landing.features.subtitle')}
           </p>
         </motion.div>
 

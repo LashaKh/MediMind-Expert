@@ -93,31 +93,31 @@ export const EuroSCOREIICalculator: React.FC = () => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.age) {
-      newErrors.age = t('calculators.cardiology.euroscore_ii.validation.age_required');
+      newErrors.age = t('calculators.eurscoreII.validation.age_required');
     } else if (parseInt(formData.age) < 18 || parseInt(formData.age) > 120) {
-      newErrors.age = t('calculators.cardiology.euroscore_ii.validation.age_range');
+      newErrors.age = t('calculators.eurscoreII.validation.age_range');
     }
 
     if (!formData.gender) {
-      newErrors.gender = t('calculators.cardiology.euroscore_ii.validation.gender_required');
+      newErrors.gender = t('calculators.eurscoreII.validation.gender_required');
     }
 
     if (!formData.urgency) {
-      newErrors.urgency = t('calculators.cardiology.euroscore_ii.validation.urgency_required');
+      newErrors.urgency = t('calculators.eurscoreII.validation.urgency_required');
     }
 
     if (!formData.nyhaClass) {
-      newErrors.nyhaClass = t('calculators.cardiology.euroscore_ii.validation.nyha_required');
+      newErrors.nyhaClass = t('calculators.eurscoreII.validation.nyha_required');
     }
 
     if (!formData.procedureWeight) {
-      newErrors.procedureWeight = t('calculators.cardiology.euroscore_ii.validation.procedure_weight_required');
+      newErrors.procedureWeight = t('calculators.eurscoreII.validation.procedure_weight_required');
     }
 
     if (!formData.creatinine) {
-      newErrors.creatinine = t('calculators.cardiology.euroscore_ii.validation.creatinine_required');
+      newErrors.creatinine = t('calculators.eurscoreII.validation.creatinine_required');
     } else if (parseFloat(formData.creatinine) < 0.5 || parseFloat(formData.creatinine) > 15) {
-      newErrors.creatinine = t('calculators.cardiology.euroscore_ii.validation.creatinine_range');
+      newErrors.creatinine = t('calculators.eurscoreII.validation.creatinine_range');
     }
 
     setErrors(newErrors);
@@ -223,36 +223,36 @@ export const EuroSCOREIICalculator: React.FC = () => {
     const recommendations: string[] = [];
 
     // Base recommendations for all patients
-    recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_team_evaluation'));
-    recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_preop_optimization'));
-    recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_counseling'));
+    recommendations.push(t('calculators.eurscoreII.recommendation_team_evaluation'));
+    recommendations.push(t('calculators.eurscoreII.recommendation_preop_optimization'));
+    recommendations.push(t('calculators.eurscoreII.recommendation_counseling'));
 
     switch (riskCategory) {
       case 'low':
-        recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_standard_approach'));
-        recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_fast_track'));
-        recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_routine_care'));
+        recommendations.push(t('calculators.eurscoreII.recommendation_standard_approach'));
+        recommendations.push(t('calculators.eurscoreII.recommendation_fast_track'));
+        recommendations.push(t('calculators.eurscoreII.recommendation_routine_care'));
         break;
       case 'intermediate':
-        recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_enhanced_assessment'));
-        recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_additional_imaging'));
-        recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_standard_icu'));
-        recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_risk_modification'));
+        recommendations.push(t('calculators.eurscoreII.recommendation_enhanced_assessment'));
+        recommendations.push(t('calculators.eurscoreII.recommendation_additional_imaging'));
+        recommendations.push(t('calculators.eurscoreII.recommendation_standard_icu'));
+        recommendations.push(t('calculators.eurscoreII.recommendation_risk_modification'));
         break;
       case 'high':
-        recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_alternative_approaches'));
-        recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_extensive_optimization'));
-        recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_extended_icu'));
-        recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_informed_consent'));
-        recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_less_invasive'));
+        recommendations.push(t('calculators.eurscoreII.recommendation_alternative_approaches'));
+        recommendations.push(t('calculators.eurscoreII.recommendation_extensive_optimization'));
+        recommendations.push(t('calculators.eurscoreII.recommendation_extended_icu'));
+        recommendations.push(t('calculators.eurscoreII.recommendation_informed_consent'));
+        recommendations.push(t('calculators.eurscoreII.recommendation_less_invasive'));
         break;
       case 'very_high':
-        recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_non_surgical'));
-        recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_palliative_care'));
-        recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_goals_care'));
-        recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_high_risk_protocols'));
-        recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_transcatheter'));
-        recommendations.push(t('calculators.cardiology.euroscore_ii.recommendation_family_meeting'));
+        recommendations.push(t('calculators.eurscoreII.recommendation_non_surgical'));
+        recommendations.push(t('calculators.eurscoreII.recommendation_palliative_care'));
+        recommendations.push(t('calculators.eurscoreII.recommendation_goals_care'));
+        recommendations.push(t('calculators.eurscoreII.recommendation_high_risk_protocols'));
+        recommendations.push(t('calculators.eurscoreII.recommendation_transcatheter'));
+        recommendations.push(t('calculators.eurscoreII.recommendation_family_meeting'));
         break;
     }
 
@@ -262,15 +262,15 @@ export const EuroSCOREIICalculator: React.FC = () => {
   const getSTSComparison = (riskCategory: string): string => {
     switch (riskCategory) {
       case 'low':
-        return t('calculators.cardiology.euroscore_ii.sts_comparison_low');
+        return t('calculators.eurscoreII.sts_comparison_low');
       case 'intermediate':
-        return t('calculators.cardiology.euroscore_ii.sts_comparison_intermediate');
+        return t('calculators.eurscoreII.sts_comparison_intermediate');
       case 'high':
-        return t('calculators.cardiology.euroscore_ii.sts_comparison_high');
+        return t('calculators.eurscoreII.sts_comparison_high');
       case 'very_high':
-        return t('calculators.cardiology.euroscore_ii.sts_comparison_very_high');
+        return t('calculators.eurscoreII.sts_comparison_very_high');
       default:
-        return t('calculators.cardiology.euroscore_ii.sts_comparison_default');
+        return t('calculators.eurscoreII.sts_comparison_default');
     }
   };
 
@@ -340,8 +340,8 @@ export const EuroSCOREIICalculator: React.FC = () => {
 
   return (
     <CalculatorContainer
-      title={t('calculators.cardiology.euroscore_ii.title')}
-      subtitle={t('calculators.cardiology.euroscore_ii.subtitle')}
+      title={t('calculators.eurscoreII.title')}
+      subtitle={t('calculators.eurscoreII.subtitle')}
       icon={Globe}
       gradient="cardiology"
       className="max-w-5xl mx-auto"
@@ -354,13 +354,13 @@ export const EuroSCOREIICalculator: React.FC = () => {
               <Globe className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
             <div className="flex-1">
-              <h4 className="text-lg font-bold text-blue-800 dark:text-blue-200 mb-2">{t('calculators.cardiology.euroscore_ii.alert_title')}</h4>
+              <h4 className="text-lg font-bold text-blue-800 dark:text-blue-200 mb-2">{t('calculators.eurscoreII.alert_title')}</h4>
               <p className="text-blue-700 dark:text-blue-300 leading-relaxed">
-                {t('calculators.cardiology.euroscore_ii.alert_description')}
+                {t('calculators.eurscoreII.alert_description')}
               </p>
               <div className="mt-3 inline-flex items-center space-x-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg px-3 py-1">
                 <Star className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                <span className="text-xs font-semibold text-blue-700 dark:text-blue-300">{t('calculators.cardiology.euroscore_ii.alert_validation')}</span>
+                <span className="text-xs font-semibold text-blue-700 dark:text-blue-300">{t('calculators.eurscoreII.alert_validation')}</span>
               </div>
             </div>
           </div>
@@ -376,7 +376,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                 }`}>
                   1
                 </div>
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.cardiology.euroscore_ii.step_patient_factors')}</span>
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.eurscoreII.step_patient_factors')}</span>
               </div>
               <div className={`w-16 h-1 rounded-full transition-all duration-300 ${
                 currentStep >= 2 ? 'bg-purple-500' : 'bg-gray-200'
@@ -387,7 +387,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                 }`}>
                   2
                 </div>
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.cardiology.euroscore_ii.step_cardiac_status')}</span>
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.eurscoreII.step_cardiac_status')}</span>
               </div>
               <div className={`w-16 h-1 rounded-full transition-all duration-300 ${
                 currentStep >= 3 ? 'bg-indigo-500' : 'bg-gray-200'
@@ -398,7 +398,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                 }`}>
                   3
                 </div>
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.cardiology.euroscore_ii.step_operative_factors')}</span>
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.eurscoreII.step_operative_factors')}</span>
               </div>
               <div className={`w-16 h-1 rounded-full transition-all duration-300 ${
                 currentStep >= 4 ? 'bg-pink-500' : 'bg-gray-200'
@@ -409,7 +409,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                 }`}>
                   4
                 </div>
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.cardiology.euroscore_ii.step_procedures')}</span>
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.eurscoreII.step_procedures')}</span>
               </div>
             </div>
 
@@ -419,48 +419,48 @@ export const EuroSCOREIICalculator: React.FC = () => {
                 <div className="text-center mb-8">
                   <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl border border-blue-200 dark:border-blue-800">
                     <User className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.euroscore_ii.section_patient_demographics')}</h3>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.eurscoreII.section_patient_demographics')}</h3>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.cardiology.euroscore_ii.section_patient_description')}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.eurscoreII.section_patient_description')}</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <CalculatorInput
-                    label={t('calculators.cardiology.euroscore_ii.age_label')}
+                    label={t('calculators.eurscoreII.age_label')}
                     value={formData.age}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, age: e.target.value })}
                     type="number"
-                    placeholder={t('calculators.cardiology.euroscore_ii.age_placeholder')}
+                    placeholder={t('calculators.eurscoreII.age_placeholder')}
                     min={18}
                     max={120}
-                    unit={t('calculators.cardiology.euroscore_ii.age_unit')}
+                    unit={t('calculators.eurscoreII.age_unit')}
                     error={errors.age}
                     icon={User}
                   />
 
                   <CalculatorSelect
-                    label={t('calculators.cardiology.euroscore_ii.gender_label')}
+                    label={t('calculators.eurscoreII.gender_label')}
                     value={formData.gender}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, gender: e.target.value as 'male' | 'female' })}
                     options={[
-                      { value: '', label: t('calculators.cardiology.euroscore_ii.gender_placeholder') },
-                      { value: 'male', label: t('calculators.cardiology.euroscore_ii.gender_male') },
-                      { value: 'female', label: t('calculators.cardiology.euroscore_ii.gender_female') },
+                      { value: '', label: t('calculators.eurscoreII.gender_placeholder') },
+                      { value: 'male', label: t('calculators.eurscoreII.gender_male') },
+                      { value: 'female', label: t('calculators.eurscoreII.gender_female') },
                     ]}
                     error={errors.gender}
                     icon={User}
                   />
 
                   <CalculatorInput
-                    label={t('calculators.cardiology.euroscore_ii.creatinine_label')}
+                    label={t('calculators.eurscoreII.creatinine_label')}
                     value={formData.creatinine}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, creatinine: e.target.value })}
                     type="number"
                     step={0.1}
-                    placeholder={t('calculators.cardiology.euroscore_ii.creatinine_placeholder')}
+                    placeholder={t('calculators.eurscoreII.creatinine_placeholder')}
                     min={0.5}
                     max={15}
-                    unit={t('calculators.cardiology.euroscore_ii.creatinine_unit')}
+                    unit={t('calculators.eurscoreII.creatinine_unit')}
                     error={errors.creatinine}
                     icon={BarChart3}
                   />
@@ -469,38 +469,38 @@ export const EuroSCOREIICalculator: React.FC = () => {
                 <div className="space-y-4">
                   <h4 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center space-x-2">
                     <Shield className="w-5 h-5 text-blue-600" />
-                    <span>{t('calculators.cardiology.euroscore_ii.additional_risk_factors')}</span>
+                    <span>{t('calculators.eurscoreII.additional_risk_factors')}</span>
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <CalculatorCheckbox
-                      label={t('calculators.cardiology.euroscore_ii.poor_mobility_label')}
+                      label={t('calculators.eurscoreII.poor_mobility_label')}
                       checked={formData.poorMobility}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, poorMobility: e.target.checked })}
-                      description={t('calculators.cardiology.euroscore_ii.poor_mobility_description')}
+                      description={t('calculators.eurscoreII.poor_mobility_description')}
                       icon={Activity}
                     />
 
                     <CalculatorCheckbox
-                      label={t('calculators.cardiology.euroscore_ii.diabetes_insulin_label')}
+                      label={t('calculators.eurscoreII.diabetes_insulin_label')}
                       checked={formData.diabetesOnInsulin}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, diabetesOnInsulin: e.target.checked })}
-                      description={t('calculators.cardiology.euroscore_ii.diabetes_insulin_description')}
+                      description={t('calculators.eurscoreII.diabetes_insulin_description')}
                       icon={BarChart3}
                     />
 
                     <CalculatorCheckbox
-                      label={t('calculators.cardiology.euroscore_ii.chronic_pulmonary_label')}
+                      label={t('calculators.eurscoreII.chronic_pulmonary_label')}
                       checked={formData.chronicPulmonaryDisease}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, chronicPulmonaryDisease: e.target.checked })}
-                      description={t('calculators.cardiology.euroscore_ii.chronic_pulmonary_description')}
+                      description={t('calculators.eurscoreII.chronic_pulmonary_description')}
                       icon={Activity}
                     />
 
                     <CalculatorCheckbox
-                      label={t('calculators.cardiology.euroscore_ii.pvd_label')}
+                      label={t('calculators.eurscoreII.pvd_label')}
                       checked={formData.pvd}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pvd: e.target.checked })}
-                      description={t('calculators.cardiology.euroscore_ii.pvd_description')}
+                      description={t('calculators.eurscoreII.pvd_description')}
                       icon={Activity}
                     />
                   </div>
@@ -511,7 +511,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                     onClick={() => setCurrentStep(2)}
                     className="enhanced-calculator-button"
                   >
-                    {t('calculators.cardiology.euroscore_ii.next_cardiac_status')}
+                    {t('calculators.eurscoreII.next_cardiac_status')}
                   </CalculatorButton>
                 </div>
               </div>
@@ -523,36 +523,36 @@ export const EuroSCOREIICalculator: React.FC = () => {
                 <div className="text-center mb-8">
                   <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-2xl border border-purple-200 dark:border-purple-800">
                     <Heart className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.euroscore_ii.section_cardiac_factors')}</h3>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.eurscoreII.section_cardiac_factors')}</h3>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.cardiology.euroscore_ii.section_cardiac_description')}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.eurscoreII.section_cardiac_description')}</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <CalculatorSelect
-                    label={t('calculators.cardiology.euroscore_ii.nyha_label')}
+                    label={t('calculators.eurscoreII.nyha_label')}
                     value={formData.nyhaClass}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, nyhaClass: e.target.value as any })}
                     options={[
-                      { value: '', label: t('calculators.cardiology.euroscore_ii.nyha_placeholder') },
-                      { value: '1', label: t('calculators.cardiology.euroscore_ii.nyha_class_1') },
-                      { value: '2', label: t('calculators.cardiology.euroscore_ii.nyha_class_2') },
-                      { value: '3', label: t('calculators.cardiology.euroscore_ii.nyha_class_3') },
-                      { value: '4', label: t('calculators.cardiology.euroscore_ii.nyha_class_4') },
+                      { value: '', label: t('calculators.eurscoreII.nyha_placeholder') },
+                      { value: '1', label: t('calculators.eurscoreII.nyha_class_1') },
+                      { value: '2', label: t('calculators.eurscoreII.nyha_class_2') },
+                      { value: '3', label: t('calculators.eurscoreII.nyha_class_3') },
+                      { value: '4', label: t('calculators.eurscoreII.nyha_class_4') },
                     ]}
                     error={errors.nyhaClass}
                     icon={Activity}
                   />
 
                   <CalculatorSelect
-                    label={t('calculators.cardiology.euroscore_ii.urgency_label')}
+                    label={t('calculators.eurscoreII.urgency_label')}
                     value={formData.urgency}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, urgency: e.target.value as any })}
                     options={[
-                      { value: '', label: t('calculators.cardiology.euroscore_ii.urgency_placeholder') },
-                      { value: 'elective', label: t('calculators.cardiology.euroscore_ii.urgency_elective') },
-                      { value: 'urgent', label: t('calculators.cardiology.euroscore_ii.urgency_urgent') },
-                      { value: 'emergency', label: t('calculators.cardiology.euroscore_ii.urgency_emergency') },
+                      { value: '', label: t('calculators.eurscoreII.urgency_placeholder') },
+                      { value: 'elective', label: t('calculators.eurscoreII.urgency_elective') },
+                      { value: 'urgent', label: t('calculators.eurscoreII.urgency_urgent') },
+                      { value: 'emergency', label: t('calculators.eurscoreII.urgency_emergency') },
                     ]}
                     error={errors.urgency}
                     icon={AlertTriangle}
@@ -562,62 +562,62 @@ export const EuroSCOREIICalculator: React.FC = () => {
                 <div className="space-y-4">
                   <h4 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center space-x-2">
                     <Heart className="w-5 h-5 text-purple-600" />
-                    <span>{t('calculators.cardiology.euroscore_ii.cardiac_history_conditions')}</span>
+                    <span>{t('calculators.eurscoreII.cardiac_history_title')}</span>
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <CalculatorCheckbox
-                      label={t('calculators.cardiology.euroscore_ii.recent_mi_label')}
+                      label={t('calculators.eurscoreII.recent_mi_label')}
                       checked={formData.recentMI}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, recentMI: e.target.checked })}
-                      description={t('calculators.cardiology.euroscore_ii.recent_mi_description')}
+                      description={t('calculators.eurscoreII.recent_mi_description')}
                       icon={Heart}
                     />
 
                     <CalculatorCheckbox
-                      label={t('calculators.cardiology.euroscore_ii.unstable_angina_label')}
+                      label={t('calculators.eurscoreII.unstable_angina_label')}
                       checked={formData.unstableAngina}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, unstableAngina: e.target.checked })}
-                      description={t('calculators.cardiology.euroscore_ii.unstable_angina_description')}
+                      description={t('calculators.eurscoreII.unstable_angina_description')}
                       icon={Heart}
                     />
 
                     <CalculatorCheckbox
-                      label={t('calculators.cardiology.euroscore_ii.pulmonary_hypertension_label')}
+                      label={t('calculators.eurscoreII.pulmonary_hypertension_label')}
                       checked={formData.pulmonaryHypertension}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pulmonaryHypertension: e.target.checked })}
-                      description={t('calculators.cardiology.euroscore_ii.pulmonary_hypertension_description')}
+                      description={t('calculators.eurscoreII.pulmonary_hypertension_description')}
                       icon={Activity}
                     />
 
                     <CalculatorCheckbox
-                      label={t('calculators.cardiology.euroscore_ii.extracardiac_arteriopathy_label')}
+                      label={t('calculators.eurscoreII.extracardiac_arteriopathy_label')}
                       checked={formData.extracardiacArteriopathy}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, extracardiacArteriopathy: e.target.checked })}
-                      description={t('calculators.cardiology.euroscore_ii.extracardiac_arteriopathy_description')}
+                      description={t('calculators.eurscoreII.extracardiac_arteriopathy_description')}
                       icon={Brain}
                     />
 
                     <CalculatorCheckbox
-                      label={t('calculators.cardiology.euroscore_ii.neurological_dysfunction_label')}
+                      label={t('calculators.eurscoreII.neurological_dysfunction_label')}
                       checked={formData.neurologicalDysfunction}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, neurologicalDysfunction: e.target.checked })}
-                      description={t('calculators.cardiology.euroscore_ii.neurological_dysfunction_description')}
+                      description={t('calculators.eurscoreII.neurological_dysfunction_description')}
                       icon={Brain}
                     />
 
                     <CalculatorCheckbox
-                      label={t('calculators.cardiology.euroscore_ii.previous_cardiac_surgery_label')}
+                      label={t('calculators.eurscoreII.previous_cardiac_surgery_label')}
                       checked={formData.previousCardiacSurgery}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, previousCardiacSurgery: e.target.checked })}
-                      description={t('calculators.cardiology.euroscore_ii.previous_cardiac_surgery_description')}
+                      description={t('calculators.eurscoreII.previous_cardiac_surgery_description')}
                       icon={Heart}
                     />
 
                     <CalculatorCheckbox
-                      label={t('calculators.cardiology.euroscore_ii.active_endocarditis_label')}
+                      label={t('calculators.eurscoreII.active_endocarditis_label')}
                       checked={formData.activeEndocarditis}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, activeEndocarditis: e.target.checked })}
-                      description={t('calculators.cardiology.euroscore_ii.active_endocarditis_description')}
+                      description={t('calculators.eurscoreII.active_endocarditis_description')}
                       icon={AlertTriangle}
                     />
                   </div>
@@ -628,13 +628,13 @@ export const EuroSCOREIICalculator: React.FC = () => {
                     onClick={() => setCurrentStep(1)}
                     variant="outline"
                   >
-                    {t('calculators.cardiology.euroscore_ii.back_button')}
+                    {t('calculators.eurscoreII.back_button')}
                   </CalculatorButton>
                   <CalculatorButton
                     onClick={() => setCurrentStep(3)}
                     className="enhanced-calculator-button"
                   >
-                    {t('calculators.cardiology.euroscore_ii.next_operative_factors')}
+                    {t('calculators.eurscoreII.next_operative_factors')}
                   </CalculatorButton>
                 </div>
               </div>
@@ -646,21 +646,21 @@ export const EuroSCOREIICalculator: React.FC = () => {
                 <div className="text-center mb-8">
                   <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-indigo-50 to-pink-50 dark:from-indigo-900/20 dark:to-pink-900/20 rounded-2xl border border-indigo-200 dark:border-indigo-800">
                     <Stethoscope className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.euroscore_ii.section_operative_factors')}</h3>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.eurscoreII.section_operative_factors')}</h3>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.cardiology.euroscore_ii.section_operative_description')}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.eurscoreII.section_operative_description')}</p>
                 </div>
 
                 <div className="grid grid-cols-1 gap-6">
                   <CalculatorSelect
-                    label={t('calculators.cardiology.euroscore_ii.procedure_weight_label')}
+                    label={t('calculators.eurscoreII.procedure_weight_label')}
                     value={formData.procedureWeight}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, procedureWeight: e.target.value as any })}
                     options={[
-                      { value: '', label: t('calculators.cardiology.euroscore_ii.procedure_weight_placeholder') },
-                      { value: 'low', label: t('calculators.cardiology.euroscore_ii.procedure_weight_low') },
-                      { value: 'medium', label: t('calculators.cardiology.euroscore_ii.procedure_weight_medium') },
-                      { value: 'high', label: t('calculators.cardiology.euroscore_ii.procedure_weight_high') },
+                      { value: '', label: t('calculators.eurscoreII.procedure_weight_placeholder') },
+                      { value: 'low', label: t('calculators.eurscoreII.procedure_weight_low') },
+                      { value: 'medium', label: t('calculators.eurscoreII.procedure_weight_medium') },
+                      { value: 'high', label: t('calculators.eurscoreII.procedure_weight_high') },
                     ]}
                     error={errors.procedureWeight}
                     icon={Calculator}
@@ -670,14 +670,14 @@ export const EuroSCOREIICalculator: React.FC = () => {
                 <div className="space-y-4">
                   <h4 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center space-x-2">
                     <AlertTriangle className="w-5 h-5 text-indigo-600" />
-                    <span>{t('calculators.cardiology.euroscore_ii.critical_conditions_header')}</span>
+                    <span>{t('calculators.eurscoreII.critical_conditions_header')}</span>
                   </h4>
                   <div className="grid grid-cols-1 gap-4">
                     <CalculatorCheckbox
-                      label={t('calculators.cardiology.euroscore_ii.critical_preoperative_label')}
+                      label={t('calculators.eurscoreII.critical_preoperative_label')}
                       checked={formData.criticalPreoperativeState}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, criticalPreoperativeState: e.target.checked })}
-                      description={t('calculators.cardiology.euroscore_ii.critical_preoperative_description')}
+                      description={t('calculators.eurscoreII.critical_preoperative_description')}
                       icon={AlertTriangle}
                     />
                   </div>
@@ -686,12 +686,12 @@ export const EuroSCOREIICalculator: React.FC = () => {
                 <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-xl p-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <Info className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                    <h4 className="font-semibold text-indigo-800 dark:text-indigo-200">{t('calculators.cardiology.euroscore_ii.complexity_info_title')}</h4>
+                    <h4 className="font-semibold text-indigo-800 dark:text-indigo-200">{t('calculators.eurscoreII.complexity_info_title')}</h4>
                   </div>
                   <div className="text-sm text-indigo-700 dark:text-indigo-300 space-y-1">
-                    <p>{t('calculators.cardiology.euroscore_ii.complexity_low_info')}</p>
-                    <p>{t('calculators.cardiology.euroscore_ii.complexity_medium_info')}</p>
-                    <p>{t('calculators.cardiology.euroscore_ii.complexity_high_info')}</p>
+                    <p>{t('calculators.eurscoreII.complexity_low_info')}</p>
+                    <p>{t('calculators.eurscoreII.complexity_medium_info')}</p>
+                    <p>{t('calculators.eurscoreII.complexity_high_info')}</p>
                   </div>
                 </div>
 
@@ -700,13 +700,13 @@ export const EuroSCOREIICalculator: React.FC = () => {
                     onClick={() => setCurrentStep(2)}
                     variant="outline"
                   >
-                    {t('calculators.cardiology.euroscore_ii.back_button')}
+                    {t('calculators.eurscoreII.back_button')}
                   </CalculatorButton>
                   <CalculatorButton
                     onClick={() => setCurrentStep(4)}
                     className="enhanced-calculator-button"
                   >
-                    {t('calculators.cardiology.euroscore_ii.next_specific_procedures')}
+                    {t('calculators.eurscoreII.next_specific_procedures')}
                   </CalculatorButton>
                 </div>
               </div>
@@ -718,47 +718,47 @@ export const EuroSCOREIICalculator: React.FC = () => {
                 <div className="text-center mb-8">
                   <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-pink-50 to-red-50 dark:from-pink-900/20 dark:to-red-900/20 rounded-2xl border border-pink-200 dark:border-pink-800">
                     <Heart className="w-6 h-6 text-pink-600 dark:text-pink-400" />
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.euroscore_ii.section_procedures_title')}</h3>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.eurscoreII.section_valve_procedures')}</h3>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.cardiology.euroscore_ii.section_procedures_description')}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.eurscoreII.section_specific_procedures_description')}</p>
                 </div>
 
                 <div className="space-y-6">
                   <div className="space-y-4">
                     <h4 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center space-x-2">
                       <Heart className="w-5 h-5 text-pink-600" />
-                      <span>{t('calculators.cardiology.euroscore_ii.valve_procedures_header')}</span>
+                      <span>{t('calculators.eurscoreII.section_valve_procedures')}</span>
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <CalculatorCheckbox
-                        label={t('calculators.cardiology.euroscore_ii.aortic_surgery_label')}
+                        label={t('calculators.eurscoreII.aortic_surgery_label')}
                         checked={formData.aorticSurgery}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, aorticSurgery: e.target.checked })}
-                        description={t('calculators.cardiology.euroscore_ii.aortic_surgery_description')}
+                        description={t('calculators.eurscoreII.aortic_surgery_description')}
                         icon={Heart}
                       />
 
                       <CalculatorCheckbox
-                        label={t('calculators.cardiology.euroscore_ii.mitral_surgery_label')}
+                        label={t('calculators.eurscoreII.mitral_surgery_label')}
                         checked={formData.mitralSurgery}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, mitralSurgery: e.target.checked })}
-                        description={t('calculators.cardiology.euroscore_ii.mitral_surgery_description')}
+                        description={t('calculators.eurscoreII.mitral_surgery_description')}
                         icon={Heart}
                       />
 
                       <CalculatorCheckbox
-                        label={t('calculators.cardiology.euroscore_ii.tricuspid_surgery_label')}
+                        label={t('calculators.eurscoreII.tricuspid_surgery_label')}
                         checked={formData.tricuspidSurgery}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, tricuspidSurgery: e.target.checked })}
-                        description={t('calculators.cardiology.euroscore_ii.tricuspid_surgery_description')}
+                        description={t('calculators.eurscoreII.tricuspid_surgery_description')}
                         icon={Heart}
                       />
 
                       <CalculatorCheckbox
-                        label={t('calculators.cardiology.euroscore_ii.pulmonary_surgery_label')}
+                        label={t('calculators.eurscoreII.pulmonary_surgery_label')}
                         checked={formData.pulmonarySurgery}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pulmonarySurgery: e.target.checked })}
-                        description={t('calculators.cardiology.euroscore_ii.pulmonary_surgery_description')}
+                        description={t('calculators.eurscoreII.pulmonary_surgery_description')}
                         icon={Heart}
                       />
                     </div>
@@ -768,12 +768,12 @@ export const EuroSCOREIICalculator: React.FC = () => {
                 <div className="bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800 rounded-xl p-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <Globe className="w-5 h-5 text-pink-600 dark:text-pink-400" />
-                    <h4 className="font-semibold text-pink-800 dark:text-pink-200">{t('calculators.cardiology.euroscore_ii.risk_assessment_info_title')}</h4>
+                    <h4 className="font-semibold text-pink-800 dark:text-pink-200">{t('calculators.eurscoreII.risk_assessment_title')}</h4>
                   </div>
                   <div className="text-sm text-pink-700 dark:text-pink-300 space-y-1">
-                    <p>{t('calculators.cardiology.euroscore_ii.risk_assessment_info_1')}</p>
-                    <p>{t('calculators.cardiology.euroscore_ii.risk_assessment_info_2')}</p>
-                    <p>{t('calculators.cardiology.euroscore_ii.risk_assessment_info_3')}</p>
+                    <p>{t('calculators.eurscoreII.risk_assessment_complexity')}</p>
+                    <p>{t('calculators.eurscoreII.risk_assessment_multiple')}</p>
+                    <p>{t('calculators.eurscoreII.risk_assessment_combined')}</p>
                   </div>
                 </div>
 
@@ -782,7 +782,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                     onClick={() => setCurrentStep(3)}
                     variant="outline"
                   >
-                    {t('calculators.cardiology.euroscore_ii.back_button')}
+                    {t('calculators.eurscoreII.back_button')}
                   </CalculatorButton>
                   <CalculatorButton
                     onClick={handleCalculate}
@@ -791,7 +791,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                     size="lg"
                     className="enhanced-calculator-button"
                   >
-                    {t('calculators.cardiology.euroscore_ii.calculate_button')}
+                    {t('calculators.eurscoreII.calculate_euroscore_ii')}
                   </CalculatorButton>
                 </div>
               </div>
@@ -802,8 +802,8 @@ export const EuroSCOREIICalculator: React.FC = () => {
           result && (
             <div className="space-y-8 animate-scaleIn">
               <ResultsDisplay
-                title={t('calculators.cardiology.euroscore_ii.results_title')}
-                value={`${result.riskCategory.charAt(0).toUpperCase() + result.riskCategory.slice(1).replace('_', ' ')} ${t('calculators.cardiology.euroscore_ii.risk_label')}`}
+                title={t('calculators.eurscoreII.results_title')}
+                value={`${result.riskCategory.charAt(0).toUpperCase() + result.riskCategory.slice(1).replace('_', ' ')} ${t('calculators.eurscoreII.risk_label')}`}
                 category={result.riskCategory === 'very_high' ? 'high' : result.riskCategory as 'low' | 'intermediate' | 'high'}
                 interpretation={result.interpretation}
                 icon={Globe}
@@ -812,12 +812,12 @@ export const EuroSCOREIICalculator: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3 mb-4">
                     <Target className="w-5 h-5 text-blue-500" />
-                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.euroscore_ii.mortality_risk_title')}</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.eurscoreII.mortality_risk_title')}</h4>
                   </div>
                   <div className="p-6 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/30 rounded-2xl border border-blue-200 dark:border-blue-800">
                     <div className="text-center">
                       <div className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">{result.predictedMortality}%</div>
-                      <div className="text-lg text-blue-700 dark:text-blue-300 mb-3">{t('calculators.cardiology.euroscore_ii.predicted_mortality_label')}</div>
+                      <div className="text-lg text-blue-700 dark:text-blue-300 mb-3">{t('calculators.eurscoreII.predicted_mortality_label')}</div>
                       <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                         <div 
                           className="bg-blue-500 h-3 rounded-full transition-all duration-1000"
@@ -832,39 +832,39 @@ export const EuroSCOREIICalculator: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3">
                     <Shield className="w-5 h-5 text-purple-500" />
-                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.euroscore_ii.risk_stratification_title')}</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.eurscoreII.risk_stratification_title')}</h4>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                     <div className={`p-4 rounded-xl border-2 transition-all ${
                       result.riskCategory === 'low' ? 'border-green-300 bg-green-50 dark:bg-green-900/20' : 'border-green-200 bg-green-50/50 dark:bg-green-900/10'
                     }`}>
                       <div className="text-center">
-                        <div className="text-sm font-semibold text-green-800 dark:text-green-200">{t('calculators.cardiology.euroscore_ii.low_risk_label')}</div>
-                        <div className="text-xs text-green-600 dark:text-green-400">{t('calculators.cardiology.euroscore_ii.low_risk_range')}</div>
+                        <div className="text-sm font-semibold text-green-800 dark:text-green-200">{t('calculators.eurscoreII.low_risk_label')}</div>
+                        <div className="text-xs text-green-600 dark:text-green-400">{t('calculators.eurscoreII.low_risk_range')}</div>
                       </div>
                     </div>
                     <div className={`p-4 rounded-xl border-2 transition-all ${
                       result.riskCategory === 'intermediate' ? 'border-yellow-300 bg-yellow-50 dark:bg-yellow-900/20' : 'border-yellow-200 bg-yellow-50/50 dark:bg-yellow-900/10'
                     }`}>
                       <div className="text-center">
-                        <div className="text-sm font-semibold text-yellow-800 dark:text-yellow-200">{t('calculators.cardiology.euroscore_ii.intermediate_risk_label')}</div>
-                        <div className="text-xs text-yellow-600 dark:text-yellow-400">{t('calculators.cardiology.euroscore_ii.intermediate_risk_range')}</div>
+                        <div className="text-sm font-semibold text-yellow-800 dark:text-yellow-200">{t('calculators.eurscoreII.intermediate_risk_label')}</div>
+                        <div className="text-xs text-yellow-600 dark:text-yellow-400">{t('calculators.eurscoreII.intermediate_risk_range')}</div>
                       </div>
                     </div>
                     <div className={`p-4 rounded-xl border-2 transition-all ${
                       result.riskCategory === 'high' ? 'border-orange-300 bg-orange-50 dark:bg-orange-900/20' : 'border-orange-200 bg-orange-50/50 dark:bg-orange-900/10'
                     }`}>
                       <div className="text-center">
-                        <div className="text-sm font-semibold text-orange-800 dark:text-orange-200">{t('calculators.cardiology.euroscore_ii.high_risk_label')}</div>
-                        <div className="text-xs text-orange-600 dark:text-orange-400">{t('calculators.cardiology.euroscore_ii.high_risk_range')}</div>
+                        <div className="text-sm font-semibold text-orange-800 dark:text-orange-200">{t('calculators.eurscoreII.high_risk_label')}</div>
+                        <div className="text-xs text-orange-600 dark:text-orange-400">{t('calculators.eurscoreII.high_risk_range')}</div>
                       </div>
                     </div>
                     <div className={`p-4 rounded-xl border-2 transition-all ${
                       result.riskCategory === 'very_high' ? 'border-red-300 bg-red-50 dark:bg-red-900/20' : 'border-red-200 bg-red-50/50 dark:bg-red-900/10'
                     }`}>
                       <div className="text-center">
-                        <div className="text-sm font-semibold text-red-800 dark:text-red-200">{t('calculators.cardiology.euroscore_ii.very_high_risk_label')}</div>
-                        <div className="text-xs text-red-600 dark:text-red-400">{t('calculators.cardiology.euroscore_ii.very_high_risk_range')}</div>
+                        <div className="text-sm font-semibold text-red-800 dark:text-red-200">{t('calculators.eurscoreII.very_high_risk_label')}</div>
+                        <div className="text-xs text-red-600 dark:text-red-400">{t('calculators.eurscoreII.very_high_risk_range')}</div>
                       </div>
                     </div>
                   </div>
@@ -874,7 +874,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3">
                     <Heart className="w-5 h-5 text-red-500" />
-                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.euroscore_ii.sts_comparison_title')}</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.eurscoreII.sts_comparison_title')}</h4>
                   </div>
                   <div className="p-6 bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 border border-red-200 dark:border-red-800 rounded-xl">
                     <p className="text-sm text-red-700 dark:text-red-300">{result.comparisonToSTS}</p>
@@ -885,7 +885,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3">
                     <Stethoscope className="w-5 h-5 text-indigo-500" />
-                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.euroscore_ii.clinical_recommendations_title')}</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.eurscoreII.clinical_recommendations_title')}</h4>
                   </div>
                   <div className={`p-6 rounded-2xl border-2 ${getRiskBgColor(result.riskCategory)}`}>
                     <div className="space-y-3">
@@ -903,10 +903,10 @@ export const EuroSCOREIICalculator: React.FC = () => {
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <Award className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                    <h4 className="font-semibold text-blue-800 dark:text-blue-200">{t('calculators.cardiology.euroscore_ii.validation_status_title')}</h4>
+                    <h4 className="font-semibold text-blue-800 dark:text-blue-200">{t('calculators.eurscoreII.validation_status_title')}</h4>
                   </div>
                   <div className="text-sm text-blue-700 dark:text-blue-300">
-                    {t('calculators.cardiology.euroscore_ii.validation_status_description')}
+                    {t('calculators.eurscoreII.validation_status_description')}
                   </div>
                 </div>
               </ResultsDisplay>
@@ -919,14 +919,14 @@ export const EuroSCOREIICalculator: React.FC = () => {
                   size="lg"
                   icon={Calculator}
                 >
-                  {t('calculators.cardiology.euroscore_ii.new_assessment_button')}
+                  {t('calculators.eurscoreII.new_assessment_button')}
                 </CalculatorButton>
                 <CalculatorButton
                   onClick={() => setResult(null)}
                   variant="secondary"
                   size="lg"
                 >
-                  {t('calculators.cardiology.euroscore_ii.modify_inputs_button')}
+                  {t('calculators.eurscoreII.modify_inputs_button')}
                 </CalculatorButton>
               </div>
             </div>
@@ -937,10 +937,10 @@ export const EuroSCOREIICalculator: React.FC = () => {
         <div className="text-center pt-8 border-t border-white/20 dark:border-gray-800/20">
           <div className="flex items-center justify-center space-x-3 text-sm text-gray-600 dark:text-gray-400">
             <Info className="w-4 h-4" />
-            <span>{t('calculators.cardiology.euroscore_ii.footer_info')}</span>
+            <span>{t('calculators.eurscoreII.footer_info')}</span>
             <div className="flex items-center space-x-1">
               <Globe className="w-4 h-4 text-blue-600" />
-              <span className="text-blue-600 font-semibold">{t('calculators.cardiology.euroscore_ii.validation_badge')}</span>
+              <span className="text-blue-600 font-semibold">{t('calculators.eurscoreII.validation_badge')}</span>
             </div>
           </div>
         </div>

@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect } from 'react';
-import { useLanguageStore } from '../store/useLanguageStore';
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { Language } from '../types/i18n';
+import { DEFAULT_LANGUAGE } from '../i18n/config';
 
 interface LanguageContextType {
   currentLanguage: Language;
@@ -11,9 +12,19 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { currentLanguage, setLanguage } = useLanguageStore();
+  // Initialize language from localStorage or default
+  const [currentLanguage, setCurrentLanguage] = useState<Language>(() => {
+    const savedLanguage = localStorage.getItem('selectedLanguage') as Language;
+    return savedLanguage && ['en', 'ka', 'ru'].includes(savedLanguage) ? savedLanguage : DEFAULT_LANGUAGE;
+  });
+  
   const location = useLocation();
   const navigate = useNavigate();
+
+  const setLanguage = (lang: Language) => {
+    setCurrentLanguage(lang);
+    localStorage.setItem('selectedLanguage', lang);
+  };
 
   useEffect(() => {
     document.documentElement.lang = currentLanguage;

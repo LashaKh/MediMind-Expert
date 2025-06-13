@@ -6,6 +6,21 @@
 [build.environment]
   NODE_VERSION = "20"
 
+[functions]
+  directory = "functions"
+  node_bundler = "esbuild"
+
+[dev]
+  framework = "vite"
+  targetPort = 5173
+
+# Security: Force HTTPS redirect
+[[redirects]]
+  from = "http://medimindexpert.netlify.app/*"
+  to = "https://medimindexpert.netlify.app/:splat"
+  status = 301
+  force = true
+
 # Handle OPTIONS requests for CORS preflight
 [[redirects]]
   from = "/api/*"
@@ -13,6 +28,12 @@
   status = 200
   force = true
   conditions = {Methods = ["OPTIONS"]}
+
+[[redirects]]
+  from = "/api/flowise/chat"
+  to = "/.netlify/functions/flowise-proxy"
+  status = 200
+  force = true
 
 [[redirects]]
   from = "/api/exa/search"
@@ -31,12 +52,26 @@
   to = "/index.html"
   status = 200
 
-[functions]
-  node_bundler = "esbuild"
+# Security Headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
 
-[dev]
-  framework = "vite"
-  targetPort = 5173
+# API Security Headers
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
 
 [build.processing]
   skip_processing = false

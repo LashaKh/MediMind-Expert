@@ -1,48 +1,123 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './Header';
 import { Footer } from './Footer';
-import { SideMenu } from './SideMenu';
-import { useAuthStore } from '../../store/useAuthStore'; 
+import { Sidebar } from './Sidebar';
+import { BottomNavigation } from './BottomNavigation';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
-  const { user } = useAuthStore();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(!isMobile);
+  const { user } = useAuth();
 
+  // Check for mobile screen size
   useEffect(() => {
     const checkMobile = () => {
-      const isMobileView = window.innerWidth < 1024;
-      setIsMobile(isMobileView);
-      setIsExpanded(!isMobileView);
+      setIsMobile(window.innerWidth < 768);
     };
     
     checkMobile();
     window.addEventListener('resize', checkMobile);
+    
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Close sidebar when clicking outside on mobile
+  useEffect(() => {
+    if (isSidebarOpen && isMobile) {
+      const handleClickOutside = (event: MouseEvent) => {
+        const sidebar = document.getElementById('sidebar');
+        const target = event.target as Node;
+        
+        if (sidebar && !sidebar.contains(target)) {
+          setIsSidebarOpen(false);
+        }
+      };
+
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isSidebarOpen, isMobile]);
+
+  // Prevent body scroll when sidebar is open on mobile
+  useEffect(() => {
+    if (isMobile && isSidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobile, isSidebarOpen]);
+
+  const handleMenuToggle = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleSidebarClose = () => {
+    setIsSidebarOpen(false);
+  };
+
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      <Header />
-      <div className="flex-1 overflow-hidden mt-16">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 safe-area-inset layout-container">
+      {/* Header with safe area support */}
+      <Header onMenuToggle={handleMenuToggle} />
+      
+      <div className="flex flex-1 layout-container pt-16">
+        {/* Sidebar - only show for authenticated users */}
         {user && (
-          <SideMenu 
-            isMobile={isMobile} 
-            isExpanded={isExpanded}
-            onExpandedChange={setIsExpanded}
+          <Sidebar 
+            isOpen={isSidebarOpen} 
+            onClose={handleSidebarClose}
+            isMobile={isMobile}
           />
         )}
-        <main className={`flex-1 transition-all duration-200 overflow-hidden ${
-          isMobile ? 'w-full' : isExpanded ? 'lg:pl-60' : 'lg:pl-[72px]'
-        }`}>
-          {children}
+        
+        {/* Mobile overlay */}
+        {isMobile && isSidebarOpen && user && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300"
+            onClick={handleSidebarClose}
+            aria-hidden="true"
+          />
+        )}
+        
+        {/* Main content area - Fixed positioning without overlap */}
+        <main 
+          className={`
+            flex-1 transition-all duration-300 ease-in-out 
+            overflow-hidden bg-gray-50 dark:bg-gray-900
+            ${user && isMobile && isSidebarOpen ? 'pointer-events-none' : ''}
+            ${user && isMobile ? 'pb-16' : ''}
+          `}
+          style={{
+            height: 'calc(100vh - 64px)', // Full height minus header
+            minHeight: 'calc(100vh - 64px)'
+          }}
+        >
+          {/* Complete gap elimination - zero margin/padding wrapper */}
+          <div className="h-full w-full m-0 p-0 border-0 bg-transparent overflow-auto">
+            {children}
+          </div>
         </main>
       </div>
-      <Footer />
+      
+      {/* Bottom Navigation for mobile - only for authenticated users */}
+      {user && <BottomNavigation />}
+      
+      {/* Footer - hide on mobile when user is authenticated (bottom nav takes its place) */}
+      <div className={user && isMobile ? 'hidden' : 'block'}>
+        <Footer />
+      </div>
+      
+      {/* Bottom safe area spacer */}
+      <div className="safe-bottom bg-gray-50 dark:bg-gray-900" />
     </div>
   );
 };

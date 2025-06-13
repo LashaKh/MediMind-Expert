@@ -1,0 +1,615 @@
+import React, { useState } from 'react';
+import { useTranslation } from '../../hooks/useTranslation';
+import { Calculator, Info, Heart, AlertTriangle, Clock, TrendingUp, Pill, Activity, User, FileText, Target, Stethoscope, Award, BarChart3, Shield, Droplets, Zap, Brain, TimerIcon, CheckCircle2 } from 'lucide-react';
+import { 
+  CalculatorContainer, 
+  CalculatorInput, 
+  CalculatorSelect, 
+  CalculatorCheckbox, 
+  CalculatorButton, 
+  ResultsDisplay 
+} from '../ui/calculator-ui';
+
+interface DAPTFormData {
+  age: string;
+  cigaretteSmoking: boolean;
+  diabetesMellitus: boolean;
+  miAtPresentation: boolean;
+  priorPCIOrMI: boolean;
+  paclitaxelElutingStent: boolean;
+  stentDiameter: string; // <3mm = 1 point
+  chfOrLVEF: boolean; // CHF or LVEF <30%
+  veinGraftPCI: boolean;
+}
+
+interface DAPTResult {
+  score: number;
+  ischemicBenefit: 'high' | 'intermediate' | 'low';
+  bleedingRisk: 'high' | 'intermediate' | 'low';
+  netBenefit: 'favorable' | 'uncertain' | 'unfavorable';
+  recommendation: string;
+  durationGuidance: string;
+  clinicalConsiderations: string[];
+  riskBalance: {
+    ischemicReduction: number;
+    bleedingIncrease: number;
+    netClinicalBenefit: string;
+  };
+}
+
+export default function DAPTCalculator() {
+  const { t } = useTranslation();
+  
+  const [formData, setFormData] = useState<DAPTFormData>({
+    age: '',
+    cigaretteSmoking: false,
+    diabetesMellitus: false,
+    miAtPresentation: false,
+    priorPCIOrMI: false,
+    paclitaxelElutingStent: false,
+    stentDiameter: '',
+    chfOrLVEF: false,
+    veinGraftPCI: false
+  });
+
+  const [result, setResult] = useState<DAPTResult | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [showResult, setShowResult] = useState(false);
+
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    const age = parseInt(formData.age);
+    if (!formData.age || isNaN(age)) {
+      newErrors.age = t('common.required');
+    } else if (age < 18 || age > 120) {
+      newErrors.age = t('calculators.cardiology.dapt.age_error');
+    }
+
+    const stentDiameter = parseFloat(formData.stentDiameter);
+    if (!formData.stentDiameter || isNaN(stentDiameter)) {
+      newErrors.stentDiameter = t('common.required');
+    } else if (stentDiameter < 1 || stentDiameter > 10) {
+      newErrors.stentDiameter = t('calculators.cardiology.dapt.stent_diameter_error');
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const calculateDAPTScore = (): DAPTResult => {
+    const age = parseInt(formData.age);
+    const stentDiameter = parseFloat(formData.stentDiameter);
+    let score = 0;
+
+    // Age scoring (65-75 = -1, ≥75 = -2)
+    if (age >= 75) score -= 2;
+    else if (age >= 65) score -= 1;
+
+    // Risk factors (+1 each)
+    if (formData.cigaretteSmoking) score += 1;
+    if (formData.diabetesMellitus) score += 1;
+    if (formData.miAtPresentation) score += 1;
+    if (formData.priorPCIOrMI) score += 1;
+    if (formData.paclitaxelElutingStent) score += 1;
+    if (stentDiameter < 3) score += 1;
+    if (formData.chfOrLVEF) score += 1;
+    if (formData.veinGraftPCI) score += 1;
+
+    // Enhanced clinical interpretation with risk-benefit analysis
+    let ischemicBenefit: 'high' | 'intermediate' | 'low';
+    let bleedingRisk: 'high' | 'intermediate' | 'low';
+    let netBenefit: 'favorable' | 'uncertain' | 'unfavorable';
+    let recommendation: string;
+    let durationGuidance: string;
+    let clinicalConsiderations: string[];
+    let ischemicReduction = 0;
+    let bleedingIncrease = 0;
+    let netClinicalBenefit = '';
+
+    // Advanced risk-benefit calculation
+    if (score >= 2) {
+      ischemicBenefit = 'high';
+      ischemicReduction = 1.4; // 1.4% absolute reduction in MACE
+      
+      if (age < 65) {
+        bleedingRisk = 'low';
+        bleedingIncrease = 0.3; // 0.3% increase in major bleeding
+        netBenefit = 'favorable';
+        netClinicalBenefit = t('calculators.cardiology.dapt.net_benefit_strong');
+        recommendation = t('calculators.cardiology.dapt.recommendation_extended_strongly');
+        durationGuidance = t('calculators.cardiology.dapt.duration_18_30_months');
+      } else if (age < 75) {
+        bleedingRisk = 'intermediate';
+        bleedingIncrease = 0.6; // 0.6% increase in major bleeding
+        netBenefit = 'uncertain';
+        netClinicalBenefit = t('calculators.cardiology.dapt.net_benefit_modest');
+        recommendation = t('calculators.cardiology.dapt.recommendation_extended_may_benefit');
+        durationGuidance = t('calculators.cardiology.dapt.duration_18_months_monitoring');
+      } else {
+        bleedingRisk = 'high';
+        bleedingIncrease = 1.2; // 1.2% increase in major bleeding
+        netBenefit = 'unfavorable';
+        netClinicalBenefit = t('calculators.cardiology.dapt.net_benefit_harm');
+        recommendation = t('calculators.cardiology.dapt.recommendation_not_recommended_bleeding');
+        durationGuidance = t('calculators.cardiology.dapt.duration_12_months_early');
+      }
+    } else if (score >= 1) {
+      ischemicBenefit = 'intermediate';
+      ischemicReduction = 0.8; // 0.8% absolute reduction in MACE
+      
+      if (age < 65) {
+        bleedingRisk = 'low';
+        bleedingIncrease = 0.3;
+        netBenefit = 'uncertain';
+        netClinicalBenefit = t('calculators.cardiology.dapt.net_benefit_modest_uncertain');
+        recommendation = t('calculators.cardiology.dapt.recommendation_individualized_assessment');
+        durationGuidance = t('calculators.cardiology.dapt.duration_12_18_individualized');
+      } else if (age < 75) {
+        bleedingRisk = 'intermediate';
+        bleedingIncrease = 0.6;
+        netBenefit = 'uncertain';
+        netClinicalBenefit = t('calculators.cardiology.dapt.net_benefit_neutral');
+        recommendation = t('calculators.cardiology.dapt.recommendation_careful_consideration');
+        durationGuidance = t('calculators.cardiology.dapt.duration_12_months_rationale');
+      } else {
+        bleedingRisk = 'high';
+        bleedingIncrease = 1.2;
+        netBenefit = 'unfavorable';
+        netClinicalBenefit = t('calculators.cardiology.dapt.net_benefit_unfavorable');
+        recommendation = t('calculators.cardiology.dapt.recommendation_not_recommended');
+        durationGuidance = t('calculators.cardiology.dapt.duration_12_months_early_consideration');
+      }
+    } else {
+      ischemicBenefit = 'low';
+      ischemicReduction = 0.4; // 0.4% absolute reduction in MACE
+      bleedingIncrease = age >= 75 ? 1.2 : age >= 65 ? 0.6 : 0.3;
+      bleedingRisk = age >= 75 ? 'high' : age >= 65 ? 'intermediate' : 'low';
+      netBenefit = 'unfavorable';
+      netClinicalBenefit = age >= 65 ? t('calculators.cardiology.dapt.net_benefit_harm_elderly') : t('calculators.cardiology.dapt.net_benefit_neutral_unfavorable');
+      recommendation = t('calculators.cardiology.dapt.recommendation_not_recommended_limited');
+      durationGuidance = t('calculators.cardiology.dapt.duration_12_months_shorter');
+    }
+
+    // Enhanced clinical considerations
+    clinicalConsiderations = [];
+    if (age >= 75) {
+      clinicalConsiderations.push(t('calculators.cardiology.dapt.consideration_advanced_age'));
+    } else if (age >= 65) {
+      clinicalConsiderations.push(t('calculators.cardiology.dapt.consideration_moderate_age'));
+    }
+    
+    if (formData.diabetesMellitus) {
+      clinicalConsiderations.push(t('calculators.cardiology.dapt.consideration_diabetes'));
+    }
+    
+    if (formData.miAtPresentation) {
+      clinicalConsiderations.push(t('calculators.cardiology.dapt.consideration_mi_presentation'));
+    }
+    
+    if (stentDiameter < 3) {
+      clinicalConsiderations.push(t('calculators.cardiology.dapt.consideration_small_vessel'));
+    }
+    
+    if (formData.chfOrLVEF) {
+      clinicalConsiderations.push(t('calculators.cardiology.dapt.consideration_heart_failure'));
+    }
+    
+    if (formData.paclitaxelElutingStent) {
+      clinicalConsiderations.push(t('calculators.cardiology.dapt.consideration_paclitaxel_stent'));
+    }
+    
+    if (formData.veinGraftPCI) {
+      clinicalConsiderations.push(t('calculators.cardiology.dapt.consideration_vein_graft'));
+    }
+
+    return {
+      score,
+      ischemicBenefit,
+      bleedingRisk,
+      netBenefit,
+      recommendation,
+      durationGuidance,
+      clinicalConsiderations,
+      riskBalance: {
+        ischemicReduction,
+        bleedingIncrease,
+        netClinicalBenefit
+      }
+    };
+  };
+
+  const handleCalculate = () => {
+    if (validateForm()) {
+      setIsCalculating(true);
+      
+      setTimeout(() => {
+        const calculatedResult = calculateDAPTScore();
+        setResult(calculatedResult);
+        setShowResult(true);
+        setIsCalculating(false);
+      }, 1500);
+    }
+  };
+
+  const handleReset = () => {
+    setFormData({
+      age: '',
+      cigaretteSmoking: false,
+      diabetesMellitus: false,
+      miAtPresentation: false,
+      priorPCIOrMI: false,
+      paclitaxelElutingStent: false,
+      stentDiameter: '',
+      chfOrLVEF: false,
+      veinGraftPCI: false
+    });
+    setResult(null);
+    setErrors({});
+    setCurrentStep(1);
+    setShowResult(false);
+  };
+
+  const getInterpretation = (category: string, score: number) => {
+    if (score >= 2) {
+      return t('calculators.cardiology.dapt.interpretation_high', { score: score.toString() });
+    } else if (score >= 1) {
+      return t('calculators.cardiology.dapt.interpretation_intermediate', { score: score.toString() });
+    } else {
+      return t('calculators.cardiology.dapt.interpretation_low', { score: score.toString() });
+    }
+  };
+
+  const getRiskLevel = (category: string): 'low' | 'borderline' | 'intermediate' | 'high' => {
+    return category === 'low' ? 'low' : category === 'intermediate' ? 'intermediate' : 'high';
+  };
+
+  const getBenefitInfo = (benefit: string) => {
+    switch (benefit) {
+      case 'favorable':
+        return { icon: Shield, label: t('calculators.cardiology.dapt.favorable_benefit'), color: 'green', description: t('calculators.cardiology.dapt.benefits_outweigh_risks') };
+      case 'uncertain':
+        return { icon: AlertTriangle, label: t('calculators.cardiology.dapt.uncertain_benefit'), color: 'orange', description: t('calculators.cardiology.dapt.requires_individual_assessment') };
+      case 'unfavorable':
+        return { icon: Zap, label: t('calculators.cardiology.dapt.unfavorable_benefit'), color: 'red', description: t('calculators.cardiology.dapt.risks_outweigh_benefits') };
+      default:
+        return { icon: Brain, label: t('calculators.cardiology.dapt.assessment_required'), color: 'gray', description: t('calculators.cardiology.dapt.clinical_evaluation_needed') };
+    }
+  };
+
+  return (
+    <CalculatorContainer
+      title={t('calculators.cardiology.dapt.title')}
+      subtitle={t('calculators.cardiology.dapt.subtitle')}
+      icon={Pill}
+      gradient="medical"
+      className="max-w-6xl mx-auto"
+    >
+      <div className="space-y-8">
+        {/* Alert */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-700 rounded-2xl p-6 mb-8">
+          <div className="flex items-start space-x-4">
+            <div className="flex-shrink-0">
+              <div className="w-10 h-10 bg-blue-100 dark:bg-blue-800 rounded-xl flex items-center justify-center">
+                <Info className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </div>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-2">
+                {t('calculators.cardiology.dapt.therapy_management_tool')}
+              </h3>
+              <p className="text-blue-700 dark:text-blue-300 leading-relaxed">
+                {t('calculators.cardiology.dapt.tool_description')}
+              </p>
+              <div className="mt-3">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200">
+                  <CheckCircle2 className="w-4 h-4 mr-1" />
+                  {t('calculators.cardiology.dapt.study_validated')}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {!showResult ? (
+          <>
+            {/* Progress Indicator */}
+            <div className="flex items-center justify-center space-x-4 mb-8">
+              <div className="flex items-center space-x-2">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                  currentStep >= 1 ? 'bg-purple-500 text-white' : 'bg-gray-200 text-gray-500'
+                }`}>
+                  1
+                </div>
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.cardiology.dapt.patient_profile')}</span>
+              </div>
+              <div className={`w-16 h-1 rounded-full transition-all duration-300 ${
+                currentStep >= 2 ? 'bg-purple-500' : 'bg-gray-200'
+              }`}></div>
+              <div className="flex items-center space-x-2">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                  currentStep >= 2 ? 'bg-purple-500 text-white' : 'bg-gray-200 text-gray-500'
+                }`}>
+                  2
+                </div>
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.cardiology.dapt.risk_assessment')}</span>
+              </div>
+              <div className={`w-16 h-1 rounded-full transition-all duration-300 ${
+                currentStep >= 3 ? 'bg-purple-500' : 'bg-gray-200'
+              }`}></div>
+              <div className="flex items-center space-x-2">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                  currentStep >= 3 ? 'bg-purple-500 text-white' : 'bg-gray-200 text-gray-500'
+                }`}>
+                  3
+                </div>
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.cardiology.dapt.dapt_analysis')}</span>
+              </div>
+            </div>
+
+            {/* Step 1: Patient Demographics and Procedure Details */}
+            {currentStep === 1 && (
+              <div className="space-y-6 animate-fadeIn">
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-2xl border border-emerald-200 dark:border-emerald-800">
+                    <User className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.dapt.demographics_section')}</h3>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.cardiology.dapt.demographics_description')}</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <CalculatorInput
+                    label={t('calculators.cardiology.dapt.age_label')}
+                    value={formData.age}
+                    onChange={(e) => setFormData({ ...formData, age: (e.target as HTMLInputElement).value })}
+                    error={errors.age}
+                    helpText={t('calculators.cardiology.dapt.age_help')}
+                    icon={User}
+                    type="number"
+                    placeholder="65"
+                    unit={t('medical.years')}
+                    min={18}
+                    max={120}
+                    required
+                  />
+
+                  <CalculatorInput
+                    label={t('calculators.cardiology.dapt.stent_diameter_label')}
+                    value={formData.stentDiameter}
+                    onChange={(e) => setFormData({ ...formData, stentDiameter: (e.target as HTMLInputElement).value })}
+                    error={errors.stentDiameter}
+                    helpText={t('calculators.cardiology.dapt.stent_diameter_help')}
+                    icon={Target}
+                    type="number"
+                    placeholder="3.0"
+                    unit="mm"
+                    step={0.1}
+                    min={1}
+                    max={10}
+                    required
+                  />
+                </div>
+
+                <div className="flex justify-end">
+                  <CalculatorButton
+                    onClick={() => setCurrentStep(2)}
+                    disabled={!formData.age || !formData.stentDiameter}
+                    className="enhanced-calculator-button"
+                  >
+                    {t('calculators.cardiology.dapt.next_risk_factors')}
+                  </CalculatorButton>
+                </div>
+              </div>
+            )}
+
+            {/* Step 2: Clinical Risk Factors */}
+            {currentStep === 2 && (
+              <div className="space-y-6 animate-fadeIn">
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-2xl border border-blue-200 dark:border-blue-800">
+                    <Activity className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.dapt.risk_factors_section')}</h3>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.cardiology.dapt.risk_factors_description')}</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <CalculatorCheckbox
+                    label={t('calculators.cardiology.dapt.cigarette_smoking')}
+                    checked={formData.cigaretteSmoking}
+                    onChange={(e) => setFormData({ ...formData, cigaretteSmoking: (e.target as HTMLInputElement).checked })}
+                    description={t('calculators.cardiology.dapt.cigarette_smoking_desc')}
+                    icon={Zap}
+                  />
+
+                  <CalculatorCheckbox
+                    label={t('calculators.cardiology.dapt.diabetes_mellitus')}
+                    checked={formData.diabetesMellitus}
+                    onChange={(e) => setFormData({ ...formData, diabetesMellitus: (e.target as HTMLInputElement).checked })}
+                    description={t('calculators.cardiology.dapt.diabetes_mellitus_desc')}
+                    icon={Droplets}
+                  />
+
+                  <CalculatorCheckbox
+                    label={t('calculators.cardiology.dapt.mi_at_presentation')}
+                    checked={formData.miAtPresentation}
+                    onChange={(e) => setFormData({ ...formData, miAtPresentation: (e.target as HTMLInputElement).checked })}
+                    description={t('calculators.cardiology.dapt.mi_at_presentation_desc')}
+                    icon={Heart}
+                  />
+
+                  <CalculatorCheckbox
+                    label={t('calculators.cardiology.dapt.prior_pci_mi')}
+                    checked={formData.priorPCIOrMI}
+                    onChange={(e) => setFormData({ ...formData, priorPCIOrMI: (e.target as HTMLInputElement).checked })}
+                    description={t('calculators.cardiology.dapt.prior_pci_mi_desc')}
+                    icon={FileText}
+                  />
+
+                  <CalculatorCheckbox
+                    label={t('calculators.cardiology.dapt.paclitaxel_stent')}
+                    checked={formData.paclitaxelElutingStent}
+                    onChange={(e) => setFormData({ ...formData, paclitaxelElutingStent: (e.target as HTMLInputElement).checked })}
+                    description={t('calculators.cardiology.dapt.paclitaxel_stent_desc')}
+                    icon={Target}
+                  />
+
+                  <CalculatorCheckbox
+                    label={t('calculators.cardiology.dapt.chf_lvef')}
+                    checked={formData.chfOrLVEF}
+                    onChange={(e) => setFormData({ ...formData, chfOrLVEF: (e.target as HTMLInputElement).checked })}
+                    description={t('calculators.cardiology.dapt.chf_lvef_desc')}
+                    icon={Heart}
+                  />
+                </div>
+
+                <div className="flex justify-between">
+                  <CalculatorButton
+                    onClick={() => setCurrentStep(1)}
+                    variant="outline"
+                  >
+                    {t('common.back')}
+                  </CalculatorButton>
+                  <CalculatorButton
+                    onClick={() => setCurrentStep(3)}
+                    className="enhanced-calculator-button"
+                  >
+                    {t('calculators.cardiology.dapt.next_specialized_factors')}
+                  </CalculatorButton>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3: Specialized Procedural Factors */}
+            {currentStep === 3 && (
+              <div className="space-y-6 animate-fadeIn">
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-2xl border border-orange-200 dark:border-orange-800">
+                    <Stethoscope className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.dapt.specialized_factors_section')}</h3>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.cardiology.dapt.specialized_factors_description')}</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <CalculatorCheckbox
+                    label={t('calculators.cardiology.dapt.vein_graft_pci')}
+                    checked={formData.veinGraftPCI}
+                    onChange={(e) => setFormData({ ...formData, veinGraftPCI: (e.target as HTMLInputElement).checked })}
+                    description={t('calculators.cardiology.dapt.vein_graft_pci_desc')}
+                    icon={Shield}
+                  />
+                </div>
+
+                <div className="flex justify-between">
+                  <CalculatorButton
+                    onClick={() => setCurrentStep(2)}
+                    variant="outline"
+                  >
+                    {t('common.back')}
+                  </CalculatorButton>
+                  <CalculatorButton
+                    onClick={handleCalculate}
+                    loading={isCalculating}
+                    className="enhanced-calculator-button"
+                  >
+                    {isCalculating ? t('common.calculating') : t('calculators.cardiology.dapt.calculate_button')}
+                  </CalculatorButton>
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          result && (
+            <div className="animate-fadeIn">
+              <ResultsDisplay
+                title={t('calculators.cardiology.dapt.score_analysis')}
+                interpretation={getInterpretation(result.ischemicBenefit, result.score)}
+                category={getRiskLevel(result.ischemicBenefit)}
+                value={t('calculators.cardiology.dapt.score_points', { score: result.score.toString() })}
+              >
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-6">
+                  <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/30">
+                    <h4 className="font-semibold text-green-700 dark:text-green-300">{t('calculators.cardiology.dapt.ischemic_benefit')}</h4>
+                    <p className="text-lg font-bold">{t(`calculators.cardiology.dapt.${result.ischemicBenefit}_risk`)}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{t('calculators.cardiology.dapt.mace_reduction', { reduction: result.riskBalance.ischemicReduction.toString() })}</p>
+                  </div>
+                  <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/30">
+                    <h4 className="font-semibold text-red-700 dark:text-red-300">{t('calculators.cardiology.dapt.bleeding_risk')}</h4>
+                    <p className="text-lg font-bold">{t(`calculators.cardiology.dapt.${result.bleedingRisk}_risk`)}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{t('calculators.cardiology.dapt.bleeding_increase', { increase: result.riskBalance.bleedingIncrease.toString() })}</p>
+                  </div>
+                  <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30">
+                    <h4 className="font-semibold text-blue-700 dark:text-blue-300">{t('calculators.cardiology.dapt.net_benefit')}</h4>
+                    <p className="text-lg font-bold">{t(`calculators.cardiology.dapt.${getBenefitInfo(result.netBenefit).label}`)}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{t(`calculators.cardiology.dapt.${getBenefitInfo(result.netBenefit).description}`)}</p>
+                  </div>
+                </div>
+
+                <div className="my-6 p-4 rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <h4 className="font-semibold mb-2">{t('calculators.cardiology.dapt.duration_recommendation')}</h4>
+                  <p>{result.durationGuidance}</p>
+                </div>
+                
+                <div className="my-6 p-4 rounded-lg bg-gray-100 dark:bg-gray-800">
+                  <h4 className="font-semibold mb-2">{t('calculators.cardiology.dapt.clinical_considerations')}</h4>
+                  <ul className="list-disc list-inside space-y-1">
+                    {result.clinicalConsiderations.map((consideration, index) => (
+                      <li key={index}>{consideration}</li>
+                    ))}
+                  </ul>
+                </div>
+              </ResultsDisplay>
+
+              {/* Interpretation Guide */}
+              <div className="mt-8 p-6 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-900/50 rounded-2xl border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">{t('calculators.cardiology.dapt.interpretation_guide')}</h3>
+                <div className="space-y-4">
+                  <div className="flex items-start">
+                    <Award className="w-5 h-5 text-green-500 mr-3 mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold">{t('calculators.cardiology.dapt.score_high')}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{t('calculators.cardiology.dapt.score_high_desc')}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <BarChart3 className="w-5 h-5 text-yellow-500 mr-3 mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold">{t('calculators.cardiology.dapt.score_intermediate')}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{t('calculators.cardiology.dapt.score_intermediate_desc')}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <Shield className="w-5 h-5 text-red-500 mr-3 mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold">{t('calculators.cardiology.dapt.score_low')}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{t('calculators.cardiology.dapt.score_low_desc')}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                   <p className="text-xs text-gray-500 dark:text-gray-400 italic">
+                    {t('calculators.cardiology.dapt.algorithm_validation')}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-8 flex justify-center">
+                <CalculatorButton
+                  onClick={handleReset}
+                  className="enhanced-calculator-button"
+                >
+                  <TimerIcon className="w-4 h-4 mr-2" />
+                  {t('calculators.cardiology.dapt.new_assessment')}
+                </CalculatorButton>
+              </div>
+            </div>
+          )
+        )}
+      </div>
+    </CalculatorContainer>
+  );
+} 

@@ -1,90 +1,124 @@
-import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../../store/useAuthStore';
-import { LoadingSpinner } from '../common/LoadingSpinner';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Mail, Lock } from 'lucide-react';
+import { AuthLayout } from './AuthLayout';
+import { MobileInput, MobileButton } from '../ui/mobile-form';
+import { useAuth } from '../../contexts/AuthContext';
+import { useTranslation } from '../../hooks/useTranslation';
 
 export const SignIn: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const { signIn, loading, error } = useAuthStore();
   const navigate = useNavigate();
+  const { signInWithPassword } = useAuth();
+  const { t } = useTranslation();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const signInSchema = z.object({
+    email: z.string().email({ message: t('validation.invalidEmail') }),
+    password: z.string().min(6, { message: t('validation.passwordMinLength') }),
+  });
+
+  type SignInFormValues = z.infer<typeof signInSchema>;
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError,
+  } = useForm<SignInFormValues>({
+    resolver: zodResolver(signInSchema),
+  });
+
+  const onSubmit: SubmitHandler<SignInFormValues> = async (data) => {
+    console.log('Attempting sign in with:', data.email);
     try {
-      await signIn(email, password);
-      navigate('/patients');
-    } catch (err) {
-      // Error is handled by the store
+      await signInWithPassword({ email: data.email, password: data.password });
+      console.log('Sign in successful, navigating to home.');
+      navigate('/');
+    } catch (error: any) {
+      console.error('Sign in failed:', error.message);
+      
+      // Set form-level errors based on the error type
+      if (error.message.includes('Invalid login credentials')) {
+        setError('email', { message: t('auth.errors.invalidCredentials') });
+        setError('password', { message: t('auth.errors.invalidCredentials') });
+      } else if (error.message.includes('Email not confirmed')) {
+        setError('email', { message: t('auth.errors.emailNotConfirmed') });
+      } else {
+        setError('email', { message: t('auth.errors.signInFailed') });
+      }
     }
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
-        <div>
-          <h2 className="text-center text-3xl font-bold tracking-tight text-white">
-            Sign in to your account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4 rounded-md shadow-sm">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="relative block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-primary sm:text-sm sm:leading-6"
-                placeholder="Email address"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="relative block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-primary sm:text-sm sm:leading-6"
-                placeholder="Password"
-              />
-            </div>
+    <AuthLayout title={t('auth.signInTitle')}>
+      <div className="mobile:px-2 px-4">
+        <form className="mt-6 mobile:mt-4 space-y-6 mobile:space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          <div className="space-y-4">
+            {/* Email Input */}
+            <MobileInput
+              id="email"
+              type="email"
+              label={t('auth.emailLabel')}
+              placeholder={t('auth.emailPlaceholder')}
+              autoComplete="email"
+              icon={Mail}
+              error={errors.email?.message}
+              disabled={isSubmitting}
+              required
+              {...register('email')}
+            />
+
+            {/* Password Input */}
+            <MobileInput
+              id="password"
+              type="password"
+              label={t('auth.passwordLabel')}
+              placeholder={t('auth.passwordPlaceholder')}
+              autoComplete="current-password"
+              icon={Lock}
+              error={errors.password?.message}
+              disabled={isSubmitting}
+              required
+              {...register('password')}
+            />
           </div>
 
-          {error && (
-            <div className="text-red-500 text-sm text-center">{error}</div>
-          )}
-
-          <div>
-            <button
+          {/* Submit Button */}
+          <div className="pt-2">
+            <MobileButton
               type="submit"
-              disabled={loading}
-              className="group relative flex w-full justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50"
+              loading={isSubmitting}
+              disabled={isSubmitting}
+              className="w-full"
+              size="lg"
             >
-              {loading ? <LoadingSpinner /> : 'Sign in'}
-            </button>
+              {isSubmitting ? t('auth.signingIn') : t('auth.signIn')}
+            </MobileButton>
           </div>
 
-          <div className="text-sm text-center">
-            <Link
-              to="/signup"
-              className="font-medium text-white hover:text-gray-200 dark:text-blue-400 dark:hover:text-blue-300"
-            >
-              Don't have an account? Sign up
-            </Link>
+          {/* Navigation Links */}
+          <div className="space-y-4 text-center">
+            <div className="text-sm">
+              <Link
+                to="/signup"
+                className="font-medium text-primary hover:text-primary/80 dark:text-accent dark:hover:text-accent/90 transition-colors duration-200 touch-target-sm p-2 -m-2 rounded-lg focus-enhanced"
+              >
+                {t('auth.noAccount')}
+              </Link>
+            </div>
+            
+            <div className="text-sm">
+              <Link
+                to="/forgot-password"
+                className="font-medium text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 transition-colors duration-200 touch-target-sm p-2 -m-2 rounded-lg focus-enhanced"
+              >
+                {t('auth.forgotPassword')}
+              </Link>
+            </div>
           </div>
         </form>
       </div>
-    </div>
+    </AuthLayout>
   );
 };
