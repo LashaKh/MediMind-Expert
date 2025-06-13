@@ -7,6 +7,7 @@ export default {
   common,
   cardiology,
   obgyn,
+  eurscoreII,
   
   // Top-level keys for Calculator landing page
   specialty: {
