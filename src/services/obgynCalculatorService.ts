@@ -566,25 +566,25 @@ export function calculateBishopScore(input: BishopScoreInput, t?: (key: string) 
   const totalScore = dilationScore + effacementScore + consistencyScore + positionScore + stationScore;
 
   // Determine category and success probability
-  let category: 'low' | 'borderline' | 'intermediate' | 'high';
-  let inductionSuccess: string;
+  let category: 'low' | 'moderate' | 'high' | 'very-high';
+  let inductionSuccess: 'unlikely' | 'possible' | 'likely' | 'very-likely';
   let cesareanRisk: number;
 
   if (totalScore <= 3) {
-    category = 'low';
+    category = 'high'; // High risk category for low scores (unfavorable)
     inductionSuccess = 'unlikely';
     cesareanRisk = 40;
   } else if (totalScore <= 6) {
-    category = 'intermediate';
+    category = 'moderate'; // Changed from 'intermediate' to 'moderate'
     inductionSuccess = 'possible';
     cesareanRisk = 25;
   } else if (totalScore <= 8) {
-    category = 'borderline';
+    category = 'moderate'; // Changed from 'borderline' to 'moderate'
     inductionSuccess = 'likely';
     cesareanRisk = 15;
   } else {
-    category = 'high';
-    inductionSuccess = 'very likely';
+    category = 'low'; // Low risk category for high scores (favorable)
+    inductionSuccess = 'very-likely'; // Changed from 'very likely' to 'very-likely'
     cesareanRisk = 8;
   }
 

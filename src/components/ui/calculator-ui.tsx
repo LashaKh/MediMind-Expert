@@ -487,7 +487,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           {interpretation && (
             <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <h3 className="font-semibold text-blue-900 mb-2">
-                {t('calculators.bishop_score.detailed_analysis')}
+                {t('common.detailed_analysis')}
               </h3>
               <p className="text-blue-800">{interpretation}</p>
             </div>
@@ -501,7 +501,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
               onClick={() => setIsExpanded(!isExpanded)}
               className="flex items-center justify-between w-full p-3 rounded-xl hover:bg-white/30 dark:hover:bg-gray-800/30 transition-colors"
             >
-              <span className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.bishop_score.detailed_analysis')}</span>
+              <span className="font-semibold text-gray-900 dark:text-gray-100">{t('common.detailed_analysis')}</span>
               {isExpanded ? (
                 <ChevronUp className="w-5 h-5 text-gray-600 dark:text-gray-400" />
               ) : (

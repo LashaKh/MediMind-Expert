@@ -47,6 +47,7 @@ export const common = {
   retry: 'Повторить',
   calculation_failed: 'Расчет не удался',
   indicates: 'указывает на',
+  detailed_analysis: 'Детальный анализ',
   // Common UI elements
   title: 'Заголовок',
   description: 'Описание',

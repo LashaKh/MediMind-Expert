@@ -47,6 +47,7 @@ export const common = {
   retry: 'ხელახლა ცდა',
   calculation_failed: 'გამოთვლა ვერ შესრულდა',
   indicates: 'მიუთითებს',
+  detailed_analysis: 'დეტალური ანალიზი',
   // Common UI elements
   title: 'სათაური',
   description: 'აღწერა',
