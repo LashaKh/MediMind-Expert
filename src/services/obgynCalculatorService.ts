@@ -525,7 +525,7 @@ export function calculatePretermBirthRisk(input: PretermBirthRiskInput): Preterm
 // LABOR MANAGEMENT
 // ========================================
 
-export function calculateBishopScore(input: BishopScoreInput): BishopScoreResult {
+export function calculateBishopScore(input: BishopScoreInput, t?: (key: string) => string): BishopScoreResult {
   // Parse inputs
   const dilation = parseFloat(input.cervicalDilation);
   const effacement = parseFloat(input.cervicalEffacement);
@@ -546,12 +546,6 @@ export function calculateBishopScore(input: BishopScoreInput): BishopScoreResult
   else if (effacement >= 40) effacementScore = 1;
   else effacementScore = 0;
 
-  let stationScore = 0;
-  if (station >= 1) stationScore = 3;
-  else if (station >= -1) stationScore = 2;
-  else if (station >= -2) stationScore = 1;
-  else stationScore = 0;
-
   let consistencyScore = 0;
   if (consistency === 'soft') consistencyScore = 2;
   else if (consistency === 'medium') consistencyScore = 1;
@@ -562,90 +556,99 @@ export function calculateBishopScore(input: BishopScoreInput): BishopScoreResult
   else if (position === 'mid') positionScore = 1;
   else positionScore = 0;
 
-  // Calculate total score
-  const totalScore = dilationScore + effacementScore + stationScore + consistencyScore + positionScore;
+  let stationScore = 0;
+  if (station >= 0) stationScore = 3;
+  else if (station >= -1) stationScore = 2;
+  else if (station >= -2) stationScore = 1;
+  else stationScore = 0;
 
-  // Determine induction success probability
-  let inductionSuccess: 'unlikely' | 'possible' | 'likely' | 'very-likely';
+  // Calculate total score
+  const totalScore = dilationScore + effacementScore + consistencyScore + positionScore + stationScore;
+
+  // Determine category and success probability
+  let category: 'low' | 'borderline' | 'intermediate' | 'high';
+  let inductionSuccess: string;
   let cesareanRisk: number;
-  
+
   if (totalScore <= 3) {
+    category = 'low';
     inductionSuccess = 'unlikely';
-    cesareanRisk = 45;
+    cesareanRisk = 40;
   } else if (totalScore <= 6) {
+    category = 'intermediate';
     inductionSuccess = 'possible';
     cesareanRisk = 25;
   } else if (totalScore <= 8) {
+    category = 'borderline';
     inductionSuccess = 'likely';
     cesareanRisk = 15;
   } else {
-    inductionSuccess = 'very-likely';
+    category = 'high';
+    inductionSuccess = 'very likely';
     cesareanRisk = 8;
   }
 
-  // Determine category based on total score
-  let category: 'low' | 'moderate' | 'high' | 'very-high';
-  if (totalScore >= 9) category = 'low';
-  else if (totalScore >= 7) category = 'moderate';
-  else if (totalScore >= 4) category = 'high';
-  else category = 'very-high';
-
-  // Generate recommendations
+  // Generate recommendations based on score
   const recommendations: string[] = [];
+  
   if (totalScore <= 3) {
-    recommendations.push(i18next.t('calculators.bishop_score.rec_cervical_ripening_agents'));
-    recommendations.push(i18next.t('calculators.bishop_score.rec_alternative_methods'));
-    recommendations.push(i18next.t('calculators.bishop_score.rec_discuss_risks_benefits'));
+    recommendations.push(t ? t('calculators.bishop_score.rec_cervical_ripening_agents') : 'Consider cervical ripening agents before induction');
+    recommendations.push(t ? t('calculators.bishop_score.rec_alternative_methods') : 'Alternative methods: mechanical dilation or prostaglandins');
+    recommendations.push(t ? t('calculators.bishop_score.rec_discuss_risks_benefits') : 'Discuss risks and benefits of induction vs. cesarean delivery');
   } else if (totalScore <= 6) {
-    recommendations.push(i18next.t('calculators.bishop_score.rec_induction_caution'));
-    recommendations.push(i18next.t('calculators.bishop_score.rec_cervical_ripening_unfavorable'));
-    recommendations.push(i18next.t('calculators.bishop_score.rec_monitor_failed_induction'));
+    recommendations.push(t ? t('calculators.bishop_score.rec_induction_caution') : 'Induction may be attempted with caution');
+    recommendations.push(t ? t('calculators.bishop_score.rec_cervical_ripening_unfavorable') : 'Consider cervical ripening if unfavorable features present');
+    recommendations.push(t ? t('calculators.bishop_score.rec_monitor_failed_induction') : 'Monitor closely for signs of failed induction');
   } else {
-    recommendations.push(i18next.t('calculators.bishop_score.rec_favorable_conditions'));
-    recommendations.push(i18next.t('calculators.bishop_score.rec_standard_protocols'));
-    recommendations.push(i18next.t('calculators.bishop_score.rec_institutional_guidelines'));
+    recommendations.push(t ? t('calculators.bishop_score.rec_favorable_conditions') : 'Favorable conditions for labor induction');
+    recommendations.push(t ? t('calculators.bishop_score.rec_standard_protocols') : 'Standard induction protocols likely successful');
+    recommendations.push(t ? t('calculators.bishop_score.rec_institutional_guidelines') : 'Monitor progress according to institutional guidelines');
   }
 
   // Add general recommendations
-  recommendations.push(i18next.t('calculators.bishop_score.rec_continuous_monitoring'));
-  recommendations.push(i18next.t('calculators.bishop_score.rec_pain_management'));
-  recommendations.push(i18next.t('calculators.bishop_score.rec_delivery_plan'));
+  recommendations.push(t ? t('calculators.bishop_score.rec_continuous_monitoring') : 'Continuous fetal monitoring during induction');
+  recommendations.push(t ? t('calculators.bishop_score.rec_pain_management') : 'Adequate pain management options');
+  recommendations.push(t ? t('calculators.bishop_score.rec_delivery_plan') : 'Clear delivery plan and cesarean backup available');
 
   // Generate induction recommendation
   let inductionRecommendation: string;
   if (totalScore <= 3) {
-    inductionRecommendation = i18next.t('calculators.bishop_score.induction_recommendation_unfavorable');
+    inductionRecommendation = t ? t('calculators.bishop_score.induction_recommendation_unfavorable') : 'Unfavorable cervix - consider cervical ripening or alternative delivery method';
   } else if (totalScore <= 6) {
-    inductionRecommendation = i18next.t('calculators.bishop_score.induction_recommendation_partially');
+    inductionRecommendation = t ? t('calculators.bishop_score.induction_recommendation_partially') : 'Partially favorable - proceed with caution and close monitoring';
   } else if (totalScore <= 8) {
-    inductionRecommendation = i18next.t('calculators.bishop_score.induction_recommendation_favorable');
+    inductionRecommendation = t ? t('calculators.bishop_score.induction_recommendation_favorable') : 'Favorable cervix - standard induction protocol likely successful';
   } else {
-    inductionRecommendation = i18next.t('calculators.bishop_score.induction_recommendation_very_favorable');
+    inductionRecommendation = t ? t('calculators.bishop_score.induction_recommendation_very_favorable') : 'Very favorable cervix - high likelihood of successful vaginal delivery';
   }
 
   // Get interpretation based on score
   let interpretationKey: string;
   if (totalScore <= 3) {
-    interpretationKey = i18next.t('calculators.bishop_score.interpretation_unfavorable');
+    interpretationKey = t ? t('calculators.bishop_score.interpretation_unfavorable') : 'an unfavorable cervix with high risk of failed induction';
   } else if (totalScore <= 6) {
-    interpretationKey = i18next.t('calculators.bishop_score.interpretation_partially_favorable');
+    interpretationKey = t ? t('calculators.bishop_score.interpretation_partially_favorable') : 'a partially favorable cervix with moderate induction success rate';
   } else if (totalScore <= 8) {
-    interpretationKey = i18next.t('calculators.bishop_score.interpretation_favorable');
+    interpretationKey = t ? t('calculators.bishop_score.interpretation_favorable') : 'a favorable cervix with good induction success rate';
   } else {
-    interpretationKey = i18next.t('calculators.bishop_score.interpretation_very_favorable');
+    interpretationKey = t ? t('calculators.bishop_score.interpretation_very_favorable') : 'a very favorable cervix with excellent induction success rate';
   }
+
+  const titleText = t ? t('calculators.bishop_score.title') : 'Bishop Score';
+  const indicatesText = t ? t('common.indicates') : 'indicates';
+  const cesareanRiskText = t ? t('calculators.bishop_score.cesarean_delivery_risk') : 'Risk of cesarean delivery';
 
   return {
     value: totalScore,
     unit: 'points',
     category,
-    interpretation: `${i18next.t('calculators.bishop_score.title')} ${totalScore}/13 ${i18next.t('common.indicates')} ${interpretationKey}. ${i18next.t('calculators.bishop_score.cesarean_delivery_risk')} ${cesareanRisk}%.`,
+    interpretation: `${titleText} ${totalScore}/13 ${indicatesText} ${interpretationKey}. ${cesareanRiskText} ${cesareanRisk}%.`,
     recommendations,
     references: [
-      i18next.t('calculators.bishop_score.ref_acog_bulletin'),
-      i18next.t('calculators.bishop_score.ref_bishop_original'),
-      i18next.t('calculators.bishop_score.ref_who_recommendations'),
-      i18next.t('calculators.bishop_score.ref_cochrane_review')
+      t ? t('calculators.bishop_score.ref_acog_bulletin') : 'ACOG Practice Bulletin No. 107: Induction of Labor',
+      t ? t('calculators.bishop_score.ref_bishop_original') : 'Bishop EH. Pelvic scoring for elective induction. Obstet Gynecol. 1964;24:266-8',
+      t ? t('calculators.bishop_score.ref_who_recommendations') : 'WHO Recommendations: Induction of Labour at or beyond Term',
+      t ? t('calculators.bishop_score.ref_cochrane_review') : 'Cochrane Review: Mechanical methods for induction of labour'
     ],
     totalScore,
     inductionSuccess,

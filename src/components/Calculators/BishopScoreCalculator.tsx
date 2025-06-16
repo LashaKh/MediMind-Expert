@@ -11,7 +11,7 @@ import {
   ResultsDisplay 
 } from '../ui/calculator-ui';
 import { CalculatorResultShare } from './CalculatorResultShare';
-import { calculateOBGYN, validateOBGYNInput } from '../../services/obgynCalculatorService';
+import { calculateOBGYN, validateOBGYNInput, calculateBishopScore } from '../../services/obgynCalculatorService';
 import { BishopScoreInput, BishopScoreResult } from '../../types/obgyn-calculators';
 import { useTranslation } from '../../hooks/useTranslation';
 
@@ -83,56 +83,24 @@ const BishopScoreCalculator: React.FC = () => {
   };
 
   const handleCalculate = () => {
-    console.log('🔍 Bishop Score: handleCalculate called');
-    console.log('🔍 Form data:', formData);
-    
-    if (!validateForm()) {
-      console.log('❌ Form validation failed');
-      return;
-    }
-
-    console.log('✅ Form validation passed');
-    setIsCalculating(true);
-    
-    // Professional Bishop Score calculation with loading animation
-    setTimeout(() => {
+    if (validateForm()) {
       try {
-        const input: BishopScoreInput = {
+        const result = calculateBishopScore({
           cervicalDilation: formData.cervicalDilation,
           cervicalEffacement: formData.cervicalEffacement,
           cervicalConsistency: formData.cervicalConsistency as 'firm' | 'medium' | 'soft',
           cervicalPosition: formData.cervicalPosition as 'posterior' | 'mid' | 'anterior',
-          fetalStation: formData.fetalStation,
-          calculationDate: new Date().toISOString()
-        };
-
-        console.log('🔍 Bishop Score input:', input);
-
-        // Use the service validation
-        const validation = validateOBGYNInput('bishop-score', input);
-        console.log('🔍 Service validation result:', validation);
-        
-        if (!validation.isValid) {
-          console.log('❌ Service validation failed:', validation.errors);
-          setErrors(validation.errors.reduce((acc, error, index) => ({ ...acc, [`error_${index}`]: error }), {}));
-          return;
-        }
-
-        console.log('✅ Service validation passed, calculating...');
-        const calculationResult = calculateOBGYN('bishop-score', input) as BishopScoreResult;
-        console.log('✅ Calculation successful:', calculationResult);
-        
-        setResult(calculationResult);
-        console.log('✅ Result state updated');
-        
+          fetalStation: formData.fetalStation
+        }, t);
+        setResult(result);
+        setErrors({});
       } catch (error) {
-        console.log('❌ Calculation error:', error);
-        setErrors({ calculation: error instanceof Error ? error.message : 'Calculation failed' });
-      } finally {
-        console.log('🔍 Setting isCalculating to false');
-        setIsCalculating(false);
+        console.error('Calculation error:', error);
+        setErrors({
+          general: t('common.calculation_failed')
+        });
       }
-    }, 1800); // Professional OB/GYN Bishop Score calculation simulation
+    }
   };
 
   const handleReset = () => {
