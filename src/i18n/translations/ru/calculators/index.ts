@@ -1,13 +1,29 @@
 import common from './common';
 import cardiology from './cardiology';
-import obgyn from './obgyn';
 import eurscoreII from './euroscore-ii';
+import hcmRiskSCD from './hcm-risk-scd';
+import hcmAFRisk from './hcm-af-risk';
+import { 
+  gestationalAgeCalculator,
+  eddCalculator,
+  preeclampsiaRiskCalculator,
+  pretermBirthRiskCalculator,
+  gdmScreeningCalculator,
+  bishopScoreCalculator
+} from './ObGyn';
 
 export default {
   common,
   cardiology,
-  obgyn,
   eurscoreII,
+  
+  // Individual OB/GYN calculators with direct access
+  gestational_age: gestationalAgeCalculator,
+  edd: eddCalculator,
+  preeclampsia_risk: preeclampsiaRiskCalculator,
+  preterm_birth_risk: pretermBirthRiskCalculator,
+  gdm_screening: gdmScreeningCalculator,
+  bishop_score: bishopScoreCalculator,
   
   // Top-level keys for Calculator landing page
   specialty: {
@@ -112,21 +128,16 @@ export default {
     subtitle: 'Европейская Система Оценки Операционного Риска на Сердце'
   },
   
-  hcm_risk_scd: {
-    title: 'Калькулятор HCM Risk-SCD',
-    subtitle: 'Риск Внезапной Сердечной Смерти при Гипертрофической Кардиомиопатии'
-  },
+  hcm_risk_scd: hcmRiskSCD,
   
-  hcm_af_risk: {
-    title: 'Калькулятор HCM-AFR',
-    subtitle: 'Риск Фибрилляции Предсердий при Гипертрофической Кардиомиопатии'
-  },
+  hcmAFRisk,
+  hcm_af_risk: hcmAFRisk,
   
   categories_label: 'Категории',
   calculator_categories: 'Категории Калькуляторов',
   back_to: 'Назад к',
   view_grid: 'Сетка',
-  view_list: 'Список'
+  view_list: 'Список',
 };
 
 export {

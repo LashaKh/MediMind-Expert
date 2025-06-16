@@ -1,6 +1,7 @@
 import React, { forwardRef, HTMLAttributes, ReactNode, useState, useEffect } from 'react';
 import { cn } from '../../lib/utils';
 import { Check, AlertCircle, Info, Eye, EyeOff, Calculator, TrendingUp, Heart, Award, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // Enhanced Calculator Container
 interface CalculatorContainerProps extends HTMLAttributes<HTMLDivElement> {
@@ -404,6 +405,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   children
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { t } = useTranslation();
 
   const getCategoryConfig = (cat: string) => {
     switch (cat) {
@@ -483,9 +485,12 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
             {unit && <span className="text-2xl ml-1 opacity-80">{unit}</span>}
           </div>
           {interpretation && (
-            <p className="text-lg text-gray-700 dark:text-gray-300 font-medium max-w-2xl mx-auto">
-              {interpretation}
-            </p>
+            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <h3 className="font-semibold text-blue-900 mb-2">
+                {t('calculators.bishop_score.detailed_analysis')}
+              </h3>
+              <p className="text-blue-800">{interpretation}</p>
+            </div>
           )}
         </div>
 

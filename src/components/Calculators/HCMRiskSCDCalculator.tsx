@@ -414,7 +414,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                     <User className="w-6 h-6 text-red-600 dark:text-red-400" />
                     <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.hcm_risk_scd.demographics')}</h3>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Basic patient information for HCM risk assessment</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.hcm_risk_scd.demographics_info')}</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
@@ -436,7 +436,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                     value={formData.gender}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, gender: e.target.value as 'male' | 'female' })}
                     options={[
-                      { value: '', label: 'Select gender...' },
+                      { value: '', label: t('calculators.hcm_risk_scd.select_option') },
                       { value: 'male', label: t('calculators.hcm_risk_scd.gender_male') },
                       { value: 'female', label: t('calculators.hcm_risk_scd.gender_female') },
                     ]}
@@ -448,12 +448,12 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                 <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <Info className="w-5 h-5 text-red-600 dark:text-red-400" />
-                    <h4 className="font-semibold text-red-800 dark:text-red-200">HCM Risk-SCD Patient Selection</h4>
+                    <h4 className="font-semibold text-red-800 dark:text-red-200">{t('calculators.hcm_risk_scd.patient_selection')}</h4>
                   </div>
                   <div className="text-sm text-red-700 dark:text-red-300 space-y-1">
-                    <p>• Age range: 16-80 years (validated population)</p>
-                    <p>• Established HCM diagnosis required</p>
-                    <p>• Primary prevention patients (no prior SCD/ICD)</p>
+                    <p>{t('calculators.hcm_risk_scd.age_range_info')}</p>
+                    <p>{t('calculators.hcm_risk_scd.diagnosis_required')}</p>
+                    <p>{t('calculators.hcm_risk_scd.primary_prevention_info')}</p>
                   </div>
                 </div>
 
@@ -462,7 +462,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                     onClick={() => setCurrentStep(2)}
                     className="enhanced-calculator-button"
                   >
-                    Next: Clinical Data
+                    {t('calculators.hcm_risk_scd.next_clinical_data')}
                   </CalculatorButton>
                 </div>
               </div>
@@ -476,7 +476,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                     <BarChart3 className="w-6 h-6 text-orange-600 dark:text-orange-400" />
                     <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.hcm_risk_scd.clinical_features')}</h3>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Echocardiographic and hemodynamic parameters</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.hcm_risk_scd.measurement_guidelines')}</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -525,12 +525,12 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                 <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-xl p-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <Stethoscope className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-                    <h4 className="font-semibold text-orange-800 dark:text-orange-200">Clinical Measurement Guidelines</h4>
+                    <h4 className="font-semibold text-orange-800 dark:text-orange-200">{t('calculators.hcm_risk_scd.measurement_guidelines')}</h4>
                   </div>
                   <div className="text-sm text-orange-700 dark:text-orange-300 space-y-1">
-                    <p>• Maximum wall thickness: Most hypertrophied segment in any view</p>
-                    <p>• Left atrial size: Anteroposterior dimension in parasternal long axis</p>
-                    <p>• LVOT gradient: Peak instantaneous gradient at rest or with Valsalva</p>
+                    <p>{t('calculators.hcm_risk_scd.wall_thickness_info')}</p>
+                    <p>{t('calculators.hcm_risk_scd.atrial_size_info')}</p>
+                    <p>{t('calculators.hcm_risk_scd.lvot_gradient_info')}</p>
                   </div>
                 </div>
 
@@ -539,7 +539,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                     onClick={() => setCurrentStep(1)}
                     variant="outline"
                   >
-                    {t('calculators.back')}
+                    {t('calculators.common.back')}
                   </CalculatorButton>
                   <CalculatorButton
                     onClick={() => setCurrentStep(3)}
@@ -559,7 +559,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                     <AlertTriangle className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
                     <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.hcm_risk_scd.risk_factors')}</h3>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">HCM-specific risk markers and clinical features</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.hcm_risk_scd.risk_factors_info')}</p>
                 </div>
 
                 <div className="space-y-6">
@@ -573,7 +573,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                         label={t('calculators.hcm_risk_scd.family_history_scd_label')}
                         checked={formData.familyHistorySCD}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, familyHistorySCD: e.target.checked })}
-                        description="Sudden cardiac death in first-degree relative with HCM"
+                        description={t('calculators.hcm_risk_scd.family_history_info')}
                         icon={Heart}
                       />
 
@@ -581,7 +581,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                         label={t('calculators.hcm_risk_scd.non_sustained_vt_label')}
                         checked={formData.nonSustainedVT}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, nonSustainedVT: e.target.checked })}
-                        description="≥3 consecutive ventricular beats at ≥120 bpm"
+                        description={t('calculators.hcm_risk_scd.nsvt_info')}
                         icon={Zap}
                       />
 
@@ -589,7 +589,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                         label={t('calculators.hcm_risk_scd.unexplained_syncope_label')}
                         checked={formData.unexplainedSyncope}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, unexplainedSyncope: e.target.checked })}
-                        description="Syncope not explained by neurally mediated or situational causes"
+                        description={t('calculators.hcm_risk_scd.unexplained_syncope_info')}
                         icon={Brain}
                       />
                     </div>
@@ -605,7 +605,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                         label={t('calculators.hcm_risk_scd.apical_aneurysm_label')}
                         checked={formData.apicalAneurysm}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, apicalAneurysm: e.target.checked })}
-                        description="Left ventricular apical aneurysm or apical pouching"
+                        description={t('calculators.hcm_risk_scd.apical_aneurysm_info')}
                         icon={Heart}
                       />
 
@@ -613,7 +613,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                         label={t('calculators.hcm_risk_scd.extensive_lge_label')}
                         checked={formData.extensiveLGE}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, extensiveLGE: e.target.checked })}
-                        description="≥15% of left ventricular mass on cardiac MRI"
+                        description={t('calculators.hcm_risk_scd.lge_info')}
                         icon={BarChart3}
                       />
                     </div>
@@ -623,12 +623,12 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                 <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <Shield className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
-                    <h4 className="font-semibold text-yellow-800 dark:text-yellow-200">Risk Factor Definitions</h4>
+                    <h4 className="font-semibold text-yellow-800 dark:text-yellow-200">{t('calculators.hcm_risk_scd.risk_factor_definitions')}</h4>
                   </div>
                   <div className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
-                    <p>• Family history: HCM-related SCD in first-degree relative</p>
-                    <p>• NSVT: Holter or exercise stress test documentation</p>
-                    <p>• LGE: Quantitative cardiac MRI assessment preferred</p>
+                    <p>{t('calculators.hcm_risk_scd.family_history_info')}</p>
+                    <p>{t('calculators.hcm_risk_scd.nsvt_info')}</p>
+                    <p>{t('calculators.hcm_risk_scd.lge_info')}</p>
                   </div>
                 </div>
 
@@ -637,7 +637,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                     onClick={() => setCurrentStep(1)}
                     variant="outline"
                   >
-                    {t('calculators.back')}
+                    {t('calculators.common.back')}
                   </CalculatorButton>
                   <CalculatorButton
                     onClick={() => setCurrentStep(4)}
@@ -655,46 +655,46 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                 <div className="text-center mb-8">
                   <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-purple-50 to-red-50 dark:from-purple-900/20 dark:to-red-900/20 rounded-2xl border border-purple-200 dark:border-purple-800">
                     <AlertTriangle className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Exclusion Criteria</h3>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.hcm_risk_scd.exclusions')}</h3>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Conditions that exclude from risk calculator use</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.hcm_risk_scd.exclusions_info')}</p>
                 </div>
 
                 <div className="space-y-4">
                   <h4 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center space-x-2">
                     <AlertCircle className="w-5 h-5 text-purple-600" />
-                    <span>Calculator Exclusions</span>
+                    <span>{t('calculators.hcm_risk_scd.calculator_exclusions')}</span>
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <CalculatorCheckbox
-                      label="Prior Survived Sudden Cardiac Death"
+                      label={t('calculators.hcm_risk_scd.prior_scd_label')}
                       checked={formData.priorSCD}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, priorSCD: e.target.checked })}
-                      description="History of ventricular fibrillation or ventricular tachycardia with hemodynamic compromise"
+                      description={t('calculators.hcm_risk_scd.prior_scd_desc')}
                       icon={AlertTriangle}
                     />
 
                     <CalculatorCheckbox
-                      label="Prior ICD Implantation"
+                      label={t('calculators.hcm_risk_scd.prior_icd_label')}
                       checked={formData.priorICD}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, priorICD: e.target.checked })}
-                      description="Previously implanted ICD or CRT-D device"
+                      description={t('calculators.hcm_risk_scd.prior_icd_desc')}
                       icon={Zap}
                     />
 
                     <CalculatorCheckbox
-                      label="Concurrent Significant Valvular Disease"
+                      label={t('calculators.hcm_risk_scd.concurrent_vhd_label')}
                       checked={formData.concurrentVHD}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, concurrentVHD: e.target.checked })}
-                      description="Moderate or severe valve disease requiring intervention"
+                      description={t('calculators.hcm_risk_scd.concurrent_vhd_desc')}
                       icon={Heart}
                     />
 
                     <CalculatorCheckbox
-                      label="Infiltrative or Storage Disease"
+                      label={t('calculators.hcm_risk_scd.infiltrative_disease_label')}
                       checked={formData.infiltrativeDisease}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, infiltrativeDisease: e.target.checked })}
-                      description="Amyloidosis, Fabry disease, or other infiltrative cardiomyopathy"
+                      description={t('calculators.hcm_risk_scd.infiltrative_disease_desc')}
                       icon={Activity}
                     />
                   </div>
@@ -703,12 +703,12 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                 <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-xl p-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <Info className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                    <h4 className="font-semibold text-purple-800 dark:text-purple-200">Important Notes</h4>
+                    <h4 className="font-semibold text-purple-800 dark:text-purple-200">{t('calculators.hcm_risk_scd.important_notes')}</h4>
                   </div>
                   <div className="text-sm text-purple-700 dark:text-purple-300 space-y-1">
-                    <p>• Presence of any exclusion criterion invalidates risk calculation</p>
-                    <p>• These patients require individualized clinical assessment</p>
-                    <p>• Consider specialist HCM consultation for complex cases</p>
+                    <p>{t('calculators.hcm_risk_scd.exclusion_invalidates')}</p>
+                    <p>{t('calculators.hcm_risk_scd.individualized_assessment')}</p>
+                    <p>{t('calculators.hcm_risk_scd.consider_specialist')}</p>
                   </div>
                 </div>
 
@@ -717,7 +717,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                     onClick={() => setCurrentStep(3)}
                     variant="outline"
                   >
-                    {t('calculators.back')}
+                    {t('calculators.common.back')}
                   </CalculatorButton>
                   <CalculatorButton
                     onClick={handleCalculate}
@@ -726,7 +726,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                     size="lg"
                     className="enhanced-calculator-button"
                   >
-                    Calculate SCD Risk
+                    {t('calculators.hcm_risk_scd.calculate_button')}
                   </CalculatorButton>
                 </div>
               </div>
@@ -739,8 +739,8 @@ export const HCMRiskSCDCalculator: React.FC = () => {
               {result.exclusionReasons.length > 0 ? (
                 /* Exclusion Results */
                 <ResultsDisplay
-                  title="Risk Calculator Not Applicable"
-                  value="Exclusion Criteria Present"
+                  title={t('calculators.hcm_risk_scd.not_applicable')}
+                  value={t('calculators.hcm_risk_scd.exclusion_present')}
                   category="high"
                   interpretation={result.interpretation}
                   icon={AlertTriangle}
@@ -748,7 +748,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3">
                       <AlertCircle className="w-5 h-5 text-yellow-500" />
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">Exclusion Criteria Present</h4>
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.hcm_risk_scd.exclusion_present')}</h4>
                     </div>
                     <div className="p-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl">
                       <ul className="space-y-2">
@@ -764,7 +764,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                     <div className="space-y-4">
                       <div className="flex items-center space-x-3">
                         <Stethoscope className="w-5 h-5 text-blue-500" />
-                        <h4 className="font-semibold text-gray-900 dark:text-gray-100">Clinical Management Recommendations</h4>
+                        <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.hcm_risk_scd.management_recommendations')}</h4>
                       </div>
                       <div className="p-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
                         <div className="space-y-3">
@@ -782,7 +782,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
               ) : (
                 /* Normal Results */
                 <ResultsDisplay
-                  title="HCM Risk-SCD Assessment Results"
+                  title={t('calculators.hcm_risk_scd.results_title')}
                   value={`${result.riskCategory.charAt(0).toUpperCase() + result.riskCategory.slice(1)} Risk`}
                   category={result.riskCategory as 'low' | 'intermediate' | 'high'}
                   interpretation={result.interpretation}
@@ -792,12 +792,12 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3 mb-4">
                       <Target className="w-5 h-5 text-red-500" />
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">5-Year Sudden Cardiac Death Risk</h4>
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.hcm_risk_scd.five_year_risk_title')}</h4>
                     </div>
                     <div className="p-6 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/30 rounded-2xl border border-red-200 dark:border-red-800">
                       <div className="text-center">
                         <div className="text-4xl font-bold text-red-600 dark:text-red-400 mb-2">{result.fiveYearRisk}%</div>
-                        <div className="text-lg text-red-700 dark:text-red-300 mb-3">5-Year SCD Risk</div>
+                        <div className="text-lg text-red-700 dark:text-red-300 mb-3">{t('calculators.hcm_risk_scd.five_year_risk')}</div>
                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                           <div 
                             className="bg-red-500 h-3 rounded-full transition-all duration-1000"
@@ -812,7 +812,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3">
                       <Zap className="w-5 h-5 text-blue-500" />
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">ICD Implantation Recommendation</h4>
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.hcm_risk_scd.icd_recommendation_title')}</h4>
                     </div>
                     <div className={`p-6 rounded-2xl border-2 ${
                       result.icdRecommendation === 'not_indicated' ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800' :
@@ -827,7 +827,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                            result.icdRecommendation === 'reasonable' ? 'Reasonable' :
                            'Indicated'}
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Based on 2024 HCM Guidelines</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{t('calculators.hcm_risk_scd.based_on_guidelines')}</p>
                       </div>
                     </div>
                   </div>
@@ -836,14 +836,14 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3">
                       <Shield className="w-5 h-5 text-purple-500" />
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">Risk Stratification Categories</h4>
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.hcm_risk_scd.risk_stratification_categories')}</h4>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       <div className={`p-4 rounded-xl border-2 transition-all ${
                         result.riskCategory === 'low' ? 'border-green-300 bg-green-50 dark:bg-green-900/20' : 'border-green-200 bg-green-50/50 dark:bg-green-900/10'
                       }`}>
                         <div className="text-center">
-                          <div className="text-sm font-semibold text-green-800 dark:text-green-200">Low Risk</div>
+                          <div className="text-sm font-semibold text-green-800 dark:text-green-200">{t('calculators.hcm_risk_scd.low_risk')}</div>
                           <div className="text-xs text-green-600 dark:text-green-400">{'<'} 4% SCD Risk</div>
                         </div>
                       </div>
@@ -851,16 +851,16 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                         result.riskCategory === 'intermediate' ? 'border-yellow-300 bg-yellow-50 dark:bg-yellow-900/20' : 'border-yellow-200 bg-yellow-50/50 dark:bg-yellow-900/10'
                       }`}>
                         <div className="text-center">
-                          <div className="text-sm font-semibold text-yellow-800 dark:text-yellow-200">Intermediate</div>
-                          <div className="text-xs text-yellow-600 dark:text-yellow-400">4-6% SCD Risk</div>
+                          <div className="text-sm font-semibold text-yellow-800 dark:text-yellow-200">{t('calculators.hcm_risk_scd.intermediate_risk')}</div>
+                          <div className="text-xs text-yellow-600 dark:text-yellow-400">{t('calculators.hcm_risk_scd.intermediate_risk_range')}</div>
                         </div>
                       </div>
                       <div className={`p-4 rounded-xl border-2 transition-all ${
                         result.riskCategory === 'high' ? 'border-red-300 bg-red-50 dark:bg-red-900/20' : 'border-red-200 bg-red-50/50 dark:bg-red-900/10'
                       }`}>
                         <div className="text-center">
-                          <div className="text-sm font-semibold text-red-800 dark:text-red-200">High Risk</div>
-                          <div className="text-xs text-red-600 dark:text-red-400">≥ 6% SCD Risk</div>
+                          <div className="text-sm font-semibold text-red-800 dark:text-red-200">{t('calculators.hcm_risk_scd.high_risk')}</div>
+                          <div className="text-xs text-red-600 dark:text-red-400">{t('calculators.hcm_risk_scd.high_risk_range')}</div>
                         </div>
                       </div>
                     </div>
@@ -870,7 +870,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3">
                       <Stethoscope className="w-5 h-5 text-indigo-500" />
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">Clinical Management Recommendations</h4>
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.hcm_risk_scd.management_recommendations')}</h4>
                     </div>
                     <div className={`p-6 rounded-2xl border-2 ${getRiskBgColor(result.riskCategory)}`}>
                       <div className="space-y-3">
@@ -905,14 +905,14 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                   size="lg"
                   icon={Calculator}
                 >
-                  New Assessment
+                  {t('calculators.reset')}
                 </CalculatorButton>
                 <CalculatorButton
                   onClick={() => setResult(null)}
                   variant="secondary"
                   size="lg"
                 >
-                  Modify Inputs
+                  {t('calculators.hcm_risk_scd.modify_inputs')}
                 </CalculatorButton>
               </div>
             </div>

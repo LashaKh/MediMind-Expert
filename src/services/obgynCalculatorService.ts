@@ -4,6 +4,7 @@
  * Based on ACOG, SMFM, ASCCP, SGO, ASRM, and NAMS evidence-based guidelines
  */
 
+import i18next from 'i18next';
 import {
   OBGYNCalculatorType,
   OBGYNCalculatorInput,
@@ -592,52 +593,59 @@ export function calculateBishopScore(input: BishopScoreInput): BishopScoreResult
   // Generate recommendations
   const recommendations: string[] = [];
   if (totalScore <= 3) {
-    recommendations.push('Consider cervical ripening agents before induction');
-    recommendations.push('Alternative methods: mechanical dilation or prostaglandins');
-    recommendations.push('Discuss risks and benefits of induction vs. cesarean delivery');
+    recommendations.push(i18next.t('calculators.bishop_score.rec_cervical_ripening_agents'));
+    recommendations.push(i18next.t('calculators.bishop_score.rec_alternative_methods'));
+    recommendations.push(i18next.t('calculators.bishop_score.rec_discuss_risks_benefits'));
   } else if (totalScore <= 6) {
-    recommendations.push('Induction may be attempted with caution');
-    recommendations.push('Consider cervical ripening if unfavorable features present');
-    recommendations.push('Monitor closely for signs of failed induction');
+    recommendations.push(i18next.t('calculators.bishop_score.rec_induction_caution'));
+    recommendations.push(i18next.t('calculators.bishop_score.rec_cervical_ripening_unfavorable'));
+    recommendations.push(i18next.t('calculators.bishop_score.rec_monitor_failed_induction'));
   } else {
-    recommendations.push('Favorable conditions for labor induction');
-    recommendations.push('Standard induction protocols likely successful');
-    recommendations.push('Monitor progress according to institutional guidelines');
+    recommendations.push(i18next.t('calculators.bishop_score.rec_favorable_conditions'));
+    recommendations.push(i18next.t('calculators.bishop_score.rec_standard_protocols'));
+    recommendations.push(i18next.t('calculators.bishop_score.rec_institutional_guidelines'));
   }
 
   // Add general recommendations
-  recommendations.push('Continuous fetal monitoring during induction');
-  recommendations.push('Adequate pain management options');
-  recommendations.push('Clear delivery plan and cesarean backup available');
+  recommendations.push(i18next.t('calculators.bishop_score.rec_continuous_monitoring'));
+  recommendations.push(i18next.t('calculators.bishop_score.rec_pain_management'));
+  recommendations.push(i18next.t('calculators.bishop_score.rec_delivery_plan'));
 
   // Generate induction recommendation
   let inductionRecommendation: string;
   if (totalScore <= 3) {
-    inductionRecommendation = 'Unfavorable cervix - consider cervical ripening or alternative delivery method';
+    inductionRecommendation = i18next.t('calculators.bishop_score.induction_recommendation_unfavorable');
   } else if (totalScore <= 6) {
-    inductionRecommendation = 'Partially favorable - proceed with caution and close monitoring';
+    inductionRecommendation = i18next.t('calculators.bishop_score.induction_recommendation_partially');
   } else if (totalScore <= 8) {
-    inductionRecommendation = 'Favorable cervix - standard induction protocol likely successful';
+    inductionRecommendation = i18next.t('calculators.bishop_score.induction_recommendation_favorable');
   } else {
-    inductionRecommendation = 'Very favorable cervix - high likelihood of successful vaginal delivery';
+    inductionRecommendation = i18next.t('calculators.bishop_score.induction_recommendation_very_favorable');
+  }
+
+  // Get interpretation based on score
+  let interpretationKey: string;
+  if (totalScore <= 3) {
+    interpretationKey = i18next.t('calculators.bishop_score.interpretation_unfavorable');
+  } else if (totalScore <= 6) {
+    interpretationKey = i18next.t('calculators.bishop_score.interpretation_partially_favorable');
+  } else if (totalScore <= 8) {
+    interpretationKey = i18next.t('calculators.bishop_score.interpretation_favorable');
+  } else {
+    interpretationKey = i18next.t('calculators.bishop_score.interpretation_very_favorable');
   }
 
   return {
     value: totalScore,
     unit: 'points',
     category,
-    interpretation: `Bishop Score of ${totalScore}/13 indicates ${
-      totalScore <= 3 ? 'an unfavorable cervix with high risk of failed induction' :
-      totalScore <= 6 ? 'a partially favorable cervix with moderate induction success rate' :
-      totalScore <= 8 ? 'a favorable cervix with good induction success rate' :
-      'a very favorable cervix with excellent induction success rate'
-    }. The estimated cesarean delivery risk is ${cesareanRisk}%.`,
+    interpretation: `${i18next.t('calculators.bishop_score.title')} ${totalScore}/13 ${i18next.t('common.indicates')} ${interpretationKey}. ${i18next.t('calculators.bishop_score.cesarean_delivery_risk')} ${cesareanRisk}%.`,
     recommendations,
     references: [
-      'ACOG Practice Bulletin No. 107: Induction of Labor',
-      'Bishop EH. Pelvic scoring for elective induction. Obstet Gynecol. 1964;24:266-8',
-      'WHO Recommendations: Induction of Labour at or beyond Term',
-      'Cochrane Review: Mechanical methods for induction of labour'
+      i18next.t('calculators.bishop_score.ref_acog_bulletin'),
+      i18next.t('calculators.bishop_score.ref_bishop_original'),
+      i18next.t('calculators.bishop_score.ref_who_recommendations'),
+      i18next.t('calculators.bishop_score.ref_cochrane_review')
     ],
     totalScore,
     inductionSuccess,
@@ -807,63 +815,47 @@ export function calculateApgarScore(input: ApgarScoreInput): ApgarScoreResult {
 }
 
 export function calculateGDMScreening(input: GDMScreeningInput): GDMScreeningResult {
+  // Calculate risk score
+  let riskScore = 0;
   const age = parseInt(input.maternalAge);
   const bmi = parseFloat(input.bmi);
 
-  // ACOG Risk Assessment for GDM
-  let riskScore = 0;
-  const riskFactors: string[] = [];
-
-  // High-risk factors (major risk factors)
-  if (input.previousGDM) {
-    riskScore += 3;
-    riskFactors.push('Previous gestational diabetes');
-  }
-
-  if (input.familyHistoryDM) {
-    riskScore += 2;
-    riskFactors.push('Family history of diabetes');
-  }
-
-  if (input.previousMacrosomia) {
-    riskScore += 2;
-    riskFactors.push('Previous macrosomia (≥4000g)');
-  }
-
-  // Race/ethnicity risk factors
-  if (input.race === 'hispanic') {
-    riskScore += 2;
-    riskFactors.push('Hispanic ethnicity');
-  } else if (input.race === 'african-american') {
-    riskScore += 1;
-    riskFactors.push('African American ethnicity');
-  } else if (input.race === 'asian') {
-    riskScore += 1;
-    riskFactors.push('Asian ethnicity');
-  } else if (input.race === 'native-american') {
-    riskScore += 2;
-    riskFactors.push('Native American ethnicity');
-  }
-
-  // Age factor
+  // Age factor (≥35 years = +1 point)
   if (age >= 35) {
     riskScore += 1;
-    riskFactors.push('Advanced maternal age (≥35 years)');
   }
 
-  // BMI factor
+  // BMI factor (≥25 = +1 point, ≥30 = +2 points)
   if (bmi >= 30) {
     riskScore += 2;
-    riskFactors.push('Obesity (BMI ≥30)');
   } else if (bmi >= 25) {
     riskScore += 1;
-    riskFactors.push('Overweight (BMI 25-29.9)');
   }
 
-  // PCOS
+  // High-risk ethnicity (+1 point)
+  const highRiskEthnicities = ['hispanic', 'asian', 'african-american', 'native-american'];
+  if (highRiskEthnicities.includes(input.race)) {
+    riskScore += 1;
+  }
+
+  // Family history of diabetes (+1 point)
+  if (input.familyHistoryDM) {
+    riskScore += 1;
+  }
+
+  // Previous GDM (+2 points - strong predictor)
+  if (input.previousGDM) {
+    riskScore += 2;
+  }
+
+  // Previous macrosomia (+1 point)
+  if (input.previousMacrosomia) {
+    riskScore += 1;
+  }
+
+  // PCOS (+1 point)
   if (input.pcos) {
     riskScore += 1;
-    riskFactors.push('Polycystic ovary syndrome (PCOS)');
   }
 
   // Determine risk level
@@ -872,63 +864,66 @@ export function calculateGDMScreening(input: GDMScreeningInput): GDMScreeningRes
   let screeningRecommendation: 'early' | 'standard' | 'enhanced';
   let testingProtocol: 'one-step' | 'two-step' | 'either';
 
-  if (riskScore === 0) {
-    riskLevel = 'low';
-    category = 'low';
-    screeningRecommendation = 'standard';
-    testingProtocol = 'either';
-  } else if (riskScore <= 2) {
+  if (riskScore >= 3) {
+    riskLevel = 'high';
+    category = 'high';
+    screeningRecommendation = 'early';
+    testingProtocol = 'one-step';
+  } else if (riskScore >= 1) {
     riskLevel = 'moderate';
     category = 'moderate';
     screeningRecommendation = 'standard';
     testingProtocol = 'either';
   } else {
-    riskLevel = 'high';
-    category = 'high';
-    screeningRecommendation = 'early';
-    testingProtocol = 'one-step';
+    riskLevel = 'low';
+    category = 'low';
+    screeningRecommendation = 'standard';
+    testingProtocol = 'either';
   }
 
-  // Generate recommendations based on risk level
-  const recommendations: string[] = [];
+  // Generate interpretation and recommendations using translation keys
+  const interpretationKey = `calculators.gdm_screening.interpretations.${riskLevel}`;
+  const recommendationsKey = `calculators.gdm_screening.recommendations.${riskLevel}`;
+  const universalRecommendationsKey = 'calculators.gdm_screening.recommendations.universal';
 
-  if (riskLevel === 'low') {
-    recommendations.push('Standard screening at 24-28 weeks gestation');
-    recommendations.push('Either one-step (75g OGTT) or two-step (50g GCT followed by 100g OGTT if abnormal) approach acceptable');
-    recommendations.push('Maintain healthy diet and regular physical activity');
-    recommendations.push('Weight management within recommended gestational weight gain guidelines');
-  } else if (riskLevel === 'moderate') {
-    recommendations.push('Standard screening at 24-28 weeks gestation');
-    recommendations.push('Consider early screening if additional risk factors develop');
-    recommendations.push('Enhanced dietary counseling and exercise guidance');
-    recommendations.push('Monitor weight gain closely according to IOM guidelines');
-    recommendations.push('Patient education on GDM symptoms and risks');
-  } else {
-    recommendations.push('Early screening recommended at first prenatal visit or before 24 weeks');
-    recommendations.push('If early screening negative, repeat screening at 24-28 weeks');
-    recommendations.push('One-step approach (75g OGTT) preferred for high-risk patients');
-    recommendations.push('Comprehensive nutritional counseling with registered dietitian');
-    recommendations.push('Structured exercise program if not contraindicated');
-    recommendations.push('Close monitoring of maternal weight gain');
-    recommendations.push('Enhanced prenatal care schedule');
-    recommendations.push('Consider continuous glucose monitoring if GDM diagnosed');
-  }
-
-  // Add universal recommendations
-  recommendations.push('Folic acid supplementation 400-800 mcg daily');
-  recommendations.push('Avoid simple sugars and refined carbohydrates');
-  recommendations.push('Postpartum screening for type 2 diabetes at 6-12 weeks');
-
-  // Generate interpretation
-  const totalRisk = riskScore;
+  // For now, return hardcoded fallback values that the component can override
+  // The component will use the translation keys for actual display
   const interpretation = `${riskLevel.charAt(0).toUpperCase() + riskLevel.slice(1)} risk for gestational diabetes mellitus (Risk Score: ${riskScore}). ${
     riskLevel === 'low' ? 'Standard screening protocols are appropriate.' :
     riskLevel === 'moderate' ? 'Standard screening with enhanced counseling recommended.' :
     'Early screening and intensive management protocols recommended.'
   }`;
 
+  const recommendations = [
+    // These will be overridden by the component using translation keys
+    ...(riskLevel === 'low' ? [
+      'Standard screening at 24-28 weeks gestation',
+      'Either one-step (75g OGTT) or two-step (50g GCT followed by 100g OGTT if abnormal) approach acceptable',
+      'Maintain healthy diet and regular physical activity',
+      'Weight management within recommended gestational weight gain guidelines'
+    ] : riskLevel === 'moderate' ? [
+      'Standard screening at 24-28 weeks gestation',
+      'Consider early screening if additional risk factors develop',
+      'Enhanced dietary counseling and exercise guidance',
+      'Monitor weight gain closely according to IOM guidelines',
+      'Patient education on GDM symptoms and risks'
+    ] : [
+      'Early screening recommended at first prenatal visit or before 24 weeks',
+      'If early screening negative, repeat screening at 24-28 weeks',
+      'One-step approach (75g OGTT) preferred for high-risk patients',
+      'Comprehensive nutritional counseling with registered dietitian',
+      'Structured exercise program if not contraindicated',
+      'Close monitoring of maternal weight gain',
+      'Enhanced prenatal care schedule',
+      'Consider continuous glucose monitoring if GDM diagnosed'
+    ]),
+    'Folic acid supplementation 400-800 mcg daily',
+    'Avoid simple sugars and refined carbohydrates',
+    'Postpartum screening for type 2 diabetes at 6-12 weeks'
+  ];
+
   return {
-    value: totalRisk,
+    value: riskScore,
     unit: 'points',
     category,
     interpretation,
@@ -942,7 +937,11 @@ export function calculateGDMScreening(input: GDMScreeningInput): GDMScreeningRes
     ],
     riskLevel,
     screeningRecommendation,
-    testingProtocol
+    testingProtocol,
+    // Add the translation keys as additional properties
+    interpretationKey,
+    recommendationsKey,
+    universalRecommendationsKey
   };
 }
 
@@ -1028,16 +1027,16 @@ export function calculateVBACSuccess(input: VBACSuccessInput): VBACSuccessResult
   let recommendation: 'candidate' | 'relative-contraindication' | 'contraindication';
   
   if (successProbability >= 70) {
-    category = 'high';
+    category = 'low'; // Low risk (high success probability)
     recommendation = 'candidate';
   } else if (successProbability >= 50) {
-    category = 'moderate';
+    category = 'moderate'; // Moderate risk (moderate success probability)
     recommendation = 'candidate';
   } else if (successProbability >= 30) {
-    category = 'low';
+    category = 'high'; // High risk (low success probability)
     recommendation = 'relative-contraindication';
   } else {
-    category = 'low';
+    category = 'high'; // Very high risk (very low success probability)
     recommendation = 'contraindication';
   }
 
@@ -1097,7 +1096,7 @@ export function calculateVBACSuccess(input: VBACSuccessInput): VBACSuccessResult
   ];
 
   const interpretation = `VBAC success probability of ${successProbability}% indicates ${
-    category === 'high' ? 'high likelihood of successful vaginal delivery' :
+    category === 'low' ? 'high likelihood of successful vaginal delivery' :
     category === 'moderate' ? 'moderate success probability requiring careful monitoring' :
     'lower success probability - consider individual factors and patient preference'
   }. Uterine rupture risk is estimated at ${uterineRuptureRisk}%. This prediction is based on validated clinical factors including maternal characteristics, obstetric history, and current labor parameters.`;

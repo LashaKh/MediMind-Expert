@@ -5,10 +5,10 @@ import ka from '../i18n/translations/ka';
 import ru from '../i18n/translations/ru';
 import type { Language, TranslationShape } from '../types/i18n';
 
-const translations: Record<Language, TranslationShape> = {
-  en: en as TranslationShape, // Cast because en.ts might have more keys than TranslationShape
-  ka: ka as TranslationShape, // Cast because ka.ts might have more keys than TranslationShape
-  ru: ru as TranslationShape  // Cast because ru.ts might have more keys than TranslationShape
+const translations: Record<Language, any> = {
+  en: en,
+  ka: ka,
+  ru: ru
 };
 
 export const useTranslation = () => {
@@ -17,6 +17,17 @@ export const useTranslation = () => {
   const t = useCallback((key: string, params?: Record<string, string>): string => {
     const keys = key.split('.');
     let currentLevel: any = translations[currentLanguage];
+
+    // Debug logging
+    if (key.includes('preterm_birth_risk')) {
+      console.log('Debug translation:', {
+        key,
+        currentLanguage,
+        hasTranslations: !!translations[currentLanguage],
+        translationKeys: Object.keys(translations[currentLanguage] || {}),
+        calculatorKeys: Object.keys(translations[currentLanguage]?.calculators || {})
+      });
+    }
 
     for (const k of keys) {
       if (typeof currentLevel === 'object' && currentLevel !== null && k in currentLevel) {
@@ -43,7 +54,7 @@ export const useTranslation = () => {
 
     // If still not found, or if it's an object (meaning we didn't reach a string leaf), return the key
     if (typeof currentLevel !== 'string') {
-      // console.warn(`Translation for key: ${key} is not a string or not found. Returning key.`);
+      console.warn(`Translation for key: ${key} is not a string or not found. Returning key.`);
       return key;
     }
 

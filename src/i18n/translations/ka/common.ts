@@ -45,6 +45,8 @@ export const common = {
   pending: 'მოლოდინშია',
   failed: 'ვერ მოხერხდა',
   retry: 'ხელახლა ცდა',
+  calculation_failed: 'გამოთვლა ვერ შესრულდა',
+  indicates: 'მიუთითებს',
   // Common UI elements
   title: 'სათაური',
   description: 'აღწერა',
@@ -201,7 +203,7 @@ export const common = {
     hospitalAdmission: 'შესაძლოა საჭირო გახდეს ჰოსპიტალიზაცია'
   },
   // Calculator-specific shared terms
-  calculator: {
+  calculatorTerms: {
     // Input labels
     enterValue: 'შეიყვანეთ მნიშვნელობა',
     selectValue: 'აირჩიეთ მნიშვნელობა',
@@ -280,8 +282,12 @@ export const common = {
     guidelines: 'გაიდლაინები',
     protocol: 'პროტოკოლი',
     standard: 'სტანდარტი',
-    evidenceBased: 'მტკიცებულებებზე დაფუძნებული'
-  }
+    evidenceBased: 'მტკიცებულებაზე დაფუძნებული'
+  },
+  // UI Components
+  calculator: 'კალკულატორი',
+  results: 'შედეგები',
+  clinical_purpose: 'კლინიკური დანიშნულება'
 };
 
 export default common; 

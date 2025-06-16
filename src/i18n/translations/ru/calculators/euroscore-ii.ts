@@ -1,7 +1,7 @@
 export default {
   title: 'Калькулятор риска EuroSCORE II',
   subtitle: 'Европейская система оценки кардиохирургического риска • Версия 2 • Прогнозирование 30-дневной смертности',
-  description: 'Обновленная европейская система оценки кардиохирургического риска для прогнозирования 30-дневной смертности.',
+  description: 'Обновленная европейская система оценки кардиохирургического риска, обеспечивающая прогнозирование 30-дневной смертности. Валидирована в европейских центрах с улучшенной калибровкой по сравнению с оригинальной моделью EuroSCORE.',
   
   validation: {
     age_required: 'Возраст обязателен',
@@ -9,14 +9,29 @@ export default {
     gender_required: 'Пол обязателен',
     urgency_required: 'Срочность обязательна',
     nyha_required: 'Класс NYHA обязателен',
-    procedure_weight_required: 'Вес процедуры обязателен',
+    procedure_weight_required: 'Вес/сложность процедуры обязательны',
     creatinine_required: 'Креатинин обязателен',
     creatinine_range: 'Креатинин должен быть от 0.5 до 15 мг/дл'
   },
   
   alert_title: 'EuroSCORE II - Европейская модель кардиохирургического риска',
-  alert_description: 'Обновленная европейская система оценки кардиохирургического риска',
-  alert_validation: 'Nashef et al. - Европейская валидация - Обновленный алгоритм',
+  alert_description: 'Обновленная европейская система оценки кардиохирургического риска, обеспечивающая прогнозирование 30-дневной смертности. Валидирована в европейских центрах с улучшенной калибровкой по сравнению с оригинальной моделью EuroSCORE.',
+  alert_validation: 'Nashef и соавт. - Европейская валидация - Обновленный алгоритм',
+  
+  step_patient_factors: 'Факторы пациента',
+  step_cardiac_status: 'Кардиальный статус',
+  step_operative_factors: 'Операционные факторы',
+  step_procedures: 'Процедуры',
+  
+  section_patient_demographics: 'Демография пациента и основные факторы',
+  section_patient_description: 'Основные характеристики пациента и лабораторные показатели',
+  section_cardiac_factors: 'Кардиальные факторы',
+  section_cardiac_description: 'Кардиальный анамнез, симптомы и функциональный статус',
+  section_operative_factors: 'Операционные факторы',
+  section_operative_description: 'Сложность процедуры и критические предоперационные состояния',
+  section_valve_procedures: 'Клапанные процедуры',
+  section_specific_cardiac_procedures: 'Специфические кардиальные процедуры',
+  section_specific_procedures_description: 'Индивидуальные клапанные и хирургические процедуры',
   
   age_label: 'Возраст',
   age_placeholder: '65',
@@ -29,9 +44,19 @@ export default {
   creatinine_placeholder: '1.0',
   creatinine_unit: 'мг/дл',
   
-  nyha_label: 'Функциональный класс NYHA',
+  additional_risk_factors: 'Дополнительные факторы риска пациента',
+  poor_mobility_label: 'Ограниченная подвижность',
+  poor_mobility_description: 'Нарушенная подвижность, влияющая на повседневную активность',
+  diabetes_insulin_label: 'Диабет на инсулине',
+  diabetes_insulin_description: 'Сахарный диабет, требующий инсулинотерапии',
+  chronic_pulmonary_label: 'Хроническое заболевание легких',
+  chronic_pulmonary_description: 'ХОБЛ или другие хронические заболевания легких',
+  pvd_label: 'Заболевание периферических сосудов',
+  pvd_description: 'Заболевание периферических артерий или перемежающаяся хромота',
+  
+  nyha_label: 'Функциональный класс по NYHA',
   nyha_placeholder: 'Выберите класс NYHA...',
-  nyha_class_1: 'Класс I - Нет симптомов',
+  nyha_class_1: 'Класс I - Без симптомов',
   nyha_class_2: 'Класс II - Легкие ограничения',
   nyha_class_3: 'Класс III - Выраженные ограничения',
   nyha_class_4: 'Класс IV - Тяжелые ограничения',
@@ -42,23 +67,141 @@ export default {
   urgency_urgent: 'Срочная',
   urgency_emergency: 'Экстренная',
   
+  cardiac_history_title: 'Кардиальный анамнез и состояния',
+  recent_mi_label: 'Недавний ИМ (в течение 90 дней)',
+  recent_mi_description: 'Инфаркт миокарда в течение 90 дней',
+  unstable_angina_label: 'Нестабильная стенокардия',
+  unstable_angina_description: 'Стенокардия покоя, требующая в/в нитратов',
+  pulmonary_hypertension_label: 'Легочная гипертензия',
+  pulmonary_hypertension_description: 'Систолическое давление в ЛА > 60 мм рт.ст.',
+  extracardiac_arteriopathy_label: 'Внесердечная артериопатия',
+  extracardiac_arteriopathy_description: 'Перемежающаяся хромота, окклюзия сонной артерии или инсульт',
+  neurological_dysfunction_label: 'Неврологическая дисфункция',
+  neurological_dysfunction_description: 'Заболевание, серьезно влияющее на передвижение или повседневную активность',
+  previous_cardiac_surgery_label: 'Предыдущая кардиохирургия',
+  previous_cardiac_surgery_description: 'Предшествующая кардиохирургическая операция',
+  active_endocarditis_label: 'Активный эндокардит',
+  active_endocarditis_description: 'Пациент все еще получает антибиотикотерапию по поводу эндокардита',
+  
   procedure_weight_label: 'Вес/сложность процедуры',
   procedure_weight_placeholder: 'Выберите сложность процедуры...',
-  procedure_weight_low: 'Низкая сложность',
-  procedure_weight_medium: 'Средняя сложность',
-  procedure_weight_high: 'Высокая сложность',
+  procedure_weight_low: 'Низкая сложность (только АКШ, одна клапан)',
+  procedure_weight_medium: 'Средняя сложность (АКШ + клапан, два клапана)',
+  procedure_weight_high: 'Высокая сложность (множественные процедуры, сложные пластики)',
+  
+  critical_preoperative_label: 'Критическое предоперационное состояние',
+  critical_preoperative_description: 'Желудочковая тахикардия или фибрилляция желудочков или остановленная внезапная смерть, предоперационный массаж сердца, предоперационная ИВЛ до операционной, предоперационная инотропная поддержка, внутриаортальная баллонная контрпульсация или предоперационная острая почечная недостаточность (анурия или олигурия < 10 мл/час)',
+  
+  critical_conditions_header: 'Критические предоперационные состояния',
+  
+  complexity_info_title: 'Сложность процедуры EuroSCORE II',
+  complexity_low_info: '• Низкая: Протезирование одного клапана, только АКШ',
+  complexity_medium_info: '• Средняя: АКШ + клапан, процедуры на двух клапанах',
+  complexity_high_info: '• Высокая: Множественные клапаны + АКШ, сложная хирургия аорты, спасательные процедуры',
+  
+  aortic_surgery_label: 'Хирургия аортального клапана',
+  aortic_surgery_description: 'Протезирование или пластика аортального клапана',
+  mitral_surgery_label: 'Хирургия митрального клапана',
+  mitral_surgery_description: 'Протезирование или пластика митрального клапана',
+  tricuspid_surgery_label: 'Хирургия трикуспидального клапана',
+  tricuspid_surgery_description: 'Протезирование или пластика трикуспидального клапана',
+  pulmonary_surgery_label: 'Хирургия легочного клапана',
+  pulmonary_surgery_description: 'Протезирование или пластика легочного клапана',
+  
+  risk_assessment_title: 'Оценка риска EuroSCORE II',
+  risk_assessment_complexity: '• Каждая специфическая процедура добавляет к общей хирургической сложности',
+  risk_assessment_multiple: '• Множественные клапанные процедуры значительно увеличивают операционный риск',
+  risk_assessment_combined: '• Учитывайте комбинированные процедуры при расчете финального риска',
+  
+  next_cardiac_status: 'Далее: Кардиальный статус',
+  next_operative_factors: 'Далее: Операционные факторы',
+  next_specific_procedures: 'Далее: Специфические процедуры',
+  back_button: 'Назад',
+  calculate_euroscore_ii: 'Рассчитать EuroSCORE II',
   
   results_title: 'Результаты оценки EuroSCORE II',
   mortality_risk_30day: 'Риск 30-дневной смертности',
   predicted_mortality: 'Прогнозируемая 30-дневная смертность',
+  risk_stratification: 'Стратификация риска EuroSCORE II',
   
   risk_low: 'Низкий риск',
-  risk_intermediate: 'Промежуточный риск',
+  risk_intermediate: 'Промежуточный',
   risk_high: 'Высокий риск',
-  risk_very_high: 'Очень высокий риск',
+  risk_very_high: 'Очень высокий',
+  
+  mortality_low: '< 2% смертность',
+  mortality_intermediate: '2-5% смертность',
+  mortality_high: '5-10% смертность',
+  mortality_very_high: '> 10% смертность',
+  
+  interpretation_low: 'Низкий операционный риск (EuroSCORE II <2%)',
+  interpretation_intermediate: 'Промежуточный операционный риск (EuroSCORE II 2-5%)',
+  interpretation_high: 'Высокий операционный риск (EuroSCORE II 5-10%)',
+  interpretation_very_high: 'Очень высокий операционный риск (EuroSCORE II >10%)',
+  
+  sts_comparison_title: 'Сравнение с моделями риска STS',
+  sts_comparison_low: 'Обычно коррелирует с низким риском STS (<2%). Обе модели поддерживают стандартный хирургический подход.',
+  sts_comparison_intermediate: 'Аналогично промежуточному риску STS (2-5%). Рекомендуется усиленный мониторинг и оптимизация.',
+  sts_comparison_high: 'Сопоставимо с высоким риском STS (5-10%). Рассмотреть оценку кардиокоманды и альтернативы.',
+  sts_comparison_very_high: 'Соответствует очень высокому риску STS (>10%). Серьезное рассмотрение нехирургических вариантов.',
+  sts_comparison_default: 'Рекомендуется сравнение оценки риска с моделями STS.',
+  
+  clinical_recommendations: 'Рекомендации по клиническому ведению',
+  
+  recommendation_team_evaluation: 'Мультидисциплинарная оценка кардиокоманды',
+  recommendation_preop_optimization: 'Предоперационная оптимизация по показаниям',
+  recommendation_counseling: 'Консультирование пациента и семьи о рисках',
+  
+  recommendation_standard_approach: 'Стандартный хирургический подход подходящий',
+  recommendation_fast_track: 'Рассмотреть быстрые протоколы',
+  recommendation_routine_care: 'Рутинный послеоперационный уход',
+  
+  recommendation_enhanced_assessment: 'Расширенная предоперационная оценка',
+  recommendation_additional_imaging: 'Рассмотреть дополнительные исследования визуализации',
+  recommendation_standard_icu: 'Стандартный мониторинг в ОИТ',
+  recommendation_risk_modification: 'Пересмотреть факторы риска для модификации',
+  
+  recommendation_alternative_approaches: 'Рассмотреть альтернативные подходы (TAVI, медикаментозная терапия)',
+  recommendation_extensive_optimization: 'Обширная предоперационная оптимизация',
+  recommendation_extended_icu: 'Запланированный расширенный мониторинг в ОИТ',
+  recommendation_informed_consent: 'Детальное обсуждение информированного согласия',
+  recommendation_less_invasive: 'Рассмотреть менее инвазивные альтернативы',
+  
+  recommendation_non_surgical: 'Серьезно рассмотреть нехирургические альтернативы',
+  recommendation_palliative_care: 'Консультация паллиативной помощи',
+  recommendation_goals_care: 'Обсуждение целей лечения',
+  recommendation_high_risk_protocols: 'При проведении операции - протоколы высокого риска',
+  recommendation_transcatheter: 'Рассмотреть транскатетерные подходы',
+  recommendation_family_meeting: 'Семейное собрание обязательно',
+  
+  validation_status_title: 'Статус валидации EuroSCORE II',
+  validation_status_text: '✓ Европейская валидация • Nashef и соавт. 2012 • Обновленный алгоритм • Улучшенная калибровка',
   
   new_assessment: 'Новая оценка',
-  modify_inputs: 'Изменить данные',
+  modify_inputs: 'Изменить входные данные',
+  calculate_button: 'Рассчитать EuroSCORE II',
+  new_assessment_button: 'Новая оценка',
+  modify_inputs_button: 'Изменить входные данные',
   
-  footer_text: 'Основано на EuroSCORE II Nashef et al. • Только для образовательных целей'
+  mortality_risk_title: 'Риск 30-дневной смертности',
+  risk_stratification_title: 'Стратификация риска EuroSCORE II',
+  clinical_recommendations_title: 'Рекомендации по клиническому ведению',
+  predicted_mortality_label: 'Прогнозируемая 30-дневная смертность',
+  risk_label: 'Риск',
+  
+  low_risk_label: 'Низкий риск',
+  intermediate_risk_label: 'Промежуточный риск',
+  high_risk_label: 'Высокий риск',
+  very_high_risk_label: 'Очень высокий риск',
+  
+  low_risk_range: '< 2%',
+  intermediate_risk_range: '2-5%',
+  high_risk_range: '5-10%',
+  very_high_risk_range: '> 10%',
+  
+  validation_badge: 'Европейская валидация',
+  footer_info: 'Основано на EuroSCORE II Nashef и соавт. • Только для образовательных целей',
+  
+  footer_text: 'Основано на EuroSCORE II Nashef и соавт. • Только для образовательных целей',
+  european_validation: 'Европейская валидация'
 }; 

@@ -45,6 +45,8 @@ export const common = {
   pending: 'Pending',
   failed: 'Failed',
   retry: 'Retry',
+  calculation_failed: 'Calculation failed',
+  indicates: 'indicates',
   // Common UI elements
   title: 'Title',
   description: 'Description',
@@ -201,7 +203,7 @@ export const common = {
     hospitalAdmission: 'Hospital admission may be required'
   },
   // Calculator-specific shared terms
-  calculator: {
+  calculatorTerms: {
     // Input labels
     enterValue: 'Enter value',
     selectValue: 'Select value',
@@ -281,7 +283,11 @@ export const common = {
     protocol: 'Protocol',
     standard: 'Standard',
     evidenceBased: 'Evidence-based'
-  }
+  },
+  // UI Components
+  calculator: 'Calculator',
+  results: 'Results',
+  clinical_purpose: 'Clinical Purpose'
 };
 
 export default common; 

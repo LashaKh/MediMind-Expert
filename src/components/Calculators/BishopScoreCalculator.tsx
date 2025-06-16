@@ -83,8 +83,15 @@ const BishopScoreCalculator: React.FC = () => {
   };
 
   const handleCalculate = () => {
-    if (!validateForm()) return;
+    console.log('🔍 Bishop Score: handleCalculate called');
+    console.log('🔍 Form data:', formData);
+    
+    if (!validateForm()) {
+      console.log('❌ Form validation failed');
+      return;
+    }
 
+    console.log('✅ Form validation passed');
     setIsCalculating(true);
     
     // Professional Bishop Score calculation with loading animation
@@ -99,20 +106,30 @@ const BishopScoreCalculator: React.FC = () => {
           calculationDate: new Date().toISOString()
         };
 
+        console.log('🔍 Bishop Score input:', input);
+
         // Use the service validation
         const validation = validateOBGYNInput('bishop-score', input);
+        console.log('🔍 Service validation result:', validation);
+        
         if (!validation.isValid) {
+          console.log('❌ Service validation failed:', validation.errors);
           setErrors(validation.errors.reduce((acc, error, index) => ({ ...acc, [`error_${index}`]: error }), {}));
-          setIsCalculating(false);
           return;
         }
 
+        console.log('✅ Service validation passed, calculating...');
         const calculationResult = calculateOBGYN('bishop-score', input) as BishopScoreResult;
+        console.log('✅ Calculation successful:', calculationResult);
+        
         setResult(calculationResult);
+        console.log('✅ Result state updated');
         
       } catch (error) {
+        console.log('❌ Calculation error:', error);
         setErrors({ calculation: error instanceof Error ? error.message : 'Calculation failed' });
       } finally {
+        console.log('🔍 Setting isCalculating to false');
         setIsCalculating(false);
       }
     }, 1800); // Professional OB/GYN Bishop Score calculation simulation
@@ -246,10 +263,10 @@ const BishopScoreCalculator: React.FC = () => {
                         <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-lg">
                           <h5 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">{t('calculators.bishop_score.scoring_system')}</h5>
                           <div className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
-                            <p>• Closed (0 cm): 0 points</p>
-                            <p>• 1-2 cm: 1 point</p>
-                            <p>• 3-4 cm: 2 points</p>
-                            <p>• ≥5 cm: 3 points</p>
+                            <p>• {t('calculators.bishop_score.dilation_score_0')}</p>
+                            <p>• {t('calculators.bishop_score.dilation_score_1')}</p>
+                            <p>• {t('calculators.bishop_score.dilation_score_2')}</p>
+                            <p>• {t('calculators.bishop_score.dilation_score_3')}</p>
                           </div>
                         </div>
                       </div>
@@ -279,10 +296,10 @@ const BishopScoreCalculator: React.FC = () => {
                         <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-lg">
                           <h5 className="font-semibold text-green-800 dark:text-green-200 mb-2">{t('calculators.bishop_score.scoring_system')}</h5>
                           <div className="text-sm text-green-700 dark:text-green-300 space-y-1">
-                            <p>• 0-30%: 0 points</p>
-                            <p>• 40-50%: 1 point</p>
-                            <p>• 60-70%: 2 points</p>
-                            <p>• ≥80%: 3 points</p>
+                            <p>• {t('calculators.bishop_score.effacement_score_0')}</p>
+                            <p>• {t('calculators.bishop_score.effacement_score_1')}</p>
+                            <p>• {t('calculators.bishop_score.effacement_score_2')}</p>
+                            <p>• {t('calculators.bishop_score.effacement_score_3')}</p>
                           </div>
                         </div>
                       </div>
@@ -315,9 +332,9 @@ const BishopScoreCalculator: React.FC = () => {
                         <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg">
                           <h5 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-2">{t('calculators.bishop_score.clinical_assessment')}</h5>
                           <div className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
-                            <p>• Firm: Like tip of nose</p>
-                            <p>• Medium: Like chin consistency</p>
-                            <p>• Soft: Like lips or earlobe</p>
+                            <p>• {t('calculators.bishop_score.consistency_descriptions_firm')}</p>
+                            <p>• {t('calculators.bishop_score.consistency_descriptions_medium')}</p>
+                            <p>• {t('calculators.bishop_score.consistency_descriptions_soft')}</p>
                           </div>
                         </div>
                       </div>
@@ -347,9 +364,9 @@ const BishopScoreCalculator: React.FC = () => {
                         <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 rounded-lg">
                           <h5 className="font-semibold text-red-800 dark:text-red-200 mb-2">{t('calculators.bishop_score.position_assessment')}</h5>
                           <div className="text-sm text-red-700 dark:text-red-300 space-y-1">
-                            <p>• Posterior: Cervix points toward sacrum</p>
-                            <p>• Mid-position: Cervix in neutral position</p>
-                            <p>• Anterior: Cervix points toward pubis</p>
+                            <p>• {t('calculators.bishop_score.position_descriptions_posterior')}</p>
+                            <p>• {t('calculators.bishop_score.position_descriptions_mid')}</p>
+                            <p>• {t('calculators.bishop_score.position_descriptions_anterior')}</p>
                           </div>
                         </div>
                       </div>
@@ -390,13 +407,13 @@ const BishopScoreCalculator: React.FC = () => {
                         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, fetalStation: e.target.value })}
                         options={[
                           { value: '', label: t('calculators.bishop_score.fetal_station_label') + '...' },
-                          { value: '-3', label: '-3 (0 points) - High' },
-                          { value: '-2', label: '-2 (0 points) - High' },
-                          { value: '-1', label: '-1 (1 point) - Mid' },
-                          { value: '0', label: '0 (2 points) - At spines' },
-                          { value: '1', label: '+1 (3 points) - Low' },
-                          { value: '2', label: '+2 (3 points) - Low' },
-                          { value: '3', label: '+3 (3 points) - Low' }
+                          { value: '-3', label: `-3 (${t('calculators.bishop_score.zero_points')}) - ${t('calculators.bishop_score.station_high_label')}` },
+                          { value: '-2', label: `-2 (${t('calculators.bishop_score.zero_points')}) - ${t('calculators.bishop_score.station_high_label')}` },
+                          { value: '-1', label: `-1 (${t('calculators.bishop_score.one_point')}) - ${t('calculators.bishop_score.station_mid_label')}` },
+                          { value: '0', label: `0 (${t('calculators.bishop_score.two_points')}) - ${t('calculators.bishop_score.station_at_spines')}` },
+                          { value: '1', label: `+1 (${t('calculators.bishop_score.three_points')}) - ${t('calculators.bishop_score.station_low_label')}` },
+                          { value: '2', label: `+2 (${t('calculators.bishop_score.three_points')}) - ${t('calculators.bishop_score.station_low_label')}` },
+                          { value: '3', label: `+3 (${t('calculators.bishop_score.three_points')}) - ${t('calculators.bishop_score.station_low_label')}` }
                         ]}
                         error={errors.fetalStation}
                         helpText={t('calculators.bishop_score.fetal_station_help')}
@@ -404,25 +421,25 @@ const BishopScoreCalculator: React.FC = () => {
                       />
 
                       <div className="mt-6 p-6 bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-700 rounded-lg">
-                        <h5 className="font-semibold text-purple-800 dark:text-purple-200 mb-4">{t('calculators.bishop_score.fetal_station_label')} Reference</h5>
+                        <h5 className="font-semibold text-purple-800 dark:text-purple-200 mb-4">{t('calculators.bishop_score.fetal_station_label')} {t('calculators.bishop_score.reference_text')}</h5>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-purple-700 dark:text-purple-300">
                           <div>
-                            <h6 className="font-semibold mb-2">High Station</h6>
-                            <p>• -3, -2: 0 points</p>
-                            <p>• Head above spines</p>
-                            <p>• More difficult delivery</p>
+                            <h6 className="font-semibold mb-2">{t('calculators.bishop_score.high_station')}</h6>
+                            <p>• {t('calculators.bishop_score.high_station_description_1')}</p>
+                            <p>• {t('calculators.bishop_score.high_station_description_2')}</p>
+                            <p>• {t('calculators.bishop_score.high_station_description_3')}</p>
                           </div>
                           <div>
-                            <h6 className="font-semibold mb-2">Mid Station</h6>
-                            <p>• -1: 1 point</p>
-                            <p>• Head approaching spines</p>
-                            <p>• Favorable position</p>
+                            <h6 className="font-semibold mb-2">{t('calculators.bishop_score.mid_station')}</h6>
+                            <p>• {t('calculators.bishop_score.mid_station_description_1')}</p>
+                            <p>• {t('calculators.bishop_score.mid_station_description_2')}</p>
+                            <p>• {t('calculators.bishop_score.mid_station_description_3')}</p>
                           </div>
                           <div>
-                            <h6 className="font-semibold mb-2">Low Station</h6>
-                            <p>• 0, +1, +2, +3: 2-3 points</p>
-                            <p>• Head at or below spines</p>
-                            <p>• Very favorable</p>
+                            <h6 className="font-semibold mb-2">{t('calculators.bishop_score.low_station')}</h6>
+                            <p>• {t('calculators.bishop_score.low_station_description_1')}</p>
+                            <p>• {t('calculators.bishop_score.low_station_description_2')}</p>
+                            <p>• {t('calculators.bishop_score.low_station_description_3')}</p>
                           </div>
                         </div>
                       </div>
@@ -486,7 +503,7 @@ const BishopScoreCalculator: React.FC = () => {
                         <h4 className="font-semibold text-green-800 dark:text-green-200">{t('calculators.bishop_score.cesarean_risk')}</h4>
                       </div>
                       <p className="text-2xl font-bold text-green-900 dark:text-green-100">{result.cesareanRisk.toFixed(1)}%</p>
-                      <p className="text-sm text-green-600 dark:text-green-400 mt-1">Risk of cesarean delivery</p>
+                      <p className="text-sm text-green-600 dark:text-green-400 mt-1">{t('calculators.bishop_score.cesarean_delivery_risk')}</p>
                     </div>
                   </div>
 
@@ -605,18 +622,18 @@ const BishopScoreCalculator: React.FC = () => {
                 <CardHeader>
                   <div className="flex items-center space-x-3">
                     <BarChart3 className="w-6 h-6 text-blue-600" />
-                    <CardTitle className="text-blue-800 dark:text-blue-200">Scoring Parameters</CardTitle>
+                    <CardTitle className="text-blue-800 dark:text-blue-200">{t('calculators.bishop_score.scoring_parameters')}</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-2">Five Assessment Parameters:</h4>
+                    <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-2">{t('calculators.bishop_score.five_assessment_parameters')}</h4>
                     <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                      <li>• Cervical dilation (0-3 points)</li>
-                      <li>• Cervical effacement (0-3 points)</li>
-                      <li>• Cervical consistency (0-2 points)</li>
-                      <li>• Cervical position (0-2 points)</li>
-                      <li>• Fetal station (0-3 points)</li>
+                      <li>• {t('calculators.bishop_score.cervical_dilation_points')}</li>
+                      <li>• {t('calculators.bishop_score.cervical_effacement_points')}</li>
+                      <li>• {t('calculators.bishop_score.cervical_consistency_points')}</li>
+                      <li>• {t('calculators.bishop_score.cervical_position_points')}</li>
+                      <li>• {t('calculators.bishop_score.fetal_station_points')}</li>
                     </ul>
                   </div>
                 </CardContent>
@@ -626,17 +643,17 @@ const BishopScoreCalculator: React.FC = () => {
                 <CardHeader>
                   <div className="flex items-center space-x-3">
                     <Target className="w-6 h-6 text-green-600" />
-                    <CardTitle className="text-green-800 dark:text-green-200">Score Interpretation</CardTitle>
+                    <CardTitle className="text-green-800 dark:text-green-200">{t('calculators.bishop_score.score_interpretation')}</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-2">Induction Success Prediction:</h4>
+                    <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-2">{t('calculators.bishop_score.induction_success_prediction')}</h4>
                     <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                      <li>• Score ≤3: Unfavorable cervix</li>
-                      <li>• Score 4-6: Intermediate success</li>
-                      <li>• Score 7-8: Favorable cervix</li>
-                      <li>• Score ≥9: Very favorable cervix</li>
+                      <li>• {t('calculators.bishop_score.score_unfavorable')}</li>
+                      <li>• {t('calculators.bishop_score.score_intermediate')}</li>
+                      <li>• {t('calculators.bishop_score.score_favorable')}</li>
+                      <li>• {t('calculators.bishop_score.score_very_favorable')}</li>
                     </ul>
                   </div>
                 </CardContent>
@@ -648,27 +665,27 @@ const BishopScoreCalculator: React.FC = () => {
               <CardHeader>
                 <div className="flex items-center space-x-3">
                   <Activity className="w-6 h-6 text-purple-600" />
-                  <CardTitle className="text-purple-800 dark:text-purple-200">Clinical Applications</CardTitle>
+                  <CardTitle className="text-purple-800 dark:text-purple-200">{t('calculators.bishop_score.clinical_applications')}</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
-                    <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-2">Labor Induction Planning</h4>
+                    <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-2">{t('calculators.bishop_score.labor_induction_planning')}</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Determines optimal timing and method for labor induction based on cervical readiness
+                      {t('calculators.bishop_score.labor_induction_description')}
                     </p>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-2">Delivery Planning</h4>
+                    <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-2">{t('calculators.bishop_score.delivery_planning')}</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Assists in counseling patients about likelihood of vaginal delivery success
+                      {t('calculators.bishop_score.delivery_planning_description')}
                     </p>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-2">Clinical Documentation</h4>
+                    <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-2">{t('calculators.bishop_score.clinical_documentation')}</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Standardized assessment tool for medical record documentation and quality metrics
+                      {t('calculators.bishop_score.clinical_documentation_description')}
                     </p>
                   </div>
                 </div>
@@ -680,24 +697,23 @@ const BishopScoreCalculator: React.FC = () => {
               <CardHeader>
                 <div className="flex items-center space-x-3">
                   <Award className="w-6 h-6 text-orange-600" />
-                  <CardTitle className="text-orange-800 dark:text-orange-200">Evidence Base</CardTitle>
+                  <CardTitle className="text-orange-800 dark:text-orange-200">{t('calculators.bishop_score.evidence_base')}</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-2">Professional Guidelines</h4>
+                    <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-2">{t('calculators.bishop_score.professional_guidelines')}</h4>
                     <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                      <li>• ACOG Practice Bulletin No. 107: Induction of Labor</li>
-                      <li>• Society for Maternal-Fetal Medicine recommendations</li>
-                      <li>• Modified Bishop Score validation studies</li>
+                      <li>• {t('calculators.bishop_score.acog_practice_bulletin')}</li>
+                      <li>• {t('calculators.bishop_score.maternal_fetal_medicine')}</li>
+                      <li>• {t('calculators.bishop_score.validation_studies')}</li>
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-2">Clinical Validation</h4>
+                    <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 mb-2">{t('calculators.bishop_score.clinical_validation')}</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Extensively validated scoring system with demonstrated predictive accuracy for labor 
-                      induction success across diverse patient populations and clinical settings.
+                      {t('calculators.bishop_score.clinical_validation_description')}
                     </p>
                   </div>
                 </div>
@@ -711,12 +727,12 @@ const BishopScoreCalculator: React.FC = () => {
                   <AlertTriangle className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-amber-800 dark:text-amber-200 mb-3">Clinical Considerations</h3>
+                  <h3 className="text-xl font-bold text-amber-800 dark:text-amber-200 mb-3">{t('calculators.bishop_score.clinical_considerations')}</h3>
                   <div className="space-y-2 text-amber-700 dark:text-amber-300 text-sm">
-                    <p>• Assessment should be performed by experienced clinicians familiar with cervical examination techniques</p>
-                    <p>• Score interpretation should consider individual patient factors and clinical context</p>
-                    <p>• Multiple assessments may be needed as cervical status can change rapidly</p>
-                    <p>• This tool supports but does not replace clinical judgment and comprehensive patient evaluation</p>
+                    <p>• {t('calculators.bishop_score.consideration_1')}</p>
+                    <p>• {t('calculators.bishop_score.consideration_2')}</p>
+                    <p>• {t('calculators.bishop_score.consideration_3')}</p>
+                    <p>• {t('calculators.bishop_score.consideration_4')}</p>
                   </div>
                 </div>
               </div>

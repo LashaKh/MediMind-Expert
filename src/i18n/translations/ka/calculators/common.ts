@@ -142,7 +142,20 @@ export const calculatorCommon = {
       status: 'ყველა ფაზა დასრულებულია: 14 პროფესიონალური კალკულატორი (100% ვალიდირებული)',
       message: '✅ ყველა ფაზა დასრულებულია: 14 პროფესიონალური კალკულატორი (100% ვალიდირებული)'
     }
-  }
+  },
+  miscellaneous: "სხვა",
+  
+  // Calculator Result Share Component
+  calculator_results_summary: "კალკულატორის შედეგების რეზიუმე",
+  shared: "გაზიარებულია",
+  sharing: "გაზიარება...",
+  share_with_ai: "AI-თან გაზიარება",
+  key_results: "ძირითადი შედეგები:",
+  clinical_interpretation_label: "კლინიკური ინტერპრეტაცია:",
+  recommendations_label: "რეკომენდაციები:",
+  more_recommendations: "მეტი რეკომენდაცია",
+  universal_recommendations: "უნივერსალური რეკომენდაციები",
+  share_results_description: "გაუზიარეთ ეს შედეგები თქვენს AI-თანაშემწეს დეტალური ანალიზისა და შემდეგი ნაბიჯებისთვის"
 };
 
 export default calculatorCommon; 

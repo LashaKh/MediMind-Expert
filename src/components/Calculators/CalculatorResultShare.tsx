@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Share2, MessageCircle, FileText, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useCalculatorIntegration, CalculatorResult } from '../../hooks/useCalculatorIntegration';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface CalculatorResultShareProps {
   calculatorName: string;
@@ -22,6 +23,7 @@ export const CalculatorResultShare: React.FC<CalculatorResultShareProps> = ({
   riskLevel = 'intermediate',
   className = ''
 }) => {
+  const { t } = useTranslation();
   const [isSharing, setIsSharing] = useState(false);
   const [isShared, setIsShared] = useState(false);
   const { shareCalculatorResults } = useCalculatorIntegration();
@@ -83,7 +85,7 @@ export const CalculatorResultShare: React.FC<CalculatorResultShareProps> = ({
           {getRiskIcon()}
           <div>
             <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-              Calculator Results Summary
+              {t('calculators.common.calculator_results_summary')}
             </h4>
             <p className="text-xs text-gray-600 dark:text-gray-400">
               {calculatorName} • {new Date().toLocaleDateString()}
@@ -101,17 +103,17 @@ export const CalculatorResultShare: React.FC<CalculatorResultShareProps> = ({
             {isShared ? (
               <>
                 <CheckCircle className="w-4 h-4 text-green-600" />
-                <span>Shared</span>
+                <span>{t('calculators.common.shared')}</span>
               </>
             ) : isSharing ? (
               <>
                 <div className="w-4 h-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
-                <span>Sharing...</span>
+                <span>{t('calculators.common.sharing')}</span>
               </>
             ) : (
               <>
                 <MessageCircle className="w-4 h-4" />
-                <span>Share with AI</span>
+                <span>{t('calculators.common.share_with_ai')}</span>
               </>
             )}
           </Button>
@@ -123,27 +125,51 @@ export const CalculatorResultShare: React.FC<CalculatorResultShareProps> = ({
         {/* Key Results */}
         <div>
           <h5 className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
-            Key Results:
+            {t('calculators.common.key_results')}
           </h5>
           <div className="grid grid-cols-2 gap-2 text-sm">
-            {Object.entries(results).map(([key, value]) => (
-              <div key={key} className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400 capitalize">
-                  {key.replace(/([A-Z])/g, ' $1').trim()}:
-                </span>
-                <span className="font-medium text-gray-900 dark:text-gray-100">
-                  {typeof value === 'number' ? value.toFixed(1) : value}
-                  {key.includes('percentage') || key.includes('risk') || key.includes('Rate') ? '%' : ''}
-                </span>
-              </div>
-            ))}
+            {Object.entries(results).map(([key, value]) => {
+              // Create a mapping for proper translation of field names
+              const getTranslatedFieldName = (fieldKey: string): string => {
+                const fieldTranslations: Record<string, string> = {
+                  // GDM Calculator specific fields
+                  screeningTiming: t('calculators.gdm_screening.screening_timing'),
+                  riskLevel: t('calculators.gdm_screening.risk_level'),
+                  testingProtocol: t('calculators.gdm_screening.testing_protocol'),
+                  
+                  // Common calculator fields
+                  ascvdRisk: t('calculators.common.ascvd_risk'),
+                  tenYearRisk: t('calculators.common.ten_year_risk'),
+                  lifetimeRisk: t('calculators.common.lifetime_risk'),
+                  riskCategory: t('calculators.common.risk_category'),
+                  recommendations: t('calculators.common.recommendations'),
+                  
+                  // Fallback to automatic conversion with proper capitalization
+                  default: fieldKey.replace(/([A-Z])/g, ' $1').trim()
+                };
+                
+                return fieldTranslations[fieldKey] || fieldTranslations.default;
+              };
+              
+              return (
+                <div key={key} className="flex justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">
+                    {getTranslatedFieldName(key)}
+                  </span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                    {typeof value === 'number' ? value.toFixed(1) : value}
+                    {key.includes('percentage') || key.includes('risk') || key.includes('Rate') ? '%' : ''}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
 
         {/* Clinical Interpretation */}
         <div>
           <h5 className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
-            Clinical Interpretation:
+            {t('calculators.common.clinical_interpretation_label')}
           </h5>
           <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
             {interpretation}
@@ -154,7 +180,7 @@ export const CalculatorResultShare: React.FC<CalculatorResultShareProps> = ({
         {recommendations.length > 0 && (
           <div>
             <h5 className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
-              Recommendations:
+              {t('calculators.common.recommendations_label')}
             </h5>
             <ul className="space-y-1">
               {recommendations.slice(0, 3).map((rec, index) => (
@@ -165,7 +191,7 @@ export const CalculatorResultShare: React.FC<CalculatorResultShareProps> = ({
               ))}
               {recommendations.length > 3 && (
                 <li className="text-xs text-gray-500 italic">
-                  +{recommendations.length - 3} more recommendations
+                  +{recommendations.length - 3} {t('calculators.common.more_recommendations')}
                 </li>
               )}
             </ul>
@@ -176,7 +202,7 @@ export const CalculatorResultShare: React.FC<CalculatorResultShareProps> = ({
         <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
           <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
             <Share2 className="w-3 h-3 mr-1" />
-            Share these results with your AI Co-Pilot for detailed analysis and next steps
+            {t('calculators.common.share_results_description')}
           </p>
         </div>
       </div>

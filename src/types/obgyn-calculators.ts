@@ -126,6 +126,9 @@ export interface GDMScreeningResult extends BaseCalculatorResult {
   riskLevel: 'low' | 'moderate' | 'high';
   screeningRecommendation: 'early' | 'standard' | 'enhanced';
   testingProtocol: 'one-step' | 'two-step' | 'either';
+  interpretationKey?: string;
+  recommendationsKey?: string;
+  universalRecommendationsKey?: string;
 }
 
 // ==================================================

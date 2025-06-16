@@ -8,6 +8,7 @@ import {
   CalculatorButton, 
   ResultsDisplay 
 } from '../ui/calculator-ui';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface HCMAFFormData {
   // Demographics
@@ -63,43 +64,45 @@ export const HCMAFRiskCalculator: React.FC = () => {
   const [isCalculating, setIsCalculating] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
 
+  const { t } = useTranslation();
+
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
     const age = parseInt(formData.age);
     if (!formData.age || isNaN(age)) {
-      newErrors.age = 'Age is required';
+      newErrors.age = t('calculators.common.required');
     } else if (age < 18 || age > 90) {
-      newErrors.age = 'Age must be between 18-90 years';
+      newErrors.age = t('calculators.hcm_af_risk.validation_age');
     }
 
     if (!formData.gender) {
-      newErrors.gender = 'Gender is required';
+      newErrors.gender = t('calculators.hcm_af_risk.validation_gender');
     }
 
     const laSize = parseFloat(formData.leftAtrialSize);
     if (!formData.leftAtrialSize || isNaN(laSize)) {
-      newErrors.leftAtrialSize = 'Left atrial size is required';
+      newErrors.leftAtrialSize = t('calculators.common.required');
     } else if (laSize < 25 || laSize > 80) {
-      newErrors.leftAtrialSize = 'Left atrial size must be between 25-80mm';
+      newErrors.leftAtrialSize = t('calculators.hcm_af_risk.validation_left_atrial_size');
     }
 
     const wallThickness = parseFloat(formData.maxWallThickness);
     if (!formData.maxWallThickness || isNaN(wallThickness)) {
-      newErrors.maxWallThickness = 'Maximum wall thickness is required';
+      newErrors.maxWallThickness = t('calculators.common.required');
     } else if (wallThickness < 10 || wallThickness > 50) {
-      newErrors.maxWallThickness = 'Wall thickness must be between 10-50mm';
+      newErrors.maxWallThickness = t('calculators.hcm_af_risk.validation_wall_thickness');
     }
 
     const lvotGradient = parseFloat(formData.maxLVOTGradient);
     if (!formData.maxLVOTGradient || isNaN(lvotGradient)) {
-      newErrors.maxLVOTGradient = 'Maximum LVOT gradient is required';
+      newErrors.maxLVOTGradient = t('calculators.common.required');
     } else if (lvotGradient < 0 || lvotGradient > 200) {
-      newErrors.maxLVOTGradient = 'LVOT gradient must be between 0-200 mmHg';
+      newErrors.maxLVOTGradient = t('calculators.hcm_af_risk.validation_lvot_gradient');
     }
 
     if (!formData.mitralRegurgitation) {
-      newErrors.mitralRegurgitation = 'Mitral regurgitation grade is required';
+      newErrors.mitralRegurgitation = t('calculators.hcm_af_risk.validation_mitral_regurgitation');
     }
 
     setErrors(newErrors);
@@ -110,17 +113,17 @@ export const HCMAFRiskCalculator: React.FC = () => {
     // Check for exclusions first
     const exclusionReasons: string[] = [];
     
-    if (formData.priorAF) exclusionReasons.push('Prior atrial fibrillation diagnosis');
-    if (formData.permanentAF) exclusionReasons.push('Permanent atrial fibrillation');
-    if (formData.concurrentValveDisease) exclusionReasons.push('Concurrent significant valvular disease');
+    if (formData.priorAF) exclusionReasons.push(t('calculators.hcm_af_risk.exclusion_prior_af'));
+    if (formData.permanentAF) exclusionReasons.push(t('calculators.hcm_af_risk.exclusion_permanent_af'));
+    if (formData.concurrentValveDisease) exclusionReasons.push(t('calculators.hcm_af_risk.exclusion_concurrent_valve_disease'));
 
     if (exclusionReasons.length > 0) {
       return {
         twoYearRisk: 0,
         fiveYearRisk: 0,
         riskCategory: 'low',
-        interpretation: 'AF risk calculation not applicable due to exclusion criteria',
-        recommendations: ['Clinical evaluation by HCM specialist for AF management'],
+        interpretation: t('calculators.hcm_af_risk.exclusion_interpretation'),
+        recommendations: [t('calculators.hcm_af_risk.recommendation_clinical_evaluation')],
         monitoringGuidance: [],
         exclusionReasons
       };
@@ -203,13 +206,13 @@ export const HCMAFRiskCalculator: React.FC = () => {
 
     if (twoYearRisk < 10) {
       riskCategory = 'low';
-      interpretation = 'Low 2-year AF risk (<10%). Standard clinical follow-up appropriate.';
+      interpretation = t('calculators.hcm_af_risk.low_interpretation');
     } else if (twoYearRisk < 25) {
       riskCategory = 'intermediate';
-      interpretation = 'Intermediate 2-year AF risk (10-25%). Consider enhanced monitoring.';
+      interpretation = t('calculators.hcm_af_risk.intermediate_interpretation');
     } else {
       riskCategory = 'high';
-      interpretation = 'High 2-year AF risk (≥25%). Enhanced surveillance recommended.';
+      interpretation = t('calculators.hcm_af_risk.high_interpretation');
     }
 
     const recommendations = getRecommendations(riskCategory, twoYearRisk, formData);
@@ -232,65 +235,69 @@ export const HCMAFRiskCalculator: React.FC = () => {
     data: HCMAFFormData
   ): string[] => {
     const baseRecs = [
-      'HCM specialist evaluation and management',
-      'Regular assessment of symptoms',
-      'Optimization of HCM medical therapy'
+      t('calculators.hcm_af_risk.recommendation_base_1'),
+      t('calculators.hcm_af_risk.recommendation_base_2'),
+      t('calculators.hcm_af_risk.recommendation_base_3')
     ];
 
     if (riskCategory === 'low') {
       return [
         ...baseRecs,
-        'Standard clinical follow-up appropriate',
-        'Patient education on AF symptoms',
-        'Annual cardiology assessment',
-        'Consider ECG at routine visits'
+        t('calculators.hcm_af_risk.recommendation_low_1'),
+        t('calculators.hcm_af_risk.recommendation_low_2'),
+        t('calculators.hcm_af_risk.recommendation_low_3'),
+        t('calculators.hcm_af_risk.recommendation_low_4')
       ];
     } else if (riskCategory === 'intermediate') {
       return [
         ...baseRecs,
-        'Consider enhanced AF surveillance',
-        'Rhythm monitoring for symptoms',
-        'Anticoagulation readiness discussion',
-        '6-month cardiology follow-up',
-        'Patient education on symptom recognition'
+        t('calculators.hcm_af_risk.recommendation_intermediate_1'),
+        t('calculators.hcm_af_risk.recommendation_intermediate_2'),
+        t('calculators.hcm_af_risk.recommendation_intermediate_3'),
+        t('calculators.hcm_af_risk.recommendation_intermediate_4'),
+        t('calculators.hcm_af_risk.recommendation_intermediate_5')
       ];
     } else {
       return [
         ...baseRecs,
-        'Enhanced AF surveillance strongly recommended',
-        'Consider ambulatory rhythm monitoring',
-        'Anticoagulation strategy planning',
-        'Frequent cardiology follow-up (3-6 months)',
-        'CHA₂DS₂-VASc assessment for future stroke risk',
-        'Consider wearable rhythm monitoring'
+        t('calculators.hcm_af_risk.recommendation_high_1'),
+        t('calculators.hcm_af_risk.recommendation_high_2'),
+        t('calculators.hcm_af_risk.recommendation_high_3'),
+        t('calculators.hcm_af_risk.recommendation_high_4'),
+        t('calculators.hcm_af_risk.recommendation_high_5'),
+        t('calculators.hcm_af_risk.recommendation_high_6'),
+        t('calculators.hcm_af_risk.recommendation_high_7')
       ];
     }
   };
 
   const getMonitoringGuidance = (riskCategory: string, laSize: number): string[] => {
-    const baseMonitoring = ['Symptom assessment at each visit', 'Annual ECG'];
+    const baseMonitoring = [
+      t('calculators.hcm_af_risk.monitoring_base_1'),
+      t('calculators.hcm_af_risk.monitoring_base_2')
+    ];
 
     if (riskCategory === 'low') {
       return [
         ...baseMonitoring,
-        'Standard clinical monitoring',
-        'Consider ECG if symptomatic'
+        t('calculators.hcm_af_risk.monitoring_low_1'),
+        t('calculators.hcm_af_risk.monitoring_low_2')
       ];
     } else if (riskCategory === 'intermediate') {
       return [
         ...baseMonitoring,
-        '24-48 hour Holter monitoring if symptomatic',
-        'Consider annual Holter monitoring',
-        'Event monitor for palpitations'
+        t('calculators.hcm_af_risk.monitoring_intermediate_1'),
+        t('calculators.hcm_af_risk.monitoring_intermediate_2'),
+        t('calculators.hcm_af_risk.monitoring_intermediate_3')
       ];
     } else {
       return [
         ...baseMonitoring,
-        'Annual 24-48 hour Holter monitoring',
-        'Consider 14-30 day ambulatory monitoring',
-        'Event monitors for any symptoms',
-        'Consider insertable cardiac monitor if very high risk',
-        'Wearable device monitoring if available'
+        t('calculators.hcm_af_risk.monitoring_high_1'),
+        t('calculators.hcm_af_risk.monitoring_high_2'),
+        t('calculators.hcm_af_risk.monitoring_high_3'),
+        t('calculators.hcm_af_risk.monitoring_high_4'),
+        t('calculators.hcm_af_risk.monitoring_high_5')
       ];
     }
   };
@@ -348,8 +355,8 @@ export const HCMAFRiskCalculator: React.FC = () => {
 
   return (
     <CalculatorContainer
-      title="HCM-AF Risk Calculator"
-      subtitle="Hypertrophic Cardiomyopathy Atrial Fibrillation Risk Assessment • 2 & 5-Year Prediction Model"
+      title={t('calculators.hcm_af_risk.title')}
+      subtitle={t('calculators.hcm_af_risk.subtitle')}
       icon={Activity}
       gradient="cardiology"
       className="max-w-5xl mx-auto"
@@ -362,13 +369,13 @@ export const HCMAFRiskCalculator: React.FC = () => {
               <Activity className="w-6 h-6 text-orange-600 dark:text-orange-400" />
             </div>
             <div className="flex-1">
-              <h4 className="text-lg font-bold text-orange-800 dark:text-orange-200 mb-2">HCM-AF Risk Assessment - Atrial Fibrillation Prediction</h4>
+              <h4 className="text-lg font-bold text-orange-800 dark:text-orange-200 mb-2">{t('calculators.hcm_af_risk.af_risk_prediction')}</h4>
               <p className="text-orange-700 dark:text-orange-300 leading-relaxed">
-                Evidence-based risk model for predicting new-onset atrial fibrillation in hypertrophic cardiomyopathy patients. Guides surveillance strategies and clinical monitoring decisions.
+                {t('calculators.hcm_af_risk.description')}
               </p>
               <div className="mt-3 inline-flex items-center space-x-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg px-3 py-1">
                 <Star className="w-4 h-4 text-orange-600 dark:text-orange-400" />
-                <span className="text-xs font-semibold text-orange-700 dark:text-orange-300">Clinical Validation - AF Surveillance - Monitoring Strategy</span>
+                <span className="text-xs font-semibold text-orange-700 dark:text-orange-300">{t('calculators.hcm_af_risk.af_surveillance')}</span>
               </div>
             </div>
           </div>
@@ -384,7 +391,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                 }`}>
                   1
                 </div>
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Demographics</span>
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.hcm_af_risk.demographics')}</span>
               </div>
               <div className={`w-16 h-1 rounded-full transition-all duration-300 ${
                 currentStep >= 2 ? 'bg-yellow-500' : 'bg-gray-200'
@@ -395,7 +402,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                 }`}>
                   2
                 </div>
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Clinical Data</span>
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.hcm_af_risk.clinical_measurements')}</span>
               </div>
               <div className={`w-16 h-1 rounded-full transition-all duration-300 ${
                 currentStep >= 3 ? 'bg-green-500' : 'bg-gray-200'
@@ -406,7 +413,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                 }`}>
                   3
                 </div>
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Risk Factors</span>
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.hcm_af_risk.risk_factors')}</span>
               </div>
               <div className={`w-16 h-1 rounded-full transition-all duration-300 ${
                 currentStep >= 4 ? 'bg-blue-500' : 'bg-gray-200'
@@ -417,7 +424,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                 }`}>
                   4
                 </div>
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Exclusions</span>
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.hcm_af_risk.exclusions')}</span>
               </div>
             </div>
 
@@ -427,18 +434,18 @@ export const HCMAFRiskCalculator: React.FC = () => {
                 <div className="text-center mb-8">
                   <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-900/20 dark:to-yellow-900/20 rounded-2xl border border-orange-200 dark:border-orange-800">
                     <User className="w-6 h-6 text-orange-600 dark:text-orange-400" />
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Patient Demographics</h3>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.hcm_af_risk.demographics')}</h3>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Basic patient information for HCM-AF risk assessment</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.hcm_af_risk.demographics_info')}</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
                   <CalculatorInput
-                    label="Age"
+                    label={t('calculators.hcm_af_risk.age_label')}
                     value={formData.age}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, age: e.target.value })}
                     type="number"
-                    placeholder="55"
+                    placeholder={t('calculators.hcm_af_risk.age_placeholder')}
                     min={18}
                     max={90}
                     unit="years"
@@ -447,13 +454,13 @@ export const HCMAFRiskCalculator: React.FC = () => {
                   />
 
                   <CalculatorSelect
-                    label="Gender"
+                    label={t('calculators.hcm_af_risk.gender_label')}
                     value={formData.gender}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, gender: e.target.value as 'male' | 'female' })}
                     options={[
-                      { value: '', label: 'Select gender...' },
-                      { value: 'male', label: 'Male' },
-                      { value: 'female', label: 'Female' },
+                      { value: '', label: t('calculators.hcm_af_risk.gender_placeholder') },
+                      { value: 'male', label: t('calculators.hcm_af_risk.gender_male') },
+                      { value: 'female', label: t('calculators.hcm_af_risk.gender_female') },
                     ]}
                     error={errors.gender}
                     icon={User}
@@ -463,12 +470,12 @@ export const HCMAFRiskCalculator: React.FC = () => {
                 <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-xl p-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <Info className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-                    <h4 className="font-semibold text-orange-800 dark:text-orange-200">HCM-AF Patient Selection</h4>
+                    <h4 className="font-semibold text-orange-800 dark:text-orange-200">{t('calculators.hcm_af_risk.patient_selection')}</h4>
                   </div>
                   <div className="text-sm text-orange-700 dark:text-orange-300 space-y-1">
-                    <p>• Age range: 18-90 years (validated population)</p>
-                    <p>• Established HCM diagnosis with no prior AF</p>
-                    <p>• Patients suitable for AF surveillance planning</p>
+                    <p>• {t('calculators.hcm_af_risk.age_range_info')}</p>
+                    <p>• {t('calculators.hcm_af_risk.diagnosis_required')}</p>
+                    <p>• {t('calculators.hcm_af_risk.surveillance_suitability')}</p>
                   </div>
                 </div>
 
@@ -477,7 +484,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                     onClick={() => setCurrentStep(2)}
                     className="enhanced-calculator-button"
                   >
-                    Next: Clinical Data
+                    {t('calculators.hcm_af_risk.next_clinical_data')}
                   </CalculatorButton>
                 </div>
               </div>
@@ -489,19 +496,19 @@ export const HCMAFRiskCalculator: React.FC = () => {
                 <div className="text-center mb-8">
                   <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-yellow-50 to-green-50 dark:from-yellow-900/20 dark:to-green-900/20 rounded-2xl border border-yellow-200 dark:border-yellow-800">
                     <BarChart3 className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Clinical Measurements</h3>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.hcm_af_risk.clinical_measurements')}</h3>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Echocardiographic parameters and structural assessment</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.hcm_af_risk.measurement_guidelines')}</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <CalculatorInput
-                    label="Left Atrial Size"
+                    label={t('calculators.hcm_af_risk.left_atrial_size')}
                     value={formData.leftAtrialSize}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, leftAtrialSize: e.target.value })}
                     type="number"
                     step={0.1}
-                    placeholder="44.0"
+                    placeholder={t('calculators.hcm_af_risk.left_atrial_size_placeholder')}
                     min={25}
                     max={80}
                     unit="mm"
@@ -510,12 +517,12 @@ export const HCMAFRiskCalculator: React.FC = () => {
                   />
 
                   <CalculatorInput
-                    label="Maximum Wall Thickness"
+                    label={t('calculators.hcm_af_risk.max_wall_thickness')}
                     value={formData.maxWallThickness}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, maxWallThickness: e.target.value })}
                     type="number"
                     step={0.1}
-                    placeholder="20.0"
+                    placeholder={t('calculators.hcm_af_risk.max_wall_thickness_placeholder')}
                     min={10}
                     max={50}
                     unit="mm"
@@ -524,11 +531,11 @@ export const HCMAFRiskCalculator: React.FC = () => {
                   />
 
                   <CalculatorInput
-                    label="Maximum LVOT Gradient"
+                    label={t('calculators.hcm_af_risk.max_lvot_gradient')}
                     value={formData.maxLVOTGradient}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, maxLVOTGradient: e.target.value })}
                     type="number"
-                    placeholder="25"
+                    placeholder={t('calculators.hcm_af_risk.max_lvot_gradient_placeholder')}
                     min={0}
                     max={200}
                     unit="mmHg"
@@ -539,16 +546,16 @@ export const HCMAFRiskCalculator: React.FC = () => {
 
                 <div className="space-y-4">
                   <CalculatorSelect
-                    label="Mitral Regurgitation Grade"
+                    label={t('calculators.hcm_af_risk.mitral_regurgitation')}
                     value={formData.mitralRegurgitation}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, mitralRegurgitation: e.target.value as any })}
                     options={[
-                      { value: '', label: 'Select MR grade...' },
-                      { value: '0', label: 'None (0)' },
-                      { value: '1', label: 'Trace (1+)' },
-                      { value: '2', label: 'Mild (2+)' },
-                      { value: '3', label: 'Moderate (3+)' },
-                      { value: '4', label: 'Severe (4+)' },
+                      { value: '', label: t('calculators.hcm_af_risk.mitral_regurgitation_placeholder') },
+                      { value: '0', label: t('calculators.hcm_af_risk.mitral_regurgitation_0') },
+                      { value: '1', label: t('calculators.hcm_af_risk.mitral_regurgitation_1') },
+                      { value: '2', label: t('calculators.hcm_af_risk.mitral_regurgitation_2') },
+                      { value: '3', label: t('calculators.hcm_af_risk.mitral_regurgitation_3') },
+                      { value: '4', label: t('calculators.hcm_af_risk.mitral_regurgitation_4') },
                     ]}
                     error={errors.mitralRegurgitation}
                     icon={Heart}
@@ -558,13 +565,13 @@ export const HCMAFRiskCalculator: React.FC = () => {
                 <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <Stethoscope className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
-                    <h4 className="font-semibold text-yellow-800 dark:text-yellow-200">Clinical Measurement Guidelines</h4>
+                    <h4 className="font-semibold text-yellow-800 dark:text-yellow-200">{t('calculators.hcm_af_risk.measurement_guidelines')}</h4>
                   </div>
                   <div className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
-                    <p>• Left atrial size: Strong predictor of AF development in HCM</p>
-                    <p>• Wall thickness: Maximum hypertrophy measurement in any view</p>
-                    <p>• LVOT gradient: Peak instantaneous gradient (rest or provoked)</p>
-                    <p>• MR grade: Comprehensive valve assessment important for AF risk</p>
+                    <p>• {t('calculators.hcm_af_risk.left_atrial_size_info')}</p>
+                    <p>• {t('calculators.hcm_af_risk.wall_thickness_info')}</p>
+                    <p>• {t('calculators.hcm_af_risk.lvot_gradient_info')}</p>
+                    <p>• {t('calculators.hcm_af_risk.mr_grade_info')}</p>
                   </div>
                 </div>
 
@@ -573,13 +580,13 @@ export const HCMAFRiskCalculator: React.FC = () => {
                     onClick={() => setCurrentStep(1)}
                     variant="outline"
                   >
-                    Back
+                    {t('calculators.hcm_af_risk.back')}
                   </CalculatorButton>
                   <CalculatorButton
                     onClick={() => setCurrentStep(3)}
                     className="enhanced-calculator-button"
                   >
-                    Next: Risk Factors
+                    {t('calculators.hcm_af_risk.next_risk_factors')}
                   </CalculatorButton>
                 </div>
               </div>
@@ -591,31 +598,31 @@ export const HCMAFRiskCalculator: React.FC = () => {
                 <div className="text-center mb-8">
                   <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-2xl border border-green-200 dark:border-green-800">
                     <Heart className="w-6 h-6 text-green-600 dark:text-green-400" />
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Clinical Risk Factors</h3>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.hcm_af_risk.risk_factors')}</h3>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Additional HCM-specific AF risk factors</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.hcm_af_risk.risk_factor_considerations')}</p>
                 </div>
 
                 <div className="space-y-6">
                   <div className="space-y-4">
                     <h4 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center space-x-2">
                       <Heart className="w-5 h-5 text-green-600" />
-                      <span>AF Risk Factors</span>
+                      <span>{t('calculators.hcm_af_risk.risk_factors')}</span>
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <CalculatorCheckbox
-                        label="Hypertension"
+                        label={t('calculators.hcm_af_risk.hypertension')}
                         checked={formData.hypertension}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, hypertension: e.target.checked })}
-                        description="Systemic hypertension (managed or uncontrolled)"
+                        description={t('calculators.hcm_af_risk.hypertension_desc')}
                         icon={TrendingUp}
                       />
 
                       <CalculatorCheckbox
-                        label="Family History of Atrial Fibrillation"
+                        label={t('calculators.hcm_af_risk.family_history_af')}
                         checked={formData.familyHistoryAF}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, familyHistoryAF: e.target.checked })}
-                        description="AF in first-degree relatives"
+                        description={t('calculators.hcm_af_risk.family_history_af_desc')}
                         icon={Brain}
                       />
                     </div>
@@ -625,13 +632,13 @@ export const HCMAFRiskCalculator: React.FC = () => {
                 <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <Shield className="w-5 h-5 text-green-600 dark:text-green-400" />
-                    <h4 className="font-semibold text-green-800 dark:text-green-200">HCM-AF Risk Factor Considerations</h4>
+                    <h4 className="font-semibold text-green-800 dark:text-green-200">{t('calculators.hcm_af_risk.risk_factor_considerations')}</h4>
                   </div>
                   <div className="text-sm text-green-700 dark:text-green-300 space-y-1">
-                    <p>• Left atrial size is the strongest independent predictor</p>
-                    <p>• Age and structural parameters contribute significantly</p>
-                    <p>• Family history suggests genetic susceptibility</p>
-                    <p>• Hypertension accelerates AF development</p>
+                    <p>• {t('calculators.hcm_af_risk.la_predictor')}</p>
+                    <p>• {t('calculators.hcm_af_risk.age_structural')}</p>
+                    <p>• {t('calculators.hcm_af_risk.family_history_genetic')}</p>
+                    <p>• {t('calculators.hcm_af_risk.hypertension_af')}</p>
                   </div>
                 </div>
 
@@ -640,13 +647,13 @@ export const HCMAFRiskCalculator: React.FC = () => {
                     onClick={() => setCurrentStep(2)}
                     variant="outline"
                   >
-                    Back
+                    {t('calculators.hcm_af_risk.back')}
                   </CalculatorButton>
                   <CalculatorButton
                     onClick={() => setCurrentStep(4)}
                     className="enhanced-calculator-button"
                   >
-                    Next: Exclusions
+                    {t('calculators.hcm_af_risk.next_exclusions')}
                   </CalculatorButton>
                 </div>
               </div>
@@ -658,38 +665,38 @@ export const HCMAFRiskCalculator: React.FC = () => {
                 <div className="text-center mb-8">
                   <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl border border-blue-200 dark:border-blue-800">
                     <AlertTriangle className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Exclusion Criteria</h3>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.hcm_af_risk.exclusions')}</h3>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Conditions that exclude from AF risk calculator use</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.hcm_af_risk.exclusion_notes')}</p>
                 </div>
 
                 <div className="space-y-4">
                   <h4 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center space-x-2">
                     <AlertCircle className="w-5 h-5 text-blue-600" />
-                    <span>Calculator Exclusions</span>
+                    <span>{t('calculators.hcm_af_risk.calculator_exclusions')}</span>
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <CalculatorCheckbox
-                      label="Prior Atrial Fibrillation Diagnosis"
+                      label={t('calculators.hcm_af_risk.prior_af')}
                       checked={formData.priorAF}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, priorAF: e.target.checked })}
-                      description="Previously documented atrial fibrillation episode"
+                      description={t('calculators.hcm_af_risk.prior_af_desc')}
                       icon={AlertTriangle}
                     />
 
                     <CalculatorCheckbox
-                      label="Permanent Atrial Fibrillation"
+                      label={t('calculators.hcm_af_risk.permanent_af')}
                       checked={formData.permanentAF}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, permanentAF: e.target.checked })}
-                      description="Persistent AF not suitable for rhythm control"
+                      description={t('calculators.hcm_af_risk.permanent_af_desc')}
                       icon={Activity}
                     />
 
                     <CalculatorCheckbox
-                      label="Concurrent Significant Valvular Disease"
+                      label={t('calculators.hcm_af_risk.concurrent_valve_disease')}
                       checked={formData.concurrentValveDisease}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, concurrentValveDisease: e.target.checked })}
-                      description="Moderate or severe valve disease independent of HCM"
+                      description={t('calculators.hcm_af_risk.concurrent_valve_disease_desc')}
                       icon={Heart}
                     />
                   </div>
@@ -698,12 +705,12 @@ export const HCMAFRiskCalculator: React.FC = () => {
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <Info className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                    <h4 className="font-semibold text-blue-800 dark:text-blue-200">Important Notes</h4>
+                    <h4 className="font-semibold text-blue-800 dark:text-blue-200">{t('calculators.hcm_af_risk.exclusion_notes')}</h4>
                   </div>
                   <div className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
-                    <p>• Calculator is for new-onset AF risk prediction only</p>
-                    <p>• Patients with existing AF require different management strategies</p>
-                    <p>• Consider HCM specialist consultation for complex cases</p>
+                    <p>• {t('calculators.hcm_af_risk.exclusion_new_onset')}</p>
+                    <p>• {t('calculators.hcm_af_risk.exclusion_existing_af')}</p>
+                    <p>• {t('calculators.hcm_af_risk.exclusion_specialist')}</p>
                   </div>
                 </div>
 
@@ -712,7 +719,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                     onClick={() => setCurrentStep(3)}
                     variant="outline"
                   >
-                    Back
+                    {t('calculators.hcm_af_risk.back')}
                   </CalculatorButton>
                   <CalculatorButton
                     onClick={handleCalculate}
@@ -721,7 +728,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                     size="lg"
                     className="enhanced-calculator-button"
                   >
-                    Calculate AF Risk
+                    {t('calculators.hcm_af_risk.calculate_button')}
                   </CalculatorButton>
                 </div>
               </div>
@@ -734,8 +741,8 @@ export const HCMAFRiskCalculator: React.FC = () => {
               {result.exclusionReasons.length > 0 ? (
                 /* Exclusion Results */
                 <ResultsDisplay
-                  title="AF Risk Calculator Not Applicable"
-                  value="Exclusion Criteria Present"
+                  title={t('calculators.hcm_af_risk.not_applicable')}
+                  value={t('calculators.hcm_af_risk.exclusion_present')}
                   category="high"
                   interpretation={result.interpretation}
                   icon={AlertTriangle}
@@ -743,7 +750,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3">
                       <AlertCircle className="w-5 h-5 text-yellow-500" />
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">Exclusion Criteria Present</h4>
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.hcm_af_risk.exclusion_present')}</h4>
                     </div>
                     <div className="p-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl">
                       <ul className="space-y-2">
@@ -759,7 +766,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                     <div className="space-y-4">
                       <div className="flex items-center space-x-3">
                         <Stethoscope className="w-5 h-5 text-blue-500" />
-                        <h4 className="font-semibold text-gray-900 dark:text-gray-100">Clinical Management Recommendations</h4>
+                        <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.hcm_af_risk.management_recommendations')}</h4>
                       </div>
                       <div className="p-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
                         <div className="space-y-3">
@@ -777,8 +784,8 @@ export const HCMAFRiskCalculator: React.FC = () => {
               ) : (
                 /* Normal Results */
                 <ResultsDisplay
-                  title="HCM-AF Risk Assessment Results"
-                  value={`${result.riskCategory.charAt(0).toUpperCase() + result.riskCategory.slice(1)} Risk`}
+                  title={t('calculators.hcm_af_risk.results_title')}
+                  value={t(`calculators.hcm_af_risk.${result.riskCategory}_risk`)}
                   category={result.riskCategory as 'low' | 'intermediate' | 'high'}
                   interpretation={result.interpretation}
                   icon={Activity}
@@ -787,19 +794,19 @@ export const HCMAFRiskCalculator: React.FC = () => {
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3 mb-4">
                       <Target className="w-5 h-5 text-orange-500" />
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">Atrial Fibrillation Risk Prediction</h4>
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.hcm_af_risk.af_risk_prediction')}</h4>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="p-6 bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-orange-900/20 dark:to-yellow-900/30 rounded-2xl border border-orange-200 dark:border-orange-800">
                         <div className="text-center">
                           <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">{result.twoYearRisk}%</div>
-                          <div className="text-sm text-orange-700 dark:text-orange-300">2-Year AF Risk</div>
+                          <div className="text-sm text-orange-700 dark:text-orange-300">{t('calculators.hcm_af_risk.two_year_risk')}</div>
                         </div>
                       </div>
                       <div className="p-6 bg-gradient-to-br from-yellow-50 to-green-50 dark:from-yellow-900/20 dark:to-green-900/30 rounded-2xl border border-yellow-200 dark:border-yellow-800">
                         <div className="text-center">
                           <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">{result.fiveYearRisk}%</div>
-                          <div className="text-sm text-yellow-700 dark:text-yellow-300">5-Year AF Risk</div>
+                          <div className="text-sm text-yellow-700 dark:text-yellow-300">{t('calculators.hcm_af_risk.five_year_risk')}</div>
                         </div>
                       </div>
                     </div>
@@ -809,31 +816,31 @@ export const HCMAFRiskCalculator: React.FC = () => {
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3">
                       <Shield className="w-5 h-5 text-purple-500" />
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">AF Risk Stratification Categories</h4>
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.hcm_af_risk.risk_stratification_categories')}</h4>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       <div className={`p-4 rounded-xl border-2 transition-all ${
                         result.riskCategory === 'low' ? 'border-green-300 bg-green-50 dark:bg-green-900/20' : 'border-green-200 bg-green-50/50 dark:bg-green-900/10'
                       }`}>
                         <div className="text-center">
-                          <div className="text-sm font-semibold text-green-800 dark:text-green-200">Low Risk</div>
-                          <div className="text-xs text-green-600 dark:text-green-400">{'<'} 10% AF Risk</div>
+                          <div className="text-sm font-semibold text-green-800 dark:text-green-200">{t('calculators.hcm_af_risk.low_risk')}</div>
+                          <div className="text-xs text-green-600 dark:text-green-400">{t('calculators.hcm_af_risk.low_risk_range')}</div>
                         </div>
                       </div>
                       <div className={`p-4 rounded-xl border-2 transition-all ${
                         result.riskCategory === 'intermediate' ? 'border-yellow-300 bg-yellow-50 dark:bg-yellow-900/20' : 'border-yellow-200 bg-yellow-50/50 dark:bg-yellow-900/10'
                       }`}>
                         <div className="text-center">
-                          <div className="text-sm font-semibold text-yellow-800 dark:text-yellow-200">Intermediate</div>
-                          <div className="text-xs text-yellow-600 dark:text-yellow-400">10-25% AF Risk</div>
+                          <div className="text-sm font-semibold text-yellow-800 dark:text-yellow-200">{t('calculators.hcm_af_risk.intermediate_risk')}</div>
+                          <div className="text-xs text-yellow-600 dark:text-yellow-400">{t('calculators.hcm_af_risk.intermediate_risk_range')}</div>
                         </div>
                       </div>
                       <div className={`p-4 rounded-xl border-2 transition-all ${
                         result.riskCategory === 'high' ? 'border-red-300 bg-red-50 dark:bg-red-900/20' : 'border-red-200 bg-red-50/50 dark:bg-red-900/10'
                       }`}>
                         <div className="text-center">
-                          <div className="text-sm font-semibold text-red-800 dark:text-red-200">High Risk</div>
-                          <div className="text-xs text-red-600 dark:text-red-400">≥ 25% AF Risk</div>
+                          <div className="text-sm font-semibold text-red-800 dark:text-red-200">{t('calculators.hcm_af_risk.high_risk')}</div>
+                          <div className="text-xs text-red-600 dark:text-red-400">{t('calculators.hcm_af_risk.high_risk_range')}</div>
                         </div>
                       </div>
                     </div>
@@ -844,9 +851,9 @@ export const HCMAFRiskCalculator: React.FC = () => {
                     <div className="space-y-4">
                       <div className="flex items-center space-x-3">
                         <Activity className="w-5 h-5 text-green-500" />
-                        <h4 className="font-semibold text-gray-900 dark:text-gray-100">AF Monitoring Strategy</h4>
+                        <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.hcm_af_risk.af_monitoring_strategy')}</h4>
                       </div>
-                      <div className={`p-6 rounded-2xl border-2 ${getRiskBgColor(result.riskCategory)}`}>
+                      <div className={`p-6 rounded-2xl border-2 ${getRiskBgColor(result.riskCategory)}`}> 
                         <div className="space-y-3">
                           {result.monitoringGuidance.map((guidance, index) => (
                             <div key={index} className="flex items-start space-x-2">
@@ -863,9 +870,9 @@ export const HCMAFRiskCalculator: React.FC = () => {
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3">
                       <Stethoscope className="w-5 h-5 text-indigo-500" />
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">Clinical Management Recommendations</h4>
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.hcm_af_risk.management_recommendations')}</h4>
                     </div>
-                    <div className={`p-6 rounded-2xl border-2 ${getRiskBgColor(result.riskCategory)}`}>
+                    <div className={`p-6 rounded-2xl border-2 ${getRiskBgColor(result.riskCategory)}`}> 
                       <div className="space-y-3">
                         {result.recommendations.map((rec, index) => (
                           <div key={index} className="flex items-start space-x-2">
@@ -881,10 +888,10 @@ export const HCMAFRiskCalculator: React.FC = () => {
                   <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
                     <div className="flex items-center space-x-3 mb-3">
                       <Award className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                      <h4 className="font-semibold text-blue-800 dark:text-blue-200">HCM-AF Validation Status</h4>
+                      <h4 className="font-semibold text-blue-800 dark:text-blue-200">{t('calculators.hcm_af_risk.validation_status')}</h4>
                     </div>
                     <div className="text-sm text-blue-700 dark:text-blue-300">
-                      ✓ Clinical Validation • AF Surveillance Model • HCM Guidelines • Risk-Based Monitoring
+                      {t('calculators.hcm_af_risk.validation_status_desc')}
                     </div>
                   </div>
                 </ResultsDisplay>
@@ -898,14 +905,14 @@ export const HCMAFRiskCalculator: React.FC = () => {
                   size="lg"
                   icon={Calculator}
                 >
-                  New Assessment
+                  {t('calculators.hcm_af_risk.new_assessment')}
                 </CalculatorButton>
                 <CalculatorButton
                   onClick={() => setResult(null)}
                   variant="secondary"
                   size="lg"
                 >
-                  Modify Inputs
+                  {t('calculators.hcm_af_risk.modify_inputs')}
                 </CalculatorButton>
               </div>
             </div>
@@ -916,10 +923,10 @@ export const HCMAFRiskCalculator: React.FC = () => {
         <div className="text-center pt-8 border-t border-white/20 dark:border-gray-800/20">
           <div className="flex items-center justify-center space-x-3 text-sm text-gray-600 dark:text-gray-400">
             <Info className="w-4 h-4" />
-            <span>Based on HCM-AF Risk Model • For educational purposes only</span>
+            <span>{t('calculators.hcm_af_risk.based_on_model')}</span>
             <div className="flex items-center space-x-1">
               <Activity className="w-4 h-4 text-orange-600" />
-              <span className="text-orange-600 font-semibold">AF Surveillance</span>
+              <span className="text-orange-600 font-semibold">{t('calculators.hcm_af_risk.af_surveillance')}</span>
             </div>
           </div>
         </div>

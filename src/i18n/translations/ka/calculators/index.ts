@@ -1,13 +1,29 @@
 import common from './common';
 import cardiology from './cardiology';
-import obgyn from './obgyn';
 import eurscoreII from './euroscore-ii';
+import hcmRiskSCD from './hcm-risk-scd';
+import hcmAFRisk from './hcm-af-risk';
+import { 
+  gestationalAgeCalculator,
+  eddCalculator,
+  preeclampsiaRiskCalculator,
+  pretermBirthRiskCalculator,
+  gdmScreeningCalculator,
+  bishopScoreCalculator
+} from './ObGyn';
 
 export default {
   common,
   cardiology,
-  obgyn,
   eurscoreII,
+  
+  // Individual OB/GYN calculators with direct access
+  gestational_age: gestationalAgeCalculator,
+  edd: eddCalculator,
+  preeclampsia_risk: preeclampsiaRiskCalculator,
+  preterm_birth_risk: pretermBirthRiskCalculator,
+  gdm_screening: gdmScreeningCalculator,
+  bishop_score: bishopScoreCalculator,
   
   // Top-level keys for Calculator landing page
   specialty: {
@@ -112,21 +128,16 @@ export default {
     subtitle: 'ევროპული კარდიაკური ოპერაციების რისკის შეფასების სისტემა'
   },
   
-  hcm_risk_scd: {
-    title: 'HCM რისკ-SCD კალკულატორი',
-    subtitle: 'უეცარი კარდიაკული სიკვდილის რისკი ჰიპერტროფიულ კარდიომიოპათიაში'
-  },
+  hcm_risk_scd: hcmRiskSCD,
   
-  hcm_af_risk: {
-    title: 'HCM-AFR კალკულატორი',
-    subtitle: 'წინაგულების ფიბრილაციის რისკი ჰიპერტროფიულ კარდიომიოპათიაში'
-  },
+  hcmAFRisk,
+  hcm_af_risk: hcmAFRisk,
   
   categories_label: 'კატეგორიები',
   calculator_categories: 'კალკულატორების კატეგორიები',
   back_to: 'უკან',
   view_grid: 'ბადე',
-  view_list: 'სია'
+  view_list: 'სია',
 };
 
 export {

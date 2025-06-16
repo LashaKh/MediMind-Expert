@@ -13,6 +13,7 @@ import {
 import { CalculatorResultShare } from './CalculatorResultShare';
 import { calculateOBGYN, validateOBGYNInput } from '../../services/obgynCalculatorService';
 import { GDMScreeningInput, GDMScreeningResult } from '../../types/obgyn-calculators';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface FormData {
   maternalAge: string;
@@ -25,6 +26,7 @@ interface FormData {
 }
 
 const GDMScreeningCalculator: React.FC = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'calculator' | 'about'>('calculator');
   const [formData, setFormData] = useState<FormData>({
     maternalAge: '',
@@ -40,25 +42,26 @@ const GDMScreeningCalculator: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isCalculating, setIsCalculating] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [showAllRecommendations, setShowAllRecommendations] = useState(false);
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.maternalAge) {
-      newErrors.maternalAge = 'Maternal age is required';
+      newErrors.maternalAge = t('calculators.gdm_screening.maternal_age_required');
     } else {
       const age = parseInt(formData.maternalAge);
       if (isNaN(age) || age < 15 || age > 55) {
-        newErrors.maternalAge = 'Maternal age must be between 15-55 years';
+        newErrors.maternalAge = t('calculators.gdm_screening.maternal_age_range_error');
       }
     }
 
     if (!formData.bmi) {
-      newErrors.bmi = 'Pre-pregnancy BMI is required';
+      newErrors.bmi = t('calculators.gdm_screening.pre_pregnancy_bmi_required');
     } else {
       const bmi = parseFloat(formData.bmi);
       if (isNaN(bmi) || bmi < 15 || bmi > 60) {
-        newErrors.bmi = 'BMI must be between 15-60 kg/m²';
+        newErrors.bmi = t('calculators.gdm_screening.pre_pregnancy_bmi_range_error');
       }
     }
 
@@ -97,7 +100,7 @@ const GDMScreeningCalculator: React.FC = () => {
         setResult(calculationResult);
         
       } catch (error) {
-        setErrors({ calculation: error instanceof Error ? error.message : 'Calculation failed' });
+        setErrors({ calculation: error instanceof Error ? error.message : t('calculators.gdm_screening.calculation_failed') });
       } finally {
         setIsCalculating(false);
       }
@@ -118,6 +121,7 @@ const GDMScreeningCalculator: React.FC = () => {
     setErrors({});
     setIsCalculating(false);
     setCurrentStep(1);
+    setShowAllRecommendations(false);
   };
 
   const getRiskColor = (category: string) => {
@@ -147,14 +151,14 @@ const GDMScreeningCalculator: React.FC = () => {
   return (
     <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'calculator' | 'about')} className="w-full">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="calculator">Calculator</TabsTrigger>
-        <TabsTrigger value="about">About</TabsTrigger>
+        <TabsTrigger value="calculator">{t('calculators.gdm_screening.calculator')}</TabsTrigger>
+        <TabsTrigger value="about">{t('calculators.gdm_screening.about')}</TabsTrigger>
       </TabsList>
 
       <TabsContent value="calculator">
         <CalculatorContainer
-          title="Gestational Diabetes Mellitus (GDM) Screening"
-          subtitle="Evidence-Based Risk Assessment • ACOG Guidelines • Personalized Screening Protocol • Clinical Decision Support"
+          title={t('calculators.gdm_screening.title')}
+          subtitle={t('calculators.gdm_screening.subtitle')}
           icon={TestTube}
           gradient="obgyn"
           className="max-w-5xl mx-auto"
@@ -167,14 +171,13 @@ const GDMScreeningCalculator: React.FC = () => {
                   <TestTube className="w-6 h-6 text-pink-600 dark:text-pink-400" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-lg font-bold text-pink-800 dark:text-pink-200 mb-2">ACOG Evidence-Based GDM Screening Protocol</h4>
+                  <h4 className="text-lg font-bold text-pink-800 dark:text-pink-200 mb-2">{t('calculators.gdm_screening.acog_evidence_based_title')}</h4>
                   <p className="text-pink-700 dark:text-pink-300 leading-relaxed">
-                    Comprehensive risk-based screening strategy for gestational diabetes mellitus using clinical risk factors 
-                    and evidence-based guidelines. Provides personalized screening timing and methodology recommendations.
+                    {t('calculators.gdm_screening.acog_description')}
                   </p>
                   <div className="mt-3 inline-flex items-center space-x-2 bg-pink-100 dark:bg-pink-900/30 rounded-lg px-3 py-1">
                     <Star className="w-4 h-4 text-pink-600 dark:text-pink-400" />
-                    <span className="text-xs font-semibold text-pink-700 dark:text-pink-300">ACOG Practice Bulletin No. 230 - GDM Screening</span>
+                    <span className="text-xs font-semibold text-pink-700 dark:text-pink-300">{t('calculators.gdm_screening.acog_reference')}</span>
                   </div>
                 </div>
               </div>
@@ -190,7 +193,7 @@ const GDMScreeningCalculator: React.FC = () => {
                     }`}>
                       1
                     </div>
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Risk Assessment</span>
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.gdm_screening.risk_assessment')}</span>
                   </div>
                   <div className={`w-16 h-1 rounded-full transition-all duration-300 ${
                     currentStep >= 2 ? 'bg-rose-500' : 'bg-gray-200'
@@ -201,7 +204,7 @@ const GDMScreeningCalculator: React.FC = () => {
                     }`}>
                       2
                     </div>
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Demographics & History</span>
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.gdm_screening.demographics_history')}</span>
                   </div>
                   <div className={`w-16 h-1 rounded-full transition-all duration-300 ${
                     currentStep >= 3 ? 'bg-purple-500' : 'bg-gray-200'
@@ -212,19 +215,19 @@ const GDMScreeningCalculator: React.FC = () => {
                     }`}>
                       3
                     </div>
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Screening Recommendations</span>
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.gdm_screening.screening_recommendations')}</span>
                   </div>
                 </div>
 
-                {/* Step 1: Risk Assessment */}
+                {/* Step 1: Patient Demographics */}
                 {currentStep === 1 && (
                   <div className="space-y-6 animate-fadeIn">
                     <div className="text-center mb-8">
-                      <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20 rounded-2xl border border-pink-200 dark:border-pink-800">
+                      <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 rounded-2xl border border-pink-200 dark:border-pink-800">
                         <User className="w-6 h-6 text-pink-600 dark:text-pink-400" />
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Patient Demographics</h3>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.gdm_screening.patient_demographics')}</h3>
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Basic maternal characteristics and anthropometric data</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.gdm_screening.basic_demographics_description')}</p>
                     </div>
 
                     <div className="space-y-6">
@@ -232,36 +235,36 @@ const GDMScreeningCalculator: React.FC = () => {
                       <div className="p-6 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl">
                         <div className="flex items-center space-x-3 mb-4">
                           <User className="w-5 h-5 text-blue-600" />
-                          <h4 className="font-semibold text-gray-900 dark:text-gray-100">Basic Demographics</h4>
+                          <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.gdm_screening.basic_demographics')}</h4>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <CalculatorInput
-                            label="Maternal Age"
+                            label={t('calculators.gdm_screening.maternal_age')}
                             value={formData.maternalAge}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, maternalAge: e.target.value })}
                             type="number"
-                            placeholder="28"
+                            placeholder={t('calculators.gdm_screening.maternal_age_placeholder')}
                             min={15}
                             max={55}
-                            unit="years"
+                            unit={t('calculators.gdm_screening.maternal_age_unit')}
                             error={errors.maternalAge}
-                            helpText="Age ≥35 increases GDM risk"
+                            helpText={t('calculators.gdm_screening.maternal_age_help')}
                             icon={User}
                           />
 
                           <CalculatorInput
-                            label="Pre-pregnancy BMI"
+                            label={t('calculators.gdm_screening.pre_pregnancy_bmi')}
                             value={formData.bmi}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, bmi: e.target.value })}
                             type="number"
-                            placeholder="24.5"
+                            placeholder={t('calculators.gdm_screening.pre_pregnancy_bmi_placeholder')}
                             min={15}
                             max={60}
-                            unit="kg/m²"
+                            unit={t('calculators.gdm_screening.pre_pregnancy_bmi_unit')}
                             step={0.1}
                             error={errors.bmi}
-                            helpText="BMI ≥25 increases GDM risk"
+                            helpText={t('calculators.gdm_screening.pre_pregnancy_bmi_help')}
                             icon={Activity}
                           />
                         </div>
@@ -271,32 +274,32 @@ const GDMScreeningCalculator: React.FC = () => {
                       <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl">
                         <div className="flex items-center space-x-3 mb-4">
                           <BarChart3 className="w-5 h-5 text-blue-600" />
-                          <h4 className="font-semibold text-blue-800 dark:text-blue-200">Race/Ethnicity</h4>
+                          <h4 className="font-semibold text-blue-800 dark:text-blue-200">{t('calculators.gdm_screening.race_ethnicity')}</h4>
                         </div>
                         
                         <CalculatorSelect
-                          label="Race/Ethnicity"
+                          label={t('calculators.gdm_screening.race_ethnicity_label')}
                           value={formData.race}
                           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, race: e.target.value as typeof formData.race })}
                           options={[
-                            { value: 'white', label: 'White/Caucasian' },
-                            { value: 'hispanic', label: 'Hispanic/Latino' },
-                            { value: 'african-american', label: 'African American' },
-                            { value: 'asian', label: 'Asian' },
-                            { value: 'native-american', label: 'Native American' },
-                            { value: 'other', label: 'Other/Mixed' }
+                            { value: 'white', label: t('calculators.gdm_screening.white_caucasian') },
+                            { value: 'hispanic', label: t('calculators.gdm_screening.hispanic_latino') },
+                            { value: 'african-american', label: t('calculators.gdm_screening.african_american') },
+                            { value: 'asian', label: t('calculators.gdm_screening.asian') },
+                            { value: 'native-american', label: t('calculators.gdm_screening.native_american') },
+                            { value: 'other', label: t('calculators.gdm_screening.other_mixed') }
                           ]}
-                          helpText="Certain ethnic groups have higher GDM prevalence"
+                          helpText={t('calculators.gdm_screening.race_ethnicity_help')}
                           icon={BarChart3}
                         />
 
                         <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-lg">
-                          <h5 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">High-Risk Ethnic Groups</h5>
+                          <h5 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">{t('calculators.gdm_screening.high_risk_ethnic_groups')}</h5>
                           <div className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
-                            <p>• Hispanic/Latino: 2-3x increased risk</p>
-                            <p>• Asian: 2-4x increased risk (especially South Asian)</p>
-                            <p>• African American: 1.5-2x increased risk</p>
-                            <p>• Native American: 3-5x increased risk</p>
+                            <p>{t('calculators.gdm_screening.hispanic_risk')}</p>
+                            <p>{t('calculators.gdm_screening.asian_risk')}</p>
+                            <p>{t('calculators.gdm_screening.african_american_risk')}</p>
+                            <p>{t('calculators.gdm_screening.native_american_risk')}</p>
                           </div>
                         </div>
                       </div>
@@ -307,7 +310,7 @@ const GDMScreeningCalculator: React.FC = () => {
                         onClick={() => setCurrentStep(2)}
                         className="enhanced-calculator-button"
                       >
-                        Next: Clinical History
+                        {t('calculators.gdm_screening.next_clinical_history')}
                       </CalculatorButton>
                     </div>
                   </div>
@@ -319,9 +322,9 @@ const GDMScreeningCalculator: React.FC = () => {
                     <div className="text-center mb-8">
                       <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-rose-50 to-purple-50 dark:from-rose-900/20 dark:to-purple-900/20 rounded-2xl border border-rose-200 dark:border-rose-800">
                         <Calendar className="w-6 h-6 text-rose-600 dark:text-rose-400" />
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Clinical History</h3>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.gdm_screening.clinical_history')}</h3>
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Medical and obstetric history assessment</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.gdm_screening.clinical_history_description')}</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -329,23 +332,23 @@ const GDMScreeningCalculator: React.FC = () => {
                       <div className="p-6 bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 border-2 border-yellow-200 dark:border-yellow-800 rounded-xl">
                         <div className="flex items-center space-x-3 mb-4">
                           <Heart className="w-5 h-5 text-yellow-600" />
-                          <h4 className="font-semibold text-yellow-800 dark:text-yellow-200">Family History</h4>
+                          <h4 className="font-semibold text-yellow-800 dark:text-yellow-200">{t('calculators.gdm_screening.family_history')}</h4>
                         </div>
                         
                         <CalculatorCheckbox
                           id="familyHistoryDM"
                           checked={formData.familyHistoryDM}
                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, familyHistoryDM: e.target.checked })}
-                          label="Family history of diabetes"
-                          description="First-degree relative (parent, sibling) with Type 1 or Type 2 diabetes"
+                          label={t('calculators.gdm_screening.family_history_diabetes')}
+                          description={t('calculators.gdm_screening.family_history_description')}
                         />
 
                         <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg">
-                          <h5 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-2">Family History Impact</h5>
+                          <h5 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-2">{t('calculators.gdm_screening.family_history_impact')}</h5>
                           <div className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
-                            <p>• First-degree relative with DM: 2-3x increased risk</p>
-                            <p>• Type 2 diabetes in parents: strongest predictor</p>
-                            <p>• Multiple affected relatives: additive risk</p>
+                            <p>{t('calculators.gdm_screening.family_history_first_degree')}</p>
+                            <p>{t('calculators.gdm_screening.family_history_type2_parents')}</p>
+                            <p>{t('calculators.gdm_screening.family_history_multiple')}</p>
                           </div>
                         </div>
                       </div>
@@ -354,7 +357,7 @@ const GDMScreeningCalculator: React.FC = () => {
                       <div className="p-6 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 border-2 border-red-200 dark:border-red-800 rounded-xl">
                         <div className="flex items-center space-x-3 mb-4">
                           <Calendar className="w-5 h-5 text-red-600" />
-                          <h4 className="font-semibold text-red-800 dark:text-red-200">Obstetric History</h4>
+                          <h4 className="font-semibold text-red-800 dark:text-red-200">{t('calculators.gdm_screening.obstetric_history')}</h4>
                         </div>
                         
                         <div className="space-y-4">
@@ -362,25 +365,25 @@ const GDMScreeningCalculator: React.FC = () => {
                             id="previousGDM"
                             checked={formData.previousGDM}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, previousGDM: e.target.checked })}
-                            label="Previous gestational diabetes"
-                            description="GDM diagnosis in prior pregnancy"
+                            label={t('calculators.gdm_screening.previous_gdm')}
+                            description={t('calculators.gdm_screening.previous_gdm_description')}
                           />
 
                           <CalculatorCheckbox
                             id="previousMacrosomia"
                             checked={formData.previousMacrosomia}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, previousMacrosomia: e.target.checked })}
-                            label="Previous macrosomic infant"
-                            description="Prior baby weighing ≥4000g (8 lbs 13 oz) or ≥4500g (9 lbs 15 oz)"
+                            label={t('calculators.gdm_screening.previous_macrosomia')}
+                            description={t('calculators.gdm_screening.previous_macrosomia_description')}
                           />
                         </div>
 
                         <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 rounded-lg">
-                          <h5 className="font-semibold text-red-800 dark:text-red-200 mb-2">Major Risk Factors</h5>
+                          <h5 className="font-semibold text-red-800 dark:text-red-200 mb-2">{t('calculators.gdm_screening.major_risk_factors')}</h5>
                           <div className="text-sm text-red-700 dark:text-red-300 space-y-1">
-                            <p>• Previous GDM: 35-70% recurrence risk</p>
-                            <p>• Macrosomic infant: Strong GDM association</p>
-                            <p>• Combined factors: Multiplicative risk increase</p>
+                            <p>{t('calculators.gdm_screening.previous_gdm_recurrence')}</p>
+                            <p>{t('calculators.gdm_screening.macrosomic_association')}</p>
+                            <p>{t('calculators.gdm_screening.combined_factors')}</p>
                           </div>
                         </div>
                       </div>
@@ -390,23 +393,23 @@ const GDMScreeningCalculator: React.FC = () => {
                     <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-200 dark:border-green-800 rounded-xl">
                       <div className="flex items-center space-x-3 mb-4">
                         <Stethoscope className="w-5 h-5 text-green-600" />
-                        <h4 className="font-semibold text-green-800 dark:text-green-200">Medical History</h4>
+                        <h4 className="font-semibold text-green-800 dark:text-green-200">{t('calculators.gdm_screening.medical_history')}</h4>
                       </div>
                       
                       <CalculatorCheckbox
                         id="pcos"
                         checked={formData.pcos}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pcos: e.target.checked })}
-                        label="Polycystic Ovary Syndrome (PCOS)"
-                        description="Diagnosed PCOS or clinical features suggestive of PCOS"
+                        label={t('calculators.gdm_screening.pcos_label')}
+                        description={t('calculators.gdm_screening.pcos_description')}
                       />
 
                       <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-lg">
-                        <h5 className="font-semibold text-green-800 dark:text-green-200 mb-2">PCOS and GDM Risk</h5>
+                        <h5 className="font-semibold text-green-800 dark:text-green-200 mb-2">{t('calculators.gdm_screening.pcos_gdm_risk')}</h5>
                         <div className="text-sm text-green-700 dark:text-green-300 space-y-1">
-                          <p>• PCOS increases GDM risk 2-4 fold</p>
-                          <p>• Insulin resistance mechanism</p>
-                          <p>• Consider early screening if PCOS present</p>
+                          <p>{t('calculators.gdm_screening.pcos_increased_risk')}</p>
+                          <p>{t('calculators.gdm_screening.pcos_insulin_resistance')}</p>
+                          <p>{t('calculators.gdm_screening.pcos_early_screening')}</p>
                         </div>
                       </div>
                     </div>
@@ -416,7 +419,7 @@ const GDMScreeningCalculator: React.FC = () => {
                         onClick={() => setCurrentStep(1)}
                         variant="outline"
                       >
-                        Back
+                        {t('calculators.gdm_screening.back')}
                       </CalculatorButton>
                       <CalculatorButton
                         onClick={handleCalculate}
@@ -425,7 +428,7 @@ const GDMScreeningCalculator: React.FC = () => {
                         size="lg"
                         className="enhanced-calculator-button"
                       >
-                        Generate Screening Plan
+                        {t('calculators.gdm_screening.generate_screening_plan')}
                       </CalculatorButton>
                     </div>
                   </div>
@@ -433,112 +436,172 @@ const GDMScreeningCalculator: React.FC = () => {
               </>
             ) : (
               /* Results Display */
-              <div className="space-y-8 animate-scaleIn">
-                <ResultsDisplay
-                  title="GDM Screening Assessment"
-                  value={result.screeningRecommendation}
-                  category={result.riskLevel === 'high' ? 'high' : result.riskLevel as 'low' | 'intermediate' | 'high'}
-                  interpretation={result.interpretation}
-                  icon={TestTube}
-                >
-                  {/* Risk Category Display */}
-                  <div className="mb-6 p-4 bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800 rounded-xl">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <Star className="w-5 h-5 text-pink-600 dark:text-pink-400" />
-                      <span className="font-semibold text-pink-800 dark:text-pink-200">Risk Level: {result.riskLevel.charAt(0).toUpperCase() + result.riskLevel.slice(1)}</span>
-                    </div>
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.gdm_screening.gdm_screening_assessment')}</h3>
+                  <div className="flex items-center space-x-4">
                     <div className={`inline-flex items-center space-x-1 rounded-lg px-3 py-1 ${getRiskColor(result.riskLevel)}`}>
-                      <span className="text-xs font-semibold">Screening: {result.screeningRecommendation.charAt(0).toUpperCase() + result.screeningRecommendation.slice(1)}</span>
+                      <span className="text-xs font-semibold">{t('calculators.gdm_screening.risk_level')} {t(`calculators.gdm_screening.result_values.risk_levels.${result.riskLevel}`)}</span>
+                    </div>
+                    
+                    <div className={`inline-flex items-center space-x-1 rounded-lg px-3 py-1 ${getRiskColor(result.riskLevel)}`}>
+                      <span className="text-xs font-semibold">{t('calculators.gdm_screening.screening')} {t(`calculators.gdm_screening.result_values.screening_recommendations.${result.screeningRecommendation}`)}</span>
                     </div>
                   </div>
+                </div>
 
-                  {/* Screening Assessment Summary */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <TestTube className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                        <h4 className="font-semibold text-blue-800 dark:text-blue-200">Screening Timing</h4>
-                      </div>
-                      <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{result.screeningRecommendation.charAt(0).toUpperCase() + result.screeningRecommendation.slice(1)}</p>
-                      <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">Recommended timing</p>
-                    </div>
-
-                    <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 rounded-xl">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <Clock className="w-6 h-6 text-green-600 dark:text-green-400" />
-                        <h4 className="font-semibold text-green-800 dark:text-green-200">Testing Protocol</h4>
-                      </div>
-                      <p className="text-2xl font-bold text-green-900 dark:text-green-100">{result.testingProtocol.charAt(0).toUpperCase() + result.testingProtocol.slice(1)}</p>
-                      <p className="text-sm text-green-600 dark:text-green-400 mt-1">Recommended approach</p>
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Screening Timing Card */}
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 p-6 rounded-2xl border border-blue-200 dark:border-blue-700">
+                    <h4 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">{t('calculators.gdm_screening.screening_timing')}</h4>
+                    <p className="text-sm text-blue-700 dark:text-blue-300 mb-3">{t('calculators.gdm_screening.recommended_timing')}</p>
+                    <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{t(`calculators.gdm_screening.result_values.screening_recommendations.${result.screeningRecommendation}`)}</p>
                   </div>
 
-                  {/* Clinical Recommendations */}
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-3">
-                      <Stethoscope className="w-5 h-5 text-blue-500" />
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">Clinical Recommendations</h4>
-                    </div>
-                    <div className={`p-6 rounded-2xl border-2 ${getRiskBgColor(result.riskLevel)}`}>
-                      <div className="space-y-3">
-                        {result.recommendations.map((rec, index) => (
+                  {/* Testing Protocol Card */}
+                  <div className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/20 p-6 rounded-2xl border border-green-200 dark:border-green-700">
+                    <h4 className="text-lg font-semibold text-green-900 dark:text-green-100 mb-2">{t('calculators.gdm_screening.testing_protocol')}</h4>
+                    <p className="text-sm text-green-700 dark:text-green-300 mb-3">{t('calculators.gdm_screening.recommended_approach')}</p>
+                    <p className="text-2xl font-bold text-green-900 dark:text-green-100">{t(`calculators.gdm_screening.result_values.testing_protocols.${result.testingProtocol}`)}</p>
+                  </div>
+                </div>
+
+                {/* Clinical Interpretation */}
+                <div className={`p-6 rounded-2xl border-2 ${getRiskBgColor(result.riskLevel)}`}>
+                  <h4 className="text-lg font-semibold mb-3">{t('calculators.gdm_screening.clinical_recommendations')}</h4>
+                  <div className="space-y-3">
+                    <p className="text-gray-800 dark:text-gray-200 leading-relaxed">
+                      {t(`calculators.gdm_screening.interpretations.${result.riskLevel}`).replace('{score}', String(result.value))}
+                    </p>
+                    
+                    <div className="space-y-2">
+                      {/* Use translated recommendations based on risk level with indexed structure */}
+                      {(() => {
+                        const riskRecommendations: string[] = [];
+                        const universalRecommendations: string[] = [];
+                        
+                        // Get risk-specific recommendations using indexed keys
+                        for (let i = 0; i < 10; i++) {
+                          const recKey = `calculators.gdm_screening.recommendations.${result.riskLevel}.${i}`;
+                          const recText = t(recKey);
+                          if (recText && recText !== recKey) {
+                            riskRecommendations.push(recText);
+                          } else {
+                            break; // Stop when no more translations available
+                          }
+                        }
+                        
+                        // Get universal recommendations using indexed keys
+                        for (let i = 0; i < 10; i++) {
+                          const uniKey = `calculators.gdm_screening.recommendations.universal.${i}`;
+                          const uniText = t(uniKey);
+                          if (uniText && uniText !== uniKey) {
+                            universalRecommendations.push(uniText);
+                          } else {
+                            break; // Stop when no more translations available
+                          }
+                        }
+                        
+                        // Combine all recommendations
+                        const allRecommendations = [...riskRecommendations, ...universalRecommendations];
+                        
+                        return allRecommendations.map((rec: string, index: number) => (
                           <div key={index} className="flex items-start space-x-2">
-                            <div className="w-2 h-2 bg-current rounded-full mt-2 flex-shrink-0"></div>
-                            <p className="text-sm text-gray-700 dark:text-gray-300">{rec}</p>
+                            <span className="text-gray-500 dark:text-gray-400 mt-1.5">•</span>
+                            <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">{rec}</p>
                           </div>
-                        ))}
-                      </div>
+                        ));
+                      })()}
                     </div>
                   </div>
+                </div>
 
-                  {/* Evidence References */}
-                  <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-xl p-4">
-                    <div className="flex items-center space-x-3 mb-3">
-                      <Award className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                      <h4 className="font-semibold text-purple-800 dark:text-purple-200">Evidence Base</h4>
-                    </div>
-                    <div className="text-sm text-purple-700 dark:text-purple-300 space-y-1">
-                      {result.references.map((ref, index) => (
-                        <p key={index}>• {ref}</p>
-                      ))}
-                    </div>
+                {/* Evidence Base */}
+                <div className="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-2xl border border-gray-200 dark:border-gray-700">
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">{t('calculators.gdm_screening.evidence_base')}</h4>
+                  <div className="space-y-2">
+                    {/* Use translated references */}
+                    {(() => {
+                      const references: string[] = [];
+                      
+                      // Build references dynamically from translations
+                      for (let i = 0; i < 10; i++) {
+                        const refKey = `calculators.gdm_screening.references.${i}`;
+                        const refText = t(refKey);
+                        if (refText && refText !== refKey) {
+                          references.push(refText);
+                        } else {
+                          break;
+                        }
+                      }
+                      
+                      return references.map((ref: string, index: number) => (
+                        <div key={index} className="flex items-start space-x-2">
+                          <span className="text-gray-500 dark:text-gray-400 mt-1.5">•</span>
+                          <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">{ref}</p>
+                        </div>
+                      ));
+                    })()}
                   </div>
-                </ResultsDisplay>
+                </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <CalculatorButton
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button
                     onClick={handleReset}
-                    variant="outline"
-                    size="lg"
-                    icon={Calculator}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                   >
-                    New Assessment
-                  </CalculatorButton>
-                  <CalculatorButton
+                    {t('calculators.gdm_screening.new_assessment')}
+                  </button>
+                  
+                  <button
                     onClick={() => setResult(null)}
-                    variant="secondary"
-                    size="lg"
+                    className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                   >
-                    Modify Inputs
-                  </CalculatorButton>
+                    {t('calculators.gdm_screening.modify_inputs')}
+                  </button>
                 </div>
 
-                {/* Result Sharing */}
-                <div className="mt-6">
-                  <CalculatorResultShare
-                    calculatorName="GDM Screening Calculator"
-                    calculatorId="gdm-screening-calculator"
-                    results={{
-                      screeningTiming: result.screeningRecommendation,
-                      riskLevel: result.riskLevel,
-                      testingProtocol: result.testingProtocol
-                    }}
-                    interpretation={result.interpretation}
-                    recommendations={result.recommendations}
-                    riskLevel={result.riskLevel === 'low' ? 'low' : result.riskLevel === 'high' ? 'high' : 'intermediate'}
-                  />
-                </div>
+                {/* Share Results */}
+                <CalculatorResultShare
+                  calculatorName={t('calculators.gdm_screening.title')}
+                  calculatorId="gdm-screening-calculator"
+                  results={{
+                    screeningTiming: t(`calculators.gdm_screening.result_values.screening_recommendations.${result.screeningRecommendation}`),
+                    riskLevel: t(`calculators.gdm_screening.result_values.risk_levels.${result.riskLevel}`),
+                    testingProtocol: t(`calculators.gdm_screening.result_values.testing_protocols.${result.testingProtocol}`)
+                  }}
+                  interpretation={t(`calculators.gdm_screening.interpretations.${result.riskLevel}`).replace('{score}', String(result.value))}
+                  recommendations={(() => {
+                    // Build translated recommendations array for CalculatorResultShare
+                    const translatedRecommendations: string[] = [];
+                    
+                    // Get risk-specific recommendations using indexed keys
+                    for (let i = 0; i < 10; i++) {
+                      const recKey = `calculators.gdm_screening.recommendations.${result.riskLevel}.${i}`;
+                      const recText = t(recKey);
+                      if (recText && recText !== recKey) {
+                        translatedRecommendations.push(recText);
+                      } else {
+                        break;
+                      }
+                    }
+                    
+                    // Get universal recommendations using indexed keys
+                    for (let i = 0; i < 10; i++) {
+                      const uniKey = `calculators.gdm_screening.recommendations.universal.${i}`;
+                      const uniText = t(uniKey);
+                      if (uniText && uniText !== uniKey) {
+                        translatedRecommendations.push(uniText);
+                      } else {
+                        break;
+                      }
+                    }
+                    
+                    return translatedRecommendations;
+                  })()}
+                  riskLevel={result.riskLevel === 'low' ? 'low' : result.riskLevel === 'high' ? 'high' : 'intermediate'}
+                />
               </div>
             )}
 
@@ -546,10 +609,10 @@ const GDMScreeningCalculator: React.FC = () => {
             <div className="text-center pt-8 border-t border-white/20 dark:border-gray-800/20">
               <div className="flex items-center justify-center space-x-3 text-sm text-gray-600 dark:text-gray-400">
                 <Info className="w-4 h-4" />
-                <span>Based on ACOG Practice Bulletin No. 230 • For educational purposes only</span>
+                <span>{t('calculators.gdm_screening.footer_info')}</span>
                 <div className="flex items-center space-x-1">
                   <Star className="w-4 h-4 text-pink-600" />
-                  <span className="text-pink-600 font-semibold">ACOG 2022 Guidelines</span>
+                  <span className="text-pink-600 font-semibold">{t('calculators.gdm_screening.acog_2022_guidelines')}</span>
                 </div>
               </div>
             </div>
@@ -559,8 +622,8 @@ const GDMScreeningCalculator: React.FC = () => {
 
       <TabsContent value="about" className="space-y-6">
         <CalculatorContainer
-          title="About the GDM Screening Calculator"
-          subtitle="Evidence-Based Risk Assessment • ACOG Guidelines • Clinical Documentation"
+          title={t('calculators.gdm_screening.about_title')}
+          subtitle={t('calculators.gdm_screening.about_subtitle')}
           icon={TestTube}
           gradient="obgyn"
           className="max-w-5xl mx-auto"
@@ -572,11 +635,9 @@ const GDMScreeningCalculator: React.FC = () => {
                   <Stethoscope className="w-6 h-6 text-pink-600 dark:text-pink-400" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-pink-800 dark:text-pink-200 mb-3">Clinical Purpose</h3>
+                  <h3 className="text-xl font-bold text-pink-800 dark:text-pink-200 mb-3">{t('calculators.gdm_screening.clinical_purpose')}</h3>
                   <p className="text-pink-700 dark:text-pink-300 leading-relaxed">
-                    The GDM Screening Calculator provides evidence-based risk assessment for gestational diabetes mellitus 
-                    using clinical risk factors and patient characteristics. It guides personalized screening timing and 
-                    methodology per ACOG guidelines and international recommendations.
+                    {t('calculators.gdm_screening.clinical_purpose_description')}
                   </p>
                 </div>
               </div>

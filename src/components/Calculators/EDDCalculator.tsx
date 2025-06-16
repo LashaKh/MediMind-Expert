@@ -47,7 +47,7 @@ export const EDDCalculator: React.FC = () => {
 
     // At least one dating method must be provided
     if (!formData.lmpDate && !formData.firstTrimesterCRL && !formData.artTransferDate) {
-      newErrors.general = t('calculators.edd_calculator.general_error');
+      newErrors.general = t('calculators.edd.general_error');
     }
 
     // LMP validation
@@ -57,9 +57,9 @@ export const EDDCalculator: React.FC = () => {
       const daysDiff = Math.floor((today.getTime() - lmpDate.getTime()) / (1000 * 60 * 60 * 24));
       
       if (daysDiff < 0) {
-        newErrors.lmpDate = t('calculators.edd_calculator.lmp_date_error');
+        newErrors.lmpDate = t('calculators.edd.lmp_date_error');
       } else if (daysDiff > 300) {
-        newErrors.lmpDate = t('calculators.edd_calculator.lmp_date_far_past_error');
+        newErrors.lmpDate = t('calculators.edd.lmp_date_far_past_error');
       }
     }
 
@@ -67,18 +67,18 @@ export const EDDCalculator: React.FC = () => {
     if (formData.firstTrimesterCRL) {
       const crl = parseFloat(formData.firstTrimesterCRL);
       if (isNaN(crl) || crl < 15 || crl > 95) {
-        newErrors.firstTrimesterCRL = t('calculators.edd_calculator.first_trimester_crl_error');
+        newErrors.firstTrimesterCRL = t('calculators.edd.first_trimester_crl_error');
       }
     }
 
     // ART validation
     if (formData.artTransferDate) {
       if (!formData.artDaysToTransfer) {
-        newErrors.artDaysToTransfer = t('calculators.edd_calculator.art_days_to_transfer_required');
+        newErrors.artDaysToTransfer = t('calculators.edd.art_days_to_transfer_required');
       } else {
         const days = parseInt(formData.artDaysToTransfer);
         if (isNaN(days) || days < 3 || days > 6) {
-          newErrors.artDaysToTransfer = t('calculators.edd_calculator.art_days_to_transfer_error');
+          newErrors.artDaysToTransfer = t('calculators.edd.art_days_to_transfer_error');
         }
       }
     }
@@ -87,7 +87,7 @@ export const EDDCalculator: React.FC = () => {
     if (formData.cycleDays) {
       const cycle = parseInt(formData.cycleDays);
       if (isNaN(cycle) || cycle < 21 || cycle > 35) {
-        newErrors.cycleDays = t('calculators.edd_calculator.cycle_days_error');
+        newErrors.cycleDays = t('calculators.edd.cycle_days_error');
       }
     }
 
@@ -124,7 +124,7 @@ export const EDDCalculator: React.FC = () => {
         setResult(calculationResult);
         
       } catch (error) {
-        setErrors({ calculation: error instanceof Error ? error.message : 'Calculation failed' });
+        setErrors({ calculation: error instanceof Error ? error.message : t('calculators.edd.errors.calculation_failed') });
       } finally {
         setIsCalculating(false);
       }
@@ -186,8 +186,8 @@ export const EDDCalculator: React.FC = () => {
 
       <TabsContent value="calculator">
         <CalculatorContainer
-          title={t('calculators.edd_calculator.title')}
-          subtitle={t('calculators.edd_calculator.subtitle')}
+          title={t('calculators.edd.title')}
+          subtitle={t('calculators.edd.subtitle')}
           icon={Baby}
           gradient="obgyn"
           className="max-w-5xl mx-auto"
@@ -200,13 +200,13 @@ export const EDDCalculator: React.FC = () => {
                   <Calendar className="w-6 h-6 text-pink-600 dark:text-pink-400" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-lg font-bold text-pink-800 dark:text-pink-200 mb-2">{t('calculators.edd_calculator.acog_evidence_based')}</h4>
+                  <h4 className="text-lg font-bold text-pink-800 dark:text-pink-200 mb-2">{t('calculators.edd.acog_evidence_based')}</h4>
                   <p className="text-pink-700 dark:text-pink-300 leading-relaxed">
-                    {t('calculators.edd_calculator.tool_description')}
+                    {t('calculators.edd.tool_description')}
                   </p>
                   <div className="mt-3 inline-flex items-center space-x-2 bg-pink-100 dark:bg-pink-900/30 rounded-lg px-3 py-1">
                     <Star className="w-4 h-4 text-pink-600 dark:text-pink-400" />
-                    <span className="text-xs font-semibold text-pink-700 dark:text-pink-300">ACOG Committee Opinion No. 700 - Due Date Estimation</span>
+                    <span className="text-xs font-semibold text-pink-700 dark:text-pink-300">{t('calculators.edd.about.clinical_guidelines.acog_guidelines')}</span>
                   </div>
                 </div>
               </div>
@@ -222,7 +222,7 @@ export const EDDCalculator: React.FC = () => {
                     }`}>
                       1
                     </div>
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.edd_calculator.dating_methods')}</span>
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.edd.dating_methods')}</span>
                   </div>
                   <div className={`w-16 h-1 rounded-full transition-all duration-300 ${
                     currentStep >= 2 ? 'bg-rose-500' : 'bg-gray-200'
@@ -254,9 +254,9 @@ export const EDDCalculator: React.FC = () => {
                     <div className="text-center mb-8">
                       <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20 rounded-2xl border border-pink-200 dark:border-pink-800">
                         <Calendar className="w-6 h-6 text-pink-600 dark:text-pink-400" />
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.edd_calculator.dating_methods')}</h3>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.edd.dating_methods')}</h3>
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.edd_calculator.multiple_dating_methods')}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.edd.multiple_dating_methods')}</p>
                     </div>
 
                     <div className="space-y-6">
@@ -264,35 +264,35 @@ export const EDDCalculator: React.FC = () => {
                       <div className="p-6 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl">
                         <div className="flex items-center space-x-3 mb-4">
                           <Calendar className="w-5 h-5 text-pink-600" />
-                          <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.edd_calculator.lmp_method')}</h4>
+                          <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.edd.lmp_method')}</h4>
                           <div className="flex items-center space-x-1 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg px-2 py-1">
-                            <span className="text-xs font-medium text-yellow-700 dark:text-yellow-300">{t('calculators.edd_calculator.moderate_confidence')}</span>
+                            <span className="text-xs font-medium text-yellow-700 dark:text-yellow-300">{t('calculators.edd.moderate_confidence')}</span>
                           </div>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <DatePicker
-                            label={t('calculators.edd_calculator.lmp_date_label')}
+                            label={t('calculators.edd.lmp_date_label')}
                             value={formData.lmpDate}
                             onChange={(value) => setFormData({ ...formData, lmpDate: value })}
-                            placeholder={t('calculators.edd_calculator.lmp_date_label') + '...'}
+                            placeholder={t('calculators.edd.lmp_date_label') + '...'}
                             error={errors.lmpDate}
-                            helpText={t('calculators.edd_calculator.lmp_date_help')}
+                            helpText={t('calculators.edd.lmp_date_help')}
                             icon={Calendar}
                             maxDate={new Date().toISOString().split('T')[0]}
                             required={!formData.firstTrimesterCRL && !formData.artTransferDate}
                           />
 
                           <CalculatorInput
-                            label={t('calculators.edd_calculator.cycle_days_label')}
+                            label={t('calculators.edd.cycle_days_label')}
                             value={formData.cycleDays}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cycleDays: e.target.value })}
                             type="number"
                             placeholder="28"
                             min={21}
                             max={35}
-                            unit={t('calculators.edd_calculator.cycle_days_unit')}
-                            helpText={t('calculators.edd_calculator.cycle_days_help')}
+                            unit={t('calculators.edd.cycle_days_unit')}
+                            helpText={t('calculators.edd.cycle_days_help')}
                             icon={Clock}
                           />
                         </div>
@@ -302,24 +302,24 @@ export const EDDCalculator: React.FC = () => {
                       <div className="p-6 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl">
                         <div className="flex items-center space-x-3 mb-4">
                           <Activity className="w-5 h-5 text-green-600" />
-                          <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.edd_calculator.ultrasound_method')}</h4>
+                          <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.edd.ultrasound_method')}</h4>
                           <div className="flex items-center space-x-1 bg-green-100 dark:bg-green-900/30 rounded-lg px-2 py-1">
-                            <span className="text-xs font-medium text-green-700 dark:text-green-300">{t('calculators.edd_calculator.high_confidence')}</span>
+                            <span className="text-xs font-medium text-green-700 dark:text-green-300">{t('calculators.edd.high_confidence')}</span>
                           </div>
                         </div>
                         
                         <CalculatorInput
-                          label={t('calculators.edd_calculator.first_trimester_crl_label')}
+                          label={t('calculators.edd.first_trimester_crl_label')}
                           value={formData.firstTrimesterCRL}
                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, firstTrimesterCRL: e.target.value })}
                           type="number"
                           placeholder="45"
                           min={15}
                           max={95}
-                          unit={t('calculators.edd_calculator.first_trimester_crl_unit')}
+                          unit={t('calculators.edd.first_trimester_crl_unit')}
                           step={0.1}
                           error={errors.firstTrimesterCRL}
-                          helpText={t('calculators.edd_calculator.first_trimester_crl_help')}
+                          helpText={t('calculators.edd.first_trimester_crl_help')}
                           icon={Activity}
                         />
                       </div>
@@ -328,34 +328,34 @@ export const EDDCalculator: React.FC = () => {
                       <div className="p-6 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl">
                         <div className="flex items-center space-x-3 mb-4">
                           <BarChart3 className="w-5 h-5 text-blue-600" />
-                          <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.edd_calculator.art_method')}</h4>
+                          <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.edd.art_method')}</h4>
                           <div className="flex items-center space-x-1 bg-green-100 dark:bg-green-900/30 rounded-lg px-2 py-1">
-                            <span className="text-xs font-medium text-green-700 dark:text-green-300">{t('calculators.edd_calculator.high_confidence')}</span>
+                            <span className="text-xs font-medium text-green-700 dark:text-green-300">{t('calculators.edd.high_confidence')}</span>
                           </div>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <DatePicker
-                            label={t('calculators.edd_calculator.art_transfer_date_label')}
+                            label={t('calculators.edd.art_transfer_date_label')}
                             value={formData.artTransferDate}
                             onChange={(value) => setFormData({ ...formData, artTransferDate: value })}
-                            placeholder={t('calculators.edd_calculator.art_transfer_date_label') + '...'}
+                            placeholder={t('calculators.edd.art_transfer_date_label') + '...'}
                             error={errors.artTransferDate}
-                            helpText={t('calculators.edd_calculator.art_transfer_date_help')}
+                            helpText={t('calculators.edd.art_transfer_date_help')}
                             icon={Calendar}
                             maxDate={new Date().toISOString().split('T')[0]}
                             required={!formData.lmpDate && !formData.firstTrimesterCRL}
                           />
 
                           <CalculatorSelect
-                            label={t('calculators.edd_calculator.art_days_to_transfer_label')}
+                            label={t('calculators.edd.art_days_to_transfer_label')}
                             value={formData.artDaysToTransfer}
                             onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, artDaysToTransfer: e.target.value })}
                             options={[
-                              { value: '', label: t('calculators.edd_calculator.art_days_to_transfer_label') + '...' },
-                              { value: '3', label: t('calculators.edd_calculator.day_3_cleavage') },
-                              { value: '5', label: t('calculators.edd_calculator.day_5_blastocyst') },
-                              { value: '6', label: t('calculators.edd_calculator.day_6_expanded_blastocyst') },
+                              { value: '', label: t('calculators.edd.art_days_to_transfer_label') + '...' },
+                              { value: '3', label: t('calculators.edd.day_3_cleavage') },
+                              { value: '5', label: t('calculators.edd.day_5_blastocyst') },
+                              { value: '6', label: t('calculators.edd.day_6_expanded_blastocyst') },
                             ]}
                             error={errors.artDaysToTransfer}
                             icon={BarChart3}
@@ -379,7 +379,7 @@ export const EDDCalculator: React.FC = () => {
                         disabled={!formData.lmpDate && !formData.firstTrimesterCRL && !formData.artTransferDate}
                         className="enhanced-calculator-button"
                       >
-                        {t('calculators.edd_calculator.next_clinical_review')}
+                        {t('calculators.edd.next_clinical_review')}
                       </CalculatorButton>
                     </div>
                   </div>
@@ -391,15 +391,15 @@ export const EDDCalculator: React.FC = () => {
                     <div className="text-center mb-8">
                       <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-rose-50 to-purple-50 dark:from-rose-900/20 dark:to-purple-900/20 rounded-2xl border border-rose-200 dark:border-rose-800">
                         <Stethoscope className="w-6 h-6 text-rose-600 dark:text-rose-400" />
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.edd_calculator.clinical_data_review')}</h3>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.edd.clinical_data_review')}</h3>
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.edd_calculator.review_dating_parameters')}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.edd.review_dating_parameters')}</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* Dating Method Summary */}
                       <div className="p-6 bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20 border border-pink-200 dark:border-pink-800 rounded-xl">
-                        <h4 className="font-semibold text-pink-800 dark:text-pink-200 mb-4">{t('calculators.edd_calculator.selected_dating_method')}</h4>
+                        <h4 className="font-semibold text-pink-800 dark:text-pink-200 mb-4">{t('calculators.edd.selected_dating_method')}</h4>
                         <div className="space-y-3">
                           {formData.lmpDate && (
                             <div className="flex items-center space-x-2">
@@ -430,24 +430,24 @@ export const EDDCalculator: React.FC = () => {
 
                       {/* Dating Accuracy Information */}
                       <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
-                        <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-4">{t('calculators.edd_calculator.expected_accuracy')}</h4>
+                        <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-4">{t('calculators.edd.expected_accuracy')}</h4>
                         <div className="space-y-2 text-sm">
                           {formData.firstTrimesterCRL && (
                             <div className="flex items-center space-x-2">
                               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                              <span className="text-green-700 dark:text-green-300">{t('calculators.edd_calculator.ultrasound_crl_accuracy')}</span>
+                              <span className="text-green-700 dark:text-green-300">{t('calculators.edd.ultrasound_crl_accuracy')}</span>
                             </div>
                           )}
                           {formData.artTransferDate && (
                             <div className="flex items-center space-x-2">
                               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                              <span className="text-green-700 dark:text-green-300">{t('calculators.edd_calculator.art_dating_accuracy')}</span>
+                              <span className="text-green-700 dark:text-green-300">{t('calculators.edd.art_dating_accuracy')}</span>
                             </div>
                           )}
                           {formData.lmpDate && (
                             <div className="flex items-center space-x-2">
                               <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                              <span className="text-yellow-700 dark:text-yellow-300">{t('calculators.edd_calculator.lmp_dating_accuracy')}</span>
+                              <span className="text-yellow-700 dark:text-yellow-300">{t('calculators.edd.lmp_dating_accuracy')}</span>
                             </div>
                           )}
                         </div>
@@ -458,13 +458,13 @@ export const EDDCalculator: React.FC = () => {
                     <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-xl p-6">
                       <div className="flex items-center space-x-3 mb-4">
                         <Award className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                        <h4 className="font-semibold text-purple-800 dark:text-purple-200">{t('calculators.edd_calculator.acog_guidelines')}</h4>
+                        <h4 className="font-semibold text-purple-800 dark:text-purple-200">{t('calculators.edd.acog_guidelines')}</h4>
                       </div>
                       <div className="text-sm text-purple-700 dark:text-purple-300 space-y-2">
-                        <p>{t('calculators.edd_calculator.acog_guideline_1')}</p>
-                        <p>{t('calculators.edd_calculator.acog_guideline_2')}</p>
-                        <p>{t('calculators.edd_calculator.acog_guideline_3')}</p>
-                        <p>{t('calculators.edd_calculator.acog_guideline_4')}</p>
+                        <p>{t('calculators.edd.acog_guideline_1')}</p>
+                        <p>{t('calculators.edd.acog_guideline_2')}</p>
+                        <p>{t('calculators.edd.acog_guideline_3')}</p>
+                        <p>{t('calculators.edd.acog_guideline_4')}</p>
                       </div>
                     </div>
 
@@ -473,7 +473,7 @@ export const EDDCalculator: React.FC = () => {
                         onClick={() => setCurrentStep(1)}
                         variant="outline"
                       >
-                        {t('calculators.edd_calculator.back')}
+                        {t('calculators.edd.back')}
                       </CalculatorButton>
                       <CalculatorButton
                         onClick={handleCalculate}
@@ -482,7 +482,7 @@ export const EDDCalculator: React.FC = () => {
                         size="lg"
                         className="enhanced-calculator-button"
                       >
-                        {t('calculators.edd_calculator.calculate_due_date')}
+                        {t('calculators.edd.calculate_due_date')}
                       </CalculatorButton>
                     </div>
                   </div>
@@ -492,7 +492,7 @@ export const EDDCalculator: React.FC = () => {
               /* Results Display */
               <div className="space-y-8 animate-scaleIn">
                 <ResultsDisplay
-                  title={t('calculators.edd_calculator.edd_analysis')}
+                  title={t('calculators.edd.edd_analysis')}
                   value={formatDate(String(result.value))}
                   category={result.confidence === 'moderate' ? 'intermediate' : result.confidence as 'low' | 'high'}
                   interpretation={result.interpretation}
@@ -502,10 +502,10 @@ export const EDDCalculator: React.FC = () => {
                   <div className="mb-6 p-4 bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800 rounded-xl">
                     <div className="flex items-center space-x-2 mb-2">
                       <Star className="w-5 h-5 text-pink-600 dark:text-pink-400" />
-                      <span className="font-semibold text-pink-800 dark:text-pink-200">{t('calculators.edd_calculator.dating_method_label')} {result.method}</span>
+                      <span className="font-semibold text-pink-800 dark:text-pink-200">{t('calculators.edd.dating_method_label')} {result.method}</span>
                     </div>
                     <div className={`inline-flex items-center space-x-1 rounded-lg px-3 py-1 ${getConfidenceColor(result.confidence)}`}>
-                      <span className="text-xs font-semibold">{t('calculators.edd_calculator.confidence_label')} {result.confidence.charAt(0).toUpperCase() + result.confidence.slice(1)}</span>
+                      <span className="text-xs font-semibold">{t('calculators.edd.confidence_label')} {result.confidence.charAt(0).toUpperCase() + result.confidence.slice(1)}</span>
                     </div>
                   </div>
 
@@ -514,19 +514,19 @@ export const EDDCalculator: React.FC = () => {
                     <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
                       <div className="flex items-center space-x-3 mb-3">
                         <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                        <h4 className="font-semibold text-blue-800 dark:text-blue-200">{t('calculators.edd_calculator.estimated_due_date')}</h4>
+                        <h4 className="font-semibold text-blue-800 dark:text-blue-200">{t('calculators.edd.estimated_due_date')}</h4>
                       </div>
                       <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{formatDate(String(result.value))}</p>
-                      <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">{t('calculators.edd_calculator.forty_weeks_gestation')}</p>
+                      <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">{t('calculators.edd.forty_weeks_gestation')}</p>
                     </div>
 
                     <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 rounded-xl">
                       <div className="flex items-center space-x-3 mb-3">
                         <Target className="w-6 h-6 text-green-600 dark:text-green-400" />
-                        <h4 className="font-semibold text-green-800 dark:text-green-200">{t('calculators.edd_calculator.current_status')}</h4>
+                        <h4 className="font-semibold text-green-800 dark:text-green-200">{t('calculators.edd.current_status')}</h4>
                       </div>
                       <p className="text-2xl font-bold text-green-900 dark:text-green-100">{result.currentGA}</p>
-                      <p className="text-sm text-green-600 dark:text-green-400 mt-1">{t('calculators.edd_calculator.current_gestational_age')}</p>
+                      <p className="text-sm text-green-600 dark:text-green-400 mt-1">{t('calculators.edd.current_gestational_age')}</p>
                     </div>
                   </div>
 
@@ -534,7 +534,7 @@ export const EDDCalculator: React.FC = () => {
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3">
                       <Stethoscope className="w-5 h-5 text-blue-500" />
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.edd_calculator.clinical_recommendations')}</h4>
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.edd.clinical_recommendations')}</h4>
                     </div>
                     <div className={`p-6 rounded-2xl border-2 ${getRiskBgColor(result.confidence)}`}>
                       <div className="space-y-3">
@@ -552,7 +552,7 @@ export const EDDCalculator: React.FC = () => {
                   <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-xl p-4">
                     <div className="flex items-center space-x-3 mb-3">
                       <Award className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                      <h4 className="font-semibold text-purple-800 dark:text-purple-200">{t('calculators.edd_calculator.evidence_base')}</h4>
+                      <h4 className="font-semibold text-purple-800 dark:text-purple-200">{t('calculators.edd.evidence_base')}</h4>
                     </div>
                     <div className="text-sm text-purple-700 dark:text-purple-300 space-y-1">
                       {result.references.map((ref, index) => (
@@ -570,21 +570,21 @@ export const EDDCalculator: React.FC = () => {
                     size="lg"
                     icon={Calculator}
                   >
-                    {t('calculators.edd_calculator.new_assessment')}
+                    {t('calculators.edd.new_assessment')}
                   </CalculatorButton>
                   <CalculatorButton
                     onClick={() => setResult(null)}
                     variant="secondary"
                     size="lg"
                   >
-                    {t('calculators.edd_calculator.modify_inputs')}
+                    {t('calculators.edd.modify_inputs')}
                   </CalculatorButton>
                 </div>
 
                 {/* Result Sharing */}
                 <div className="mt-6">
                   <CalculatorResultShare
-                    calculatorName="EDD Calculator"
+                    calculatorName={t('calculators.edd.name')}
                     calculatorId="edd-calculator"
                     results={{
                       estimatedDueDate: formatDate(String(result.value)),
@@ -604,10 +604,10 @@ export const EDDCalculator: React.FC = () => {
             <div className="text-center pt-8 border-t border-white/20 dark:border-gray-800/20">
               <div className="flex items-center justify-center space-x-3 text-sm text-gray-600 dark:text-gray-400">
                 <Info className="w-4 h-4" />
-                <span>{t('calculators.edd_calculator.based_on_acog_700')} • {t('calculators.edd_calculator.educational_purposes_only')}</span>
+                <span>{t('calculators.edd.based_on_acog_700')} • {t('calculators.edd.educational_purposes_only')}</span>
                 <div className="flex items-center space-x-1">
                   <Star className="w-4 h-4 text-pink-600" />
-                  <span className="text-pink-600 font-semibold">{t('calculators.edd_calculator.acog_2017_guidelines')}</span>
+                  <span className="text-pink-600 font-semibold">{t('calculators.edd.acog_2017_guidelines')}</span>
                 </div>
               </div>
             </div>
@@ -617,8 +617,8 @@ export const EDDCalculator: React.FC = () => {
 
       <TabsContent value="about" className="space-y-6">
         <CalculatorContainer
-          title={t('calculators.edd_calculator.about_edd_calculator')}
-          subtitle={t('calculators.edd_calculator.about_subtitle')}
+          title={t('calculators.edd.about_edd_calculator')}
+          subtitle={t('calculators.edd.about_subtitle')}
           icon={Baby}
           gradient="obgyn"
           className="max-w-5xl mx-auto"
@@ -631,9 +631,9 @@ export const EDDCalculator: React.FC = () => {
                   <Stethoscope className="w-6 h-6 text-pink-600 dark:text-pink-400" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-pink-800 dark:text-pink-200 mb-3">{t('calculators.edd_calculator.clinical_purpose')}</h3>
+                  <h3 className="text-xl font-bold text-pink-800 dark:text-pink-200 mb-3">{t('calculators.edd.clinical_purpose')}</h3>
                   <p className="text-pink-700 dark:text-pink-300 leading-relaxed">
-                    {t('calculators.edd_calculator.clinical_purpose_description')}
+                    {t('calculators.edd.clinical_purpose_description')}
                   </p>
                 </div>
               </div>
@@ -642,8 +642,8 @@ export const EDDCalculator: React.FC = () => {
             {/* Dating Methods */}
             <div className="space-y-6">
               <div className="text-center">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('calculators.edd_calculator.evidence_based_dating_methods')}</h3>
-                <p className="text-gray-600 dark:text-gray-400">{t('calculators.edd_calculator.multiple_approaches_accuracy')}</p>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{t('calculators.edd.evidence_based_dating_methods')}</h3>
+                <p className="text-gray-600 dark:text-gray-400">{t('calculators.edd.multiple_approaches_accuracy')}</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -653,19 +653,19 @@ export const EDDCalculator: React.FC = () => {
                     <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
                       <Calendar className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
                     </div>
-                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.edd_calculator.last_menstrual_period_lmp')}</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.edd.last_menstrual_period_lmp')}</h4>
                   </div>
                   <div className="space-y-3">
                     <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg px-3 py-2">
-                      <span className="text-xs font-medium text-yellow-700 dark:text-yellow-300">{t('calculators.edd_calculator.moderate_accuracy_days')}</span>
+                      <span className="text-xs font-medium text-yellow-700 dark:text-yellow-300">{t('calculators.edd.moderate_accuracy_days')}</span>
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {t('calculators.edd_calculator.naegele_rule_description')}
+                      {t('calculators.edd.naegele_rule_description')}
                     </p>
                     <ul className="text-xs text-gray-500 dark:text-gray-500 space-y-1">
-                      <li>{t('calculators.edd_calculator.standard_28_day_cycle')}</li>
-                      <li>{t('calculators.edd_calculator.cycle_length_adjustments')}</li>
-                      <li>{t('calculators.edd_calculator.requires_accurate_lmp')}</li>
+                      <li>{t('calculators.edd.standard_28_day_cycle')}</li>
+                      <li>{t('calculators.edd.cycle_length_adjustments')}</li>
+                      <li>{t('calculators.edd.requires_accurate_lmp')}</li>
                     </ul>
                   </div>
                 </div>
@@ -676,19 +676,19 @@ export const EDDCalculator: React.FC = () => {
                     <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
                       <Activity className="w-5 h-5 text-green-600 dark:text-green-400" />
                     </div>
-                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.edd_calculator.ultrasound_method')}</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.edd.ultrasound_method')}</h4>
                   </div>
                   <div className="space-y-3">
                     <div className="bg-green-50 dark:bg-green-900/20 rounded-lg px-3 py-2">
-                      <span className="text-xs font-medium text-green-700 dark:text-green-300">{t('calculators.edd_calculator.high_confidence_accuracy')}</span>
+                      <span className="text-xs font-medium text-green-700 dark:text-green-300">{t('calculators.edd.high_confidence_accuracy')}</span>
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {t('calculators.edd_calculator.crl_most_accurate')}
+                      {t('calculators.edd.crl_most_accurate')}
                     </p>
                     <ul className="text-xs text-gray-500 dark:text-gray-500 space-y-1">
-                      <li>{t('calculators.edd_calculator.crl_range_weeks')}</li>
-                      <li>{t('calculators.edd_calculator.robinson_fleming_formula')}</li>
-                      <li>{t('calculators.edd_calculator.gold_standard_dating')}</li>
+                      <li>{t('calculators.edd.crl_range_weeks')}</li>
+                      <li>{t('calculators.edd.robinson_fleming_formula')}</li>
+                      <li>{t('calculators.edd.gold_standard_dating')}</li>
                     </ul>
                   </div>
                 </div>
@@ -699,19 +699,19 @@ export const EDDCalculator: React.FC = () => {
                     <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
                       <BarChart3 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     </div>
-                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.edd_calculator.art_method')}</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.edd.art_method')}</h4>
                   </div>
                   <div className="space-y-3">
                     <div className="bg-green-50 dark:bg-green-900/20 rounded-lg px-3 py-2">
-                      <span className="text-xs font-medium text-green-700 dark:text-green-300">{t('calculators.edd_calculator.high_confidence_accuracy')}</span>
+                      <span className="text-xs font-medium text-green-700 dark:text-green-300">{t('calculators.edd.high_confidence_accuracy')}</span>
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {t('calculators.edd_calculator.highly_accurate_known_conception')}
+                      {t('calculators.edd.highly_accurate_known_conception')}
                     </p>
                     <ul className="text-xs text-gray-500 dark:text-gray-500 space-y-1">
-                      <li>{t('calculators.edd_calculator.transfer_day_options')}</li>
-                      <li>{t('calculators.edd_calculator.known_conception_timing')}</li>
-                      <li>{t('calculators.edd_calculator.precise_developmental_stage')}</li>
+                      <li>{t('calculators.edd.transfer_day_options')}</li>
+                      <li>{t('calculators.edd.known_conception_timing')}</li>
+                      <li>{t('calculators.edd.precise_developmental_stage')}</li>
                     </ul>
                   </div>
                 </div>
@@ -725,24 +725,24 @@ export const EDDCalculator: React.FC = () => {
                   <Award className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-purple-800 dark:text-purple-200 mb-4">{t('calculators.edd_calculator.clinical_guidelines_evidence')}</h3>
+                  <h3 className="text-xl font-bold text-purple-800 dark:text-purple-200 mb-4">{t('calculators.edd.clinical_guidelines_evidence')}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <h4 className="font-semibold text-purple-700 dark:text-purple-300 mb-2">{t('calculators.edd_calculator.acog_guidelines_section')}</h4>
+                      <h4 className="font-semibold text-purple-700 dark:text-purple-300 mb-2">{t('calculators.edd.acog_guidelines_section')}</h4>
                       <ul className="space-y-1 text-sm text-purple-600 dark:text-purple-400">
-                        <li>{t('calculators.edd_calculator.acog_committee_700')}</li>
-                        <li>{t('calculators.edd_calculator.acog_practice_175')}</li>
-                        <li>{t('calculators.edd_calculator.first_trimester_preferred')}</li>
-                        <li>{t('calculators.edd_calculator.discrepancy_ultrasound')}</li>
+                        <li>{t('calculators.edd.acog_committee_700')}</li>
+                        <li>{t('calculators.edd.acog_practice_175')}</li>
+                        <li>{t('calculators.edd.first_trimester_preferred')}</li>
+                        <li>{t('calculators.edd.discrepancy_ultrasound')}</li>
                       </ul>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-purple-700 dark:text-purple-300 mb-2">{t('calculators.edd_calculator.clinical_applications')}</h4>
+                      <h4 className="font-semibold text-purple-700 dark:text-purple-300 mb-2">{t('calculators.edd.clinical_applications')}</h4>
                       <ul className="space-y-1 text-sm text-purple-600 dark:text-purple-400">
-                        <li>{t('calculators.edd_calculator.prenatal_care_scheduling')}</li>
-                        <li>{t('calculators.edd_calculator.screening_test_timing')}</li>
-                        <li>{t('calculators.edd_calculator.labor_delivery_planning')}</li>
-                        <li>{t('calculators.edd_calculator.fetal_growth_baselines')}</li>
+                        <li>{t('calculators.edd.prenatal_care_scheduling')}</li>
+                        <li>{t('calculators.edd.screening_test_timing')}</li>
+                        <li>{t('calculators.edd.labor_delivery_planning')}</li>
+                        <li>{t('calculators.edd.fetal_growth_baselines')}</li>
                       </ul>
                     </div>
                   </div>
@@ -757,19 +757,19 @@ export const EDDCalculator: React.FC = () => {
                   <AlertTriangle className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-amber-800 dark:text-amber-200 mb-3">{t('calculators.edd_calculator.important_clinical_considerations')}</h3>
+                  <h3 className="text-xl font-bold text-amber-800 dark:text-amber-200 mb-3">{t('calculators.edd.important_clinical_considerations')}</h3>
                   <div className="space-y-3">
                     <p className="text-amber-700 dark:text-amber-300 leading-relaxed">
-                      {t('calculators.edd_calculator.clinical_calculator_notice')}
+                      {t('calculators.edd.clinical_calculator_notice')}
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                       <div className="bg-amber-100 dark:bg-amber-900/30 rounded-lg p-3">
-                        <h4 className="font-semibold text-amber-800 dark:text-amber-200 text-sm mb-1">{t('calculators.edd_calculator.statistical_reality')}</h4>
-                        <p className="text-xs text-amber-600 dark:text-amber-400">{t('calculators.edd_calculator.five_percent_exact_date')}</p>
+                        <h4 className="font-semibold text-amber-800 dark:text-amber-200 text-sm mb-1">{t('calculators.edd.statistical_reality')}</h4>
+                        <p className="text-xs text-amber-600 dark:text-amber-400">{t('calculators.edd.five_percent_exact_date')}</p>
                       </div>
                       <div className="bg-amber-100 dark:bg-amber-900/30 rounded-lg p-3">
-                        <h4 className="font-semibold text-amber-800 dark:text-amber-200 text-sm mb-1">{t('calculators.edd_calculator.clinical_range')}</h4>
-                        <p className="text-xs text-amber-600 dark:text-amber-400">{t('calculators.edd_calculator.normal_delivery_weeks')}</p>
+                        <h4 className="font-semibold text-amber-800 dark:text-amber-200 text-sm mb-1">{t('calculators.edd.clinical_range')}</h4>
+                        <p className="text-xs text-amber-600 dark:text-amber-400">{t('calculators.edd.normal_delivery_weeks')}</p>
                       </div>
                     </div>
                   </div>
@@ -781,10 +781,10 @@ export const EDDCalculator: React.FC = () => {
             <div className="text-center pt-6 border-t border-pink-200 dark:border-pink-800">
               <div className="flex items-center justify-center space-x-3 text-sm text-gray-600 dark:text-gray-400">
                 <Info className="w-4 h-4" />
-                <span>{t('calculators.edd_calculator.based_on_acog_700')} • {t('calculators.edd_calculator.educational_purposes_only')}</span>
+                <span>{t('calculators.edd.based_on_acog_700')} • {t('calculators.edd.educational_purposes_only')}</span>
                 <div className="flex items-center space-x-1">
                   <Star className="w-4 h-4 text-pink-600" />
-                  <span className="text-pink-600 font-semibold">{t('calculators.edd_calculator.acog_2017_guidelines')}</span>
+                  <span className="text-pink-600 font-semibold">{t('calculators.edd.acog_2017_guidelines')}</span>
                 </div>
               </div>
             </div>

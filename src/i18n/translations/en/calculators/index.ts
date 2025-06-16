@@ -1,13 +1,29 @@
 import common from './common';
 import cardiology from './cardiology';
-import obgyn from './obgyn';
 import eurscoreII from './euroscore-ii';
+import hcmRiskSCD from './hcm-risk-scd';
+import hcmAFRisk from './hcm-af-risk';
+import { 
+  gestationalAgeCalculator,
+  eddCalculator,
+  preeclampsiaRiskCalculator,
+  pretermBirthRiskCalculator,
+  gdmScreeningCalculator,
+  bishopScoreCalculator
+} from './ObGyn';
 
 export default {
   common,
   cardiology,
-  obgyn,
   eurscoreII,
+  
+  // Individual OB/GYN calculators with direct access
+  gestational_age: gestationalAgeCalculator,
+  edd: eddCalculator,
+  preeclampsia_risk: preeclampsiaRiskCalculator,
+  preterm_birth_risk: pretermBirthRiskCalculator,
+  gdm_screening: gdmScreeningCalculator,
+  bishop_score: bishopScoreCalculator,
   
   // Top-level keys for Calculator landing page
   specialty: {
@@ -112,21 +128,16 @@ export default {
     subtitle: 'European System for Cardiac Operative Risk Evaluation'
   },
   
-  hcm_risk_scd: {
-    title: 'HCM Risk-SCD Calculator',
-    subtitle: 'Sudden Cardiac Death Risk in Hypertrophic Cardiomyopathy'
-  },
+  hcm_risk_scd: hcmRiskSCD,
   
-  hcm_af_risk: {
-    title: 'HCM-AFR Calculator',
-    subtitle: 'Atrial Fibrillation Risk in Hypertrophic Cardiomyopathy'
-  },
+  hcmAFRisk,
+  hcm_af_risk: hcmAFRisk,
   
   categories_label: 'Categories',
   calculator_categories: 'Calculator Categories',
   back_to: 'Back to',
   view_grid: 'Grid',
-  view_list: 'List'
+  view_list: 'List',
 };
 
 export {

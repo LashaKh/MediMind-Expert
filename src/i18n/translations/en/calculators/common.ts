@@ -104,5 +104,19 @@ export default {
   diagnosis: 'Diagnosis',
   treatment: 'Treatment',
   prognosis: 'Prognosis',
-  followUp: 'Follow-up'
+  followUp: 'Follow-up',
+
+  miscellaneous: "Other",
+  
+  // Calculator Result Share Component
+  calculator_results_summary: "Calculator Results Summary",
+  shared: "Shared",
+  sharing: "Sharing...",
+  share_with_ai: "Share with AI",
+  key_results: "Key Results:",
+  clinical_interpretation_label: "Clinical Interpretation:",
+  recommendations_label: "Recommendations:",
+  more_recommendations: "more recommendations",
+  universal_recommendations: "Universal Recommendations",
+  share_results_description: "Share these results with your AI Co-Pilot for detailed analysis and next steps"
 }; 

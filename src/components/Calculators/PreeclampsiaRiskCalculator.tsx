@@ -13,6 +13,7 @@ import {
 import { CalculatorResultShare } from './CalculatorResultShare';
 import { calculatePreeclampsiaRisk, validateOBGYNInput } from '../../services/obgynCalculatorService';
 import { PreeclampsiaRiskInput, PreeclampsiaRiskResult } from '../../types/obgyn-calculators';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface FormData {
   maternalAge: string;
@@ -30,6 +31,7 @@ interface FormData {
 }
 
 export const PreeclampsiaRiskCalculator: React.FC = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('calculator');
   const [formData, setFormData] = useState<FormData>({
     maternalAge: '',
@@ -56,21 +58,21 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
 
     // Maternal age validation
     if (!formData.maternalAge) {
-      newErrors.maternalAge = 'Maternal age is required';
+      newErrors.maternalAge = t('calculators.preeclampsia_risk.maternal_age_error');
     } else {
       const age = parseInt(formData.maternalAge);
-      if (isNaN(age) || age < 12 || age > 55) {
-        newErrors.maternalAge = 'Maternal age must be between 12-55 years';
+      if (isNaN(age) || age < 15 || age > 50) {
+        newErrors.maternalAge = t('calculators.preeclampsia_risk.maternal_age_error');
       }
     }
 
     // BMI validation
     if (!formData.bmi) {
-      newErrors.bmi = 'BMI is required';
+      newErrors.bmi = t('calculators.preeclampsia_risk.maternal_bmi_error');
     } else {
       const bmi = parseFloat(formData.bmi);
-      if (isNaN(bmi) || bmi < 15 || bmi > 60) {
-        newErrors.bmi = 'BMI must be between 15-60 kg/m²';
+      if (isNaN(bmi) || bmi < 15 || bmi > 50) {
+        newErrors.bmi = t('calculators.preeclampsia_risk.maternal_bmi_error');
       }
     }
 
@@ -78,14 +80,14 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
     if (formData.meanArterialPressure) {
       const map = parseFloat(formData.meanArterialPressure);
       if (isNaN(map) || map < 60 || map > 150) {
-        newErrors.meanArterialPressure = 'Mean arterial pressure must be between 60-150 mmHg';
+        newErrors.meanArterialPressure = t('calculators.preeclampsia_risk.mean_arterial_pressure_error');
       }
     }
 
     if (formData.uterineArteryPI) {
       const pi = parseFloat(formData.uterineArteryPI);
       if (isNaN(pi) || pi < 0.5 || pi > 3.0) {
-        newErrors.uterineArteryPI = 'Uterine artery PI must be between 0.5-3.0';
+        newErrors.uterineArteryPI = t('calculators.preeclampsia_risk.uterine_artery_pi_error');
       }
     }
 
@@ -129,7 +131,7 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
         setResult(calculationResult);
         
       } catch (error) {
-        setErrors({ calculation: error instanceof Error ? error.message : 'Calculation failed' });
+        setErrors({ calculation: error instanceof Error ? error.message : t('calculators.preeclampsia_risk.calculation_failed') });
       } finally {
         setIsCalculating(false);
       }
@@ -184,14 +186,14 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="calculator">Calculator</TabsTrigger>
-        <TabsTrigger value="about">About</TabsTrigger>
+        <TabsTrigger value="calculator">{t('calculators.common.calculator')}</TabsTrigger>
+        <TabsTrigger value="about">{t('calculators.common.about')}</TabsTrigger>
       </TabsList>
 
       <TabsContent value="calculator">
         <CalculatorContainer
-          title="Preeclampsia Risk Calculator"
-          subtitle="ACOG/SMFM Evidence-Based Risk Assessment • Aspirin Prophylaxis Guidance • Clinical Decision Support"
+          title={t('calculators.preeclampsia_risk.title')}
+          subtitle={t('calculators.preeclampsia_risk.subtitle')}
           icon={Heart}
           gradient="obgyn"
           className="max-w-5xl mx-auto"
@@ -204,14 +206,13 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                   <Heart className="w-6 h-6 text-pink-600 dark:text-pink-400" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-lg font-bold text-pink-800 dark:text-pink-200 mb-2">ACOG/SMFM Preeclampsia Risk Assessment</h4>
+                  <h4 className="text-lg font-bold text-pink-800 dark:text-pink-200 mb-2">{t('calculators.preeclampsia_risk.acog_evidence_based')}</h4>
                   <p className="text-pink-700 dark:text-pink-300 leading-relaxed">
-                    Evidence-based risk stratification for preeclampsia using clinical risk factors and optional biomarkers. 
-                    Provides aspirin prophylaxis recommendations per USPSTF and ACOG guidelines.
+                    {t('calculators.preeclampsia_risk.tool_description')}
                   </p>
                   <div className="mt-3 inline-flex items-center space-x-2 bg-pink-100 dark:bg-pink-900/30 rounded-lg px-3 py-1">
                     <Star className="w-4 h-4 text-pink-600 dark:text-pink-400" />
-                    <span className="text-xs font-semibold text-pink-700 dark:text-pink-300">ACOG Practice Bulletin No. 222 - Preeclampsia Risk Assessment</span>
+                    <span className="text-xs font-semibold text-pink-700 dark:text-pink-300">{t('calculators.preeclampsia_risk.acog_committee_reference')}</span>
                   </div>
                 </div>
               </div>
@@ -227,7 +228,7 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                     }`}>
                       1
                     </div>
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Risk Factors</span>
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.preeclampsia_risk.progress.step_1')}</span>
                   </div>
                   <div className={`w-16 h-1 rounded-full transition-all duration-300 ${
                     currentStep >= 2 ? 'bg-rose-500' : 'bg-gray-200'
@@ -238,7 +239,7 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                     }`}>
                       2
                     </div>
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Clinical Parameters</span>
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.preeclampsia_risk.progress.step_2')}</span>
                   </div>
                   <div className={`w-16 h-1 rounded-full transition-all duration-300 ${
                     currentStep >= 3 ? 'bg-purple-500' : 'bg-gray-200'
@@ -249,7 +250,7 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                     }`}>
                       3
                     </div>
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Assessment</span>
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.preeclampsia_risk.progress.step_3')}</span>
                   </div>
                 </div>
 
@@ -259,9 +260,9 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                     <div className="text-center mb-8">
                       <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20 rounded-2xl border border-pink-200 dark:border-pink-800">
                         <User className="w-6 h-6 text-pink-600 dark:text-pink-400" />
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Risk Factor Assessment</h3>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.preeclampsia_risk.risk_methods')}</h3>
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Identify major and moderate risk factors for preeclampsia</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.preeclampsia_risk.multiple_risk_factors')}</p>
                     </div>
 
                     <div className="space-y-6">
@@ -269,36 +270,36 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                       <div className="p-6 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl">
                         <div className="flex items-center space-x-3 mb-4">
                           <User className="w-5 h-5 text-blue-600" />
-                          <h4 className="font-semibold text-gray-900 dark:text-gray-100">Patient Demographics</h4>
+                          <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.preeclampsia_risk.maternal_characteristics')}</h4>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <CalculatorInput
-                            label="Maternal Age"
+                            label={t('calculators.preeclampsia_risk.maternal_age_label')}
                             value={formData.maternalAge}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, maternalAge: e.target.value })}
                             type="number"
                             placeholder="25"
-                            min={12}
-                            max={55}
-                            unit="years"
+                            min={15}
+                            max={50}
+                            unit={t('calculators.preeclampsia_risk.years_unit')}
                             error={errors.maternalAge}
-                            helpText="Age ≥35 is a moderate risk factor"
+                            helpText={t('calculators.preeclampsia_risk.maternal_age_help')}
                             icon={User}
                           />
 
                           <CalculatorInput
-                            label="Body Mass Index (BMI)"
+                            label={t('calculators.preeclampsia_risk.maternal_bmi_label')}
                             value={formData.bmi}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, bmi: e.target.value })}
                             type="number"
                             placeholder="24.5"
                             min={15}
-                            max={60}
-                            unit="kg/m²"
+                            max={50}
+                            unit={t('calculators.preeclampsia_risk.kg_m2_unit')}
                             step={0.1}
                             error={errors.bmi}
-                            helpText="BMI ≥30 is a moderate risk factor"
+                            helpText={t('calculators.preeclampsia_risk.maternal_bmi_help')}
                             icon={Activity}
                           />
                         </div>
@@ -308,8 +309,8 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                             id="nulliparity"
                             checked={formData.nulliparity}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, nulliparity: e.target.checked })}
-                            label="Nulliparity (first pregnancy)"
-                            description="First-time pregnancy - moderate risk factor"
+                            label={t('calculators.preeclampsia_risk.nulliparity')}
+                            description={t('calculators.preeclampsia_risk.nulliparity')}
                           />
                         </div>
                       </div>
@@ -318,7 +319,7 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                       <div className="p-6 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 border-2 border-red-200 dark:border-red-800 rounded-xl">
                         <div className="flex items-center space-x-3 mb-4">
                           <AlertTriangle className="w-5 h-5 text-red-600" />
-                          <h4 className="font-semibold text-red-800 dark:text-red-200">Major Risk Factors (High Impact)</h4>
+                          <h4 className="font-semibold text-red-800 dark:text-red-200">{t('calculators.preeclampsia_risk.high_risk_factors')}</h4>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -326,32 +327,32 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                             id="previousPreeclampsia"
                             checked={formData.previousPreeclampsia}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, previousPreeclampsia: e.target.checked })}
-                            label="Previous preeclampsia"
-                            description="History of preeclampsia in prior pregnancy"
+                            label={t('calculators.preeclampsia_risk.previous_preeclampsia')}
+                            description={t('calculators.preeclampsia_risk.previous_preeclampsia')}
                           />
 
                           <CalculatorCheckbox
                             id="chronicHypertension"
                             checked={formData.chronicHypertension}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, chronicHypertension: e.target.checked })}
-                            label="Chronic hypertension"
-                            description="Pre-existing hypertension before pregnancy"
+                            label={t('calculators.preeclampsia_risk.chronic_hypertension')}
+                            description={t('calculators.preeclampsia_risk.chronic_hypertension')}
                           />
 
                           <CalculatorCheckbox
                             id="diabetes"
                             checked={formData.diabetes}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, diabetes: e.target.checked })}
-                            label="Diabetes mellitus"
-                            description="Type 1, Type 2, or gestational diabetes"
+                            label={t('calculators.preeclampsia_risk.diabetes_pregestational')}
+                            description={t('calculators.preeclampsia_risk.diabetes_pregestational')}
                           />
 
                           <CalculatorCheckbox
                             id="multipleGestation"
                             checked={formData.multipleGestation}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, multipleGestation: e.target.checked })}
-                            label="Multiple gestation"
-                            description="Twins, triplets, or higher-order multiples"
+                            label={t('calculators.preeclampsia_risk.multiple_gestation')}
+                            description={t('calculators.preeclampsia_risk.multiple_gestation')}
                           />
                         </div>
                       </div>
@@ -360,15 +361,15 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                       <div className="p-6 bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 border-2 border-yellow-200 dark:border-yellow-800 rounded-xl">
                         <div className="flex items-center space-x-3 mb-4">
                           <Info className="w-5 h-5 text-yellow-600" />
-                          <h4 className="font-semibold text-yellow-800 dark:text-yellow-200">Moderate Risk Factors</h4>
+                          <h4 className="font-semibold text-yellow-800 dark:text-yellow-200">{t("calculators.preeclampsia_risk.moderate_risk_factors")}</h4>
                         </div>
                         
                         <CalculatorCheckbox
                           id="familyHistory"
                           checked={formData.familyHistory}
                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, familyHistory: e.target.checked })}
-                          label="Family history of preeclampsia"
-                          description="Mother or sister with history of preeclampsia"
+                          label={t("calculators.preeclampsia_risk.family_history_preeclampsia")}
+                          description={t("calculators.preeclampsia_risk.family_history_preeclampsia")}
                         />
                       </div>
                     </div>
@@ -378,7 +379,7 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                         onClick={() => setCurrentStep(2)}
                         className="enhanced-calculator-button"
                       >
-                        Next: Clinical Parameters
+                        {t("calculators.preeclampsia_risk.next_clinical_review")}
                       </CalculatorButton>
                     </div>
                   </div>
@@ -390,18 +391,18 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                     <div className="text-center mb-8">
                       <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-rose-50 to-purple-50 dark:from-rose-900/20 dark:to-purple-900/20 rounded-2xl border border-rose-200 dark:border-rose-800">
                         <Stethoscope className="w-6 h-6 text-rose-600 dark:text-rose-400" />
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Clinical Parameters</h3>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.preeclampsia_risk.clinical_parameters')}</h3>
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Optional biomarkers and clinical measurements (11-13+6 weeks)</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.preeclampsia_risk.clinical_parameters_subtitle')}</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* Basic Clinical Measurements */}
                       <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
-                        <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-4">Clinical Measurements</h4>
+                        <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-4">{t('calculators.preeclampsia_risk.clinical_measurements')}</h4>
                         <div className="space-y-4">
                           <CalculatorInput
-                            label="Mean Arterial Pressure (MAP)"
+                            label={t('calculators.preeclampsia_risk.mean_arterial_pressure')}
                             value={formData.meanArterialPressure}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, meanArterialPressure: e.target.value })}
                             type="number"
@@ -411,12 +412,12 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                             unit="mmHg"
                             step={1}
                             error={errors.meanArterialPressure}
-                            helpText="Optional: First trimester MAP measurement"
+                            helpText={t('calculators.preeclampsia_risk.mean_arterial_pressure_help')}
                             icon={Heart}
                           />
 
                           <CalculatorInput
-                            label="Uterine Artery Pulsatility Index"
+                            label={t('calculators.preeclampsia_risk.uterine_artery_pi')}
                             value={formData.uterineArteryPI}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, uterineArteryPI: e.target.value })}
                             type="number"
@@ -425,7 +426,7 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                             max={3.0}
                             step={0.1}
                             error={errors.uterineArteryPI}
-                            helpText="Optional: Doppler assessment at 11-13+6 weeks"
+                            helpText={t('calculators.preeclampsia_risk.uterine_artery_pi_help')}
                             icon={Activity}
                           />
                         </div>
@@ -433,10 +434,10 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
 
                       {/* Biochemical Markers */}
                       <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 rounded-xl">
-                        <h4 className="font-semibold text-green-800 dark:text-green-200 mb-4">Biochemical Markers</h4>
+                        <h4 className="font-semibold text-green-800 dark:text-green-200 mb-4">{t('calculators.preeclampsia_risk.biochemical_markers')}</h4>
                         <div className="space-y-4">
                           <CalculatorInput
-                            label="PlGF (Placental Growth Factor)"
+                            label={t('calculators.preeclampsia_risk.plgf_label')}
                             value={formData.plgf}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, plgf: e.target.value })}
                             type="number"
@@ -446,12 +447,12 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                             unit="pg/mL"
                             step={0.1}
                             error={errors.plgf}
-                            helpText="Optional: First trimester PlGF level"
+                            helpText={t('calculators.preeclampsia_risk.plgf_help')}
                             icon={BarChart3}
                           />
 
                           <CalculatorInput
-                            label="PAPP-A"
+                            label={t('calculators.preeclampsia_risk.papp_a_label')}
                             value={formData.pappA}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pappA: e.target.value })}
                             type="number"
@@ -461,7 +462,7 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                             unit="MoM"
                             step={0.1}
                             error={errors.pappA}
-                            helpText="Optional: PAPP-A level (multiples of median)"
+                            helpText={t('calculators.preeclampsia_risk.papp_a_help')}
                             icon={BarChart3}
                           />
                         </div>
@@ -472,13 +473,13 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                     <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-xl p-6">
                       <div className="flex items-center space-x-3 mb-4">
                         <Info className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                        <h4 className="font-semibold text-purple-800 dark:text-purple-200">Clinical Parameters Information</h4>
+                        <h4 className="font-semibold text-purple-800 dark:text-purple-200">{t('calculators.preeclampsia_risk.clinical_parameters_information')}</h4>
                       </div>
                       <div className="text-sm text-purple-700 dark:text-purple-300 space-y-2">
-                        <p>• These parameters are optional but can improve risk assessment accuracy</p>
-                        <p>• Optimal timing for assessment is 11-13+6 weeks gestation</p>
-                        <p>• Combined screening algorithms use these parameters for enhanced risk stratification</p>
-                        <p>• Clinical risk factors alone are sufficient for basic risk assessment</p>
+                        <p>• {t('calculators.preeclampsia_risk.clinical_info_1')}</p>
+                        <p>• {t('calculators.preeclampsia_risk.clinical_info_2')}</p>
+                        <p>• {t('calculators.preeclampsia_risk.clinical_info_3')}</p>
+                        <p>• {t('calculators.preeclampsia_risk.clinical_info_4')}</p>
                       </div>
                     </div>
 
@@ -487,7 +488,7 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                         onClick={() => setCurrentStep(1)}
                         variant="outline"
                       >
-                        Back
+                        {t("calculators.preeclampsia_risk.back")}
                       </CalculatorButton>
                       <CalculatorButton
                         onClick={handleCalculate}
@@ -496,7 +497,7 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                         size="lg"
                         className="enhanced-calculator-button"
                       >
-                        Calculate Risk
+                        {t("calculators.preeclampsia_risk.calculate_risk")}
                       </CalculatorButton>
                     </div>
                   </div>
@@ -506,7 +507,7 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
               /* Results Display */
               <div className="space-y-8 animate-scaleIn">
                 <ResultsDisplay
-                  title="Preeclampsia Risk Assessment"
+                  title={t("calculators.preeclampsia_risk.title")}
                   value={formatRiskPercentage(parseFloat(result.value.toString()))}
                   category={result.category === 'very-high' ? 'high' : result.category as 'low' | 'intermediate' | 'high'}
                   interpretation={result.interpretation}
@@ -586,14 +587,14 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                     size="lg"
                     icon={Calculator}
                   >
-                    New Assessment
+                    {t('calculators.preeclampsia_risk.new_assessment')}
                   </CalculatorButton>
                   <CalculatorButton
                     onClick={() => setResult(null)}
                     variant="secondary"
                     size="lg"
                   >
-                    Modify Inputs
+                    {t('calculators.preeclampsia_risk.modify_inputs')}
                   </CalculatorButton>
                 </div>
 
@@ -631,10 +632,9 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
       </TabsContent>
 
       <TabsContent value="about" className="space-y-6">
-        {/* About content will be added next */}
         <CalculatorContainer
-          title="About the Preeclampsia Risk Calculator"
-          subtitle="Evidence-Based Risk Assessment • ACOG Guidelines • Clinical Documentation"
+          title={t('calculators.preeclampsia_risk.about_preeclampsia_calculator')}
+          subtitle={t('calculators.preeclampsia_risk.about_evidence_subtitle')}
           icon={Heart}
           gradient="obgyn"
           className="max-w-5xl mx-auto"
@@ -646,10 +646,9 @@ export const PreeclampsiaRiskCalculator: React.FC = () => {
                   <Stethoscope className="w-6 h-6 text-pink-600 dark:text-pink-400" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-pink-800 dark:text-pink-200 mb-3">Clinical Purpose</h3>
+                  <h3 className="text-xl font-bold text-pink-800 dark:text-pink-200 mb-3">{t('calculators.preeclampsia_risk.about_clinical_purpose')}</h3>
                   <p className="text-pink-700 dark:text-pink-300 leading-relaxed">
-                    The Preeclampsia Risk Calculator provides evidence-based risk assessment for preeclampsia using clinical risk factors 
-                    and optional biomarkers. It guides aspirin prophylaxis decisions per USPSTF and ACOG recommendations.
+                    {t('calculators.preeclampsia_risk.about_clinical_purpose_description')}
                   </p>
                 </div>
               </div>

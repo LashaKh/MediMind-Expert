@@ -45,6 +45,8 @@ export const common = {
   pending: 'В ожидании',
   failed: 'Не удалось',
   retry: 'Повторить',
+  calculation_failed: 'Расчет не удался',
+  indicates: 'указывает на',
   // Common UI elements
   title: 'Заголовок',
   description: 'Описание',
@@ -201,7 +203,7 @@ export const common = {
     hospitalAdmission: 'Может потребоваться госпитализация'
   },
   // Calculator-specific shared terms
-  calculator: {
+  calculatorTerms: {
     // Input labels
     enterValue: 'Введите значение',
     selectValue: 'Выберите значение',
@@ -280,8 +282,12 @@ export const common = {
     guidelines: 'Рекомендации',
     protocol: 'Протокол',
     standard: 'Стандарт',
-    evidenceBased: 'Основанный на доказательствах'
-  }
+    evidenceBased: 'Доказательный'
+  },
+  // UI Components
+  calculator: 'Калькулятор',
+  results: 'Результаты',
+  clinical_purpose: 'Клиническое назначение'
 };
 
 export default common; 

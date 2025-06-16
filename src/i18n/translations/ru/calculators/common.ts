@@ -85,7 +85,20 @@ export const calculatorCommon = {
     heart_failure: 'Сердечная недостаточность',
     surgical_risk: 'Хирургический риск',
     cardiomyopathy: 'Кардиомиопатия'
-  }
+  },
+  miscellaneous: "Другое",
+  
+  // Calculator Result Share Component
+  calculator_results_summary: "Сводка результатов калькулятора",
+  shared: "Отправлено",
+  sharing: "Отправка...",
+  share_with_ai: "Поделиться с ИИ",
+  key_results: "Ключевые результаты:",
+  clinical_interpretation_label: "Клиническая интерпретация:",
+  recommendations_label: "Рекомендации:",
+  more_recommendations: "ещё рекомендации",
+  universal_recommendations: "Универсальные рекомендации",
+  share_results_description: "Поделитесь этими результатами с вашим ИИ-помощником для подробного анализа и следующих шагов"
 };
 
 export default calculatorCommon; 
