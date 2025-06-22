@@ -4,6 +4,8 @@ import { DiseaseData, DiseaseIndexItem } from './types';
 import { abdominalAorticAneurysmData } from './cardiology/abdominal-aortic-aneurysm';
 import { antidromicAVRTData } from './cardiology/antidromic-atrioventricular-reentrant-tachycardia';
 import { aorticIntramuralHematomaData } from './cardiology/aortic-intramural-hematoma';
+import { aorticRegurgitationData } from './cardiology/aortic-regurgitation';
+import { aorticStenosisData } from './cardiology/aortic-stenosis';
 import { atrialFibrillationData } from './cardiology/atrial-fibrillation';
 import { atrialFlutterData } from './cardiology/atrial-flutter';
 
@@ -12,6 +14,8 @@ export const diseaseRegistry: Record<string, DiseaseData> = {
   'abdominal-aortic-aneurysm': abdominalAorticAneurysmData,
   'antidromic-atrioventricular-reentrant-tachycardia': antidromicAVRTData,
   'aortic-intramural-hematoma': aorticIntramuralHematomaData,
+  'aortic-regurgitation': aorticRegurgitationData,
+  'aortic-stenosis': aorticStenosisData,
   'atrial-fibrillation': atrialFibrillationData,
   'atrial-flutter': atrialFlutterData,
 };
@@ -52,6 +56,30 @@ export const diseaseIndex: DiseaseIndexItem[] = [
     description: 'A condition characterized by bleeding within the wall of the aorta without an entrance tear. Usually carries a lower mortality rate than aortic dissection but requires urgent management.',
     tags: ['Aortic Syndrome', 'Emergency', 'TEVAR', 'Surgical Repair', 'Medical Management'],
     prevalence: '1.2 per 100,000 person-years',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'aortic-regurgitation',
+    title: 'Aortic Regurgitation',
+    category: 'Valvular Heart Disease',
+    lastUpdated: 'May 31, 2025',
+    readTime: '25 min',
+    severity: 'high',
+    description: 'A structural heart disease characterized by diastolic flow of blood from the aorta into the left ventricle. Moderate or severe AR is associated with significant morbidity and mortality.',
+    tags: ['Valvular Disease', 'Heart Failure', 'Surgical Repair', 'Medical Management', 'Echocardiography'],
+    prevalence: '500 per 100,000',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'aortic-stenosis',
+    title: 'Aortic Stenosis',
+    category: 'Valvular Heart Disease',
+    lastUpdated: 'June 13, 2025',
+    readTime: '30 min',
+    severity: 'high',
+    description: 'A chronic fibrocalcific disease that results in narrowing of the aortic valve. Overall survival of elderly patients with severe AS is 3 years from symptom onset without intervention.',
+    tags: ['Valvular Disease', 'TAVR', 'SAVR', 'Heart Failure', 'Syncope', 'Stenosis'],
+    prevalence: '400 per 100,000',
     specialty: 'cardiology'
   },
   {

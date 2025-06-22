@@ -449,19 +449,21 @@ export const DiseasePage: React.FC = () => {
                           <div className="px-6 py-4 space-y-4">
                             {section.content.map((content: GuidelineContent, contentIndex: number) => (
                               <div key={contentIndex}>
-                                <div className="flex items-start gap-3 mb-3">
-                                  <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-semibold ${
-                                    content.level === 'A' ? 'bg-green-100 text-green-800' :
-                                    content.level === 'B' ? 'bg-blue-100 text-blue-800' :
-                                    content.level === 'C' ? 'bg-yellow-100 text-yellow-800' :
-                                    content.level === 'D' ? 'bg-red-100 text-red-800' :
-                                    content.level === 'I' ? 'bg-gray-100 text-gray-800' :
-                                    'bg-gray-100 text-gray-800'
-                                  }`}>
-                                    {content.level}
-                                  </span>
+                                <div className="mb-3">
                                   <div className="flex-1">
-                                    <p className="text-gray-900 font-medium">{content.statement}</p>
+                                    <p className="text-gray-900 font-medium">
+                                      {content.statement}{' '}
+                                      <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-semibold ml-2 ${
+                                        content.level === 'A' ? 'bg-blue-100 text-blue-800' :
+                                        content.level === 'B' ? 'bg-green-100 text-green-800' :
+                                        content.level === 'C' ? 'bg-yellow-100 text-yellow-800' :
+                                        content.level === 'D' ? 'bg-red-100 text-red-800' :
+                                        content.level === 'I' ? 'bg-gray-100 text-gray-800' :
+                                        'bg-gray-100 text-gray-800'
+                                      }`}>
+                                        Class {content.level}
+                                      </span>
+                                    </p>
                                     <p className="text-sm text-gray-600 mt-1">{content.source}</p>
                                   </div>
                                 </div>
@@ -471,21 +473,21 @@ export const DiseasePage: React.FC = () => {
                                     <h4 className="font-semibold text-gray-800 mb-2">{subsection.title}</h4>
                                     {subsection.content && subsection.content.map((subContent: GuidelineContent, subContentIndex: number) => (
                                       <div key={subContentIndex} className="mb-3">
-                                        <div className="flex items-start gap-2">
-                                          <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-semibold ${
-                                            subContent.level === 'A' ? 'bg-green-100 text-green-800' :
-                                            subContent.level === 'B' ? 'bg-blue-100 text-blue-800' :
-                                            subContent.level === 'C' ? 'bg-yellow-100 text-yellow-800' :
-                                            subContent.level === 'D' ? 'bg-red-100 text-red-800' :
-                                            subContent.level === 'I' ? 'bg-gray-100 text-gray-800' :
-                                            'bg-gray-100 text-gray-800'
-                                          }`}>
-                                            {subContent.level}
-                                          </span>
-                                          <div className="flex-1">
-                                            <p className="text-gray-700">{subContent.statement}</p>
-                                            <p className="text-sm text-gray-500 mt-1">{subContent.source}</p>
-                                          </div>
+                                        <div className="flex-1">
+                                          <p className="text-gray-700">
+                                            {subContent.statement}{' '}
+                                            <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-semibold ml-2 ${
+                                              subContent.level === 'A' ? 'bg-blue-100 text-blue-800' :
+                                              subContent.level === 'B' ? 'bg-green-100 text-green-800' :
+                                              subContent.level === 'C' ? 'bg-yellow-100 text-yellow-800' :
+                                              subContent.level === 'D' ? 'bg-red-100 text-red-800' :
+                                              subContent.level === 'I' ? 'bg-gray-100 text-gray-800' :
+                                              'bg-gray-100 text-gray-800'
+                                            }`}>
+                                              Class {subContent.level}
+                                            </span>
+                                          </p>
+                                          <p className="text-sm text-gray-500 mt-1">{subContent.source}</p>
                                         </div>
                                       </div>
                                     ))}

@@ -52,7 +52,58 @@ mcp__puppeteer__puppeteer_evaluate("document.body.innerText.slice(20000, 30000)"
 // Continue until all content extracted
 ```
 
-## Step 3: Content Organization
+## Step 3: Extract All Reference Links and Sources
+
+### 3.1 Extract PubMed and DOI References
+
+```javascript
+// Extract all reference links with their URLs
+mcp__puppeteer__puppeteer_evaluate(`(() => {
+  const references = [];
+  const referenceElements = document.querySelectorAll('a[href*="doi.org"], a[href*="pubmed"], a[href*="ncbi.nlm.nih.gov"], a[href*="Open"]');
+  referenceElements.forEach((link, index) => {
+    references.push({
+      text: link.innerText.trim(),
+      url: link.href,
+      context: link.parentElement?.innerText?.slice(0, 200) + '...'
+    });
+  });
+  return JSON.stringify(references, null, 2);
+})()`)
+```
+
+### 3.2 Extract Related Calculator Links
+
+```javascript
+// Extract calculator and internal pathway links
+mcp__puppeteer__puppeteer_evaluate(`(() => {
+  const allLinks = [];
+  const linkElements = document.querySelectorAll('a[href]');
+  linkElements.forEach((link) => {
+    if (link.href && 
+        (link.href.includes('pubmed') || 
+         link.href.includes('doi.org') || 
+         link.href.includes('ncbi.nlm.nih.gov') ||
+         link.href.includes('pathway.md'))) {
+      allLinks.push({
+        text: link.innerText.trim(),
+        url: link.href,
+        type: link.href.includes('pathway.md') ? 'internal' : 'external'
+      });
+    }
+  });
+  return JSON.stringify(allLinks, null, 2);
+})()`)
+```
+
+### 3.3 Verify Reference Count
+
+```javascript
+// Count total references to ensure completeness
+mcp__puppeteer__puppeteer_evaluate("document.querySelectorAll('a[href*=\"pubmed\"], a[href*=\"doi.org\"]').length")
+```
+
+## Step 4: Content Organization
 
 ### Key Sections to Identify:
 - **Background** (Definition, Pathophysiology, Epidemiology)
@@ -60,6 +111,12 @@ mcp__puppeteer__puppeteer_evaluate("document.body.innerText.slice(20000, 30000)"
 - **Clinical Findings** (Symptoms, Medical History) 
 - **Studies** (Recent research and trials)
 - **References** (Citations and links)
+
+### Reference Link Formatting Requirements:
+- **PubMed Links**: Format as `[PubMed](https://pubmed.ncbi.nlm.nih.gov/PMID)`
+- **Calculator Links**: Include all related Pathway.md calculator references
+- **Internal Links**: Preserve navigation and section links
+- **Source Attribution**: Always include original Pathway.md article link
 
 ## Quick Workflow
 
@@ -70,12 +127,26 @@ mcp__puppeteer__puppeteer_navigate("https://www.pathway.md/diseases/[article-id]
 // 2. Expand all content
 mcp__puppeteer__puppeteer_click("text=Expand All Topics")
 
-// 3. Extract in chunks
+// 3. Extract content in chunks
 mcp__puppeteer__puppeteer_evaluate("document.body.innerText.slice(0, 10000)")
 mcp__puppeteer__puppeteer_evaluate("document.body.innerText.slice(10000, 20000)")
 // Continue as needed
 
-// 4. Update A-Fib.md and React components with extracted content
+// 4. Extract all reference links
+mcp__puppeteer__puppeteer_evaluate(`(() => {
+  const references = [];
+  const referenceElements = document.querySelectorAll('a[href*="doi.org"], a[href*="pubmed"], a[href*="ncbi.nlm.nih.gov"], a[href*="Open"]');
+  referenceElements.forEach((link, index) => {
+    references.push({
+      text: link.innerText.trim(),
+      url: link.href,
+      context: link.parentElement?.innerText?.slice(0, 200) + '...'
+    });
+  });
+  return JSON.stringify(references, null, 2);
+})()`)
+
+// 5. Create comprehensive markdown file with all links preserved
 ```
 
 ## Success Indicators
@@ -85,13 +156,32 @@ mcp__puppeteer__puppeteer_evaluate("document.body.innerText.slice(10000, 20000)"
 ✅ **40,000+ characters** - Complete article extracted  
 ✅ **Evidence levels preserved** - A, B, C, D, E, I classifications visible  
 ✅ **Multiple guidelines sources** - ACC, ESC, AHA, CCS, etc.
+✅ **All PubMed links extracted** - References with clickable links preserved
+✅ **Calculator links included** - Related Pathway.md tools referenced
+✅ **Source attribution complete** - Original article link included
 
 ## Troubleshooting
 
 **If content truncated:** Extract in smaller 5,000 character chunks  
 **If login required:** Navigate to main pathway.md first, then to article  
 **If expansion fails:** Click individual section headers manually
+**If links missing:** Re-run reference extraction script and verify JSON output
+**If reference count low:** Check for additional link selectors or DOM changes
 
-# must rules
- - Make sure to extract all the resource links with the resources
- - create md folder with extratced disease text in this folder : /Users/Lasha/Desktop/MediMindexpert copy/docs/cardiology-diseases.md
+# Must Rules
+- Make sure to extract all the resource links with the resources
+- Create md folder with extracted disease text in this folder: /Users/Lasha/Desktop/MediMindexpert copy/docs/cardiology-diseases.md
+- **CRITICAL**: Always extract and preserve all PubMed reference links
+- **CRITICAL**: Include all related calculator links from Pathway.md
+- **CRITICAL**: Format all references with proper markdown links
+- **CRITICAL**: Verify reference link count matches article reference count
+- **CRITICAL**: Include original Pathway.md source attribution
+
+## Reference Link Extraction Verification
+
+After extraction, verify:
+1. **PubMed link count** matches references section
+2. **Calculator links** are properly formatted
+3. **Internal navigation links** preserved where relevant
+4. **External research links** all functional
+5. **Source attribution** to original Pathway.md article included

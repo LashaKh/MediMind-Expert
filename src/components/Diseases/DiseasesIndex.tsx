@@ -22,6 +22,7 @@ import { DiseaseIndexItem } from './types';
 const categories = [
   'All Categories',
   'Vascular Cardiology',
+  'Valvular Heart Disease',
   'Interventional Cardiology',
   'Electrophysiology',
   'Heart Failure',
