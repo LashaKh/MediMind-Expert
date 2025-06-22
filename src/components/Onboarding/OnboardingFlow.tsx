@@ -89,41 +89,46 @@ export const OnboardingFlow: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 flex flex-col">
       {/* Header */}
-      <div className="bg-white shadow-sm">
-        <div className="max-w-2xl mx-auto px-4 py-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            {t('onboarding.welcome')}
-          </h1>
-          <p className="text-gray-600">
-            {t('onboarding.setupMessage')}
-          </p>
+      <div className="bg-white/80 backdrop-blur-sm shadow-sm border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 bg-clip-text text-transparent mb-3">
+              {t('onboarding.welcome')}
+            </h1>
+            <p className="text-xl text-slate-600 font-light max-w-2xl mx-auto">
+              {t('onboarding.setupMessage')}
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Progress Steps */}
-      <div className="max-w-2xl mx-auto px-4 py-8">
-        <div className="flex items-center mb-8">
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="flex items-center justify-center mb-16">
           {steps.map((step, index) => (
             <div key={index} className="flex items-center">
               <div className={`
-                w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium
+                relative w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold transition-all duration-300
                 ${index <= currentStep 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-200 text-gray-500'
+                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/25' 
+                  : 'bg-slate-200 text-slate-500'
                 }
               `}>
-                {index + 1}
+                <span className="relative z-10">{index + 1}</span>
+                {index <= currentStep && (
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 animate-pulse opacity-75"></div>
+                )}
               </div>
-              <span className={`ml-2 text-sm font-medium ${
-                index <= currentStep ? 'text-blue-600' : 'text-gray-500'
+              <span className={`ml-4 text-lg font-semibold transition-colors duration-300 ${
+                index <= currentStep ? 'text-blue-700' : 'text-slate-500'
               }`}>
                 {step.title}
               </span>
               {index < steps.length - 1 && (
-                <div className={`w-16 h-px mx-4 ${
-                  index < currentStep ? 'bg-blue-600' : 'bg-gray-200'
+                <div className={`w-24 h-0.5 mx-8 transition-colors duration-300 ${
+                  index < currentStep ? 'bg-gradient-to-r from-blue-600 to-indigo-600' : 'bg-slate-200'
                 }`} />
               )}
             </div>
@@ -131,7 +136,10 @@ export const OnboardingFlow: React.FC = () => {
         </div>
 
         {/* Step Content */}
-        <div className="bg-white rounded-lg shadow-sm border p-6">
+        <div className={`
+          transition-all duration-500 transform
+          ${currentStep === 0 ? 'bg-transparent' : 'bg-white/60 backdrop-blur-sm rounded-3xl shadow-lg border border-white/20 p-8'}
+        `}>
           {currentStep === 0 && (
             <SpecialtySelection 
               onSelect={handleSpecialtySelect}

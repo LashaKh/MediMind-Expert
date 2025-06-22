@@ -1,6 +1,7 @@
 import React from 'react';
 import { Settings as SettingsIcon } from 'lucide-react';
 import { useTranslation } from '../../hooks/useTranslation';
+import DebugPanel from './DebugPanel';
 
 export const Settings: React.FC = () => {
   const { t } = useTranslation();
@@ -15,7 +16,9 @@ export const Settings: React.FC = () => {
           </h1>
         </div>
         
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+        <DebugPanel />
+        
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mt-6">
           <p className="text-gray-600 dark:text-gray-300 mb-4">
             {t('navigation.settingsDesc')}
           </p>

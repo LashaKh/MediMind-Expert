@@ -15,7 +15,7 @@ import { useTheme } from '../../hooks/useTheme';
 
 export const UserDropdown: React.FC = () => {
   const { t } = useTranslation();
-  const { user, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
@@ -42,6 +42,14 @@ export const UserDropdown: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Helper function to get user initials
+  const getUserInitials = () => {
+    if (profile?.full_name) {
+      return profile.full_name.charAt(0).toUpperCase();
+    }
+    return user?.email?.charAt(0).toUpperCase() || 'U';
+  };
+
   if (!user) return null;
 
   return (
@@ -51,14 +59,14 @@ export const UserDropdown: React.FC = () => {
         className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
       >
         <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium">
-          {user.email?.charAt(0).toUpperCase()}
+          {getUserInitials()}
         </div>
         <div className="hidden md:block text-left">
           <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-            {user.email}
+            {profile?.full_name || user?.email}
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            {t('common.account')}
+            {profile?.medical_specialty || t('common.account')}
           </div>
         </div>
         <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
@@ -70,14 +78,14 @@ export const UserDropdown: React.FC = () => {
           <div className="px-4 py-3 border-b dark:border-gray-700">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-lg font-medium">
-                {user.email?.charAt(0).toUpperCase()}
+                {getUserInitials()}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                  {user.email}
+                  {profile?.full_name || user?.email}
                 </div>
                 <div className="text-xs text-gray-500 dark:text-gray-400">
-                  {t('common.signedIn')}
+                  {profile?.medical_specialty ? `${profile.medical_specialty} • ${t('common.signedIn')}` : t('common.signedIn')}
                 </div>
               </div>
             </div>

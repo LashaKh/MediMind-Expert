@@ -269,7 +269,7 @@ export const medical = {
     prenatal: 'დაბადებამდელი',
     postnatal: 'დაბადების შემდგომი',
     delivery: 'მშობიარობა',
-    cesarean: 'კეისრის კვეთა',
+    cesarean: 'საკეისროკვეთა',
     vaginal: 'ვაგინალური მშობიარობა',
     fetal: 'ნაყოფის',
     maternal: 'დედობრივი',

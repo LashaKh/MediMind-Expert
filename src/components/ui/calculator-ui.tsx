@@ -1,7 +1,7 @@
 import React, { forwardRef, HTMLAttributes, ReactNode, useState, useEffect } from 'react';
 import { cn } from '../../lib/utils';
 import { Check, AlertCircle, Info, Eye, EyeOff, Calculator, TrendingUp, Heart, Award, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../hooks/useTranslation';
 
 // Enhanced Calculator Container
 interface CalculatorContainerProps extends HTMLAttributes<HTMLDivElement> {
@@ -12,64 +12,68 @@ interface CalculatorContainerProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export const CalculatorContainer = forwardRef<HTMLDivElement, CalculatorContainerProps>(
-  ({ className, title, subtitle, icon: Icon = Calculator, gradient = 'medical', children, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "relative overflow-hidden rounded-3xl shadow-2xl backdrop-blur-xl border border-white/20 dark:border-gray-800/20",
-        gradient === 'medical' && "bg-gradient-to-br from-blue-50/80 via-white/90 to-indigo-50/80 dark:from-blue-900/20 dark:via-gray-900/90 dark:to-indigo-900/20",
-        gradient === 'cardiology' && "bg-gradient-to-br from-red-50/80 via-white/90 to-pink-50/80 dark:from-red-900/20 dark:via-gray-900/90 dark:to-pink-900/20",
-        gradient === 'obgyn' && "bg-gradient-to-br from-purple-50/80 via-white/90 to-pink-50/80 dark:from-purple-900/20 dark:via-gray-900/90 dark:to-pink-900/20",
-        gradient === 'premium' && "bg-gradient-to-br from-amber-50/80 via-white/90 to-yellow-50/80 dark:from-amber-900/20 dark:via-gray-900/90 dark:to-yellow-900/20",
-        className
-      )}
-      {...props}
-    >
-      {/* Animated Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,_rgba(120,119,198,0.3),_transparent_50%)]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,_rgba(120,119,198,0.3),_transparent_50%)]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,_rgba(120,119,198,0.2),_transparent_50%)]"></div>
-      </div>
+  ({ className, title, subtitle, icon: Icon = Calculator, gradient = 'medical', children, ...props }, ref) => {
+    const { t } = useTranslation();
+    
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "relative overflow-hidden rounded-3xl shadow-2xl backdrop-blur-xl border border-white/20 dark:border-gray-800/20",
+          gradient === 'medical' && "bg-gradient-to-br from-blue-50/80 via-white/90 to-indigo-50/80 dark:from-blue-900/20 dark:via-gray-900/90 dark:to-indigo-900/20",
+          gradient === 'cardiology' && "bg-gradient-to-br from-red-50/80 via-white/90 to-pink-50/80 dark:from-red-900/20 dark:via-gray-900/90 dark:to-pink-900/20",
+          gradient === 'obgyn' && "bg-gradient-to-br from-purple-50/80 via-white/90 to-pink-50/80 dark:from-purple-900/20 dark:via-gray-900/90 dark:to-pink-900/20",
+          gradient === 'premium' && "bg-gradient-to-br from-amber-50/80 via-white/90 to-yellow-50/80 dark:from-amber-900/20 dark:via-gray-900/90 dark:to-yellow-900/20",
+          className
+        )}
+        {...props}
+      >
+        {/* Animated Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,_rgba(120,119,198,0.3),_transparent_50%)]"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,_rgba(120,119,198,0.3),_transparent_50%)]"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,_rgba(120,119,198,0.2),_transparent_50%)]"></div>
+        </div>
 
-      {/* Header Section */}
-      <div className="relative p-8 pb-6 border-b border-white/20 dark:border-gray-800/20">
-        <div className="flex items-center space-x-6">
-          {/* Animated Icon */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-600 rounded-2xl blur-xl opacity-30 animate-pulse"></div>
-            <div className="relative p-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl shadow-lg">
-              <Icon className="w-8 h-8 text-white" />
+        {/* Header Section */}
+        <div className="relative p-8 pb-6 border-b border-white/20 dark:border-gray-800/20">
+          <div className="flex items-center space-x-6">
+            {/* Animated Icon */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-600 rounded-2xl blur-xl opacity-30 animate-pulse"></div>
+              <div className="relative p-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl shadow-lg">
+                <Icon className="w-8 h-8 text-white" />
+              </div>
+              <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-yellow-400 animate-bounce" />
             </div>
-            <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-yellow-400 animate-bounce" />
-          </div>
 
-          {/* Title and Subtitle */}
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-indigo-900 dark:from-gray-100 dark:via-blue-200 dark:to-indigo-200 bg-clip-text text-transparent">
-              {title}
-            </h1>
-            {subtitle && (
-              <p className="text-lg text-gray-600 dark:text-gray-300 mt-1 font-medium">
-                {subtitle}
-              </p>
-            )}
-          </div>
+            {/* Title and Subtitle */}
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-indigo-900 dark:from-gray-100 dark:via-blue-200 dark:to-indigo-200 bg-clip-text text-transparent">
+                {title}
+              </h1>
+              {subtitle && (
+                <p className="text-lg text-gray-600 dark:text-gray-300 mt-1 font-medium">
+                  {subtitle}
+                </p>
+              )}
+            </div>
 
-          {/* Quality Badge */}
-          <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/30 dark:to-green-900/30 rounded-xl border border-emerald-200 dark:border-emerald-800/30">
-            <Award className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-            <span className="text-sm font-bold text-emerald-700 dark:text-emerald-300">Validated</span>
+            {/* Quality Badge */}
+            <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/30 dark:to-green-900/30 rounded-xl border border-emerald-200 dark:border-emerald-800/30">
+              <Award className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+              <span className="text-sm font-bold text-emerald-700 dark:text-emerald-300">{t('calculators.common.validated')}</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="relative p-8">
-        {children}
+        {/* Content */}
+        <div className="relative p-8">
+          {children}
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 );
 
 // Enhanced Input Field
@@ -487,7 +491,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           {interpretation && (
             <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <h3 className="font-semibold text-blue-900 mb-2">
-                {t('common.detailed_analysis')}
+                {t('common.detailed_analysis') || 'Detailed Analysis'}
               </h3>
               <p className="text-blue-800">{interpretation}</p>
             </div>
@@ -501,7 +505,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
               onClick={() => setIsExpanded(!isExpanded)}
               className="flex items-center justify-between w-full p-3 rounded-xl hover:bg-white/30 dark:hover:bg-gray-800/30 transition-colors"
             >
-              <span className="font-semibold text-gray-900 dark:text-gray-100">{t('common.detailed_analysis')}</span>
+              <span className="font-semibold text-gray-900 dark:text-gray-100">{t('common.detailed_analysis') || 'Detailed Analysis'}</span>
               {isExpanded ? (
                 <ChevronUp className="w-5 h-5 text-gray-600 dark:text-gray-400" />
               ) : (

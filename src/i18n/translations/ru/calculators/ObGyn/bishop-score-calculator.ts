@@ -179,5 +179,16 @@ export const bishopScoreCalculator = {
   ref_acog_bulletin: 'Практический бюллетень ACOG № 107: Индукция родов',
   ref_bishop_original: 'Bishop EH. Оценка таза для плановой индукции. Obstet Gynecol. 1964;24:266-8',
   ref_who_recommendations: 'Рекомендации ВОЗ: Индукция родов в срок или после срока',
-  ref_cochrane_review: 'Кокрейновский обзор: Механические методы индукции родов'
+  ref_cochrane_review: 'Кокрейновский обзор: Механические методы индукции родов',
+  
+  // Result field labels (for UI display)
+  bishop_score_label: 'Оценка Бишопа',
+  induction_success_label: 'Успех Индукции',
+  cesarean_risk_label: 'Риск Кесарева',
+  
+  // Induction success values
+  unlikely: 'Маловероятно',
+  possible: 'Возможно', 
+  likely: 'Вероятно',
+  very_likely: 'Очень Вероятно',
 }; 

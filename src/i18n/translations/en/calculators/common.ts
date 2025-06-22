@@ -4,6 +4,11 @@ export default {
   back_to: 'Back to Calculators',
   categories_label: 'Categories',
   tools_count: '{count} Tool | {count} Tools',
+  
+  // Common UI elements (these are the missing keys)
+  about: 'About',
+  calculator: 'Calculator',
+  validated: 'Validated',
 
   specialty: {
     cardiology: {
@@ -43,6 +48,12 @@ export default {
   interpretation: 'Interpretation',
   recommendations: 'Recommendations',
   riskLevel: 'Risk Level', // Or simply 'risk' if preferred
+  lifetime_risk: 'Lifetime Risk',
+  annual_risk: 'Annual Risk',
+  risk_multiplier: 'Risk Multiplier',
+  screening_recommendation: 'Screening Recommendation',
+  protective_factors: 'Protective Factors',
+  prophylactic_surgery_discussion: 'Prophylactic Surgery Discussion',
   lowRisk: 'Low Risk',
   moderateRisk: 'Moderate Risk',
   highRisk: 'High Risk',
@@ -118,5 +129,14 @@ export default {
   recommendations_label: "Recommendations:",
   more_recommendations: "more recommendations",
   universal_recommendations: "Universal Recommendations",
-  share_results_description: "Share these results with your AI Co-Pilot for detailed analysis and next steps"
+  share_results_description: "Share these results with your AI Co-Pilot for detailed analysis and next steps",
+
+  // Common risk levels
+  risk_levels: {
+    low: 'Low',
+    moderate: 'Moderate',
+    intermediate: 'Intermediate',
+    high: 'High',
+    very_high: 'Very High'
+  },
 }; 

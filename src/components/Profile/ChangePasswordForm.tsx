@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Lock, Eye, EyeOff, Save, X } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface ChangePasswordFormProps {
   onClose?: () => void;
@@ -11,6 +12,7 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
   onClose,
   onSuccess
 }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -27,27 +29,27 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
 
   const validateForm = () => {
     if (!formData.currentPassword) {
-      setError('Current password is required');
+      setError(t('profile.currentPasswordRequired'));
       return false;
     }
     if (!formData.newPassword) {
-      setError('New password is required');
+      setError(t('profile.newPasswordRequired'));
       return false;
     }
     if (formData.newPassword.length < 8) {
-      setError('New password must be at least 8 characters long');
+      setError(t('profile.newPasswordMinLength'));
       return false;
     }
     if (formData.newPassword === formData.currentPassword) {
-      setError('New password must be different from current password');
+      setError(t('profile.newPasswordDifferent'));
       return false;
     }
     if (formData.newPassword !== formData.confirmPassword) {
-      setError('New password and confirmation do not match');
+      setError(t('profile.passwordsDoNotMatch'));
       return false;
     }
     if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.newPassword)) {
-      setError('New password must contain at least one uppercase letter, one lowercase letter, and one number');
+      setError(t('profile.passwordComplexity'));
       return false;
     }
     return true;
@@ -68,7 +70,7 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
       // First verify the current password by attempting to sign in
       const { data: currentUser } = await supabase.auth.getUser();
       if (!currentUser.user?.email) {
-        throw new Error('No authenticated user found');
+        throw new Error(t('profile.noAuthenticatedUser'));
       }
 
       // Supabase doesn't provide a direct way to verify current password,
@@ -81,7 +83,7 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
         throw updateError;
       }
 
-      setSuccess('Password updated successfully!');
+      setSuccess(t('profile.passwordUpdateSuccess'));
       setFormData({
         currentPassword: '',
         newPassword: '',
@@ -95,7 +97,7 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
 
     } catch (error: any) {
       console.error('Error updating password:', error);
-      setError(error.message || 'Failed to update password. Please try again.');
+      setError(error.message || t('profile.passwordUpdateFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -125,7 +127,7 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
         <div className="flex items-center space-x-3">
           <Lock className="w-6 h-6 text-primary" />
           <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            Change Password
+            {t('profile.changePassword')}
           </h3>
         </div>
         {onClose && (
@@ -154,7 +156,7 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
         {/* Current Password */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Current Password
+            {t('profile.currentPassword')}
           </label>
           <div className="relative">
             <input
@@ -162,7 +164,7 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
               value={formData.currentPassword}
               onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
               className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-              placeholder="Enter your current password"
+              placeholder={t('profile.enterCurrentPassword')}
               required
             />
             <button
@@ -178,7 +180,7 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
         {/* New Password */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            New Password
+            {t('profile.newPassword')}
           </label>
           <div className="relative">
             <input
@@ -186,7 +188,7 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
               value={formData.newPassword}
               onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
               className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-              placeholder="Enter your new password"
+              placeholder={t('profile.enterNewPassword')}
               required
             />
             <button
@@ -198,14 +200,14 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
             </button>
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Password must be at least 8 characters with uppercase, lowercase, and number
+            {t('profile.passwordRequirements')}
           </p>
         </div>
 
         {/* Confirm New Password */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Confirm New Password
+            {t('profile.confirmNewPassword')}
           </label>
           <div className="relative">
             <input
@@ -213,7 +215,7 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
               value={formData.confirmPassword}
               onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
               className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-              placeholder="Confirm your new password"
+              placeholder={t('profile.confirmNewPasswordPlaceholder')}
               required
             />
             <button
@@ -234,7 +236,7 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
             className="flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Save className="w-4 h-4" />
-            <span>{isLoading ? 'Updating...' : 'Update Password'}</span>
+            <span>{isLoading ? t('profile.updating') : t('profile.updatePassword')}</span>
           </button>
           {onClose && (
             <button
@@ -244,7 +246,7 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
               className="flex items-center space-x-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <X className="w-4 h-4" />
-              <span>Cancel</span>
+              <span>{t('profile.cancel')}</span>
             </button>
           )}
         </div>

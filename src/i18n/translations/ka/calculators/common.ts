@@ -1,10 +1,27 @@
 export const calculatorCommon = {
   title: 'სამედიცინო კალკულატორები',
+  back_to: 'უკან კალკულატორებთან',
+  categories_label: 'კატეგორიები',
+  tools_count: '{count} ხელსაწყო | {count} ხელსაწყოები',
+  
+  // Common UI elements (these are the missing keys)
+  about: 'კალკულატორის შესახებ',
+  calculator: 'კალკულატორი',
+  validated: 'ვალიდირებული',
+
   calculate: 'გამოთვლა',
-  reset: 'განულება',
+  calculating: 'მიმდინარეობს გამოთვლა...',
   result: 'შედეგი',
+  results: 'შედეგები',
   interpretation: 'ინტერპრეტაცია',
-  risk: 'რისკი',
+  recommendations: 'რეკომენდაციები',
+  riskLevel: 'რისკის დონე',
+  lifetime_risk: 'სიცოცხლისგანმანძლობელი რისკი',
+  annual_risk: 'წლიური რისკი',
+  risk_multiplier: 'რისკის მულტიპლიკატორი',
+  screening_recommendation: 'სკრინინგის რეკომენდაცია',
+  protective_factors: 'დამცავი ფაქტორები',
+  prophylactic_surgery_discussion: 'პროფილაქტიკური ოპერაციის განხილვა',
   score: 'ქულა',
   low: 'დაბალი',
   moderate: 'ზომიერი',
@@ -16,9 +33,7 @@ export const calculatorCommon = {
   negative: 'უარყოფითი',
   
   // Main interface translations
-  back_to: 'უკან',
   calculator_categories: 'კალკულატორის კატეგორიები',
-  categories_label: 'კატეგორიები',
   view_grid: 'ბადე',
   view_list: 'სია',
   
@@ -155,7 +170,16 @@ export const calculatorCommon = {
   recommendations_label: "რეკომენდაციები:",
   more_recommendations: "მეტი რეკომენდაცია",
   universal_recommendations: "უნივერსალური რეკომენდაციები",
-  share_results_description: "გაუზიარეთ ეს შედეგები თქვენს AI-თანაშემწეს დეტალური ანალიზისა და შემდეგი ნაბიჯებისთვის"
+  share_results_description: "გაზიარეთ ეს შედეგები თქვენს AI თანაშემწე-თან დეტალური ანალიზისა და შემდეგი ნაბიჯებისთვის",
+  
+  // Common risk levels
+  risk_levels: {
+    low: 'დაბალი',
+    moderate: 'ზომიერი',
+    intermediate: 'შუალედური',
+    high: 'მაღალი',
+    very_high: 'ძალიან მაღალი'
+  },
 };
 
 export default calculatorCommon; 

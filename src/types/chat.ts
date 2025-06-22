@@ -6,6 +6,12 @@ export interface Message {
   status?: 'sending' | 'sent' | 'error';
   sources?: SourceReference[];
   attachments?: Attachment[];
+  metadata?: {
+    sessionId?: string;
+    knowledgeBase?: KnowledgeBaseType;
+    caseId?: string;
+    [key: string]: any;
+  };
 }
 
 export interface SourceReference {

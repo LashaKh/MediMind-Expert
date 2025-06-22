@@ -4,6 +4,10 @@ export const knowledgeBase = {
   subtitle: 'Cardiology Resources',
   description: 'Access comprehensive medical literature, evidence-based guidelines, and your personal document collection with AI-powered insights.',
   
+  // Root level keys for KnowledgeBaseSelector
+  personal: 'Personal',
+  curated: 'Curated',
+  
   // Feature highlights
   evidenceBased: 'Evidence-Based',
   aiPoweredSearch: 'AI-Powered Search',
@@ -78,8 +82,8 @@ export const knowledgeBase = {
     }
   },
   
-  // Curated Knowledge Base
-  curated: {
+  // Curated Knowledge Base Settings
+  curatedSettings: {
     searchPlaceholder: 'Search resources, authors, organizations...',
     sortByTitle: 'Sort by Title',
     sortByYear: 'Sort by Year',

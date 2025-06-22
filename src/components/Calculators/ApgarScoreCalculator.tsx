@@ -405,7 +405,18 @@ export const ApgarScoreCalculator: React.FC = () => {
                   title={t('calculators.obgyn.apgar_score.results.title')}
                   value={`${result.totalScore}/10`}
                   category={result.assessment === 'excellent' ? 'high' : result.assessment === 'moderately-depressed' ? 'intermediate' : 'low'}
-                  interpretation={result.interpretation}
+                  interpretation={
+                    t('calculators.obgyn.apgar_score.interpretation_templates.score_template', {
+                      score: result.interpretationData.score.toString(),
+                      time: t(`calculators.obgyn.apgar_score.interpretation_templates.time_display.${result.interpretationData.timeKey}`),
+                      condition: t(`calculators.obgyn.apgar_score.result_interpretations.${result.interpretationData.conditionKey}`)
+                    }) +
+                    (result.interpretationData.timeKey === '1-min' 
+                      ? ' ' + t('calculators.obgyn.apgar_score.interpretation_templates.followup_one_min')
+                      : result.interpretationData.needsFollowup 
+                        ? ' ' + t('calculators.obgyn.apgar_score.interpretation_templates.followup_five_min_low')
+                        : '')
+                  }
                   icon={Baby}
                 >
                   {/* Score Display */}

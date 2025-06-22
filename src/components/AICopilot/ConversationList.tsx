@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useChat } from '../../contexts/ChatContext';
 import { formatTimestampDetailed } from '../../utils/chat/messageUtils';
 import { ConversationSummary } from '../../types/chat';
@@ -14,7 +14,15 @@ import {
   Trash2,
   Heart,
   Brain,
-  X
+  X,
+  Filter,
+  SortDesc,
+  Clock,
+  Hash,
+  AlignLeft,
+  Sparkles,
+  Calendar,
+  TrendingUp
 } from 'lucide-react';
 
 interface ConversationListProps {
@@ -134,94 +142,200 @@ export const ConversationList: React.FC<ConversationListProps> = ({
 
   return (
     <>
-      <div className={`fixed inset-0 bg-black bg-opacity-50 z-40 ${className}`} onClick={onClose} />
+      {/* Premium Backdrop with Blur */}
+      <div 
+        className={`fixed inset-0 bg-slate-900/20 backdrop-blur-md z-40 transition-opacity duration-300 ${className}`} 
+        onClick={onClose} 
+      />
       
-      <div className="fixed left-4 top-4 bottom-4 w-96 bg-white rounded-lg shadow-xl z-50 flex flex-col">
-        {/* Header */}
-        <div className="p-4 border-b border-gray-200">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">{t('conversations.title')}</h2>
-            <div className="flex items-center gap-2">
-              <Button
-                onClick={handleCreateNew}
-                size="sm"
-                className="flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                {t('conversations.newChat')}
-              </Button>
-              <Button
-                onClick={onClose}
-                variant="ghost"
-                size="sm"
-                className="p-1"
-              >
-                <X className="w-4 h-4" />
-              </Button>
+      {/* Sophisticated Conversation Panel */}
+      <div className="fixed left-6 top-6 bottom-6 w-[420px] bg-white/98 backdrop-blur-3xl rounded-3xl shadow-2xl shadow-slate-900/10 z-50 flex flex-col border border-slate-200/60 overflow-hidden">
+        {/* Luxurious Header Section */}
+        <div className="relative bg-gradient-to-br from-slate-50/80 via-white/90 to-slate-50/80 border-b border-slate-200/60">
+          {/* Subtle background effects */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/2 via-indigo-500/1 to-purple-500/2" />
+          
+          <div className="relative p-6 pb-5">
+            {/* Premium Header Row */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/25">
+                  <MessageCircle className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-black text-slate-800 tracking-tight">
+                    {t('conversations.title')}
+                  </h2>
+                  <p className="text-sm text-slate-500 font-medium">
+                    Manage your conversations
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Button
+                  onClick={handleCreateNew}
+                  size="sm"
+                  className="
+                    relative h-10 px-4 py-2.5 rounded-xl
+                    bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold text-sm
+                    shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30
+                    hover:scale-105 hover:-translate-y-0.5 active:scale-95
+                    transition-all duration-300 ease-out
+                    focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2
+                  "
+                >
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-700 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                  <Plus className="w-4 h-4 mr-2 relative z-10" />
+                  <span className="relative z-10">{t('conversations.newChat')}</span>
+                </Button>
+                
+                <Button
+                  onClick={onClose}
+                  variant="ghost"
+                  size="sm"
+                  className="
+                    relative h-10 w-10 p-0 rounded-xl
+                    bg-gradient-to-br from-slate-50 to-slate-100/80 border border-slate-200/60
+                    text-slate-600 hover:text-slate-800 shadow-lg shadow-slate-900/5
+                    hover:shadow-xl hover:shadow-slate-900/10 hover:scale-105 hover:-translate-y-0.5
+                    active:scale-95 transition-all duration-300 ease-out
+                    focus:outline-none focus:ring-2 focus:ring-slate-500/20 focus:ring-offset-2
+                  "
+                >
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-slate-500/5 to-gray-500/10 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                  <X className="w-4 h-4 relative z-10" />
+                </Button>
+              </div>
             </div>
-          </div>
 
-          {/* Search */}
-          <div className="relative mb-3">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input
-              type="text"
-              placeholder={t('conversations.searchPlaceholder')}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
+            {/* Premium Search Bar */}
+            <div className="relative mb-5">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5 z-10" />
+                <input
+                  type="text"
+                  placeholder={t('conversations.searchPlaceholder')}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="
+                    w-full pl-12 pr-5 py-3.5 text-sm font-medium text-slate-700
+                    bg-gradient-to-r from-white/90 to-slate-50/90 border border-slate-200/60
+                    rounded-2xl shadow-lg shadow-slate-900/5 backdrop-blur-xl
+                    placeholder:text-slate-400 placeholder:font-medium
+                    focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-200/60
+                    hover:shadow-xl hover:shadow-slate-900/10 hover:-translate-y-0.5
+                    transition-all duration-300 ease-out
+                  "
+                />
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/5 to-indigo-500/5 opacity-0 focus-within:opacity-100 transition-opacity duration-300 pointer-events-none" />
+              </div>
+            </div>
 
-          {/* Filters */}
-          <div className="flex gap-2 mb-2">
-            <select
-              value={selectedSpecialty}
-              onChange={(e) => setSelectedSpecialty(e.target.value as 'all' | 'cardiology' | 'obgyn')}
-              className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">{t('conversations.allSpecialties')}</option>
-              <option value="cardiology">{t('conversations.cardiology')}</option>
-              <option value="obgyn">{t('conversations.obgyn')}</option>
-            </select>
-            
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as 'date' | 'name' | 'messages')}
-              className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="date">{t('conversations.recent')}</option>
-              <option value="name">{t('conversations.byName')}</option>
-              <option value="messages">{t('conversations.byMessages')}</option>
-            </select>
+            {/* Sophisticated Filter Controls */}
+            <div className="flex items-center space-x-3">
+              {/* Specialty Filter */}
+              <div className="relative flex-1">
+                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 z-10" />
+                <select
+                  value={selectedSpecialty}
+                  onChange={(e) => setSelectedSpecialty(e.target.value as 'all' | 'cardiology' | 'obgyn')}
+                  className="
+                    w-full pl-10 pr-4 py-2.5 text-sm font-semibold text-slate-700
+                    bg-gradient-to-r from-white/90 to-slate-50/90 border border-slate-200/60
+                    rounded-xl shadow-md shadow-slate-900/5 backdrop-blur-xl
+                    focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-200/60
+                    hover:shadow-lg hover:shadow-slate-900/10 hover:-translate-y-0.5
+                    transition-all duration-300 ease-out appearance-none cursor-pointer
+                  "
+                >
+                  <option value="all">{t('conversations.allSpecialties')}</option>
+                  <option value="cardiology">{t('conversations.cardiology')}</option>
+                  <option value="obgyn">{t('conversations.obgyn')}</option>
+                </select>
+              </div>
+              
+              {/* Sort Filter */}
+              <div className="relative flex-1">
+                <SortDesc className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 z-10" />
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as 'date' | 'name' | 'messages')}
+                  className="
+                    w-full pl-10 pr-4 py-2.5 text-sm font-semibold text-slate-700
+                    bg-gradient-to-r from-white/90 to-slate-50/90 border border-slate-200/60
+                    rounded-xl shadow-md shadow-slate-900/5 backdrop-blur-xl
+                    focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-200/60
+                    hover:shadow-lg hover:shadow-slate-900/10 hover:-translate-y-0.5
+                    transition-all duration-300 ease-out appearance-none cursor-pointer
+                  "
+                >
+                  <option value="date">{t('conversations.recent')}</option>
+                  <option value="name">{t('conversations.byName')}</option>
+                  <option value="messages">{t('conversations.byMessages')}</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Conversation List */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-2">
+        {/* Premium Conversation List */}
+        <div className="flex-1 overflow-y-auto px-5 py-4">
           {filteredConversations.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <MessageCircle className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-              <p className="text-sm">{t('conversations.noConversationsFound')}</p>
-              {searchTerm && (
-                <p className="text-xs mt-1">{t('conversations.tryAdjustingSearchOrFilters')}</p>
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="relative mb-6">
+                <div className="p-6 rounded-3xl bg-gradient-to-br from-slate-100 to-slate-50 shadow-lg">
+                  <MessageCircle className="w-12 h-12 text-slate-400" />
+                </div>
+                <div className="absolute -top-1 -right-1 p-2 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg">
+                  <Search className="w-3 h-3 text-white" />
+                </div>
+              </div>
+              
+              <h3 className="text-lg font-bold text-slate-800 mb-2">
+                {searchTerm ? 'No matches found' : t('conversations.noConversationsFound')}
+              </h3>
+              
+              <p className="text-sm text-slate-500 mb-4 max-w-sm leading-relaxed">
+                {searchTerm 
+                  ? t('conversations.tryAdjustingSearchOrFilters')
+                  : 'Start a new conversation to begin chatting with your AI medical assistant.'
+                }
+              </p>
+              
+              {!searchTerm && (
+                <Button
+                  onClick={handleCreateNew}
+                  className="
+                    relative px-6 py-3 rounded-xl
+                    bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold
+                    shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30
+                    hover:scale-105 hover:-translate-y-0.5 active:scale-95
+                    transition-all duration-300 ease-out
+                  "
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create First Conversation
+                </Button>
               )}
             </div>
           ) : (
-            filteredConversations.map((conv) => (
-              <div
-                key={conv.id}
-                className={`group p-3 rounded-lg border cursor-pointer transition-all hover:shadow-sm ${
-                  state.activeConversationId === conv.id
-                    ? 'bg-blue-50 border-blue-200'
-                    : 'bg-white border-gray-200 hover:bg-gray-50'
-                }`}
-                onClick={() => editingId !== conv.id && handleSelectConversation(conv.id)}
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
+            <div className="space-y-3">
+              {filteredConversations.map((conv, index) => (
+                <div
+                  key={conv.id}
+                  className={`group relative rounded-2xl cursor-pointer transition-all duration-300 ease-out ${
+                    state.activeConversationId === conv.id
+                      ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200/60 shadow-lg shadow-blue-500/10 scale-105'
+                      : 'bg-gradient-to-r from-white/90 to-slate-50/90 border-2 border-slate-200/40 hover:border-slate-300/60 hover:shadow-lg hover:shadow-slate-900/10 hover:scale-[1.02] hover:-translate-y-0.5'
+                  }`}
+                  onClick={() => editingId !== conv.id && handleSelectConversation(conv.id)}
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  {/* Sophisticated Card Content */}
+                  <div className="p-5">
                     {editingId === conv.id ? (
-                      <div className="flex gap-2">
+                      <div className="space-y-3">
                         <input
                           type="text"
                           value={editingTitle}
@@ -230,65 +344,147 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                             if (e.key === 'Enter') handleSaveEdit();
                             if (e.key === 'Escape') handleCancelEdit();
                           }}
-                          className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="
+                            w-full px-4 py-3 text-sm font-semibold text-slate-800
+                            bg-white/90 border-2 border-blue-200/60 rounded-xl
+                            focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300/60
+                            shadow-lg backdrop-blur-sm
+                          "
                           autoFocus
                         />
-                        <Button size="sm" onClick={handleSaveEdit}>{t('conversations.save')}</Button>
-                        <Button size="sm" variant="outline" onClick={handleCancelEdit}>{t('conversations.cancel')}</Button>
+                        <div className="flex items-center space-x-2">
+                          <Button 
+                            size="sm" 
+                            onClick={handleSaveEdit}
+                            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold"
+                          >
+                            {t('conversations.save')}
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={handleCancelEdit}
+                            className="px-4 py-2 border-slate-300 text-slate-700 hover:bg-slate-50 rounded-lg font-semibold"
+                          >
+                            {t('conversations.cancel')}
+                          </Button>
+                        </div>
                       </div>
                     ) : (
                       <>
-                        <div className="flex items-center gap-2 mb-1">
-                          {getSpecialtyIcon(conv.specialty)}
-                          <h3 className="font-medium text-sm text-gray-900 truncate">
-                            {conv.title}
-                          </h3>
+                        {/* Card Header */}
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center space-x-3 min-w-0 flex-1">
+                            {/* Premium Specialty Icon */}
+                            <div className={`
+                              p-2.5 rounded-xl shadow-md transition-all duration-300
+                              ${conv.specialty === 'cardiology' 
+                                ? 'bg-gradient-to-br from-red-50 to-rose-100 border border-red-200/50' 
+                                : conv.specialty === 'obgyn'
+                                  ? 'bg-gradient-to-br from-purple-50 to-violet-100 border border-purple-200/50'
+                                  : 'bg-gradient-to-br from-slate-50 to-gray-100 border border-slate-200/50'
+                              }
+                              ${state.activeConversationId === conv.id ? 'scale-110' : 'group-hover:scale-105'}
+                            `}>
+                              {getSpecialtyIcon(conv.specialty)}
+                            </div>
+                            
+                            {/* Conversation Title */}
+                            <div className="min-w-0 flex-1">
+                              <h3 className="font-bold text-base text-slate-800 truncate leading-tight">
+                                {conv.title}
+                              </h3>
+                              
+                              {/* Quick Stats */}
+                              <div className="flex items-center space-x-2 mt-1">
+                                <div className="flex items-center space-x-1">
+                                  <Hash className="w-3 h-3 text-slate-400" />
+                                  <span className="text-xs font-semibold text-slate-500">
+                                    {conv.messageCount}
+                                  </span>
+                                </div>
+                                <div className="w-1 h-1 bg-slate-300 rounded-full" />
+                                <div className="flex items-center space-x-1">
+                                  <Clock className="w-3 h-3 text-slate-400" />
+                                  <span className="text-xs font-semibold text-slate-500">
+                                    {formatTimestampDetailed(conv.updatedAt, 'relative')}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Action Button */}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="
+                              opacity-0 group-hover:opacity-100 transition-all duration-300
+                              h-8 w-8 p-0 rounded-lg bg-white/80 hover:bg-white shadow-md
+                              hover:scale-110 hover:shadow-lg
+                            "
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleStartEdit(conv);
+                            }}
+                          >
+                            <Edit className="w-4 h-4 text-slate-600" />
+                          </Button>
                         </div>
                         
+                        {/* Last Message Preview */}
                         {conv.lastMessage && (
-                          <p className="text-xs text-gray-600 line-clamp-2 mb-2">
-                            {conv.lastMessage}
-                          </p>
+                          <div className="mb-4">
+                            <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed font-medium">
+                              {conv.lastMessage}
+                            </p>
+                          </div>
                         )}
                         
+                        {/* Enhanced Footer */}
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className="text-xs">
-                              {conv.messageCount} {conv.messageCount !== 1 ? t('conversations.messages') : t('conversations.message')}
-                            </Badge>
+                          <div className="flex items-center space-x-2">
+                            {/* Message Count Badge */}
+                            <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-slate-100 to-slate-50 border border-slate-200/50">
+                              <MessageCircle className="w-3 h-3 text-slate-500" />
+                              <span className="text-xs font-bold text-slate-700">
+                                {conv.messageCount} {conv.messageCount !== 1 ? t('conversations.messages') : t('conversations.message')}
+                              </span>
+                            </div>
+                            
+                            {/* Specialty Badge */}
                             {conv.specialty && (
-                              <Badge className={`text-xs ${getSpecialtyColor(conv.specialty)}`}>
+                              <div className={`
+                                px-3 py-1.5 rounded-lg text-xs font-bold border shadow-sm
+                                ${getSpecialtyColor(conv.specialty)}
+                              `}>
                                 {conv.specialty}
-                              </Badge>
+                              </div>
                             )}
                           </div>
                           
-                          <span className="text-xs text-gray-500">
-                            {formatTimestampDetailed(conv.updatedAt, 'relative')}
-                          </span>
+                          {/* Enhanced Timestamp */}
+                          <div className="flex items-center space-x-1.5 px-2 py-1 rounded-lg bg-slate-100/50">
+                            <Calendar className="w-3 h-3 text-slate-400" />
+                            <span className="text-xs font-semibold text-slate-500 tabular-nums">
+                              {formatTimestampDetailed(conv.updatedAt, 'relative')}
+                            </span>
+                          </div>
                         </div>
                       </>
                     )}
                   </div>
                   
-                  {editingId !== conv.id && (
-                    <div className="relative">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleStartEdit(conv);
-                        }}
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                    </div>
+                  {/* Subtle gradient overlay for active state */}
+                  {state.activeConversationId === conv.id && (
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/5 to-indigo-500/5 pointer-events-none" />
                   )}
+                  
+                  {/* Hover gradient overlay */}
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-slate-500/5 to-gray-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                 </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
 

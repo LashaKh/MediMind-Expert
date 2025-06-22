@@ -30,8 +30,20 @@
   conditions = {Methods = ["OPTIONS"]}
 
 [[redirects]]
+  from = "/api/test-auth"
+  to = "/.netlify/functions/test-auth"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/api/flowise/chat"
-  to = "/.netlify/functions/flowise-proxy"
+  to = "/.netlify/functions/flowise-fixed"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/openai-assistant"
+  to = "/.netlify/functions/openai-assistant"
   status = 200
   force = true
 

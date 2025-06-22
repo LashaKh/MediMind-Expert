@@ -4,12 +4,21 @@ import eurscoreII from './euroscore-ii';
 import hcmRiskSCD from './hcm-risk-scd';
 import hcmAFRisk from './hcm-af-risk';
 import { 
+  ovarianReserve,
+  ovarianReserveCalculator,
   gestationalAgeCalculator,
   eddCalculator,
   preeclampsiaRiskCalculator,
   pretermBirthRiskCalculator,
   gdmScreeningCalculator,
-  bishopScoreCalculator
+  bishopScoreCalculator,
+  vbacSuccessCalculator,
+  apgarScoreCalculator,
+  pphRiskCalculator,
+  cervicalCancerRiskCalculator,
+  ovarianCancerRiskCalculator,
+  endometrialCancerRiskCalculator,
+  menopauseAssessmentCalculator
 } from './ObGyn';
 
 export default {
@@ -17,13 +26,48 @@ export default {
   cardiology,
   eurscoreII,
   
-  // Individual OB/GYN calculators with direct access
-  gestational_age: gestationalAgeCalculator,
-  edd: eddCalculator,
-  preeclampsia_risk: preeclampsiaRiskCalculator,
-  preterm_birth_risk: pretermBirthRiskCalculator,
-  gdm_screening: gdmScreeningCalculator,
-  bishop_score: bishopScoreCalculator,
+  // OB/GYN namespace - this is what makes t('calculators.obgyn.apgar_score.title') work
+  obgyn: {
+    apgar_score: apgarScoreCalculator,
+    bishop_score: bishopScoreCalculator,
+    cervical_cancer_risk: cervicalCancerRiskCalculator,
+    edd_calculator: eddCalculator,
+    endometrial_cancer_risk: endometrialCancerRiskCalculator,
+    gdm_screening: gdmScreeningCalculator,
+    gestational_age: gestationalAgeCalculator,
+    menopause_assessment: menopauseAssessmentCalculator,
+    ovarian_cancer_risk: ovarianCancerRiskCalculator,
+    ovarian_reserve: ovarianReserve,
+    ovarian_reserve_calculator: ovarianReserveCalculator,
+    pph_risk: pphRiskCalculator,
+    preeclampsia_risk: preeclampsiaRiskCalculator,
+    preterm_birth_risk: pretermBirthRiskCalculator,
+    vbac_success: vbacSuccessCalculator,
+  },
+  
+  // Legacy namespace mappings
+  ObGyn: {
+    ovarianReserve: ovarianReserve,
+    ovarianReserveCalculator: ovarianReserveCalculator,
+    apgarScoreCalculator: apgarScoreCalculator,
+    bishopScoreCalculator: bishopScoreCalculator,
+    cervicalCancerRiskCalculator: cervicalCancerRiskCalculator,
+    eddCalculator: eddCalculator,
+    endometrialCancerRiskCalculator: endometrialCancerRiskCalculator,
+    gdmScreeningCalculator: gdmScreeningCalculator,
+    gestationalAgeCalculator: gestationalAgeCalculator,
+    menopauseAssessmentCalculator: menopauseAssessmentCalculator,
+    ovarianCancerRiskCalculator: ovarianCancerRiskCalculator,
+    pphRiskCalculator: pphRiskCalculator,
+    preeclampsiaRiskCalculator: preeclampsiaRiskCalculator,
+    pretermBirthRiskCalculator: pretermBirthRiskCalculator,
+    vbacSuccessCalculator: vbacSuccessCalculator,
+  },
+  
+  // HCM Risk calculators
+  hcm_risk_scd: hcmRiskSCD,
+  
+  hcm_af_risk: hcmAFRisk,
   
   // Top-level keys for Calculator landing page
   specialty: {
@@ -59,7 +103,7 @@ export default {
     labor_management: 'Labor Management',
     assessment_tools: 'Assessment Tools',
     gynecologic_oncology: 'Gynecologic Oncology',
-    reproductive_health: 'Reproductive Health'
+    reproductive_endocrinology: 'Reproductive Endocrinology'
   },
   
   // Calculator title/subtitle shortcuts for cards
@@ -128,16 +172,43 @@ export default {
     subtitle: 'European System for Cardiac Operative Risk Evaluation'
   },
   
-  hcm_risk_scd: hcmRiskSCD,
-  
-  hcmAFRisk,
-  hcm_af_risk: hcmAFRisk,
-  
   categories_label: 'Categories',
   calculator_categories: 'Calculator Categories',
   back_to: 'Back to',
   view_grid: 'Grid',
   view_list: 'List',
+  
+  // OB/GYN Calculator entries - Fixed to match working Russian structure
+  pph_risk: pphRiskCalculator,
+  
+  cervical_cancer_risk: cervicalCancerRiskCalculator,
+  
+  ovarian_cancer_risk: ovarianCancerRiskCalculator,
+  
+  endometrial_cancer_risk: endometrialCancerRiskCalculator,
+  
+  ovarian_reserve_calculator: ovarianReserveCalculator,
+  
+  menopause_assessment: menopauseAssessmentCalculator,
+  
+  edd: eddCalculator,
+  
+  gestational_age: gestationalAgeCalculator,
+  
+  preeclampsia_risk: preeclampsiaRiskCalculator,
+  
+  preterm_birth_risk: pretermBirthRiskCalculator,
+  
+  gdm_screening: gdmScreeningCalculator,
+  
+  bishop_score: bishopScoreCalculator,
+  
+  vbac_success: vbacSuccessCalculator,
+  
+  ovarian_reserve: ovarianReserve,
+  
+  // Individual OB/GYN calculators with direct access (for backward compatibility) 
+  apgar_score: apgarScoreCalculator
 };
 
 export {

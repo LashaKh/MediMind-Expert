@@ -2,7 +2,11 @@ export const knowledgeBase = {
   // Main page headers
   title: 'ცოდნის ბაზა',
   subtitle: 'კარდიოლოგიის რესურსები',
-  description: 'მიაპყრობთ კომპლექსური სამედიცინო ლიტერატურა, მტკიცებულებაზე დაფუძნებული წესებისა და თქვენი პირადი დოკუმენტების კოლექცია AI-ზე დაფუძნებული ინსაიტებით.',
+  description: 'მიაწვდოთ კომპლექსური სამედიცინო ლიტერატურა, მტკიცებულებაზე დაფუძნებული წესები და თქვენი პირადი დოკუმენტების კოლექცია AI-ზე დაფუძნებული ინსაიტებით.',
+  
+  // Root level keys for KnowledgeBaseSelector
+  personal: 'პირადი',
+  curated: 'კურირებული',
   
   // Feature highlights
   evidenceBased: 'მტკიცებულებაზე დაფუძნებული',
@@ -26,7 +30,7 @@ export const knowledgeBase = {
     totalDocuments: 'სულ დოკუმენტები',
     completed: 'დასრულებული',
     processing: 'მუშავდება',
-    storageUsed: 'ნაცავი ვადა',
+    storageUsed: 'გამოყენებული მეხსიერება',
     
     // Upload section
     uploadDocument: 'დოკუმენტის ატვირთვა',
@@ -40,7 +44,7 @@ export const knowledgeBase = {
     error: 'შეცდომა',
     
     // Advanced filters
-    advanced: 'გაფართოებული',
+    advanced: 'დამატებითი',
     allCategories: 'ყველა კატეგორია',
     from: 'დან',
     to: 'მდე',
@@ -49,19 +53,19 @@ export const knowledgeBase = {
     showingResults: 'ნაჩვენებია',
     of: '-დან',
     documentsText: 'დოკუმენტები',
-    showingAll: 'ნაჩვენებია ყველა',
+    showingAll: 'ყველას ჩვენება',
     
     // Upload process
-    dragDropText: 'ჩავუშვათ ფაილები აქ ან დავაწკაპუნოთ',
+    dragDropText: 'ჩაუშვით ფაილები აქ ან დააწკაპუნეთ არჩევისთვის',
     selectFiles: 'ფაილების არჩევა',
     uploadButton: 'ატვირთვა',
-    maxFileSize: 'მაქსიმალური ფაილის ზომა: {size}MB',
+    maxFileSize: 'მაქს. ფაილის ზომა: {size}MB',
     supportedFormats: 'მხარდაჭერილი ფორმატები',
     
     // File actions
     retry: 'ხელახლა ცდა',
     remove: 'წაშლა',
-    preview: 'გადახედვა',
+    preview: 'წინასწარი ნახვა',
     
     // File metadata
     fileName: 'ფაილის სახელი',
@@ -78,22 +82,22 @@ export const knowledgeBase = {
     }
   },
   
-  // Curated Knowledge Base
-  curated: {
-    searchPlaceholder: 'რესურსების, ავტორების, ორგანიზაციების ძიება...',
-    sortByTitle: 'სახელწოდების მიხედვით',
-    sortByYear: 'წლის მიხედვით',
-    sortByCategory: 'კატეგორიის მიხედვით',
-    sortByOrganization: 'ორგანიზაციის მიხედვით',
+  // Curated Knowledge Base Settings
+  curatedSettings: {
+    searchPlaceholder: 'ძიება რესურსებში, ავტორებში, ორგანიზაციებში...',
+    sortByTitle: 'დალაგება სათაურით',
+    sortByYear: 'დალაგება წლით',
+    sortByCategory: 'დალაგება კატეგორიით',
+    sortByOrganization: 'დალაგება ორგანიზაციით',
     
     // View modes
-    gridView: 'ბადის ხედი',
+    gridView: 'ქსელის ხედი',
     listView: 'სიის ხედი',
     
     // Search results
-    searchingFor: 'ძებნა:',
+    searchingFor: 'ძიება:',
     noResultsFound: 'შედეგები ვერ მოიძებნა',
-    tryDifferentTerms: 'სცადეთ სხვა საძიებო ტერმინები',
+    tryDifferentTerms: 'სცადეთ განსხვავებული საძიებო ტერმინები',
     
     // Resource details
     authors: 'ავტორები',
@@ -109,17 +113,17 @@ export const knowledgeBase = {
   
   // Vector Store Management
   vectorStore: {
-    createVectorStore: 'ვექტორული საცავის შექმნა',
-    managingVectorStore: 'ვექტორული საცავის მართვა',
+    createVectorStore: 'ვექტორული მეხსიერების შექმნა',
+    managingVectorStore: 'ვექტორული მეხსიერების მართვა',
     loading: 'იტვირთება...',
-    noVectorStore: 'ვექტორული საცავი არ არის ნაპოვნი',
-    createOne: 'შექმენით ახალი',
+    noVectorStore: 'ვექტორული მეხსიერება ვერ მოიძებნა',
+    createOne: 'შექმენით',
     refreshData: 'მონაცემების განახლება',
-    deleteVectorStore: 'ვექტორული საცავის წაშლა',
+    deleteVectorStore: 'ვექტორული მეხსიერების წაშლა',
     delete: 'წაშლა',
     
     // Creation form
-    vectorStoreName: 'ვექტორული საცავის სახელი',
+    vectorStoreName: 'ვექტორული მეხსიერების სახელი',
     vectorStoreNamePlaceholder: 'ჩემი სამედიცინო ცოდნის ბაზა',
     description: 'აღწერა',
     descriptionPlaceholder: 'სამედიცინო დოკუმენტებისა და კვლევითი ნაშრომების პირადი კოლექცია',
@@ -129,8 +133,8 @@ export const knowledgeBase = {
     // Status indicators
     ready: 'მზად არის',
     processing: 'მუშავდება',
-    pending: 'ელოდება',
-    failed: 'წარუმატებელი',
+    pending: 'მოლოდინში',
+    failed: 'ვერ მოხერხდა',
     unknown: 'უცნობი'
   },
   
@@ -146,8 +150,8 @@ export const knowledgeBase = {
     // Processing status
     statusReady: 'მზად არის',
     statusProcessing: 'მუშავდება',
-    statusPending: 'ელოდება',
-    statusFailed: 'წარუმატებელი',
+    statusPending: 'მოლოდინში',
+    statusFailed: 'ვერ მოხერხდა',
     
     // Actions
     reprocess: 'ხელახლა მუშავება',

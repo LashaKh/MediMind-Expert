@@ -31,6 +31,7 @@ export const navigation = {
   calculatorsDesc: 'Professional medical calculators and risk assessment',
   formsDesc: 'Medical forms and documentation',
   personalKBDesc: 'Personal knowledge base and medical literature',
+  profileDesc: 'Manage your account and preferences',
   settingsDesc: 'Profile settings and platform configuration',
   
   // Additional missing keys

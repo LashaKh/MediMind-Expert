@@ -38,6 +38,68 @@ export default {
   noFilesSelected: 'No files selected for upload.',
   allFilesProcessed: 'All files have been processed.',
   
+  // Upload Modal - Progressive Steps
+  modal: {
+    title: 'Upload Documents',
+    subtitle: 'Add medical literature, research papers, and clinical documents to your knowledge base',
+    
+    // Step indicators
+    steps: {
+      select: 'Select',
+      configure: 'Configure', 
+      upload: 'Upload',
+      complete: 'Complete'
+    },
+    
+    // Select step
+    select: {
+      title: 'Drag and drop files here',
+      subtitle: 'or click to select files from your computer',
+      selectFiles: 'Select Files',
+      dropFiles: 'Drop files here',
+      supportedTypes: 'Supported file types',
+      maxSizeNote: 'Maximum file size: {size}MB • Maximum files: {maxFiles}'
+    },
+    
+    // Configure step
+    configure: {
+      title: 'Configure Documents',
+      filesSelected: '{count} file selected|{count} files selected',
+      documentTitle: 'Document Title',
+      documentTitleRequired: 'Document Title *',
+      titlePlaceholder: 'Enter document title...',
+      description: 'Description',
+      descriptionPlaceholder: 'Brief description of the document content...',
+      category: 'Category',
+      tags: 'Tags',
+      tagsPlaceholder: 'Add tags separated by commas...',
+      addMoreFiles: 'Add More Files',
+      startUpload: 'Start Upload'
+    },
+    
+    // Upload step
+    upload: {
+      title: 'Uploading Documents',
+      subtitle: 'Processing your files and adding them to your knowledge base...',
+      uploading: 'Uploading...',
+      complete: 'Complete',
+      failed: 'Failed'
+    },
+    
+    // Complete step
+    complete: {
+      title: 'Upload Complete!',
+      subtitle: 'Your documents have been successfully added to your knowledge base.',
+      continueButton: 'Continue to Knowledge Base'
+    },
+    
+    // Error handling
+    errors: {
+      vectorStoreInit: 'Failed to initialize knowledge base. Please try again.',
+      uploadFailed: '{count} upload failed|{count} uploads failed'
+    }
+  },
+
   // Categories
   categories: {
     'research-papers': 'Research Papers',
@@ -57,6 +119,7 @@ export default {
     'pdf': 'PDF Document',
     'word-doc': 'Word Document (.doc)',
     'word-docx': 'Word Document (.docx)',
+    'excel': 'Excel',
     'text': 'Text File',
     'markdown': 'Markdown File',
     'csv': 'CSV File',
@@ -125,5 +188,20 @@ export default {
   clearAll: 'Clear All',
   close: 'Close',
   cancel: 'Cancel',
-  dropFiles: 'Drop files here'
+  dropFiles: 'Drop files here',
+  
+  // Statistics section
+  stats: {
+    totalDocuments: 'Total Documents',
+    completed: 'Completed',
+    processing: 'Processing',
+    storageUsed: 'Storage Used'
+  },
+  
+  // Actions
+  actions: {
+    uploadDocument: 'Upload Document',
+    refresh: 'Refresh',
+    searchPlaceholder: 'Search documents...'
+  }
 }; 

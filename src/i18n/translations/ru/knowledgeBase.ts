@@ -4,6 +4,10 @@ export const knowledgeBase = {
   subtitle: 'Кардиологические ресурсы',
   description: 'Доступ к комплексной медицинской литературе, основанным на доказательствах руководствам и вашей личной коллекции документов с помощью ИИ.',
   
+  // Root level keys for KnowledgeBaseSelector
+  personal: 'Личные',
+  curated: 'Курированные',
+  
   // Feature highlights
   evidenceBased: 'Основано на доказательствах',
   aiPoweredSearch: 'Поиск с ИИ',
@@ -78,8 +82,8 @@ export const knowledgeBase = {
     }
   },
   
-  // Curated Knowledge Base
-  curated: {
+  // Curated Knowledge Base Settings
+  curatedSettings: {
     searchPlaceholder: 'Поиск ресурсов, авторов, организаций...',
     sortByTitle: 'Сортировать по названию',
     sortByYear: 'Сортировать по году',

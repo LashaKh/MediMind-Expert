@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Calculator, Info, AlertTriangle, CheckCircle, Shield, Activity } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Calculator, Info, AlertTriangle, CheckCircle, Baby, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { CalculatorResultShare } from './CalculatorResultShare';
+import { Button } from '../ui/button';
+
 import { calculateOBGYN, validateOBGYNInput } from '../../services/obgynCalculatorService';
-import { OvarianReserveInput, OvarianReserveResult } from '../../types/obgyn-calculators';
+import type { OvarianReserveInput, OvarianReserveResult } from '../../types/obgyn-calculators';
 
 interface FormData {
   age: string;
@@ -16,6 +18,20 @@ interface FormData {
 }
 
 const OvarianReserveCalculator: React.FC = () => {
+  const { t } = useTranslation();
+  
+  // Helper function to access nested translations
+  const getOvarianText = (key: string, options?: any): string => {
+    const result = t(`calculators.ObGyn.ovarianReserveCalculator.${key}`, options);
+    return typeof result === 'string' ? result : key;
+  };
+  
+  // Helper function to get array translations
+  const getOvarianArray = (key: string): string[] => {
+    const result = t(`calculators.ObGyn.ovarianReserveCalculator.${key}`, { returnObjects: true });
+    return Array.isArray(result) ? result : [];
+  };
+  
   const [activeTab, setActiveTab] = useState<'calculator' | 'about'>('calculator');
   const [formData, setFormData] = useState<FormData>({
     age: '',
@@ -27,68 +43,68 @@ const OvarianReserveCalculator: React.FC = () => {
   });
   
   const [result, setResult] = useState<OvarianReserveResult | null>(null);
-  const [errors, setErrors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors.length > 0) {
-      setErrors([]);
-    }
-  };
-
-  const validateForm = (): boolean => {
-    const newErrors: string[] = [];
-
-    if (!formData.age) {
-      newErrors.push('Age is required');
-    } else {
-      const age = parseInt(formData.age);
-      if (isNaN(age) || age < 18 || age > 50) {
-        newErrors.push('Age must be between 18-50 years');
-      }
-    }
-
-    if (!formData.amh) {
-      newErrors.push('AMH level is required');
-    } else {
-      const amh = parseFloat(formData.amh);
-      if (isNaN(amh) || amh < 0 || amh > 50) {
-        newErrors.push('AMH must be between 0-50 ng/mL');
-      }
-    }
-
-    setErrors(newErrors);
-    return newErrors.length === 0;
   };
 
   const handleCalculate = async () => {
-    if (!validateForm()) return;
-
     setIsLoading(true);
+    setErrors([]);
+    setResult(null);
+
     try {
+      // Create input for validation - keep as strings as expected by the interface
       const input: OvarianReserveInput = {
         age: formData.age,
         amh: formData.amh,
         antalFolicleCount: formData.antalFolicleCount || undefined,
         fsh: formData.fsh || undefined,
         estradiol: formData.estradiol || undefined,
-        inhibinB: formData.inhibinB || undefined,
-        calculationDate: new Date().toISOString()
+        inhibinB: formData.inhibinB || undefined
       };
 
-      // Use the service validation
+      // Validate input
       const validation = validateOBGYNInput('ovarian-reserve', input);
       if (!validation.isValid) {
         setErrors(validation.errors);
         return;
       }
 
-      const calculationResult = calculateOBGYN('ovarian-reserve', input) as OvarianReserveResult;
-      setResult(calculationResult);
+      // Calculate result
+      const calcResult = calculateOBGYN('ovarian-reserve', input);
       
+      // Process the result - parse strings to numbers for classification logic
+      const amh = parseFloat(input.amh);
+      const afc = input.antalFolicleCount ? parseFloat(input.antalFolicleCount) : 0;
+      const fsh = input.fsh ? parseFloat(input.fsh) : 0;
+
+      // Simple classification logic
+      let category: 'low' | 'normal' | 'high';
+      if (amh < 1.0 || afc < 7 || fsh > 10) {
+        category = 'low';
+      } else if (amh > 3.0 || afc > 15) {
+        category = 'high';
+      } else {
+        category = 'normal';
+      }
+
+      setResult({
+        reserveCategory: category,
+        reproductivePotential: getOvarianText(category),
+        treatmentOptions: getOvarianArray(`${category}ReserveDetails`),
+        counselingPoints: [],
+        value: amh,
+        unit: 'ng/mL',
+        category: category as 'low' | 'moderate' | 'high',
+        interpretation: getOvarianText(`${category}Interpretation`),
+        recommendations: getOvarianArray(`${category}Recommendations`),
+        references: getOvarianArray('references')
+      });
     } catch (error) {
-      setErrors([error instanceof Error ? error.message : 'Calculation failed']);
+      setErrors([getOvarianText('calculationError')]);
     } finally {
       setIsLoading(false);
     }
@@ -109,315 +125,292 @@ const OvarianReserveCalculator: React.FC = () => {
 
   const getReserveColor = (level: string) => {
     switch (level) {
-      case 'low': return 'text-red-700 bg-red-50 border-red-200';
-      case 'normal': return 'text-green-700 bg-green-50 border-green-200';
-      case 'high': return 'text-blue-700 bg-blue-50 border-blue-200';
-      default: return 'text-gray-700 bg-gray-50 border-gray-200';
+      case 'low': return 'text-red-600';
+      case 'normal': return 'text-green-600';
+      case 'high': return 'text-blue-600';
+      default: return 'text-gray-600';
     }
   };
 
   const getReserveIcon = (level: string) => {
     switch (level) {
-      case 'low': return <AlertTriangle className="w-5 h-5 text-red-600" />;
-      case 'normal': return <CheckCircle className="w-5 h-5 text-green-600" />;
-      case 'high': return <Info className="w-5 h-5 text-blue-600" />;
-      default: return <Info className="w-5 h-5 text-gray-600" />;
+      case 'low': return '⬇️';
+      case 'normal': return '✅';
+      case 'high': return '⬆️';
+      default: return '❓';
     }
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-6">
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'calculator' | 'about')} className="w-full">
+    <div className="max-w-4xl mx-auto p-6">
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'calculator' | 'about')}>
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="calculator">Calculator</TabsTrigger>
-          <TabsTrigger value="about">About</TabsTrigger>
+          <TabsTrigger value="calculator">{getOvarianText('calculatorTab')}</TabsTrigger>
+          <TabsTrigger value="about">{getOvarianText('aboutTab')}</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="calculator" className="space-y-6">
+        
+        <TabsContent value="calculator" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Activity className="w-5 h-5 text-blue-600" />
-                <span>Ovarian Reserve Assessment</span>
-              </CardTitle>
-              <CardDescription>
-                Comprehensive ovarian reserve assessment using multiple biomarkers and clinical parameters
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent className="space-y-6">
-              {/* Demographics */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Age (years) *
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.age}
-                    onChange={(e) => handleInputChange('age', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="e.g., 32"
-                    min="18"
-                    max="50"
-                  />
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-pink-100 rounded-lg">
+                  <Baby className="w-6 h-6 text-pink-600" />
                 </div>
-
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    AMH (ng/mL) *
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.amh}
-                    onChange={(e) => handleInputChange('amh', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="e.g., 2.5"
-                    min="0"
-                    max="50"
-                    step="0.1"
-                  />
+                <div>
+                  <CardTitle className="text-xl">{getOvarianText('title')}</CardTitle>
+                  <CardDescription>{getOvarianText('description')}</CardDescription>
                 </div>
               </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {errors.length > 0 && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <div className="flex items-center gap-2 text-red-800 font-medium mb-2">
+                    <AlertTriangle className="w-4 h-4" />
+                    {getOvarianText('validationErrors')}
+                  </div>
+                  <ul className="list-disc list-inside text-red-700 space-y-1">
+                    {errors.map((error, index) => (
+                      <li key={index}>{error}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-              {/* Primary Markers */}
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Primary Reserve Markers</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Primary Markers */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900">{getOvarianText('primaryMarkersTitle')}</h3>
+                  
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Antral Follicle Count (AFC)
+                    <label className="block text-sm font-medium text-gray-700">
+                      {getOvarianText('ageLabel')}
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.age}
+                      onChange={(e) => handleInputChange('age', e.target.value)}
+                      placeholder={getOvarianText('agePlaceholder')}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    />
+                    <p className="text-xs text-gray-500">{getOvarianText('ageDescription')}</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      {getOvarianText('amhLabel')}
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      value={formData.amh}
+                      onChange={(e) => handleInputChange('amh', e.target.value)}
+                      placeholder={getOvarianText('amhPlaceholder')}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    />
+                    <p className="text-xs text-gray-500">{getOvarianText('amhDescription')}</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      {getOvarianText('antralFollicleCountLabel')}
                     </label>
                     <input
                       type="number"
                       value={formData.antalFolicleCount}
                       onChange={(e) => handleInputChange('antalFolicleCount', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="e.g., 12"
-                      min="0"
-                      max="50"
+                      placeholder={getOvarianText('antralFollicleCountPlaceholder')}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
                     />
-                    <p className="text-xs text-gray-500">Total follicles 2-10mm in both ovaries</p>
+                    <p className="text-xs text-gray-500">{getOvarianText('antralFollicleCountDescription')}</p>
                   </div>
+                </div>
 
+                {/* Secondary Markers */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900">{getOvarianText('secondaryMarkersTitle')}</h3>
+                  
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      FSH (mIU/mL) - Day 3
+                    <label className="block text-sm font-medium text-gray-700">
+                      {getOvarianText('fshLabel')}
                     </label>
                     <input
                       type="number"
+                      step="0.1"
                       value={formData.fsh}
                       onChange={(e) => handleInputChange('fsh', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="e.g., 8.5"
-                      min="0"
-                      max="100"
-                      step="0.1"
+                      placeholder={getOvarianText('fshPlaceholder')}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
                     />
-                    <p className="text-xs text-gray-500">Follicle stimulating hormone</p>
+                    <p className="text-xs text-gray-500">{getOvarianText('fshDescription')}</p>
                   </div>
-                </div>
-              </div>
 
-              {/* Secondary Markers */}
-              <div className="bg-green-50 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Secondary Markers (Optional)</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Estradiol (pg/mL) - Day 3
+                    <label className="block text-sm font-medium text-gray-700">
+                      {getOvarianText('estradiolLabel')}
                     </label>
                     <input
                       type="number"
                       value={formData.estradiol}
                       onChange={(e) => handleInputChange('estradiol', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="e.g., 45"
-                      min="0"
-                      max="500"
-                      step="0.1"
+                      placeholder={getOvarianText('estradiolPlaceholder')}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
                     />
-                    <p className="text-xs text-gray-500">Baseline estradiol level</p>
+                    <p className="text-xs text-gray-500">{getOvarianText('estradiolDescription')}</p>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Inhibin B (pg/mL)
+                    <label className="block text-sm font-medium text-gray-700">
+                      {getOvarianText('inhibinBLabel')}
                     </label>
                     <input
                       type="number"
                       value={formData.inhibinB}
                       onChange={(e) => handleInputChange('inhibinB', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="e.g., 65"
-                      min="0"
-                      max="500"
-                      step="0.1"
+                      placeholder={getOvarianText('inhibinBPlaceholder')}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
                     />
-                    <p className="text-xs text-gray-500">Granulosa cell marker</p>
+                    <p className="text-xs text-gray-500">{getOvarianText('inhibinBDescription')}</p>
                   </div>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-3">
-                <button
-                  onClick={handleCalculate}
+              <div className="flex gap-3 pt-4">
+                <Button 
+                  onClick={handleCalculate} 
                   disabled={isLoading || !formData.age || !formData.amh}
-                  className="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="flex-1"
                 >
-                  {isLoading ? 'Calculating...' : 'Calculate Ovarian Reserve'}
-                </button>
-                <button
-                  onClick={handleReset}
-                  className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
-                >
-                  Reset
-                </button>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      {getOvarianText('calculating')}
+                    </>
+                  ) : (
+                    <>
+                      <Calculator className="w-4 h-4 mr-2" />
+                      {getOvarianText('calculateButton')}
+                    </>
+                  )}
+                </Button>
+                <Button variant="outline" onClick={handleReset}>
+                  {getOvarianText('resetButton')}
+                </Button>
               </div>
 
-              {errors.length > 0 && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                  <ul className="text-sm space-y-1">
-                    {errors.map((error, index) => (
-                      <li key={index}>• {error}</li>
-                    ))}
-                  </ul>
+              {/* Results */}
+              {result && (
+                <div className="mt-6 p-6 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-2 mb-4">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                    <h3 className="text-lg font-semibold text-gray-900">{getOvarianText('resultsTitle')}</h3>
+                  </div>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-medium text-gray-700 mb-2">{getOvarianText('reserveCategory')}</h4>
+                      <p className="text-lg font-semibold">{result.reproductivePotential}</p>
+                      
+                      <h4 className="font-medium text-gray-700 mt-4 mb-2">{getOvarianText('interpretationTitle')}</h4>
+                      <p className="text-gray-600">{result.interpretation}</p>
+                    </div>
+                    
+                    <div>
+                      <h4 className="font-medium text-gray-700 mb-2">{getOvarianText('treatmentOptionsTitle')}</h4>
+                      <ul className="space-y-1">
+                        {result.treatmentOptions.map((option, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <span className="w-1.5 h-1.5 bg-pink-500 rounded-full mt-2 flex-shrink-0"></span>
+                            <span className="text-sm text-gray-600">{option}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      
+                      <h4 className="font-medium text-gray-700 mt-4 mb-2">{getOvarianText('recommendationsTitle')}</h4>
+                      <ul className="space-y-1">
+                        {result.recommendations.map((rec, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></span>
+                            <span className="text-sm text-gray-600">{rec}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               )}
             </CardContent>
           </Card>
-
-          {/* Results - Coming Soon placeholder for now */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Coming Soon</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <Shield className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">Ovarian Reserve Calculator</h3>
-                <p className="text-gray-600 mb-4">This calculator is currently under development.</p>
-                <p className="text-sm text-gray-500">
-                  Comprehensive ovarian reserve assessment and fertility counseling will be available soon.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
 
-        <TabsContent value="about" className="space-y-6">
+        <TabsContent value="about" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>About Ovarian Reserve Assessment</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Info className="w-5 h-5" />
+                {getOvarianText('aboutTitle')}
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="bg-blue-50 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-blue-800 mb-3">Clinical Purpose</h3>
-                <p className="text-blue-700 mb-2">
-                  Ovarian reserve assessment evaluates the quantity and quality of a woman's remaining oocytes, 
-                  providing crucial information for fertility counseling and treatment planning.
-                </p>
-                <p className="text-blue-700">
-                  This assessment is essential for reproductive planning, IVF protocol selection, and 
-                  understanding reproductive potential across different life stages.
-                </p>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">{getOvarianText('purposeTitle')}</h3>
+                <p className="text-gray-600">{getOvarianText('purposeText')}</p>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-blue-800 mb-3">Primary Markers</h3>
-                  <ul className="text-sm text-blue-700 space-y-2">
-                    <li><strong>AMH (Anti-Müllerian Hormone):</strong> Most reliable marker of ovarian reserve</li>
-                    <li><strong>AFC (Antral Follicle Count):</strong> Ultrasound-based assessment of follicles</li>
-                    <li><strong>FSH (Day 3):</strong> Elevated FSH indicates diminished reserve</li>
-                    <li><strong>Age:</strong> Most important predictor of reproductive potential</li>
-                  </ul>
-                </div>
-
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-green-800 mb-3">Secondary Markers</h3>
-                  <ul className="text-sm text-green-700 space-y-2">
-                    <li><strong>Estradiol (Day 3):</strong> Baseline hormone level assessment</li>
-                    <li><strong>Inhibin B:</strong> Granulosa cell function marker</li>
-                    <li><strong>LH:</strong> Luteinizing hormone patterns</li>
-                    <li><strong>Ovarian Volume:</strong> Ultrasound morphology assessment</li>
-                  </ul>
-                </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">{getOvarianText('parametersTitle')}</h3>
+                <ul className="space-y-2">
+                  {getOvarianArray('parameters').map((param, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="w-1.5 h-1.5 bg-pink-500 rounded-full mt-2 flex-shrink-0"></span>
+                      <span className="text-gray-600">{param}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
 
-              <div className="bg-orange-50 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-orange-800 mb-3">Clinical Interpretation</h3>
+              <div>
+                <h3 className="text-lg font-semibold mb-4">{getOvarianText('interpretationGuideTitle')}</h3>
                 
-                <div className="grid md:grid-cols-3 gap-4">
-                  <div className="bg-white p-3 rounded-lg">
-                    <h4 className="font-medium text-red-800 mb-2">Low Reserve</h4>
-                    <ul className="text-xs text-red-700 space-y-1">
-                      <li>• AMH &lt; 1.0 ng/mL</li>
-                      <li>• AFC &lt; 7</li>
-                      <li>• FSH &gt; 10 mIU/mL</li>
-                      <li>• Poor response expected</li>
-                    </ul>
+                <div className="grid gap-4">
+                  <div className="p-4 border border-red-200 bg-red-50 rounded-lg">
+                    <h4 className="font-medium text-red-800 mb-2">{getOvarianText('lowReserveTitle')}</h4>
+                    <p className="text-red-700 text-sm">{getOvarianText('lowReserveDescription')}</p>
                   </div>
                   
-                  <div className="bg-white p-3 rounded-lg">
-                    <h4 className="font-medium text-green-800 mb-2">Normal Reserve</h4>
-                    <ul className="text-xs text-green-700 space-y-1">
-                      <li>• AMH 1.0-3.0 ng/mL</li>
-                      <li>• AFC 7-15</li>
-                      <li>• FSH &lt; 10 mIU/mL</li>
-                      <li>• Good response expected</li>
-                    </ul>
+                  <div className="p-4 border border-green-200 bg-green-50 rounded-lg">
+                    <h4 className="font-medium text-green-800 mb-2">{getOvarianText('normalReserveTitle')}</h4>
+                    <p className="text-green-700 text-sm">{getOvarianText('normalReserveDescription')}</p>
                   </div>
                   
-                  <div className="bg-white p-3 rounded-lg">
-                    <h4 className="font-medium text-blue-800 mb-2">High Reserve</h4>
-                    <ul className="text-xs text-blue-700 space-y-1">
-                      <li>• AMH &gt; 3.0 ng/mL</li>
-                      <li>• AFC &gt; 15</li>
-                      <li>• PCOS possible</li>
-                      <li>• OHSS risk increased</li>
-                    </ul>
+                  <div className="p-4 border border-orange-200 bg-orange-50 rounded-lg">
+                    <h4 className="font-medium text-orange-800 mb-2">{getOvarianText('highReserveTitle')}</h4>
+                    <p className="text-orange-700 text-sm">{getOvarianText('highReserveDescription')}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-purple-50 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-purple-800 mb-3">Clinical Applications</h3>
-                
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-medium text-purple-800">Fertility Counseling</h4>
-                    <ul className="text-sm text-purple-700 mt-1 space-y-1">
-                      <li>• Reproductive lifespan prediction</li>
-                      <li>• Family planning optimization</li>
-                      <li>• Egg freezing counseling</li>
-                      <li>• Contraception counseling</li>
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-medium text-purple-800">IVF Protocol Selection</h4>
-                    <ul className="text-sm text-purple-700 mt-1 space-y-1">
-                      <li>• Stimulation protocol optimization</li>
-                      <li>• OHSS risk assessment</li>
-                      <li>• Cycle cancellation prediction</li>
-                      <li>• Donor consideration timing</li>
-                    </ul>
-                  </div>
-                </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">{getOvarianText('limitationsTitle')}</h3>
+                <ul className="space-y-2">
+                  {getOvarianArray('limitations').map((limitation, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="w-1.5 h-1.5 bg-yellow-500 rounded-full mt-2 flex-shrink-0"></span>
+                      <span className="text-gray-600">{limitation}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
 
-              <div className="bg-gray-50 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-800 mb-3">Professional Guidelines</h3>
-                <ul className="text-sm text-gray-700 space-y-2">
-                  <li><strong>ASRM Guidelines:</strong> Ovarian reserve testing recommendations</li>
-                  <li><strong>ESHRE Consensus:</strong> AMH measurement and interpretation</li>
-                  <li><strong>ACOG Committee Opinion:</strong> Age-related fertility decline</li>
-                  <li><strong>Cochrane Reviews:</strong> Ovarian reserve test accuracy</li>
-                  <li><strong>RCOG Guidelines:</strong> Fertility assessment and counseling</li>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">{getOvarianText('referencesTitle')}</h3>
+                <ul className="space-y-2">
+                  {getOvarianArray('references').map((reference, index) => (
+                    <li key={index} className="text-sm text-gray-600">
+                      {index + 1}. {reference}
+                    </li>
+                  ))}
                 </ul>
               </div>
             </CardContent>

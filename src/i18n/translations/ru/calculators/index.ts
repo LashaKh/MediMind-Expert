@@ -4,12 +4,21 @@ import eurscoreII from './euroscore-ii';
 import hcmRiskSCD from './hcm-risk-scd';
 import hcmAFRisk from './hcm-af-risk';
 import { 
+  ovarianReserve,
+  ovarianReserveCalculator,
   gestationalAgeCalculator,
   eddCalculator,
   preeclampsiaRiskCalculator,
   pretermBirthRiskCalculator,
   gdmScreeningCalculator,
-  bishopScoreCalculator
+  bishopScoreCalculator,
+  vbacSuccessCalculator,
+  apgarScoreCalculator,
+  pphRiskCalculator,
+  cervicalCancerRiskCalculator,
+  ovarianCancerRiskCalculator,
+  endometrialCancerRiskCalculator,
+  menopauseAssessmentCalculator
 } from './ObGyn';
 
 export default {
@@ -17,13 +26,54 @@ export default {
   cardiology,
   eurscoreII,
   
-  // Individual OB/GYN calculators with direct access
+  // OB/GYN namespace - this is what makes t('calculators.obgyn.apgar_score.title') work
+  obgyn: {
+    apgar_score: apgarScoreCalculator,
+    bishop_score: bishopScoreCalculator,
+    cervical_cancer_risk: cervicalCancerRiskCalculator,
+    edd_calculator: eddCalculator,
+    endometrial_cancer_risk: endometrialCancerRiskCalculator,
+    gdm_screening: gdmScreeningCalculator,
+    gestational_age: gestationalAgeCalculator,
+    menopause_assessment: menopauseAssessmentCalculator,
+    ovarian_cancer_risk: ovarianCancerRiskCalculator,
+    ovarian_reserve: ovarianReserve,
+    ovarian_reserve_calculator: ovarianReserveCalculator,
+    pph_risk: pphRiskCalculator,
+    preeclampsia_risk: preeclampsiaRiskCalculator,
+    preterm_birth_risk: pretermBirthRiskCalculator,
+    vbac_success: vbacSuccessCalculator
+  },
+  
+  // Direct access ObGyn namespace for the useTranslation hook
+  ObGyn: {
+    ovarianReserve: ovarianReserve,
+    ovarianReserveCalculator: ovarianReserveCalculator,
+    gestationalAgeCalculator: gestationalAgeCalculator,
+    eddCalculator: eddCalculator,
+    preeclampsiaRiskCalculator: preeclampsiaRiskCalculator,
+    pretermBirthRiskCalculator: pretermBirthRiskCalculator,
+    gdmScreeningCalculator: gdmScreeningCalculator,
+    bishopScoreCalculator: bishopScoreCalculator,
+    vbacSuccessCalculator: vbacSuccessCalculator,
+    apgarScoreCalculator: apgarScoreCalculator,
+    pphRiskCalculator: pphRiskCalculator,
+    cervicalCancerRiskCalculator: cervicalCancerRiskCalculator,
+    ovarianCancerRiskCalculator: ovarianCancerRiskCalculator,
+    endometrialCancerRiskCalculator: endometrialCancerRiskCalculator,
+    menopauseAssessmentCalculator: menopauseAssessmentCalculator
+  },
+  
+  // Individual OB/GYN calculators with direct access (for backward compatibility)
   gestational_age: gestationalAgeCalculator,
   edd: eddCalculator,
   preeclampsia_risk: preeclampsiaRiskCalculator,
   preterm_birth_risk: pretermBirthRiskCalculator,
   gdm_screening: gdmScreeningCalculator,
   bishop_score: bishopScoreCalculator,
+  vbac_success: vbacSuccessCalculator,
+  apgar_score: apgarScoreCalculator,
+  pph_risk_calculator: pphRiskCalculator,
   
   // Top-level keys for Calculator landing page
   specialty: {
@@ -48,18 +98,18 @@ export default {
   },
   
   categories: {
-    risk_assessment: 'Оценка Рисков',
-    acute_care: 'Неотложная Помощь',
-    therapy_management: 'Управление Терапией',
-    heart_failure: 'Сердечная Недостаточность',
-    surgical_risk: 'Хирургический Риск',
+    risk_assessment: 'Оценка риска',
+    acute_care: 'Острая помощь',
+    therapy_management: 'Управление терапией',
+    heart_failure: 'Сердечная недостаточность',
+    surgical_risk: 'Хирургический риск',
     cardiomyopathy: 'Кардиомиопатия',
-    pregnancy_dating: 'Датировка Беременности',
-    antenatal_risk: 'Антенатальный Риск',
-    labor_management: 'Ведение Родов',
-    assessment_tools: 'Инструменты Оценки',
-    gynecologic_oncology: 'Гинекологическая Онкология',
-    reproductive_health: 'Репродуктивное Здоровье'
+    pregnancy_dating: 'Датировка беременности',
+    antenatal_risk: 'Антенатальный риск',
+    labor_management: 'Управление родами',
+    assessment_tools: 'Инструменты оценки',
+    gynecologic_oncology: 'Гинекологическая онкология',
+    reproductive_endocrinology: 'Репродуктивная эндокринология'
   },
   
   // Calculator title/subtitle shortcuts for cards
@@ -138,6 +188,34 @@ export default {
   back_to: 'Назад к',
   view_grid: 'Сетка',
   view_list: 'Список',
+  
+  // OB/GYN Calculator entries
+  pph_risk: {
+    title: 'Калькулятор риска ПРК',
+    subtitle: 'Оценка риска послеродового кровотечения'
+  },
+  
+  cervical_cancer_risk: {
+    title: 'Калькулятор риска рака шейки матки',
+    subtitle: 'Оценка риска рака шейки матки на основе ВПЧ'
+  },
+  
+  ovarian_cancer_risk: {
+    title: 'Калькулятор риска рака яичников',
+    subtitle: 'Оценка наследственного риска рака яичников'
+  },
+  
+  endometrial_cancer_risk: {
+    title: 'Калькулятор риска рака эндометрия',
+    subtitle: 'Оценка пожизненного риска рака эндометрия'
+  },
+  
+  ovarian_reserve: {
+    title: 'Калькулятор овариального резерва',
+    subtitle: 'Оценка фертильности на основе АМГ'
+  },
+  
+  menopause_assessment: menopauseAssessmentCalculator,
 };
 
 export {

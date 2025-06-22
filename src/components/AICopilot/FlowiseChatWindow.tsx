@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { MessageSquare, Wifi, WifiOff, History, Plus, FileText, Sparkles, Brain, Stethoscope, User, BookOpen } from 'lucide-react';
+import { History, Plus, FileText, Sparkles, Stethoscope, Heart, AlertCircle, X } from 'lucide-react';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useChat } from '../../contexts/ChatContext';
 import { useFlowiseChat } from '../../hooks/chat/useFlowiseChat';
@@ -8,31 +8,30 @@ import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
 import { ConversationList } from './ConversationList';
 import { KnowledgeBaseSelector } from './KnowledgeBaseSelector';
-import { PersonalKBGuidance, usePersonalKBPlaceholder } from './PersonalKBGuidance';
+import { usePersonalKBPlaceholder } from './PersonalKBGuidance';
 import { NewCaseButton } from './NewCaseButton';
 import { CaseCreationModal } from './CaseCreationModal';
 import { CaseIndicator } from './CaseIndicator';
 import { CaseListModal } from './CaseListModal';
 import { CalculatorSuggestions } from './CalculatorSuggestions';
 import { Button } from '../ui/button';
-import { Message, PatientCase } from '../../types/chat';
+import { Message, PatientCase, Attachment } from '../../types/chat';
 import { useCalculatorIntegration } from '../../hooks/useCalculatorIntegration';
 import { v4 as uuidv4 } from 'uuid';
+import { WelcomeScreen } from './WelcomeScreen';
 
 interface FlowiseChatWindowProps {
   className?: string;
   isDisabled?: boolean;
   placeholder?: string;
   allowAttachments?: boolean;
-  enableDemo?: boolean;
 }
 
 export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
   className = '',
   isDisabled = false,
   placeholder,
-  allowAttachments = true,
-  enableDemo = false
+  allowAttachments = true
 }) => {
   const { t } = useTranslation();
   const { profile } = useAuth();
@@ -50,13 +49,24 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
     setActiveCase,
     resetCaseContext,
     // Knowledge base management methods
-    setKnowledgeBase,
-    setPersonalDocumentCount
+    setKnowledgeBase
   } = useChat();
 
   const [showConversationList, setShowConversationList] = useState(false);
   const [showCaseModal, setShowCaseModal] = useState(false);
   const [showCaseListModal, setShowCaseListModal] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Enhanced animations and interactions
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // Update every minute
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
 
   // Calculator integration
   const {
@@ -74,8 +84,7 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
   const {
     sendMessage: sendToFlowise,
     isLoading: flowiseLoading,
-    error: flowiseError,
-    sessionId
+    error: flowiseError
   } = useFlowiseChat({
     onMessageReceived: (message: Message) => {
       addMessage(message);
@@ -110,43 +119,49 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
   }, [flowiseError]);
 
   // Handle sending a new message
-  const handleSendMessage = useCallback(async (content: string, attachments?: any[]) => {
-    if (!content.trim() || isDisabled || flowiseLoading) return;
+  const handleSendMessage = useCallback(async (content: string, attachments?: Attachment[]) => {
+    if (!content.trim() && (!attachments || attachments.length === 0)) return;
 
-    // Add user message to context immediately
+    // Create user message with enhanced metadata
     const userMessage: Message = {
       id: uuidv4(),
-      content: content.trim(),
+      content,
       type: 'user',
       timestamp: new Date(),
-      status: 'sent',
-      attachments: attachments
+      attachments,
+      metadata: {
+        sessionId: chatState.currentSessionId,
+        knowledgeBase: chatState.selectedKnowledgeBase,
+        caseId: chatState.caseContext.activeCase?.id
+      }
     };
 
     addMessage(userMessage);
+    setLoading(true);
 
-    // Send to Flowise API with case context and Vector Store integration
     try {
+      // Pass the current knowledge base type and case context to the API
       await sendToFlowise(
         content, 
         attachments, 
-        chatState.caseContext.activeCase,
-        chatState.selectedKnowledgeBase,
-        // Vector Store integration handles document retrieval automatically
-        undefined
+        chatState.caseContext.activeCase, 
+        chatState.selectedKnowledgeBase, 
+        undefined // personalDocumentIds - handled automatically by backend
       );
     } catch (error) {
-      console.error('Error sending message:', error);
-      // Error handling is managed by the useFlowiseChat hook
+      console.error('Failed to send message:', error);
+      setError('Failed to send message. Please try again.');
+    } finally {
+      setLoading(false);
     }
-  }, [isDisabled, flowiseLoading, addMessage, sendToFlowise, chatState.caseContext.activeCase, chatState.selectedKnowledgeBase]);
+  }, [addMessage, sendToFlowise, chatState.currentSessionId, chatState.selectedKnowledgeBase, chatState.caseContext.activeCase, setLoading, setError]);
 
   // Handle case creation
   const handleCaseCreate = async (caseData: Omit<PatientCase, 'id' | 'createdAt' | 'updatedAt'>) => {
     const newCase = createCase(caseData);
     
     // Create a new conversation for this case
-    const conversationId = createNewConversation(
+    createNewConversation(
       `Case: ${newCase.title}`, 
       profile?.medical_specialty as 'cardiology' | 'obgyn',
       newCase.id
@@ -168,32 +183,122 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
     return newCase;
   };
 
-  // Handle case reset
+  // Handle case reset - Enhanced with better debugging
   const handleResetCase = () => {
-    resetCaseContext();
-    // Optionally create a new conversation without case context
-    createNewConversation(undefined, profile?.medical_specialty as 'cardiology' | 'obgyn');
+    console.log('🔥 HANDLE RESET CASE FUNCTION CALLED!!! - This should appear if button click works');
+    console.log('🚀 Starting case reset process...');
+    console.log('Current active case:', chatState.caseContext.activeCase);
+    console.log('Current messages count:', chatState.messages.length);
+    
+    try {
+      // Step 1: Clear the active case first
+      console.log('Step 1: Resetting case context...');
+      resetCaseContext();
+      
+      // Step 2: Clear current messages
+      console.log('Step 2: Clearing messages...');
+      clearMessages();
+      
+      // Step 3: Force clear any lingering case references in localStorage
+      console.log('Step 3: Cleaning localStorage...');
+      try {
+        const conversationsData = localStorage.getItem('medimind-conversations');
+        if (conversationsData) {
+          const conversations = JSON.parse(conversationsData);
+          if (Array.isArray(conversations)) {
+            const updatedConversations = conversations.map((conv: any) => ({
+              ...conv,
+              caseId: undefined,
+              title: conv.title?.startsWith('Case:') ? 'General Discussion' : conv.title
+            }));
+            localStorage.setItem('medimind-conversations', JSON.stringify(updatedConversations));
+          }
+        }
+      } catch (storageError) {
+        console.warn('localStorage cleanup failed:', storageError);
+        // Clear the entire conversations storage if it's corrupted
+        localStorage.removeItem('medimind-conversations');
+      }
+      
+      // Step 4: Create a completely new conversation without any case context
+      console.log('Step 4: Creating new conversation...');
+      const newConversationId = createNewConversation(
+        'Fresh Conversation', 
+        profile?.medical_specialty as 'cardiology' | 'obgyn',
+        undefined // explicitly no case ID
+      );
+      
+      // Step 5: Set the new conversation as active
+      console.log('Step 5: Setting active conversation...');
+      setActiveConversation(newConversationId);
+      
+      // Step 6: Add a welcoming AI message for the fresh start
+      console.log('Step 6: Adding welcome message...');
+      setTimeout(() => {
+        const welcomeMessage = {
+          id: `msg-${Date.now()}`,
+          content: `Hello! I've cleared the previous case context and we're starting fresh. How can I assist you with your ${profile?.medical_specialty || 'medical'} practice today?`,
+          type: 'ai' as const,
+          timestamp: new Date(),
+        };
+        addMessage(welcomeMessage);
+        console.log('✅ Welcome message added');
+      }, 100);
+      
+      // Step 7: Force re-render by clearing error state
+      setError(undefined);
+      
+      console.log('✅ Case reset completed successfully!');
+      console.log('New conversation ID:', newConversationId);
+      
+    } catch (error) {
+      console.error('❌ Error during case reset:', error);
+      setError('Failed to reset case. Please try again.');
+    }
   };
 
   // Handle viewing case details (could expand to show full case modal later)
   const handleViewCase = () => {
-    // For now, we'll just console log the case details
-    // This could be expanded to show a case details modal
-    if (chatState.caseContext.activeCase) {
-      console.log('Active case details:', chatState.caseContext.activeCase);
-      // Future: show case details modal
-    }
+    console.log('🔍 handleViewCase called!');
+    console.log('Current active case:', chatState.caseContext.activeCase);
+    // For now, we'll show the case list modal to allow case switching
+    setShowCaseListModal(true);
+    console.log('Case list modal should be opening...');
   };
 
   // Handle case selection from list
   const handleCaseSelect = (selectedCase: PatientCase) => {
+    // Set the selected case as active
     setActiveCase(selectedCase);
+    
+    // Clear current messages to start fresh with the new case
+    clearMessages();
+    
     // Create a new conversation for the selected case
-    createNewConversation(
+    const newConversationId = createNewConversation(
       `Case: ${selectedCase.title}`, 
       profile?.medical_specialty as 'cardiology' | 'obgyn',
       selectedCase.id
     );
+    
+    // Set the new conversation as active
+    setActiveConversation(newConversationId);
+    
+    // Add an initial AI message with case context
+    const caseIntroMessage: Message = {
+      id: uuidv4(),
+      content: t('chat.caseReceived', { title: selectedCase.title }) + 
+              '\n\n' + t('chat.caseSummary') + 
+              `\n${selectedCase.description}` +
+              '\n\n' + t('chat.caseDiscussionPrompt'),
+      type: 'ai',
+      timestamp: new Date(),
+    };
+    
+    addMessage(caseIntroMessage);
+    
+    // Close the case list modal
+    setShowCaseListModal(false);
   };
 
   // Calculator integration for AI suggestions
@@ -201,318 +306,461 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
     handleCalculatorSelect(calculatorId);
   }, [handleCalculatorSelect]);
 
-  // Handle new conversation
+  // Handle new conversation - Enhanced
   const handleNewConversation = () => {
-    createNewConversation(undefined, profile?.medical_specialty as 'cardiology' | 'obgyn');
-  };
-
-  const getCurrentConversationTitle = () => {
-    const activeConversation = chatState.conversations.find(
-      conv => conv.id === chatState.activeConversationId
+    // Clear current messages
+    clearMessages();
+    
+    // Reset any active case context
+    resetCaseContext();
+    
+    // Create a completely fresh conversation
+    const newConversationId = createNewConversation(
+      undefined, 
+      profile?.medical_specialty as 'cardiology' | 'obgyn'
     );
-    return activeConversation?.title || t('chat.defaultChatTitle');
+    
+    // Set the new conversation as active
+    setActiveConversation(newConversationId);
+    
+    // Optional: Show success feedback
+    console.log('New conversation started successfully');
   };
 
   // Connection status
-  const isConnected = !flowiseError && sessionId;
+  const isConnected = !flowiseError;
 
   // Get specialty configuration
   const getSpecialtyConfig = () => {
-    switch (profile?.medical_specialty) {
-      case 'cardiology':
-        return {
-          icon: <Stethoscope className="w-5 h-5" />,
-          title: t('chat.cardiologyAICoPilot'),
-          gradient: 'from-red-500 via-pink-500 to-purple-500',
-          bgGradient: 'from-red-50/30 via-pink-50/30 to-purple-50/30',
-          borderColor: 'border-red-200/50'
-        };
-      case 'obgyn':
-        return {
-          icon: <Brain className="w-5 h-5" />,
-          title: t('chat.obgynAICoPilot'),
-          gradient: 'from-purple-500 via-pink-500 to-rose-500',
-          bgGradient: 'from-purple-50/30 via-pink-50/30 to-rose-50/30',
-          borderColor: 'border-purple-200/50'
-        };
-      default:
-        return {
-          icon: <Sparkles className="w-5 h-5" />,
-          title: t('chat.medicalAICoPilot'),
-          gradient: 'from-blue-500 via-indigo-500 to-purple-500',
-          bgGradient: 'from-blue-50/30 via-indigo-50/30 to-purple-50/30',
-          borderColor: 'border-blue-200/50'
-        };
+    if (profile?.medical_specialty === 'cardiology') {
+      return {
+        icon: <Heart className="w-5 h-5" />,
+        title: t('chat.cardiologyAICoPilot'),
+        gradient: 'from-red-500 via-pink-500 to-rose-600',
+        bgGradient: 'from-red-50/30 via-pink-50/30 to-rose-50/30',
+        borderColor: 'border-red-200/50',
+        accentColor: 'red'
+      };
+    } else if (profile?.medical_specialty === 'obgyn') {
+      return {
+        icon: <Stethoscope className="w-5 h-5" />,
+        title: t('chat.obgynAICoPilot'),
+        gradient: 'from-purple-500 via-violet-500 to-indigo-600',
+        bgGradient: 'from-purple-50/30 via-violet-50/30 to-indigo-50/30',
+        borderColor: 'border-purple-200/50',
+        accentColor: 'purple'
+      };
+    } else {
+      return {
+        icon: <Sparkles className="w-5 h-5" />,
+        title: t('chat.medicalAICoPilot'),
+        gradient: 'from-blue-500 via-indigo-500 to-purple-500',
+        bgGradient: 'from-blue-50/30 via-indigo-50/30 to-purple-50/30',
+        borderColor: 'border-blue-200/50',
+        accentColor: 'blue'
+      };
     }
   };
 
   const specialtyConfig = getSpecialtyConfig();
 
   return (
-    <div 
-      className={`h-full w-full flex flex-col bg-gradient-to-br ${specialtyConfig.bgGradient} dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 ${className}`}
-      role="main"
-      aria-label={t('chat.chatWindow')}
-    >
-      {/* Compact Modern Glass Header */}
-      <div className="flex-shrink-0 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-b border-white/20 dark:border-gray-700/50 shadow-lg">
-        {/* Single Compact Header Row */}
-        <div className="flex items-center justify-between px-4 py-2.5">
-          <div className="flex items-center space-x-3">
-            <div className={`p-1.5 rounded-lg bg-gradient-to-r ${specialtyConfig.gradient} shadow-md`}>
-              {React.cloneElement(specialtyConfig.icon, { className: "w-4 h-4 text-white" })}
-            </div>
-            <div className="min-w-0">
-              <h1 className={`text-lg font-bold bg-gradient-to-r ${specialtyConfig.gradient} bg-clip-text text-transparent leading-tight`}>
-                {specialtyConfig.title}
-              </h1>
-              <div className="flex items-center space-x-2 mt-0.5">
-                <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
-                  {getCurrentConversationTitle()}
-                </p>
-                {chatState.messages.length > 0 && (
-                  <span className="text-xs px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-gray-600 dark:text-gray-400">
-                    {chatState.messages.length}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Compact Right Side */}
-          <div className="flex items-center space-x-2">
-            {/* Compact Status */}
-            <div className="flex items-center space-x-1.5 px-2 py-1 rounded-md bg-white/40 dark:bg-gray-800/40">
-              {isConnected ? (
-                <>
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-xs font-medium text-green-700 dark:text-green-400">{t('chat.online')}</span>
-                </>
-              ) : (
-                <>
-                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
-                  <span className="text-xs font-medium text-red-700 dark:text-red-400">{t('chat.offline')}</span>
-                </>
-              )}
-            </div>
-
-            {/* Compact Knowledge Base Selector */}
-            <div className="flex items-center">
-              <KnowledgeBaseSelector
-                selectedKnowledgeBase={chatState.selectedKnowledgeBase}
-                onKnowledgeBaseChange={setKnowledgeBase}
-                personalDocumentCount={chatState.personalDocumentCount}
-                disabled={chatState.isLoading}
-                className="text-xs scale-90"
-              />
-            </div>
-
-            {/* Compact Action Buttons */}
-            <div className="flex items-center space-x-1">
-              <NewCaseButton
-                onClick={() => setShowCaseModal(true)}
-                disabled={isDisabled || !isConnected}
-                variant="ghost"
-                size="sm"
-                className="h-7 w-7 p-0 hover:bg-white/40 dark:hover:bg-gray-800/40"
-              />
-
-              {chatState.caseContext.caseHistory.length > 0 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowCaseListModal(true)}
-                  className="h-7 w-7 p-0 hover:bg-white/40 dark:hover:bg-gray-800/40"
-                  title={t('chat.viewAllCases')}
-                >
-                  <FileText className="w-3.5 h-3.5" />
-                </Button>
-              )}
-
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowConversationList(true)}
-                className="h-7 w-7 p-0 hover:bg-white/40 dark:hover:bg-gray-800/40"
-                title={t('chat.viewConversationHistory')}
-              >
-                <History className="w-3.5 h-3.5" />
-              </Button>
-
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleNewConversation}
-                className="h-7 w-7 p-0 hover:bg-white/40 dark:hover:bg-gray-800/40"
-                title={t('chat.startNewConversation')}
-              >
-                <Plus className="w-3.5 h-3.5" />
-              </Button>
-            </div>
-          </div>
+    <div className={`h-full w-full flex flex-col relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-50 ${className}`}>
+      {/* Sophisticated Premium Header */}
+      <div className="relative bg-white/95 backdrop-blur-3xl border-b border-slate-200/60 shadow-2xl shadow-slate-900/5">
+        {/* Luxurious Background Effects */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Primary gradient mesh */}
+          <div className="absolute -top-24 -left-24 w-96 h-48 bg-gradient-conic from-blue-500/8 via-indigo-500/6 to-purple-500/8 rounded-full blur-3xl transform rotate-12" />
+          <div className="absolute -top-16 -right-16 w-80 h-32 bg-gradient-conic from-violet-500/6 via-rose-500/4 to-blue-500/6 rounded-full blur-2xl transform -rotate-12" />
+          
+          {/* Subtle texture overlay */}
+          <div className="absolute inset-0 opacity-[0.02] bg-gradient-to-br from-slate-900/5 via-transparent to-slate-900/5" />
         </div>
 
-        {/* Compact Personal KB Guidance - Only show if active and no messages */}
-        {chatState.selectedKnowledgeBase === 'personal' && chatState.messages.length === 0 && (
-          <div className="px-4 pb-2">
-            <div className="text-xs text-blue-600 dark:text-blue-400 bg-blue-50/60 dark:bg-blue-900/20 rounded-lg px-3 py-1.5 flex items-center space-x-2">
-              <User className="w-3 h-3" />
-              <span>
-                {chatState.personalDocumentCount > 0 
-                  ? t('chat.usingPersonalDocs', { count: chatState.personalDocumentCount.toString() })
-                  : t('chat.uploadDocsForKB')
-                }
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Messages Container - Properly distributed layout */}
-      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-        {/* Active Case Indicator */}
-        {chatState.caseContext.activeCase && (
-          <div className="flex-shrink-0 px-6 pt-4 pb-2">
-            <CaseIndicator
-              activeCase={chatState.caseContext.activeCase}
-              onViewCase={handleViewCase}
-              onResetCase={handleResetCase}
-            />
-          </div>
-        )}
-
-        {/* Main Chat Content Area - Properly spaced */}
-        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-          {chatState.messages.length === 0 ? (
-            // Welcome Screen with proper spacing
-            <div className="flex-1 flex flex-col overflow-hidden">
-              {/* Main Welcome Content */}
-              <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-8 overflow-y-auto">
-                <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${specialtyConfig.gradient} shadow-xl flex items-center justify-center mb-4`}>
-                  <MessageSquare className="w-8 h-8 text-white" />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                  {t('chat.welcomeToMediMind')}
-                </h2>
-                <p className="text-base text-gray-600 dark:text-gray-400 max-w-2xl mb-6">
-                  {t('chat.welcomeDescription')}
-                </p>
-                
-                {/* Feature Cards - Responsive Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl w-full mb-6">
-                  <div className="p-4 rounded-lg bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-white/30 dark:border-gray-700/30 hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-200">
-                    <div className="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center mb-3">
-                      <Stethoscope className="w-5 h-5 text-white" />
-                    </div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm">{t('chat.clinicalGuidelines')}</h3>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">
-                      {t('chat.clinicalGuidelinesExample')}
-                    </p>
-                  </div>
+        {/* Enhanced Top Navigation Bar */}
+        <div className="relative px-4 sm:px-6 lg:px-8 py-4 sm:py-5 lg:py-6">
+          <div className="flex items-center justify-between flex-wrap gap-4 lg:flex-nowrap">
+            {/* Elevated Brand Identity */}
+            <div className="flex items-center space-x-3 sm:space-x-4 lg:space-x-5 min-w-0">
+              {/* Premium Brand Icon */}
+              <div className={`
+                relative group cursor-pointer transform transition-all duration-700 hover:scale-105
+                flex-shrink-0
+              `}>
+                <div className={`
+                  relative p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br ${specialtyConfig.gradient}
+                  shadow-xl sm:shadow-2xl shadow-slate-900/20 backdrop-blur-xl border border-white/20
+                  transition-all duration-500 hover:shadow-3xl hover:shadow-blue-500/25
+                `}>
+                  {React.cloneElement(specialtyConfig.icon, { 
+                    className: "w-6 h-6 sm:w-7 lg:w-8 sm:h-7 lg:h-8 text-white relative z-10 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6" 
+                  })}
                   
-                  <div className="p-4 rounded-lg bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-white/30 dark:border-gray-700/30 hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-200">
-                    <div className="w-10 h-10 rounded-lg bg-green-500 flex items-center justify-center mb-3">
-                      <Brain className="w-5 h-5 text-white" />
-                    </div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm">{t('chat.caseAnalysis')}</h3>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">
-                      {t('chat.caseAnalysisExample')}
-                    </p>
-                  </div>
+                  {/* Sophisticated shine effect */}
+                  <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-white/30 via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   
-                  <div className="p-4 rounded-lg bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-white/30 dark:border-gray-700/30 hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-200">
-                    <div className="w-10 h-10 rounded-lg bg-purple-500 flex items-center justify-center mb-3">
-                      <Sparkles className="w-5 h-5 text-white" />
-                    </div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm">{t('chat.drugInformation')}</h3>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">
-                      {t('chat.drugInformationExample')}
-                    </p>
-                  </div>
+                  {/* Luxury glow ring */}
+                  <div className="absolute -inset-1 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-400/30 via-purple-400/20 to-rose-400/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-lg" />
                 </div>
               </div>
 
-              {/* Knowledge Base Status - Fixed at bottom of welcome area */}
-              <div className="flex-shrink-0 px-6 pb-4">
-                <div className="flex items-center justify-center">
-                  <div className="flex items-center space-x-2 px-4 py-2 bg-blue-50/80 dark:bg-blue-900/30 rounded-lg border border-blue-200/50 dark:border-blue-800/50 backdrop-blur-sm">
-                    <BookOpen className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                    <span className="text-sm text-blue-700 dark:text-blue-300 font-medium">
-                      {t('chat.usingGeneralMedicalKnowledge')}
+              {/* Refined Brand Typography */}
+              <div className="flex flex-col space-y-0.5 sm:space-y-1 min-w-0">
+                <h1 className={`
+                  text-lg sm:text-xl lg:text-2xl font-black tracking-tight leading-none
+                  bg-gradient-to-r ${specialtyConfig.gradient} bg-clip-text text-transparent
+                  transition-all duration-500 hover:tracking-wide
+                  drop-shadow-sm truncate
+                `}>
+                  MediMind AI
+                </h1>
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                  <div className={`
+                    flex items-center space-x-1.5 sm:space-x-2 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full
+                    bg-gradient-to-r from-slate-100/80 to-slate-50/80 border border-slate-200/50
+                    backdrop-blur-sm flex-shrink-0
+                  `}>
+                    <div className={`
+                      w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-300
+                      ${isConnected ? 'bg-emerald-400 shadow-emerald-400/50' : 'bg-red-400 shadow-red-400/50'}
+                      ${isConnected ? 'animate-pulse shadow-lg' : 'animate-ping shadow-lg'}
+                    `} />
+                    <span className="text-xs font-semibold text-slate-600 uppercase tracking-widest hidden sm:inline">
+                      {profile?.medical_specialty || 'Medical'} Expert
+                    </span>
+                    <span className="text-xs font-semibold text-slate-600 uppercase tracking-widest sm:hidden">
+                      {(profile?.medical_specialty || 'Medical').slice(0, 6)}
                     </span>
                   </div>
                 </div>
               </div>
             </div>
-          ) : (
-            // Message List - Full height when messages exist
-            <MessageList 
-              messages={chatState.messages}
-              isTyping={chatState.isTyping}
-              className="flex-1"
-              typingMessage={chatState.isLoading ? t('chat.analyzingQuery') : undefined}
-            />
-          )}
+
+            {/* Premium Control Suite */}
+            <div className="flex items-center space-x-2 sm:space-x-3 lg:space-x-5 w-full lg:w-auto justify-end lg:justify-start order-last lg:order-none">
+              {/* Mobile: Collapsible Quick Actions */}
+              <div className="hidden sm:flex items-center space-x-2 lg:space-x-3">
+                {/* Fresh Start - Premium Design */}
+                <Button
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => {
+                    console.log('Force clearing all chat data');
+                    clearMessages();
+                    localStorage.removeItem('medimind-conversations');
+                    localStorage.removeItem('medimind-cases');
+                    createNewConversation('Fresh Start', profile?.medical_specialty as 'cardiology' | 'obgyn');
+                    window.location.reload();
+                  }}
+                  className={`
+                    group relative h-9 sm:h-10 lg:h-11 px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl
+                    bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200/60
+                    text-emerald-700 font-semibold text-xs sm:text-sm
+                    hover:shadow-2xl hover:shadow-emerald-500/25 hover:scale-105 hover:-translate-y-0.5
+                    active:scale-95 transition-all duration-300 ease-out
+                    focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:ring-offset-2
+                  `}
+                >
+                  <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-emerald-500/10 to-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <span className="relative z-10 flex items-center space-x-2">
+                    <span className="hidden lg:inline">Fresh Start</span>
+                    <span className="lg:hidden">Fresh</span>
+                  </span>
+                </Button>
+
+                {/* Connection Status - Premium */}
+                <div className={`
+                  flex items-center space-x-2 sm:space-x-3 lg:space-x-4 px-2 sm:px-3 lg:px-5 py-1.5 sm:py-2 lg:py-2.5 rounded-xl sm:rounded-2xl
+                  bg-gradient-to-r from-white/90 to-slate-50/90 border border-slate-200/60
+                  shadow-lg shadow-slate-900/5 backdrop-blur-xl
+                `}>
+                  {/* Status Indicator */}
+                  <div className="flex items-center space-x-1.5 sm:space-x-2 lg:space-x-3">
+                    {isConnected ? (
+                      <>
+                        <div className="relative">
+                          <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 bg-emerald-400 rounded-full shadow-emerald-400/50 shadow-md" />
+                          <div className="absolute inset-0 w-2 sm:w-2.5 h-2 sm:h-2.5 bg-emerald-400 rounded-full animate-ping opacity-30" />
+                        </div>
+                        <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest hidden lg:inline">
+                          Connected
+                        </span>
+                        <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest lg:hidden">
+                          Online
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 bg-red-400 rounded-full animate-pulse shadow-red-400/50 shadow-md" />
+                        <span className="text-xs font-bold text-red-600 uppercase tracking-widest">
+                          Offline
+                        </span>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Elegant Divider - Hidden on mobile */}
+                  <div className="hidden sm:block w-px h-3 lg:h-4 bg-gradient-to-b from-transparent via-slate-300 to-transparent" />
+
+                  {/* Session Time - Enhanced */}
+                  <div className="hidden sm:block text-xs font-medium text-slate-500 tabular-nums">
+                    {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Knowledge Base Selector - Enhanced with responsive sizing */}
+              <div className="hidden lg:block">
+                <KnowledgeBaseSelector
+                  selectedKnowledgeBase={chatState.selectedKnowledgeBase}
+                  onKnowledgeBaseChange={setKnowledgeBase}
+                  personalDocumentCount={chatState.personalDocumentCount}
+                  disabled={chatState.isLoading}
+                  className="min-w-[280px] lg:min-w-[320px]"
+                />
+              </div>
+
+              {/* Sophisticated Action Group */}
+              <div className="flex items-center space-x-1 sm:space-x-2">
+                {/* History - Elevated */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowConversationList(true)}
+                  className={`
+                    group relative h-9 w-9 sm:h-10 sm:w-10 lg:h-11 lg:w-11 p-0 rounded-xl sm:rounded-2xl
+                    bg-gradient-to-br from-slate-50 to-slate-100/80 border border-slate-200/60
+                    text-slate-600 hover:text-slate-800 shadow-lg shadow-slate-900/5
+                    hover:shadow-xl hover:shadow-slate-900/10 hover:scale-105 hover:-translate-y-0.5
+                    active:scale-95 transition-all duration-300 ease-out
+                    focus:outline-none focus:ring-2 focus:ring-slate-500/20 focus:ring-offset-2
+                  `}
+                  title="View conversation history"
+                >
+                  <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-slate-500/5 to-gray-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <History className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 transition-transform duration-300 group-hover:scale-110" />
+                </Button>
+
+                {/* Cases - Premium */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowCaseListModal(true)}
+                  className={`
+                    group relative h-9 w-9 sm:h-10 sm:w-10 lg:h-11 lg:w-11 p-0 rounded-xl sm:rounded-2xl
+                    bg-gradient-to-br from-purple-50 to-violet-100/80 border border-purple-200/60
+                    text-purple-600 hover:text-purple-800 shadow-lg shadow-purple-900/5
+                    hover:shadow-xl hover:shadow-purple-500/20 hover:scale-105 hover:-translate-y-0.5
+                    active:scale-95 transition-all duration-300 ease-out
+                    focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:ring-offset-2
+                  `}
+                  title={`View cases (${chatState.caseContext.caseHistory.length} created)`}
+                >
+                  <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-500/5 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <FileText className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 transition-transform duration-300 group-hover:scale-110" />
+                  {/* Enhanced Case Badge */}
+                  {chatState.caseContext.caseHistory.length > 0 && (
+                    <div className="absolute -top-1 -right-1 sm:-top-1.5 sm:-right-1.5 min-w-[16px] sm:min-w-[20px] h-4 sm:h-5 px-0.5 sm:px-1 rounded-full bg-gradient-to-r from-purple-500 to-violet-600 text-white text-xs font-bold flex items-center justify-center shadow-lg shadow-purple-500/30">
+                      {chatState.caseContext.caseHistory.length > 9 ? '9+' : chatState.caseContext.caseHistory.length}
+                    </div>
+                  )}
+                </Button>
+
+                {/* New Case - Refined */}
+                <NewCaseButton
+                  onClick={() => setShowCaseModal(true)}
+                  disabled={isDisabled || !isConnected}
+                  variant="ghost"
+                  size="sm"
+                  className={`
+                    group relative h-9 w-9 sm:h-10 sm:w-10 lg:h-11 lg:w-11 p-0 rounded-xl sm:rounded-2xl
+                    bg-gradient-to-br from-blue-50 to-indigo-100/80 border border-blue-200/60
+                    text-blue-600 hover:text-blue-800 shadow-lg shadow-blue-900/5
+                    hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105 hover:-translate-y-0.5
+                    active:scale-95 transition-all duration-300 ease-out
+                    disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0
+                    focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2
+                  `}
+                />
+
+                {/* New Conversation - Sophisticated */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleNewConversation}
+                  className={`
+                    group relative h-9 w-9 sm:h-10 sm:w-10 lg:h-11 lg:w-11 p-0 rounded-xl sm:rounded-2xl
+                    bg-gradient-to-br from-emerald-50 to-green-100/80 border border-emerald-200/60
+                    text-emerald-600 hover:text-emerald-800 shadow-lg shadow-emerald-900/5
+                    hover:shadow-xl hover:shadow-emerald-500/20 hover:scale-105 hover:-translate-y-0.5
+                    active:scale-95 transition-all duration-300 ease-out
+                    focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:ring-offset-2
+                  `}
+                  title="Start a new conversation (clears current chat and case)"
+                >
+                  <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500/5 to-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <Plus className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-90" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Mobile Knowledge Base Selector */}
+            <div className="lg:hidden w-full order-2">
+              <KnowledgeBaseSelector
+                selectedKnowledgeBase={chatState.selectedKnowledgeBase}
+                onKnowledgeBaseChange={setKnowledgeBase}
+                personalDocumentCount={chatState.personalDocumentCount}
+                disabled={chatState.isLoading}
+                className="w-full"
+              />
+            </div>
+          </div>
         </div>
 
-        {/* Notifications Area - Properly positioned */}
-        <div className="flex-shrink-0">
-          {/* Error Display */}
-          {chatState.error && (
-            <div className="mx-6 mb-4">
-              <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg shadow-sm">
-                <p className="text-sm text-red-600 dark:text-red-400 font-medium">{chatState.error}</p>
-                <button
-                  onClick={() => setError(undefined)}
-                  className="mt-2 text-xs text-red-500 hover:text-red-700 underline font-medium"
-                >
-                  {t('chat.dismiss')}
-                </button>
-              </div>
-            </div>
-          )}
+        {/* Refined Progress Indicator */}
+        {(chatState.isLoading || isAnalyzing) && (
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-slate-200/30 via-blue-200/50 to-purple-200/30 overflow-hidden">
+            <div 
+              className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full shadow-lg" 
+              style={{ 
+                width: '40%', 
+                animation: 'sophisticatedSlide 3s cubic-bezier(0.4, 0, 0.2, 1) infinite',
+                filter: 'drop-shadow(0 2px 8px rgba(59, 130, 246, 0.4))'
+              }} 
+            />
+          </div>
+        )}
 
-          {/* Loading Indicator */}
-          {chatState.isLoadingHistory && (
-            <div className="mx-6 mb-4">
-              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg shadow-sm">
-                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">{t('chat.loadingConversationHistory')}</p>
-              </div>
-            </div>
-          )}
+        {/* Subtle Bottom Enhancement */}
+        <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-2/3 h-4 bg-gradient-to-r from-transparent via-blue-500/5 to-transparent blur-2xl rounded-full" />
+      </div>
 
-          {/* Calculator Suggestions */}
-          {showSuggestions && suggestions && (
-            <div className="mx-6 mb-4">
-              <CalculatorSuggestions
-                recommendations={suggestions.recommendations}
-                matchedKeywords={suggestions.matchedKeywords}
-                confidence={suggestions.confidence}
-                onCalculatorSelect={onCalculatorSelect}
-                onDismiss={dismissSuggestions}
+      {/* Enhanced Main Content Area */}
+      <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative">
+        {/* Advanced Case Indicator */}
+        {chatState.caseContext.activeCase && (
+          <div className="flex-shrink-0 px-6 pt-6 pb-4">
+            <CaseIndicator
+              activeCase={chatState.caseContext.activeCase}
+              onViewCase={handleViewCase}
+              onResetCase={handleResetCase}
+              className="transform transition-all duration-500 hover:scale-[1.01]"
+            />
+          </div>
+        )}
+
+        {/* Messages Area with Enhanced Styling */}
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative">
+          {chatState.messages.length === 0 ? (
+            // Enhanced Welcome Screen
+            <div className="relative">
+              <WelcomeScreen 
+                onQuickAction={(action) => {
+                  if (action === 'case') {
+                    setShowCaseModal(true);
+                  } else if (action === 'cases') {
+                    setShowCaseListModal(true);
+                  } else if (action.startsWith('selectCase:')) {
+                    const caseId = action.split(':')[1];
+                    const selectedCase = chatState.caseContext.caseHistory.find(c => c.id === caseId);
+                    if (selectedCase) {
+                      handleCaseSelect(selectedCase);
+                    }
+                  }
+                }}
+                specialty={profile?.medical_specialty || 'general'}
+                caseHistory={chatState.caseContext.caseHistory}
               />
+              
+              {/* Welcome Screen Glow Effect */}
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-radial from-blue-500/5 to-transparent rounded-full" />
+                <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-gradient-radial from-purple-500/5 to-transparent rounded-full" />
+              </div>
+            </div>
+          ) : (
+            // Enhanced Chat Messages
+            <div className="flex-1 flex flex-col min-h-0 relative">
+              <MessageList 
+                messages={chatState.messages} 
+                isTyping={chatState.isTyping}
+                className="flex-1"
+              />
+              
+              {/* Message Area Glow Effect */}
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-radial from-blue-500/3 to-transparent rounded-full" />
+                <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-radial from-purple-500/3 to-transparent rounded-full" />
+              </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* Message Input - No gaps, attached to bottom */}
-      <div className="flex-shrink-0 border-t border-white/20 dark:border-gray-700/50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl">
-        <MessageInput
-          onSendMessage={handleSendMessage}
-          disabled={isDisabled || chatState.isLoading || !isConnected}
-          placeholder={
-            personalKBPlaceholder || 
-            placeholder || 
-            (isConnected ? t('chat.typeMessage') : t('chat.connectToStartChatting'))
-          }
-          allowAttachments={allowAttachments}
-          maxFileSize={10}
-          maxFiles={5}
-          selectedKnowledgeBase={chatState.selectedKnowledgeBase}
-          personalDocumentCount={chatState.personalDocumentCount}
-          className="border-0 bg-transparent"
-        />
+      {/* Enhanced Error and Notifications */}
+      {chatState.error && (
+        <div className={`
+          flex-shrink-0 mx-6 mb-2 p-4 rounded-2xl
+          backdrop-blur-xl bg-gradient-to-r from-red-500/10 to-rose-500/10
+          border border-red-200/30 shadow-lg
+        `}>
+          <div className="flex items-start space-x-3">
+            <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-red-800">Connection Error</p>
+              <p className="text-xs text-red-600 mt-1">{chatState.error}</p>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setError(undefined)}
+              className="p-1 h-6 w-6 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-lg"
+            >
+              <X className="w-3 h-3" />
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Calculator Suggestions with Enhanced Design */}
+      {showSuggestions && suggestions && suggestions.recommendations && suggestions.recommendations.length > 0 && (
+        <div className="flex-shrink-0 px-6 mb-2">
+          <CalculatorSuggestions
+            recommendations={suggestions.recommendations}
+            matchedKeywords={suggestions.matchedKeywords}
+            confidence={suggestions.confidence}
+            onCalculatorSelect={onCalculatorSelect}
+            onDismiss={dismissSuggestions}
+            className="backdrop-blur-xl bg-gradient-to-r from-white/90 to-white/80 border border-white/30 rounded-2xl shadow-xl"
+          />
+        </div>
+      )}
+
+      {/* Enhanced Input Area */}
+      <div className="flex-shrink-0 relative">
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/95 to-transparent backdrop-blur-2xl" />
+        
+        <div className="relative border-t border-white/30 bg-gradient-to-r from-white/90 via-white/80 to-white/90 backdrop-blur-2xl">
+          <MessageInput
+            onSendMessage={handleSendMessage}
+            disabled={isDisabled || chatState.isLoading || !isConnected}
+            placeholder={
+              personalKBPlaceholder || 
+              placeholder || 
+              (isConnected ? "Ask me about medical guidelines, case analysis, or clinical decisions..." : "Connecting to AI assistant...")
+            }
+            allowAttachments={allowAttachments}
+            maxFileSize={10}
+            maxFiles={5}
+            selectedKnowledgeBase={chatState.selectedKnowledgeBase}
+            personalDocumentCount={chatState.personalDocumentCount}
+            className="border-0 bg-transparent"
+          />
+        </div>
+
+        {/* Input Area Glow Effect */}
+        <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 w-3/4 h-6 bg-gradient-to-r from-transparent via-blue-400/10 to-transparent blur-xl rounded-full" />
       </div>
 
       {/* Modals */}
@@ -535,8 +783,17 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
         onCaseSelect={handleCaseSelect}
         activeCase={chatState.caseContext.activeCase}
       />
+
+      {/* Global Styles for Animations */}
+      <style>{`
+        @keyframes slide {
+          0% { transform: translateX(-100%); }
+          50% { transform: translateX(0%); }
+          100% { transform: translateX(100%); }
+        }
+      `}</style>
     </div>
   );
 };
 
-export default FlowiseChatWindow; 
+export default FlowiseChatWindow;

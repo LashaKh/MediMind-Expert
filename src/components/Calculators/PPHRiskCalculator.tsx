@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Droplets, AlertTriangle, Shield, Activity, Heart, Info, CheckCircle, Star, User, Baby, Clock, Target, Calculator, TrendingUp, Stethoscope, Award, ArrowRight, Users, FileText, Calendar, AlertCircle } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Tooltip } from '../ui/tooltip';
@@ -15,6 +15,8 @@ import {
 import { CalculatorResultShare } from './CalculatorResultShare';
 import { calculatePPHRisk, validateOBGYNInput } from '../../services/obgynCalculatorService';
 import { PPHRiskInput, PPHRiskResult } from '../../types/obgyn-calculators';
+import { useTranslation } from '../../hooks/useTranslation';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface FormData {
   maternalAge: string;
@@ -37,6 +39,9 @@ interface Errors {
 }
 
 const PPHRiskCalculator: React.FC = () => {
+  const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
+  
   const [formData, setFormData] = useState<FormData>({
     maternalAge: '',
     bmi: '',
@@ -58,6 +63,13 @@ const PPHRiskCalculator: React.FC = () => {
   const [showResult, setShowResult] = useState(false);
   const [activeTab, setActiveTab] = useState<'calculator' | 'about'>('calculator');
 
+  // Clear results when language changes to prevent stale translations
+  useEffect(() => {
+    setResult(null);
+    setStep(1);
+    setShowResult(false);
+  }, [currentLanguage]);
+
   const handleInputChange = (field: keyof FormData, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     // Clear errors when user starts typing
@@ -71,21 +83,21 @@ const PPHRiskCalculator: React.FC = () => {
     
     if (currentStep === 1) {
       if (!formData.maternalAge) {
-        newErrors.maternalAge = 'Maternal age is required';
+        newErrors.maternalAge = t('calculators.obgyn.pph_risk_calculator.demographics.maternal_age.required_error');
       } else if (Number(formData.maternalAge) < 15 || Number(formData.maternalAge) > 55) {
-        newErrors.maternalAge = 'Please enter a valid maternal age (15-55 years)';
+        newErrors.maternalAge = t('calculators.obgyn.pph_risk_calculator.demographics.maternal_age.validation_error');
       }
 
       if (!formData.bmi) {
-        newErrors.bmi = 'BMI is required';
+        newErrors.bmi = t('calculators.obgyn.pph_risk_calculator.demographics.bmi.required_error');
       } else if (Number(formData.bmi) < 15 || Number(formData.bmi) > 60) {
-        newErrors.bmi = 'Please enter a valid BMI (15-60 kg/m²)';
+        newErrors.bmi = t('calculators.obgyn.pph_risk_calculator.demographics.bmi.validation_error');
       }
 
       if (!formData.parity) {
-        newErrors.parity = 'Parity is required';
+        newErrors.parity = t('calculators.obgyn.pph_risk_calculator.demographics.parity.required_error');
       } else if (Number(formData.parity) < 0 || Number(formData.parity) > 20) {
-        newErrors.parity = 'Please enter a valid parity (0-20)';
+        newErrors.parity = t('calculators.obgyn.pph_risk_calculator.demographics.parity.validation_error');
       }
     }
 
@@ -137,7 +149,7 @@ const PPHRiskCalculator: React.FC = () => {
         return;
       }
 
-      const calculationResult = calculatePPHRisk(input);
+      const calculationResult = calculatePPHRisk(input, t);
       setResult(calculationResult);
       setShowResult(true);
       
@@ -150,7 +162,7 @@ const PPHRiskCalculator: React.FC = () => {
       }, 100);
     } catch (error) {
       console.error('Calculation error:', error);
-      setErrors({ maternalAge: 'An error occurred during calculation. Please try again.' });
+      setErrors({ maternalAge: t('calculators.obgyn.pph_risk_calculator.calculation_error') });
     } finally {
       setIsLoading(false);
     }
@@ -215,10 +227,38 @@ const PPHRiskCalculator: React.FC = () => {
     }
   };
 
+  const getTranslationArray = (key: string, fallbackLength: number = 0): string[] => {
+    try {
+      // For arrays in translations, we need to access them individually
+      const items: string[] = [];
+      let index = 0;
+      
+      // Keep trying to get items until we don't find any more
+      while (true) {
+        const itemKey = `${key}.${index}`;
+        const item = t(itemKey);
+        
+        // If we get back the key itself, it means translation doesn't exist
+        if (item === itemKey) {
+          break;
+        }
+        
+        items.push(item);
+        index++;
+      }
+      
+      return items;
+    } catch (error) {
+      console.error(`Error getting translation array for key "${key}":`, error);
+      return [];
+    }
+  };
+
   return (
     <CalculatorContainer
-      title="Postpartum Hemorrhage Risk Assessment"
-      subtitle="Comprehensive assessment tool for evaluating PPH risk factors and implementing preventive strategies"
+      key={currentLanguage}
+      title={t('calculators.obgyn.pph_risk_calculator.title')}
+      subtitle={t('calculators.obgyn.pph_risk_calculator.subtitle')}
       icon={Droplets}
       gradient="obgyn"
     >
@@ -226,11 +266,11 @@ const PPHRiskCalculator: React.FC = () => {
         <TabsList className="grid w-full grid-cols-2 bg-red-50 border border-red-200">
           <TabsTrigger value="calculator" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
             <Calculator className="w-4 h-4 mr-2" />
-            Calculator
+            {t('calculators.obgyn.pph_risk_calculator.calculator_tab')}
           </TabsTrigger>
           <TabsTrigger value="about" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
             <Info className="w-4 h-4 mr-2" />
-            About
+            {t('calculators.obgyn.pph_risk_calculator.about_tab')}
           </TabsTrigger>
         </TabsList>
 
@@ -238,9 +278,9 @@ const PPHRiskCalculator: React.FC = () => {
           {/* Progress Indicator */}
           <div className="w-full bg-red-50 border border-red-200 rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-red-800">Assessment Progress</h3>
+              <h3 className="text-lg font-semibold text-red-800">{t('calculators.obgyn.pph_risk_calculator.progress.title')}</h3>
               <span className="text-sm text-red-600 bg-red-100 px-3 py-1 rounded-full">
-                Step {step} of 3
+                {t('calculators.obgyn.pph_risk_calculator.progress.step_indicator', { step: step.toString() })}
               </span>
             </div>
             
@@ -268,16 +308,16 @@ const PPHRiskCalculator: React.FC = () => {
             
             <div className="grid grid-cols-3 gap-4 mt-4 text-center">
               <div>
-                <p className="text-sm font-medium text-red-800">Demographics</p>
-                <p className="text-xs text-red-600">Basic information</p>
+                <p className="text-sm font-medium text-red-800">{t('calculators.obgyn.pph_risk_calculator.progress.steps.demographics.title')}</p>
+                <p className="text-xs text-red-600">{t('calculators.obgyn.pph_risk_calculator.progress.steps.demographics.description')}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-red-800">Medical History</p>
-                <p className="text-xs text-red-600">Risk factors</p>
+                <p className="text-sm font-medium text-red-800">{t('calculators.obgyn.pph_risk_calculator.progress.steps.medical_history.title')}</p>
+                <p className="text-xs text-red-600">{t('calculators.obgyn.pph_risk_calculator.progress.steps.medical_history.description')}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-red-800">Current Pregnancy</p>
-                <p className="text-xs text-red-600">Labor factors</p>
+                <p className="text-sm font-medium text-red-800">{t('calculators.obgyn.pph_risk_calculator.progress.steps.current_pregnancy.title')}</p>
+                <p className="text-xs text-red-600">{t('calculators.obgyn.pph_risk_calculator.progress.steps.current_pregnancy.description')}</p>
               </div>
             </div>
           </div>
@@ -288,56 +328,56 @@ const PPHRiskCalculator: React.FC = () => {
               <CardHeader className="bg-gradient-to-r from-red-50 to-pink-50 border-b border-red-200">
                 <CardTitle className="flex items-center gap-3 text-red-800">
                   <User className="w-6 h-6 text-red-600" />
-                  Maternal Demographics
+                  {t('calculators.obgyn.pph_risk_calculator.demographics.title')}
                   <span className="text-sm bg-red-100 text-red-700 px-2 py-1 rounded-full ml-auto">
-                    Step 1 of 3
+                    {t('calculators.obgyn.pph_risk_calculator.demographics.step_label')}
                   </span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <CalculatorInput
-                    label="Maternal Age"
+                    label={t('calculators.obgyn.pph_risk_calculator.demographics.maternal_age.label')}
                     value={formData.maternalAge}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('maternalAge', e.target.value)}
                     type="number"
-                    placeholder="32"
+                    placeholder={t('calculators.obgyn.pph_risk_calculator.demographics.maternal_age.placeholder')}
                     min={15}
                     max={55}
-                    unit="years"
+                    unit={t('calculators.obgyn.pph_risk_calculator.demographics.maternal_age.unit')}
                     error={errors.maternalAge}
-                    helpText="Current age in years"
+                    helpText={t('calculators.obgyn.pph_risk_calculator.demographics.maternal_age.help')}
                     icon={User}
                     required
                   />
 
                   <CalculatorInput
-                    label="Body Mass Index"
+                    label={t('calculators.obgyn.pph_risk_calculator.demographics.bmi.label')}
                     value={formData.bmi}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('bmi', e.target.value)}
                     type="number"
                     step={0.1}
-                    placeholder="25.0"
+                    placeholder={t('calculators.obgyn.pph_risk_calculator.demographics.bmi.placeholder')}
                     min={15}
                     max={60}
-                    unit="kg/m²"
+                    unit={t('calculators.obgyn.pph_risk_calculator.demographics.bmi.unit')}
                     error={errors.bmi}
-                    helpText="Pre-pregnancy or early pregnancy BMI"
+                    helpText={t('calculators.obgyn.pph_risk_calculator.demographics.bmi.help')}
                     icon={Activity}
                     required
                   />
 
                   <CalculatorInput
-                    label="Parity"
+                    label={t('calculators.obgyn.pph_risk_calculator.demographics.parity.label')}
                     value={formData.parity}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('parity', e.target.value)}
                     type="number"
-                    placeholder="2"
+                    placeholder={t('calculators.obgyn.pph_risk_calculator.demographics.parity.placeholder')}
                     min={0}
                     max={20}
-                    unit="previous births"
+                    unit={t('calculators.obgyn.pph_risk_calculator.demographics.parity.unit')}
                     error={errors.parity}
-                    helpText="Number of previous births ≥20 weeks"
+                    helpText={t('calculators.obgyn.pph_risk_calculator.demographics.parity.help')}
                     icon={Baby}
                     required
                   />
@@ -349,7 +389,7 @@ const PPHRiskCalculator: React.FC = () => {
                     disabled={!formData.maternalAge || !formData.bmi || !formData.parity}
                     className="bg-red-600 hover:bg-red-700 text-white px-8"
                   >
-                    Next: Medical History
+                    {t('calculators.obgyn.pph_risk_calculator.demographics.next_button')}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </CalculatorButton>
                 </div>
@@ -363,9 +403,9 @@ const PPHRiskCalculator: React.FC = () => {
               <CardHeader className="bg-gradient-to-r from-red-50 to-pink-50 border-b border-red-200">
                 <CardTitle className="flex items-center gap-3 text-red-800">
                   <FileText className="w-6 h-6 text-red-600" />
-                  Medical History & Risk Factors
+                  {t('calculators.obgyn.pph_risk_calculator.medical_history.title')}
                   <span className="text-sm bg-red-100 text-red-700 px-2 py-1 rounded-full ml-auto">
-                    Step 2 of 3
+                    {t('calculators.obgyn.pph_risk_calculator.medical_history.step_label')}
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -373,21 +413,21 @@ const PPHRiskCalculator: React.FC = () => {
                 <div className="bg-red-50 p-4 rounded-lg border border-red-200">
                   <h4 className="font-semibold text-red-800 mb-4 flex items-center gap-2">
                     <Clock className="w-5 h-5" />
-                    Previous Obstetric History
+                    {t('calculators.obgyn.pph_risk_calculator.medical_history.obstetric_history.title')}
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <CalculatorCheckbox
-                      label="Previous Postpartum Hemorrhage"
+                      label={t('calculators.obgyn.pph_risk_calculator.medical_history.obstetric_history.previous_pph.label')}
                       checked={formData.previousPPH}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('previousPPH', e.target.checked)}
-                      description="History of PPH in previous deliveries"
+                      description={t('calculators.obgyn.pph_risk_calculator.medical_history.obstetric_history.previous_pph.description')}
                     />
                     
                     <CalculatorCheckbox
-                      label="Anticoagulation Therapy"
+                      label={t('calculators.obgyn.pph_risk_calculator.medical_history.obstetric_history.anticoagulation.label')}
                       checked={formData.anticoagulation}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('anticoagulation', e.target.checked)}
-                      description="Currently on anticoagulant medications"
+                      description={t('calculators.obgyn.pph_risk_calculator.medical_history.obstetric_history.anticoagulation.description')}
                     />
                   </div>
                 </div>
@@ -398,13 +438,13 @@ const PPHRiskCalculator: React.FC = () => {
                     variant="outline"
                     className="px-8"
                   >
-                    Previous
+                    {t('calculators.obgyn.pph_risk_calculator.medical_history.previous_button')}
                   </CalculatorButton>
                   <CalculatorButton
                     onClick={handleNext}
                     className="bg-red-600 hover:bg-red-700 text-white px-8 flex-1"
                   >
-                    Next: Current Pregnancy
+                    {t('calculators.obgyn.pph_risk_calculator.medical_history.next_button')}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </CalculatorButton>
                 </div>
@@ -418,9 +458,9 @@ const PPHRiskCalculator: React.FC = () => {
               <CardHeader className="bg-gradient-to-r from-red-50 to-pink-50 border-b border-red-200">
                 <CardTitle className="flex items-center gap-3 text-red-800">
                   <Activity className="w-6 h-6 text-red-600" />
-                  Current Pregnancy & Labor Factors
+                  {t('calculators.obgyn.pph_risk_calculator.current_pregnancy.title')}
                   <span className="text-sm bg-red-100 text-red-700 px-2 py-1 rounded-full ml-auto">
-                    Step 3 of 3
+                    {t('calculators.obgyn.pph_risk_calculator.current_pregnancy.step_label')}
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -429,35 +469,35 @@ const PPHRiskCalculator: React.FC = () => {
                 <div className="bg-pink-50 p-4 rounded-lg border border-pink-200">
                   <h4 className="font-semibold text-pink-800 mb-4 flex items-center gap-2">
                     <Baby className="w-5 h-5" />
-                    Current Pregnancy Factors
+                    {t('calculators.obgyn.pph_risk_calculator.current_pregnancy.pregnancy_factors.title')}
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <CalculatorCheckbox
-                      label="Multiple Gestation"
+                      label={t('calculators.obgyn.pph_risk_calculator.current_pregnancy.pregnancy_factors.multiple_gestation.label')}
                       checked={formData.multipleGestation}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('multipleGestation', e.target.checked)}
-                      description="Twins, triplets, or higher multiples"
+                      description={t('calculators.obgyn.pph_risk_calculator.current_pregnancy.pregnancy_factors.multiple_gestation.description')}
                     />
                     
                     <CalculatorCheckbox
-                      label="Polyhydramnios"
+                      label={t('calculators.obgyn.pph_risk_calculator.current_pregnancy.pregnancy_factors.polyhydramnios.label')}
                       checked={formData.polyhydramnios}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('polyhydramnios', e.target.checked)}
-                      description="Excessive amniotic fluid volume"
+                      description={t('calculators.obgyn.pph_risk_calculator.current_pregnancy.pregnancy_factors.polyhydramnios.description')}
                     />
                     
                     <CalculatorCheckbox
-                      label="Macrosomia"
+                      label={t('calculators.obgyn.pph_risk_calculator.current_pregnancy.pregnancy_factors.macrosomia.label')}
                       checked={formData.macrosomia}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('macrosomia', e.target.checked)}
-                      description="Estimated fetal weight ≥4000g"
+                      description={t('calculators.obgyn.pph_risk_calculator.current_pregnancy.pregnancy_factors.macrosomia.description')}
                     />
                     
                     <CalculatorCheckbox
-                      label="Chorioamnionitis"
+                      label={t('calculators.obgyn.pph_risk_calculator.current_pregnancy.pregnancy_factors.chorioamnionitis.label')}
                       checked={formData.chorioamnionitis}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('chorioamnionitis', e.target.checked)}
-                      description="Intraamniotic infection/inflammation"
+                      description={t('calculators.obgyn.pph_risk_calculator.current_pregnancy.pregnancy_factors.chorioamnionitis.description')}
                     />
                   </div>
                 </div>
@@ -466,28 +506,28 @@ const PPHRiskCalculator: React.FC = () => {
                 <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
                   <h4 className="font-semibold text-orange-800 mb-4 flex items-center gap-2">
                     <Heart className="w-5 h-5" />
-                    Labor & Delivery Factors
+                    {t('calculators.obgyn.pph_risk_calculator.current_pregnancy.labor_factors.title')}
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <CalculatorCheckbox
-                      label="Prolonged Labor"
+                      label={t('calculators.obgyn.pph_risk_calculator.current_pregnancy.labor_factors.prolonged_labor.label')}
                       checked={formData.prolongedLabor}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('prolongedLabor', e.target.checked)}
-                      description="Labor dystocia or arrest disorders"
+                      description={t('calculators.obgyn.pph_risk_calculator.current_pregnancy.labor_factors.prolonged_labor.description')}
                     />
                     
                     <div className="space-y-3">
                       <CalculatorSelect
-                        label="Placental Condition"
+                        label={t('calculators.obgyn.pph_risk_calculator.current_pregnancy.labor_factors.placental_condition.label')}
                         value={formData.placenta}
                         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleInputChange('placenta', e.target.value)}
                         options={[
-                          { value: 'normal', label: 'Normal Placenta' },
-                          { value: 'previa', label: 'Placenta Previa' },
-                          { value: 'accreta', label: 'Placenta Accreta' },
-                          { value: 'abruption', label: 'Placental Abruption' }
+                          { value: 'normal', label: t('calculators.obgyn.pph_risk_calculator.current_pregnancy.labor_factors.placental_condition.options.normal') },
+                          { value: 'previa', label: t('calculators.obgyn.pph_risk_calculator.current_pregnancy.labor_factors.placental_condition.options.previa') },
+                          { value: 'accreta', label: t('calculators.obgyn.pph_risk_calculator.current_pregnancy.labor_factors.placental_condition.options.accreta') },
+                          { value: 'abruption', label: t('calculators.obgyn.pph_risk_calculator.current_pregnancy.labor_factors.placental_condition.options.abruption') }
                         ]}
-                        helpText="Select the most appropriate placental condition"
+                        helpText={t('calculators.obgyn.pph_risk_calculator.current_pregnancy.labor_factors.placental_condition.help')}
                         icon={Target}
                       />
                     </div>
@@ -500,7 +540,7 @@ const PPHRiskCalculator: React.FC = () => {
                     variant="outline"
                     className="px-8"
                   >
-                    Previous
+                    {t('calculators.obgyn.pph_risk_calculator.current_pregnancy.previous_button')}
                   </CalculatorButton>
                   <CalculatorButton
                     onClick={handleCalculate}
@@ -510,12 +550,12 @@ const PPHRiskCalculator: React.FC = () => {
                     {isLoading ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Calculating Risk...
+                        {t('calculators.obgyn.pph_risk_calculator.current_pregnancy.calculating')}
                       </>
                     ) : (
                       <>
                         <Calculator className="w-4 h-4 mr-2" />
-                        Calculate PPH Risk
+                        {t('calculators.obgyn.pph_risk_calculator.current_pregnancy.calculate_button')}
                       </>
                     )}
                   </CalculatorButton>
@@ -526,7 +566,7 @@ const PPHRiskCalculator: React.FC = () => {
                   variant="outline"
                   className="w-full mt-4"
                 >
-                  Reset All Fields
+                  {t('calculators.obgyn.pph_risk_calculator.current_pregnancy.reset_button')}
                 </CalculatorButton>
               </CardContent>
             </Card>
@@ -536,8 +576,10 @@ const PPHRiskCalculator: React.FC = () => {
           {showResult && result && (
             <div id="pph-results">
               <ResultsDisplay
-                title="Postpartum Hemorrhage Risk Assessment"
-                value={result.category.charAt(0).toUpperCase() + result.category.slice(1) + ' Risk'}
+                title={t('calculators.obgyn.pph_risk_calculator.results.title')}
+                value={t('calculators.obgyn.pph_risk_calculator.results.risk_level', { 
+                  category: t(`calculators.obgyn.pph_risk_calculator.results.categories.${result.category}`)
+                })}
                 category={result.category === 'low' ? 'low' : result.category === 'moderate' ? 'intermediate' : 'high'}
                 interpretation={result.interpretation}
                 icon={Droplets}
@@ -548,9 +590,9 @@ const PPHRiskCalculator: React.FC = () => {
                     {getRiskIcon(result.category)}
                     <div>
                       <h3 className="text-xl font-bold">
-                        {result.category.charAt(0).toUpperCase() + result.category.slice(1)} Risk Level
+                        {t(`calculators.obgyn.pph_risk_calculator.results.categories.${result.category}`)} {t('calculators.obgyn.pph_risk_calculator.results.risk_level', { category: '' }).split(' ')[1]}
                       </h3>
-                      <p className="text-sm font-medium">Score: {result.riskScore}/20 points</p>
+                      <p className="text-sm font-medium">{t('calculators.obgyn.pph_risk_calculator.results.score', { score: result.riskScore.toString() })}</p>
                     </div>
                   </div>
                   <p className="text-sm leading-relaxed">{result.interpretation}</p>
@@ -561,20 +603,23 @@ const PPHRiskCalculator: React.FC = () => {
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <div className="flex items-center gap-3 mb-3">
                       <Shield className="w-5 h-5 text-blue-600" />
-                      <h4 className="font-semibold text-blue-800">Prevention Strategy</h4>
+                      <h4 className="font-semibold text-blue-800">{t('calculators.obgyn.pph_risk_calculator.results.cards.prevention_strategy.title')}</h4>
                     </div>
                     <p className="text-sm text-blue-700 capitalize">
-                      {result.preventionStrategy.replace('-', ' ')} prevention protocol
+                      {t(`calculators.obgyn.pph_risk_calculator.results.prevention_strategies.${result.preventionStrategy}`)}
                     </p>
                   </div>
 
                   <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                     <div className="flex items-center gap-3 mb-3">
                       <AlertTriangle className="w-5 h-5 text-purple-600" />
-                      <h4 className="font-semibold text-purple-800">Emergency Preparedness</h4>
+                      <h4 className="font-semibold text-purple-800">{t('calculators.obgyn.pph_risk_calculator.results.cards.emergency_preparedness.title')}</h4>
                     </div>
                     <p className="text-sm text-purple-700">
-                      {result.emergencyPreparation ? 'Enhanced emergency protocols required' : 'Standard protocols sufficient'}
+                      {result.emergencyPreparation 
+                        ? t('calculators.obgyn.pph_risk_calculator.results.emergency_preparations.enhanced')
+                        : t('calculators.obgyn.pph_risk_calculator.results.emergency_preparations.standard')
+                      }
                     </p>
                   </div>
                 </div>
@@ -583,7 +628,7 @@ const PPHRiskCalculator: React.FC = () => {
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
                   <h4 className="font-semibold text-green-800 mb-3 flex items-center gap-2">
                     <Stethoscope className="w-5 h-5" />
-                    Intervention Plan
+                    {t('calculators.obgyn.pph_risk_calculator.results.cards.intervention_plan.title')}
                   </h4>
                   <ul className="space-y-2">
                     {result.interventionPlan.map((intervention, index) => (
@@ -599,7 +644,7 @@ const PPHRiskCalculator: React.FC = () => {
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
                   <h4 className="font-semibold text-red-800 mb-3 flex items-center gap-2">
                     <Award className="w-5 h-5" />
-                    Management Recommendations
+                    {t('calculators.obgyn.pph_risk_calculator.results.cards.management_recommendations.title')}
                   </h4>
                   <ul className="space-y-2">
                     {result.recommendations.map((rec, index) => (
@@ -613,13 +658,15 @@ const PPHRiskCalculator: React.FC = () => {
 
                 {/* Share Results */}
                 <CalculatorResultShare
-                  calculatorName="PPH Risk Assessment"
+                  calculatorName={t('calculators.obgyn.pph_risk_calculator.results.share.calculator_name')}
                   calculatorId="pph-risk"
                   results={{
-                    riskLevel: result.category,
-                    riskScore: `${result.riskScore}/20`,
-                    preventionStrategy: result.preventionStrategy,
-                    emergencyPreparation: result.emergencyPreparation ? 'Required' : 'Standard'
+                    [t('calculators.obgyn.pph_risk_calculator.results.share.results_summary.risk_level')]: t(`calculators.obgyn.pph_risk_calculator.results.categories.${result.category}`),
+                    [t('calculators.obgyn.pph_risk_calculator.results.share.results_summary.risk_score')]: `${result.riskScore}/20`,
+                    [t('calculators.obgyn.pph_risk_calculator.results.share.results_summary.prevention_strategy')]: t(`calculators.obgyn.pph_risk_calculator.results.prevention_strategies.${result.preventionStrategy}`),
+                    [t('calculators.obgyn.pph_risk_calculator.results.share.results_summary.emergency_preparation')]: result.emergencyPreparation 
+                      ? t('calculators.obgyn.pph_risk_calculator.results.emergency_preparations.enhanced') 
+                      : t('calculators.obgyn.pph_risk_calculator.results.emergency_preparations.standard')
                   }}
                   interpretation={result.interpretation}
                   recommendations={result.recommendations}
@@ -635,101 +682,80 @@ const PPHRiskCalculator: React.FC = () => {
             <CardHeader className="bg-gradient-to-r from-red-50 to-pink-50 border-b border-red-200">
               <CardTitle className="flex items-center gap-3 text-red-800">
                 <Info className="w-6 h-6 text-red-600" />
-                About Postpartum Hemorrhage Risk Assessment
+                {t('calculators.obgyn.pph_risk_calculator.about.title')}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
               <div className="bg-red-50 border border-red-200 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-red-800 mb-3 flex items-center gap-2">
                   <Target className="w-5 h-5" />
-                  Clinical Purpose
+                  {t('calculators.obgyn.pph_risk_calculator.about.clinical_purpose.title')}
                 </h3>
                 <p className="text-red-700 mb-3">
-                  This calculator assesses the risk of postpartum hemorrhage (PPH) based on maternal 
-                  characteristics, pregnancy factors, and clinical conditions to enable early identification 
-                  and preventive interventions.
+                  {t('calculators.obgyn.pph_risk_calculator.about.clinical_purpose.description1')}
                 </p>
                 <p className="text-red-700">
-                  PPH remains a leading cause of maternal morbidity and mortality worldwide. Early 
-                  identification of high-risk patients enables preventive interventions and optimal care planning.
+                  {t('calculators.obgyn.pph_risk_calculator.about.clinical_purpose.description2')}
                 </p>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                  <h3 className="font-semibold text-orange-800 mb-3 flex items-center gap-2">
-                    <AlertTriangle className="w-5 h-5" />
-                    Major Risk Factors
+                  <h3 className="font-semibold text-orange-800 mb-2">
+                    {t('calculators.obgyn.pph_risk_calculator.about.risk_factors.title')}
                   </h3>
                   <ul className="text-sm text-orange-700 space-y-1">
-                    <li>• Previous postpartum hemorrhage</li>
-                    <li>• Placenta previa or accreta</li>
-                    <li>• Multiple gestation</li>
-                    <li>• Grand multiparity (≥5 deliveries)</li>
-                    <li>• Polyhydramnios</li>
-                    <li>• Macrosomia (≥4000g)</li>
-                    <li>• Prolonged labor</li>
-                    <li>• Chorioamnionitis</li>
+                   {getTranslationArray('calculators.obgyn.pph_risk_calculator.about.risk_factors.items').map((item: string, index: number) => (
+                     <li key={index}>• {item}</li>
+                   ))}
                   </ul>
                 </div>
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h3 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
-                    <Shield className="w-5 h-5" />
-                    Prevention Strategies
+                  <h3 className="font-semibold text-blue-800 mb-2">
+                    {t('calculators.obgyn.pph_risk_calculator.about.prevention_strategies.title')}
                   </h3>
                   <ul className="text-sm text-blue-700 space-y-1">
-                    <li>• Active management of third stage</li>
-                    <li>• Uterotonic agents (oxytocin)</li>
-                    <li>• IV access and blood type/screen</li>
-                    <li>• Anesthesia consultation</li>
-                    <li>• Blood bank notification</li>
-                    <li>• Delivery room preparation</li>
-                    <li>• Team communication</li>
+                   {getTranslationArray('calculators.obgyn.pph_risk_calculator.about.prevention_strategies.items').map((item: string, index: number) => (
+                     <li key={index}>• {item}</li>
+                   ))}
                   </ul>
                 </div>
-              </div>
 
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-yellow-800 mb-4 flex items-center gap-2">
-                  <Droplets className="w-5 h-5" />
-                  PPH Definition & Management
-                </h3>
-                
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-medium text-yellow-800 mb-2">PPH Definition</h4>
-                    <ul className="text-sm text-yellow-700 space-y-1">
-                      <li>• Vaginal delivery: Blood loss ≥500 mL within 24 hours</li>
-                      <li>• Cesarean delivery: Blood loss ≥1000 mL within 24 hours</li>
-                      <li>• Any blood loss causing hemodynamic instability</li>
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-medium text-yellow-800 mb-2">Management Protocol</h4>
-                    <ul className="text-sm text-yellow-700 space-y-1">
-                      <li>• Immediate uterine massage and bimanual compression</li>
-                      <li>• Oxytocin 20-40 units in 1L normal saline</li>
-                      <li>• Secondary uterotonics: ergot alkaloids, prostaglandins</li>
-                      <li>• Surgical interventions if medical management fails</li>
-                    </ul>
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <h3 className="font-semibold text-yellow-800 mb-2">
+                    {t('calculators.obgyn.pph_risk_calculator.about.pph_definition.title')}
+                  </h3>
+                  <div className="space-y-3">
+                    <div>
+                      <h4 className="font-medium text-yellow-800 mb-2">{t('calculators.obgyn.pph_risk_calculator.about.pph_definition.definition.title')}</h4>
+                      <ul className="text-sm text-yellow-700 space-y-1">
+                       {getTranslationArray('calculators.obgyn.pph_risk_calculator.about.pph_definition.definition.items').map((item: string, index: number) => (
+                         <li key={index}>• {item}</li>
+                       ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-yellow-800 mb-2">{t('calculators.obgyn.pph_risk_calculator.about.pph_definition.management.title')}</h4>
+                      <ul className="text-sm text-yellow-700 space-y-1">
+                       {getTranslationArray('calculators.obgyn.pph_risk_calculator.about.pph_definition.management.items').map((item: string, index: number) => (
+                         <li key={index}>• {item}</li>
+                       ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                  <FileText className="w-5 h-5" />
-                  Clinical Guidelines
-                </h3>
-                <ul className="text-sm text-gray-700 space-y-2">
-                  <li><strong>ACOG Practice Bulletin No. 183:</strong> Postpartum Hemorrhage</li>
-                  <li><strong>WHO Guidelines:</strong> Management of postpartum haemorrhage and retained placenta</li>
-                  <li><strong>SMFM Consult Series:</strong> Postpartum hemorrhage risk assessment</li>
-                  <li><strong>California Maternal Quality Care Collaborative:</strong> OB hemorrhage toolkit</li>
-                  <li><strong>National Partnership for Maternal Safety:</strong> Consensus bundle on obstetric hemorrhage</li>
-                </ul>
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                  <h3 className="font-semibold text-gray-800 mb-2">
+                    {t('calculators.obgyn.pph_risk_calculator.about.clinical_guidelines.title')}
+                  </h3>
+                  <ul className="text-sm text-gray-700 space-y-2">
+                   {getTranslationArray('calculators.obgyn.pph_risk_calculator.about.clinical_guidelines.items').map((item: string, index: number) => (
+                     <li key={index}>{item}</li>
+                   ))}
+                  </ul>
+                </div>
               </div>
             </CardContent>
           </Card>

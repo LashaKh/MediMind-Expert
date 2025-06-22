@@ -28,7 +28,99 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables');
 }
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Singleton Supabase client to prevent multiple instances
+let supabaseInstance: ReturnType<typeof createClient> | null = null;
+const getSupabaseClient = () => {
+  if (!supabaseInstance) {
+    supabaseInstance = createClient(supabaseUrl, supabaseAnonKey);
+  }
+  return supabaseInstance;
+};
+
+const supabase = getSupabaseClient();
+
+// Simple cache to prevent duplicate simultaneous requests with longer TTL
+const requestCache = new Map<string, { promise: Promise<any>; timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes cache TTL
+
+// Rate limiting helper with exponential backoff
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function makeRequestWithRetry<T>(
+  requestFn: () => Promise<T>,
+  cacheKey?: string,
+  maxRetries: number = 3
+): Promise<T> {
+  // Check cache for ongoing requests with TTL
+  if (cacheKey) {
+    const cached = requestCache.get(cacheKey);
+    if (cached && (Date.now() - cached.timestamp) < CACHE_TTL) {
+      console.log(`Returning cached request for: ${cacheKey} (age: ${(Date.now() - cached.timestamp) / 1000}s)`);
+      return cached.promise;
+    }
+  }
+
+  const executeRequest = async (): Promise<T> => {
+    let lastError: Error | null = null;
+    
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        const result = await requestFn();
+        return result;
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error('Unknown error');
+        
+        // Check if it's a rate limit error
+        if (lastError.message.includes('Rate limit exceeded') || 
+            lastError.message.includes('429') ||
+            lastError.message.includes('Try again after')) {
+          
+          // Extract wait time from message if available
+          const waitTimeMatch = lastError.message.match(/Try again after (\d+) minutes?/);
+          let waitTime: number;
+          
+          if (waitTimeMatch) {
+            // Use the exact wait time specified by the backend
+            waitTime = parseInt(waitTimeMatch[1]) * 60 * 1000; // Convert minutes to ms
+            console.log(`Backend requested wait time: ${waitTime / 1000}s`);
+          } else {
+            // Exponential backoff with max of 10 minutes
+            waitTime = Math.min(1000 * Math.pow(2, attempt), 10 * 60 * 1000); // Max 10 minutes
+          }
+          
+          if (attempt < maxRetries - 1) {
+            console.log(`Rate limited, waiting ${waitTime / 1000}s before retry ${attempt + 1}/${maxRetries}`);
+            await sleep(waitTime);
+            continue;
+          } else {
+            // On final attempt, throw a more user-friendly error
+            throw new Error('Rate limit exceeded. Please wait a few minutes before trying again.');
+          }
+        }
+        
+        // For non-rate-limit errors, don't retry
+        throw lastError;
+      }
+    }
+    
+    throw lastError || new Error('Max retries exceeded');
+  };
+
+  // Cache the promise if cache key provided
+  if (cacheKey) {
+    const promise = executeRequest().finally(() => {
+      // Remove from cache when done, but keep successful results for TTL
+      setTimeout(() => {
+        requestCache.delete(cacheKey);
+      }, CACHE_TTL);
+    });
+    
+    requestCache.set(cacheKey, { promise, timestamp: Date.now() });
+    return promise;
+  }
+
+  return executeRequest();
+}
 
 /**
  * Vector Store Management
@@ -38,12 +130,15 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export async function createVectorStore(
   request: VectorStoreCreateRequest
 ): Promise<VectorStoreCreateResponse> {
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      throw new VectorStoreError('Authentication required');
-    }
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    throw new VectorStoreError('Authentication required');
+  }
 
+  const userId = session.user.id;
+  const cacheKey = `createVectorStore-${userId}`;
+
+  return makeRequestWithRetry(async () => {
     const response = await fetch('/.netlify/functions/manageVectorStore', {
       method: 'POST',
       headers: {
@@ -53,30 +148,35 @@ export async function createVectorStore(
       body: JSON.stringify(request),
     });
 
-    const data = await response.json();
+    const responseData = await response.json();
+    console.log('Raw backend response:', responseData);
 
     if (!response.ok) {
-      throw new VectorStoreError(data.error || 'Failed to create Vector Store', data.code);
+      throw new VectorStoreError(responseData.error || 'Failed to create Vector Store', responseData.code);
     }
 
-    return data;
-  } catch (error) {
-    console.error('Error creating Vector Store:', error);
-    if (error instanceof VectorStoreError) {
-      throw error;
-    }
-    throw new VectorStoreError('Failed to create Vector Store');
-  }
+    // Backend wraps data in a 'data' property, so we need to extract it
+    const result: VectorStoreCreateResponse = {
+      message: responseData.message || 'Vector Store created successfully',
+      vectorStore: responseData.data?.vectorStore || responseData.vectorStore
+    };
+
+    console.log('Parsed response:', result);
+    return result;
+  }, cacheKey);
 }
 
 // Get user's Vector Store
 export async function getUserVectorStore(): Promise<VectorStoreGetResponse> {
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      throw new VectorStoreError('Authentication required');
-    }
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    throw new VectorStoreError('Authentication required');
+  }
 
+  const userId = session.user.id;
+  const cacheKey = `getUserVectorStore-${userId}`;
+
+  return makeRequestWithRetry(async () => {
     const response = await fetch('/.netlify/functions/manageVectorStore', {
       method: 'GET',
       headers: {
@@ -84,20 +184,35 @@ export async function getUserVectorStore(): Promise<VectorStoreGetResponse> {
       },
     });
 
-    const data = await response.json();
+    const responseData = await response.json();
+    console.log('Raw getUserVectorStore response:', responseData);
 
     if (!response.ok) {
-      throw new VectorStoreError(data.error || 'Failed to get Vector Store');
+      throw new VectorStoreError(responseData.error || 'Failed to get Vector Store');
     }
 
-    return data;
-  } catch (error) {
-    console.error('Error getting Vector Store:', error);
-    if (error instanceof VectorStoreError) {
-      throw error;
-    }
-    throw new VectorStoreError('Failed to get Vector Store');
-  }
+    // Backend wraps data in a 'data' property, so we need to extract it
+    const result: VectorStoreGetResponse = {
+      vectorStore: responseData.data?.vectorStore || responseData.vectorStore
+    };
+
+    console.log('Parsed getUserVectorStore response:', {
+      vectorStore: result.vectorStore
+    });
+    
+    // Add detailed logging for debugging backend mismatch
+    const currentUser = await supabase.auth.getUser();
+    console.log('🔍 VECTOR STORE DEBUG - Frontend Data:', {
+      userId: currentUser.data.user?.id,
+      vectorStoreId: result.vectorStore?.openai_vector_store_id,
+      vectorStoreName: result.vectorStore?.name,
+      vectorStoreStatus: result.vectorStore?.status,
+      documentCount: result.vectorStore?.document_count,
+      fullVectorStoreData: result.vectorStore
+    });
+
+    return result;
+  }, cacheKey);
 }
 
 // Delete user's Vector Store
@@ -235,7 +350,7 @@ export async function listUserDocuments(
     }
 
     return {
-      documents: data || [],
+      documents: (data || []) as unknown as UserDocument[],
       total: count || 0,
       hasMore: (count || 0) > offset + limit
     };
@@ -262,7 +377,7 @@ export async function getUserDocument(documentId: string): Promise<UserDocument>
       throw new Error('Document not found');
     }
 
-    return data;
+    return data as unknown as UserDocument;
   } catch (error) {
     console.error('Error getting user document:', error);
     throw new Error('Failed to get document');
@@ -297,7 +412,7 @@ export async function updateUserDocument(
       throw new Error('Document not found');
     }
 
-    return data;
+    return data as unknown as UserDocument;
   } catch (error) {
     console.error('Error updating user document:', error);
     throw new Error('Failed to update document');
@@ -314,32 +429,32 @@ export async function deleteUserDocument(
       throw new Error('Authentication required');
     }
 
-    // Get document details first
-    const document = await getUserDocument(request.documentId);
-    
-    if (request.deleteFromOpenAI !== false) {
-      // TODO: Create Edge Function to delete from OpenAI Vector Store
-      // For now, we'll just delete from our database
-      console.log('Note: OpenAI file deletion not yet implemented');
+    // Call the Netlify function to delete from OpenAI and database
+    const response = await fetch('/.netlify/functions/deleteDocumentFromOpenAI', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`
+      },
+      body: JSON.stringify({
+        documentId: request.documentId
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
     }
 
-    // Delete from database
-    const { error } = await supabase
-      .from('user_documents')
-      .delete()
-      .eq('id', request.documentId);
-
-    if (error) {
-      throw new Error(error.message);
-    }
+    const result = await response.json();
 
     return {
       success: true,
-      message: 'Document deleted successfully'
+      message: result.message || 'Document deleted successfully from OpenAI and database.'
     };
   } catch (error) {
     console.error('Error deleting user document:', error);
-    throw new Error('Failed to delete document');
+    throw new Error(error instanceof Error ? error.message : 'Failed to delete document');
   }
 }
 
@@ -406,12 +521,44 @@ export async function initializeUserVectorStore(
   name: string = 'Personal Knowledge Base',
   description: string = 'Personal medical knowledge base and documents'
 ): Promise<VectorStoreCreateResponse> {
-  try {
-    return await createVectorStore({ name, description });
-  } catch (error) {
-    console.error('Error initializing user Vector Store:', error);
-    throw error;
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    throw new VectorStoreError('Authentication required');
   }
+
+  const userId = session.user.id;
+  const cacheKey = `initializeUserVectorStore-${userId}`;
+
+  return makeRequestWithRetry(async () => {
+    // First check if user already has a Vector Store
+    const { hasVectorStore, vectorStore } = await checkUserVectorStore();
+    
+    console.log('CheckUserVectorStore result:', { hasVectorStore, vectorStore });
+    
+    if (hasVectorStore && vectorStore) {
+      // Return existing vector store information in the expected format
+      const existingResponse = {
+        message: 'Vector Store already exists',
+        vectorStore: {
+          id: vectorStore.id,
+          openai_vector_store_id: vectorStore.openai_vector_store_id,
+          name: vectorStore.name,
+          description: vectorStore.description || '',
+          status: vectorStore.status,
+          document_count: vectorStore.document_count,
+          created_at: vectorStore.created_at
+        }
+      };
+      console.log('Returning existing vector store response:', existingResponse);
+      return existingResponse;
+    }
+    
+    // If no vector store exists, create a new one
+    console.log('Creating new vector store...');
+    const createResponse = await createVectorStore({ name, description });
+    console.log('Create vector store response:', createResponse);
+    return createResponse;
+  }, cacheKey);
 }
 
 // Count user documents by category
@@ -438,11 +585,12 @@ export async function getUserDocumentStats(): Promise<{
 
     if (data) {
       for (const doc of data) {
+        const docData = doc as any; // Type assertion for database row
         // Count by category
-        stats.categoryCounts[doc.category] = (stats.categoryCounts[doc.category] || 0) + 1;
+        stats.categoryCounts[docData.category] = (stats.categoryCounts[docData.category] || 0) + 1;
         
         // Sum file sizes
-        stats.totalSize += doc.file_size || 0;
+        stats.totalSize += docData.file_size || 0;
       }
     }
 

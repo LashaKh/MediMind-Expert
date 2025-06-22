@@ -1,10 +1,10 @@
 export const bishopScoreCalculator = {
-  title: 'ბიშოპის ქულების კალკულატორი',
+  title: 'ბიშოპის ქულის კალკულატორი',
   subtitle: 'საშვილოსნოს ყელის მზაობის შეფასება მშობიარობის ინდუქციისთვის',
   assessment_tool: 'შეფასების ინსტრუმენტი',
   tool_description: 'ბიშოპის ქულა არის საშვილოსნოს ყელის მზაობის შეფასების სტანდარტიზებული მეთოდი მშობიარობის ინდუქციისთვის, რომელიც აფასებს საშვილოსნოს ყელისა და ნაყოფის ხუთ ძირითად პარამეტრს ინდუქციის წარმატების ალბათობის პროგნოზირებისთვის.',
   based_on_bishop: 'დაფუძნებულია ბიშოპის (1964) მოდიფიცირებულ ქულების სისტემაზე',
-  obstetric_safety_validated: 'აკუშერული უსაფრთხოება დადასტურებულია',
+  obstetric_safety_validated: 'მეან უსაფრთხოება დადასტურებულია',
   about_title: 'ბიშოპის ქულების შესახებ',
   
   // Form Labels and Help Text
@@ -16,7 +16,7 @@ export const bishopScoreCalculator = {
   cervical_effacement_label: 'საშვილოსნოს ყელის განცხილება',
   cervical_effacement_unit: '%',
   cervical_effacement_help: 'საშვილოსნოს ყელის გახდომის პროცენტი (0-100%)',
-  cervical_effacement_error: 'გთხოვთ, შეიყვანოთ კორექტული განცხილება 0-100%-ის შუალედში',
+  cervical_effacement_error: 'გთხოვთ, შეიყვანოთ სწორი ყელის გაბრტყელების მაჩვენებელი 0-100%-ის შუალედში',
   
   cervical_consistency_label: 'საშვილოსნოს ყელის კონსისტენცია',
   cervical_consistency_help: 'საშვილოსნოს ყელის სიმტკიცის შეფასება პალპაციით',
@@ -37,7 +37,7 @@ export const bishopScoreCalculator = {
   // Sections
   cervical_assessment: 'საშვილოსნოს ყელის შეფასება',
   cervical_parameters_section: 'საშვილოსნოს ყელის პარამეტრები',
-  cervical_parameters_description: 'შეაფასეთ საშვილოსნოს ყელის გაშლა, განცხილება, კონსისტენცია და პოზიცია',
+  cervical_parameters_description: 'შეაფასეთ საშვილოსნოს ყელის გაშლა, გაბრტყელება, კონსისტენცია და პოზიცია',
   
   // Scoring System
   scoring_system: 'ქულების სისტემა',
@@ -45,11 +45,11 @@ export const bishopScoreCalculator = {
   position_assessment: 'პოზიციის შეფასება',
   
   // Results
-  bishop_score_analysis: 'ბიშოპის ქულების ანალიზი',
+  bishop_score_analysis: 'ბიშოპის ქულის ანალიზი',
   total_score: 'მთლიანი ქულა',
   induction_success: 'ინდუქციის წარმატება',
   labor_likelihood: 'მშობიარობის ალბათობა',
-  cesarean_risk: 'კეისრის კვეთის რისკი',
+  cesarean_risk: 'საკეისროკვეთის რისკი',
   clinical_recommendation: 'კლინიკური რეკომენდაცია',
   evidence_base: 'მტკიცებულების ბაზა',
   
@@ -59,8 +59,8 @@ export const bishopScoreCalculator = {
   modify_inputs: 'მონაცემების შეცვლა',
   
   // Hardcoded text replacements
-  reference_text: 'საცნობარო',
-  high_station: 'მაღალი სიმაღლე',
+  reference_text: 'საცნობარო ტექსტი',
+  high_station: 'მაღალი დგომა',
   high_station_description_1: '-3, -2: 0 ქულა',
   high_station_description_2: 'თავი ზემოთ ძვლებზე',
   high_station_description_3: 'უფრო რთული მშობიარობა',
@@ -92,9 +92,9 @@ export const bishopScoreCalculator = {
   
   position_descriptions_posterior: 'უკანა: საშვილოსნოს ყელი მიმართულია ზურგისკენ',
   position_descriptions_mid: 'შუა პოზიცია: საშვილოსნოს ყელი ნეიტრალურ პოზიციაშია',
-  position_descriptions_anterior: 'წინა: საშვილოსნოს ყელი მიმართულია ლონისკენ',
+  position_descriptions_anterior: 'წინა: საშვილოსნოს ყელი მიმართულია ბოქვენისკენ',
   
-  cesarean_delivery_risk: 'კეისრის კვეთის რისკი',
+  cesarean_delivery_risk: 'საკეისრო კვეთის რისკი',
   
   // About page content
   scoring_parameters: 'შეფასების პარამეტრები',
@@ -179,5 +179,16 @@ export const bishopScoreCalculator = {
   ref_acog_bulletin: 'ACOG პრაქტიკული ბიულეტენი #107: შრომის ინდუქცია',
   ref_bishop_original: 'Bishop EH. კუდის შეფასება ელექტიური ინდუქციისთვის. Obstet Gynecol. 1964;24:266-8',
   ref_who_recommendations: 'WHO რეკომენდაციები: შრომის ინდუქცია ვადაზე ან ვადის შემდეგ',
-  ref_cochrane_review: 'კოქრეინის მიმოხილვა: შრომის ინდუქციის მექანიკური მეთოდები'
+  ref_cochrane_review: 'კოქრეინის მიმოხილვა: შრომის ინდუქციის მექანიკური მეთოდები',
+  
+  // Result field labels (for UI display)
+  bishop_score_label: 'ბიშოპის ქულა',
+  induction_success_label: 'ინდუქციის წარმატება',
+  cesarean_risk_label: 'საკეისრო კვეთის რისკი',
+  
+  // Induction success values
+  unlikely: 'ნაკლებ სავარაუდო',
+  possible: 'შესაძლო', 
+  likely: 'სავარაუდო',
+  very_likely: 'ძალიან სავარაუდო',
 }; 

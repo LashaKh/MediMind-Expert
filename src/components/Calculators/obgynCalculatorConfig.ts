@@ -163,8 +163,8 @@ export const obgynCalculatorCategories: OBGYNCalculatorCategory[] = [
     calculators: [
       {
         id: 'ovarian-reserve',
-        name: 'Ovarian Reserve Assessment',
-        description: 'Fertility evaluation and treatment planning',
+        name: 'ovarianReserve.title',
+        description: 'ovarianReserve.description',
         guidelines: [
           'ASRM Practice Committee: Testing and Interpreting Measures of Ovarian Reserve',
           'ACOG Committee Opinion No. 773: The Use of Antimüllerian Hormone'

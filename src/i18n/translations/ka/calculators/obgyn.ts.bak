@@ -2,7 +2,7 @@ export const obgynCalculators = {
   // VBAC წარმატების კალკულატორი
   vbac_success: {
     title: 'VBAC წარმატების კალკულატორი',
-    subtitle: 'კეისრის სექციის შემდეგ ვაგინალური მშობიარობის წარმატების პროგნოზირება',
+    subtitle: 'საკეისროსექციის შემდეგ ვაგინალური მშობიარობის წარმატების პროგნოზირება',
     description: 'VBAC-ის წარმატების მტკიცებულებებზე დაფუძნებული პროგნოზირება დედობრივი და აკუშერული ფაქტორების გამოყენებით',
     
     // დემოგრაფია
@@ -13,11 +13,11 @@ export const obgynCalculators = {
     
     // აკუშერული ისტორია
     obstetric_history: 'აკუშერული ანამნეზი',
-    prior_cesareans_label: 'წინა კეისრის კვეთების რაოდენობა',
+    prior_cesareans_label: 'წინა საკეისროკვეთების რაოდენობა',
     prior_cesareans_placeholder: 'შეიყვანეთ რაოდენობა (1-3)',
-    prior_cesareans_help: 'წინა კეისრის სექციების რაოდენობა აფასებს რისკს',
+    prior_cesareans_help: 'წინა საკეისროსექციების რაოდენობა აფასებს რისკს',
     
-    indication_previous_cd_label: 'წინა კეისრის კვეთის ჩვენება',
+    indication_previous_cd_label: 'წინა საკეისროკვეთის ჩვენება',
     indication_ftp: 'პროგრესის არარსებობა',
     indication_breech: 'ჰანდახან წარდგენა',
     indication_fetal_distress: 'ნაყოფის დისტრესი',
@@ -63,7 +63,7 @@ export const obgynCalculators = {
     
     // ვალიდაცია
     age_error: 'დედის ასაკი უნდა იყოს 15-50 წლის შორის',
-    cesareans_error: 'წინა კეისრის კვეთები უნდა იყოს 1-3-ს შორის',
+    cesareans_error: 'წინა საკეისროკვეთები უნდა იყოს 1-3-ს შორის',
     gestational_age_error: 'გესტაციური ასაკი უნდა იყოს 24-42 კვირის შორის',
     fetal_weight_error: 'ნაყოფის სავარაუდო წონა უნდა იყოს 500-6000 გრამს შორის',
     dilation_error: 'საშვილოსნოს ყელის გაფართოება უნდა იყოს 0-10 სმ-ს შორის'
@@ -117,7 +117,7 @@ export const obgynCalculators = {
     score_points: '{score}/13 ქულა',
     induction_success: 'ინდუქციის წარმატება',
     labor_likelihood: 'მშობიარობის ალბათობა',
-    cesarean_risk: 'კეისრის კვეთის რისკი',
+    cesarean_risk: 'საკეისროკვეთის რისკი',
     clinical_recommendation: 'კლინიკური რეკომენდაცია',
     evidence_base: 'მტკიცებულების ბაზა',
     
@@ -169,7 +169,7 @@ export const obgynCalculators = {
   // VBAC წარმატების კალკულატორი
   vbac_success: {
     title: 'VBAC წარმატების კალკულატორი',
-    subtitle: 'კეისრის სექციის შემდეგ ვაგინალური მშობიარობის წარმატების პროგნოზირება',
+    subtitle: 'საკეისროსექციის შემდეგ ვაგინალური მშობიარობის წარმატების პროგნოზირება',
     description: 'VBAC-ის წარმატების მტკიცებულებებზე დაფუძნებული პროგნოზირება დედობრივი და აკუშერული ფაქტორების გამოყენებით',
     
     // დემოგრაფია
@@ -180,11 +180,11 @@ export const obgynCalculators = {
     
     // აკუშერული ისტორია
     obstetric_history: 'აკუშერული ანამნეზი',
-    prior_cesareans_label: 'წინა კეისრის კვეთების რაოდენობა',
+    prior_cesareans_label: 'წინა საკეისროკვეთების რაოდენობა',
     prior_cesareans_placeholder: 'შეიყვანეთ რაოდენობა (1-3)',
-    prior_cesareans_help: 'წინა კეისრის სექციების რაოდენობა აფასებს რისკს',
+    prior_cesareans_help: 'წინა საკეისროსექციების რაოდენობა აფასებს რისკს',
     
-    indication_previous_cd_label: 'წინა კეისრის კვეთის ჩვენება',
+    indication_previous_cd_label: 'წინა საკეისროკვეთის ჩვენება',
     indication_ftp: 'პროგრესის არარსებობა',
     indication_breech: 'ჰანდახან წარდგენა',
     indication_fetal_distress: 'ნაყოფის დისტრესი',
@@ -230,7 +230,7 @@ export const obgynCalculators = {
     
     // ვალიდაცია
     age_error: 'დედის ასაკი უნდა იყოს 15-50 წლის შორის',
-    cesareans_error: 'წინა კეისრის კვეთები უნდა იყოს 1-3-ს შორის',
+    cesareans_error: 'წინა საკეისროკვეთები უნდა იყოს 1-3-ს შორის',
     gestational_age_error: 'გესტაციური ასაკი უნდა იყოს 24-42 კვირის შორის',
     fetal_weight_error: 'ნაყოფის სავარაუდო წონა უნდა იყოს 500-6000 გრამს შორის',
     dilation_error: 'საშვილოსნოს ყელის გაფართოება უნდა იყოს 0-10 სმ-ს შორის'
@@ -284,7 +284,7 @@ export const obgynCalculators = {
     score_points: '{score}/13 ქულა',
     induction_success: 'ინდუქციის წარმატება',
     labor_likelihood: 'მშობიარობის ალბათობა',
-    cesarean_risk: 'კეისრის კვეთის რისკი',
+    cesarean_risk: 'საკეისროკვეთის რისკი',
     clinical_recommendation: 'კლინიკური რეკომენდაცია',
     evidence_base: 'მტკიცებულების ბაზა',
     
@@ -403,7 +403,7 @@ export const obgynCalculators = {
     
     // About სექცია
     about_title: 'საშვილოსნოს კიბოს რისკის კალკულატორის შესახებ',
-    about_subtitle: 'მტკიცებულებებზე დაფუძნებული რისკის შეფასება • კლინიკური გაიდლაინები • სამედიცინო ზუსტობა',
+    about_subtitle: 'მტკიცებულებებზე დაფუძნებული რისკის შეფასება • კლინიკური გაიდლაინები • სამედიცინო სიზუსტე',
     clinical_purpose: 'კლინიკური დანიშნულება',
     clinical_purpose_description: 'საშვილოსნოს კიბოს რისკის კალკულატორი უზრუნველყოფს მტკიცებულებებზე დაფუძნებულ სიცოცხლისმანძილზე რისკის შეფასებას ცნობილი რისკ-ფაქტორების გამოყენებით. ზუსტი რისკის შეფასება აუცილებელია შესაფერისი სკრინინგისა და პრევენციული ღონისძიებების დასაგეგმად.',
     
@@ -447,12 +447,12 @@ export const obgynCalculators = {
     clinical_data_review: 'კლინიკური მონაცემების მიმოხილვა',
     review_dating_parameters: 'დათარიღების პარამეტრების მიმოხილვა ზუსტობის შეფასებისთვის',
     selected_dating_method: 'არჩეული დათარიღების მეთოდი',
-    expected_accuracy: 'მოსალოდნელი ზუსტობა',
+    expected_accuracy: 'მოსალოდნელი სიზუსტე',
     
-    // დათარიღების მეთოდების ზუსტობა
-    ultrasound_crl_accuracy: 'ულტრაბგერითი CRL: ±3-5 დღე (ყველაზე მაღალი ზუსტობა)',
-    art_dating_accuracy: 'ART დათარიღება: ±1-2 დღე (ყველაზე მაღალი ზუსტობა)',
-    lmp_dating_accuracy: 'LMP დათარიღება: ±7-10 დღე (საშუალო ზუსტობა)',
+    // დათარიღების მეთოდების სიზუსტე
+    ultrasound_crl_accuracy: 'ულტრაბგერითი CRL: ±3-5 დღე (ყველაზე მაღალი სიზუსტე)',
+    art_dating_accuracy: 'ART დათარიღება: ±1-2 დღე (ყველაზე მაღალი სიზუსტე)',
+    lmp_dating_accuracy: 'LMP დათარიღება: ±7-10 დღე (საშუალო სიზუსტე)',
     
     // ACOG გაიდლაინები
     acog_guidelines: 'ACOG გაიდლაინები',
@@ -532,7 +532,7 @@ export const obgynCalculators = {
     
     // LMP მეთოდის აღწერა
     last_menstrual_period_lmp: 'ბოლო მენსტრუაციის პერიოდი (LMP)',
-    moderate_accuracy_days: 'საშუალო ზუსტობა: ±7-10 დღე',
+    moderate_accuracy_days: 'საშუალო სიზუსტე: ±7-10 დღე',
     naegele_rule_description: 'იყენებს ნეგელეს წესს: LMP + 280 დღე. არეგულირებს ციკლის ხანგრძლივობის ვარიაციებს. ყველაზე ხელმისაწვდომი მეთოდი, მაგრამ ვარაუდობს რეგულარულ ოვულაციას.',
     standard_28_day_cycle: '• სტანდარტული 28-დღიანი ციკლის ვარაუდი',
     cycle_length_adjustments: '• ციკლის ხანგრძლივობის კორექტირება მხარდაჭერილია',
@@ -1415,7 +1415,7 @@ export const obgynCalculators = {
       limitations: {
         title: 'შეზღუდვები',
         operator_dependent: 'ოპერატორზე დამოკიდებული ტექნიკა',
-        gestational_age: 'გესტაციური ასაკის ზუსტობა მნიშვნელოვანია',
+        gestational_age: 'გესტაციური ასაკის სიზუსტე მნიშვნელოვანია',
         individual_variation: 'ინდივიდუალური ცვალებადობა',
         prediction_limitations: 'პროგნოზირება არა 100%-ით ზუსტია'
       }

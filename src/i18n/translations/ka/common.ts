@@ -1,4 +1,6 @@
 export const common = {
+  account: 'ანგარიში',
+  medicalAssistant: 'სამედიცინო ასისტენტი',
   save: 'შენახვა',
   cancel: 'გაუქმება',
   delete: 'წაშლა',
@@ -6,13 +8,13 @@ export const common = {
   close: 'დახურვა',
   open: 'გახსნა',
   add: 'დამატება',
-  remove: 'ამოღება',
+  remove: 'წაშლა',
   create: 'შექმნა',
   update: 'განახლება',
   submit: 'გაგზავნა',
-  reset: 'გადატვირთვა',
+  reset: 'გაუქმება',
   clear: 'გასუფთავება',
-  search: 'ძებნა',
+  search: 'ძიება',
   filter: 'ფილტრი',
   sort: 'დალაგება',
   loading: 'იტვირთება...',
@@ -29,22 +31,22 @@ export const common = {
   back: 'უკან',
   forward: 'წინ',
   home: 'მთავარი',
-  dashboard: 'დაშბორდი',
+  dashboard: 'მართვის პანელი',
   profile: 'პროფილი',
   settings: 'პარამეტრები',
   help: 'დახმარება',
-  about: 'ჩვენს შესახებ',
+  about: 'შესახებ',
   contact: 'კონტაქტი',
-  privacy: 'კონფიდენციალობა',
+  privacy: 'კონფიდენციალურობა',
   terms: 'პირობები',
   medical: 'სამედიცინო',
   aiAssistant: 'AI ასისტენტი',
   // Status messages
   processing: 'მუშავდება...',
-  complete: 'დასრულდა',
-  pending: 'მოლოდინშია',
-  failed: 'ვერ მოხერხდა',
-  retry: 'ხელახლა ცდა',
+  complete: 'დასრულებული',
+  pending: 'მოლოდინში',
+  failed: 'ვერ შესრულდა',
+  retry: 'ხელახლა',
   calculation_failed: 'გამოთვლა ვერ შესრულდა',
   indicates: 'მიუთითებს',
   detailed_analysis: 'დეტალური ანალიზი',
@@ -52,7 +54,7 @@ export const common = {
   title: 'სათაური',
   description: 'აღწერა',
   name: 'სახელი',
-  email: 'ელექტრონული ფოსტა',
+  email: 'ელ-ფოსტა',
   phone: 'ტელეფონი',
   address: 'მისამართი',
   date: 'თარიღი',
@@ -74,12 +76,12 @@ export const common = {
   // Navigation
   menu: 'მენიუ',
   sidebar: 'გვერდითი პანელი',
-  navbar: 'ნავიგაციის პანელი',
-  breadcrumb: 'ნავიგაციის ბილიკი',
+  navbar: 'ნავიგაციის ზოლი',
+  breadcrumb: 'ნავიგაციის ჯაჭვი',
   // Pagination
   page: 'გვერდი',
   pageOf: 'გვერდი {current} {total}-დან',
-  itemsPerPage: 'ელემენტი გვერდზე',
+  itemsPerPage: 'ელემენტები გვერდზე',
   showingItems: 'ნაჩვენებია {start}-{end} {total}-დან',
   // Time and dates
   today: 'დღეს',
@@ -89,7 +91,7 @@ export const common = {
   thisMonth: 'ამ თვეში',
   thisYear: 'ამ წელს',
   // Common validation
-  required: 'აუცილებელია',
+  required: 'სავალდებულო',
   optional: 'არასავალდებულო',
   invalid: 'არასწორი',
   valid: 'სწორი',
@@ -106,11 +108,11 @@ export const common = {
     cm: 'სმ',
     m: 'მ',
     ft: 'ფუტი',
-    in: 'დუიმი',
+    in: 'ინჩი',
     mm: 'მმ',
     
     // Blood Pressure
-    mmHg: 'მმ ვართხლ. სვ.',
+    mmHg: 'მმ ვრცლ. სვ.',
     
     // Laboratory Values
     mgdL: 'მგ/დლ',
@@ -120,7 +122,7 @@ export const common = {
     mEqL: 'მეკვ/ლ',
     ngmL: 'ნგ/მლ',
     pgmL: 'პგ/მლ',
-    mIUmL: 'მსაერთ.ერთ./მლ',
+    mIUmL: 'მსაერთ. ერთ./მლ',
     
     // Time
     years: 'წელი',
@@ -138,9 +140,9 @@ export const common = {
     L: 'ლ',
     
     // Frequency
-    bpm: 'ურტყმა/წთ',
+    bpm: 'გ/წთ',
     perMin: '/წთ',
-    perHour: '/საათი',
+    perHour: '/საათ',
     perDay: '/დღე'
   },
   // Risk Categories
@@ -151,7 +153,7 @@ export const common = {
     veryHigh: 'ძალიან მაღალი რისკი',
     borderline: 'საზღვრული რისკი',
     intermediate: 'შუალედური რისკი',
-    elevated: 'გაზრდილი რისკი',
+    elevated: 'მაღლებული რისკი',
     normal: 'ნორმალური',
     optimal: 'ოპტიმალური',
     nearOptimal: 'ოპტიმალურთან ახლოს',
@@ -164,10 +166,10 @@ export const common = {
     
     // Categories for specific conditions
     cardiovascular: {
-      low: 'დაბალი გულ-სისხლძარღვული რისკი',
-      moderate: 'ზომიერი გულ-სისხლძარღვული რისკი',
-      high: 'მაღალი გულ-სისხლძარღვული რისკი',
-      veryHigh: 'ძალიან მაღალი გულ-სისხლძარღვული რისკი'
+      low: 'დაბალი გულ-სისხლძარღვთა რისკი',
+      moderate: 'ზომიერი გულ-სისხლძარღვთა რისკი',
+      high: 'მაღალი გულ-სისხლძარღვთა რისკი',
+      veryHigh: 'ძალიან მაღალი გულ-სისხლძარღვთა რისკი'
     }
   },
   // Clinical Recommendations
@@ -175,33 +177,33 @@ export const common = {
     // General recommendations
     consultPhysician: 'გაიარეთ კონსულტაცია ექიმთან',
     seekMedicalAttention: 'მიმართეთ გადაუდებელ სამედიცინო დახმარებას',
-    routineFollowUp: 'დაგეგმეთ რუტინული კონტროლი',
-    urgentReferral: 'რეკომენდებულია გადაუდებელი მიმართვა',
-    lifestyleModification: 'რეკომენდებულია ცხოვრების წესის კორექცია',
-    medicationReview: 'რეკომენდებულია მედიკამენტების გადახედვა',
+    routineFollowUp: 'დაგეგმეთ რუტინული ზედამხედველობა',
+    urgentReferral: 'რეკომენდირებულია გადაუდებელი მიმართვა',
+    lifestyleModification: 'რეკომენდირებულია ცხოვრების წესის შეცვლა',
+    medicationReview: 'რეკომენდირებულია მედიკამენტების გადახედვა',
     
     // Monitoring recommendations
-    regularMonitoring: 'საჭიროა რეგულარული კონტროლი',
-    closeMonitoring: 'საჭიროა მჭიდრო კონტროლი',
-    annualCheckup: 'რეკომენდებულია წლიური გამოკვლევა',
-    frequentMonitoring: 'საჭიროა ხშირი კონტროლი',
+    regularMonitoring: 'საჭიროა რეგულარული ზედამხედველობა',
+    closeMonitoring: 'საჭიროა მჭიდრო ზედამხედველობა',
+    annualCheckup: 'რეკომენდირებულია წლიური შემოწმება',
+    frequentMonitoring: 'საჭიროა ხშირი ზედამხედველობა',
     
     // Treatment recommendations
     considerTreatment: 'განიხილეთ მკურნალობის დაწყება',
     optimizeTreatment: 'ოპტიმიზაცია გაუკეთეთ მიმდინარე მკურნალობას',
-    reassessRisk: 'ხელახლა შეაფასეთ რისკ ფაქტორები',
+    reassessRisk: 'ხელახლა შეაფასეთ რისკ-ფაქტორები',
     
     // Lifestyle recommendations
-    dietModification: 'რეკომენდებულია დიეტის კორექცია',
-    exerciseProgram: 'რეკომენდებულია ვარჯიშის პროგრამა',
-    smokingCessation: 'რეკომენდებულია მოწევის შეწყვეტა',
-    weightManagement: 'რეკომენდებულია წონის კონტროლი',
-    stressReduction: 'რეკომენდებულია სტრესის შემცირება',
+    dietModification: 'რეკომენდირებულია დიეტის კორექცია',
+    exerciseProgram: 'რეკომენდირებულია ვარჯიშის პროგრამა',
+    smokingCessation: 'რეკომენდირებულია მოწევის მიტოვება',
+    weightManagement: 'რეკომენდირებულია წონის მართვა',
+    stressReduction: 'რეკომენდირებულია სტრესის შემცირება',
     
     // Emergency recommendations
-    emergencyRoom: 'დაუყოვნებლივ მიმართეთ გადაუდებელი დახმარების განყოფილებას',
+    emergencyRoom: 'დაუყოვნებლივ მიმართეთ სასწრაფო დახმარების განყოფილებას',
     call911: 'გამოიძახეთ სასწრაფო დახმარება (112)',
-    hospitalAdmission: 'შესაძლოა საჭირო გახდეს ჰოსპიტალიზაცია'
+    hospitalAdmission: 'შესაძლოა საჭირო იყოს ჰოსპიტალიზაცია'
   },
   // Calculator-specific shared terms
   calculatorTerms: {
@@ -209,7 +211,7 @@ export const common = {
     enterValue: 'შეიყვანეთ მნიშვნელობა',
     selectValue: 'აირჩიეთ მნიშვნელობა',
     chooseOption: 'აირჩიეთ ვარიანტი',
-    inputRequired: 'ეს ველი აუცილებელია',
+    inputRequired: 'ეს ველი სავალდებულოა',
     
     // Results
     result: 'შედეგი',
@@ -222,15 +224,15 @@ export const common = {
     calculate: 'გამოთვლა',
     recalculate: 'ხელახლა გამოთვლა',
     clearAll: 'ყველაფრის გასუფთავება',
-    printResult: 'შედეგის დაბეჭდვა',
+    printResult: 'შედეგის ბეჭდვა',
     shareResult: 'შედეგის გაზიარება',
     
     // Status
-    calculating: 'ითვლება...',
-    calculated: 'გამოთვლილია',
+    calculating: 'იანგარიშება...',
+    calculated: 'გამოთვლილი',
     
     // Validation
-    invalidInput: 'არასწორი შეყვანა',
+    invalidInput: 'არასწორი ჩანაწერი',
     outOfRange: 'მნიშვნელობა დიაპაზონს გარეთ',
     pleaseEnter: 'გთხოვთ შეიყვანოთ',
     
@@ -247,13 +249,13 @@ export const common = {
       yes: 'კი',
       no: 'არა',
       unknown: 'უცნობი',
-      notApplicable: 'არ ეხება'
+      notApplicable: 'არ გამოიყენება'
     }
   },
   // Clinical terminology
   clinical: {
     // Patient demographics
-    patient: 'პაციენტი',
+    patient: 'პაცენტი',
     demographics: 'დემოგრაფიული მონაცემები',
     
     // Medical history
@@ -275,20 +277,21 @@ export const common = {
     intervention: 'ჩარევა',
     
     // Follow-up
-    followUp: 'კონტროლი',
+    followUp: 'ზედამხედველობა',
     monitoring: 'მონიტორინგი',
-    surveillance: 'ზედამხედველობა',
+    surveillance: 'კონტროლი',
     
     // Guidelines
     guidelines: 'გაიდლაინები',
     protocol: 'პროტოკოლი',
     standard: 'სტანდარტი',
-    evidenceBased: 'მტკიცებულებაზე დაფუძნებული'
+    evidenceBased: 'მტკიცებულებებზე დაფუძნებული'
   },
   // UI Components
   calculator: 'კალკულატორი',
   results: 'შედეგები',
-  clinical_purpose: 'კლინიკური დანიშნულება'
+  clinical_purpose: 'კლინიკური დანიშნულება',
+  about_calculator: 'კალკულატორის შესახებ'
 };
 
 export default common; 

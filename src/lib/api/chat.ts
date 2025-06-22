@@ -60,34 +60,56 @@ Please provide clinical insights and recommendations based on this case context.
     }
 
     // Get the current user session for authentication
-    const { data: { session } } = await supabase.auth.getSession();
+    let { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    // Check if session exists and token is not expired
+    const isTokenExpired = session?.expires_at ? new Date(session.expires_at * 1000) <= new Date() : false;
+    
+    // If no session, session error, or token is expired, try to refresh
+    if (!session || sessionError || isTokenExpired) {
+      console.log('🔄 Session invalid, expired, or missing - attempting refresh...', {
+        hasSession: !!session,
+        hasError: !!sessionError,
+        isExpired: isTokenExpired,
+        expiresAt: session?.expires_at ? new Date(session.expires_at * 1000).toISOString() : 'N/A',
+        currentTime: new Date().toISOString()
+      });
+      
+      const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession();
+      
+      if (refreshError || !refreshedSession) {
+        console.error('Failed to refresh session:', refreshError);
+        throw new APIError('Authentication required - please sign in again', 401);
+      }
+      
+      console.log('✅ Session refreshed successfully');
+      // Use the refreshed session
+      session = refreshedSession;
+    }
     
     if (!session) {
       throw new APIError('Authentication required', 401);
     }
 
+    // DEBUG: Log token information
+    console.log('🔑 Using session token:', {
+      hasAccessToken: !!session.access_token,
+      tokenLength: session.access_token?.length,
+      tokenPrefix: session.access_token?.substring(0, 20) + '...',
+      expiresAt: session.expires_at ? new Date(session.expires_at * 1000).toISOString() : 'N/A',
+      currentTime: new Date().toISOString(),
+      isValid: session.expires_at ? new Date(session.expires_at * 1000) > new Date() : false
+    });
+
     // Prepare request body
-    const requestBody: any = {
+    let requestBody: any = {
       message: messageText,
       conversationId: sessionId,
       caseContext: caseContext ? {
         id: caseContext.id,
         title: caseContext.title,
         specialty: caseContext.specialty
-      } : undefined,
-      // Knowledge base context - simplified for OpenAI Vector Store integration
-      knowledgeBase: {
-        type: knowledgeBaseType || 'curated',
-        // For personal knowledge base, the backend will automatically fetch
-        // the user's Vector Store ID and document IDs from the database
-        ...(knowledgeBaseType === 'personal' && {
-          useVectorStore: true
-        }),
-        // Legacy support for manual document IDs (fallback)
-        ...(knowledgeBaseType === 'personal' && personalDocumentIds && personalDocumentIds.length > 0 && {
-          personalDocumentIds: personalDocumentIds
-        })
-      }
+      } : undefined
     };
 
     // Add uploads if attachments are provided
@@ -99,8 +121,63 @@ Please provide clinical insights and recommendations based on this case context.
       }
     }
 
-    // Use our Netlify Function proxy instead of direct Flowise endpoint
-    const response = await fetch('/api/flowise/chat', {
+    // ROUTE BASED ON KNOWLEDGE BASE TYPE
+    let apiEndpoint: string;
+    const isPersonalKB = knowledgeBaseType === 'personal';
+    
+    console.log('🔍 KNOWLEDGE BASE ROUTING DEBUG:', {
+      knowledgeBaseType,
+      isPersonalKB,
+      sessionId,
+      hasCaseContext: !!caseContext
+    });
+    
+    if (isPersonalKB) {
+      // Route to OpenAI Assistants for personal knowledge base
+      apiEndpoint = '/api/openai-assistant';
+      console.log('🤖 Routing to OpenAI Assistants for personal knowledge base');
+      
+      // Format request body specifically for OpenAI Assistant endpoint
+      requestBody = {
+        message: messageText,
+        conversationId: sessionId,
+        caseContext: caseContext || null // Send full case object or null
+      };
+      
+      console.log('🔍 OpenAI Assistant Request Body:', {
+        message: messageText,
+        messageType: typeof messageText,
+        messageLength: messageText?.length,
+        conversationId: sessionId,
+        caseContext: caseContext,
+        fullRequestBody: requestBody
+      });
+      
+      // Remove uploads field for OpenAI Assistant (not supported yet)
+      if (requestBody.uploads) {
+        console.warn('File uploads not yet supported for personal knowledge base');
+        delete requestBody.uploads;
+      }
+    } else {
+      // Route to Flowise for curated knowledge base (existing behavior)
+      apiEndpoint = '/api/flowise/chat';
+      
+      // Add knowledge base context for Flowise
+      requestBody.knowledgeBase = {
+        type: knowledgeBaseType || 'curated',
+        // Legacy support for manual document IDs (fallback)
+        ...(personalDocumentIds && personalDocumentIds.length > 0 && {
+          personalDocumentIds: personalDocumentIds
+        })
+      };
+      
+      console.log('🌊 Routing to Flowise for curated knowledge base');
+    }
+
+    console.log(`📡 Sending ${knowledgeBaseType || 'curated'} KB request to:`, apiEndpoint);
+
+    // Make the API request
+    const response = await fetch(apiEndpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

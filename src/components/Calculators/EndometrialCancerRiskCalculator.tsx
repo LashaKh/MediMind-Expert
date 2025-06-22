@@ -127,7 +127,7 @@ const EndometrialCancerRiskCalculator: React.FC = () => {
         return;
       }
 
-      const calculationResult = calculateOBGYN('endometrial-cancer-risk', input) as EndometrialCancerRiskResult;
+      const calculationResult = calculateOBGYN('endometrial-cancer-risk', input, t) as EndometrialCancerRiskResult;
       setResult(calculationResult);
       setShowResult(true);
       
@@ -232,7 +232,7 @@ const EndometrialCancerRiskCalculator: React.FC = () => {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-purple-800">{t('calculators.obgyn.endometrial_cancer_risk.risk_assessment')}</h3>
               <span className="text-sm text-purple-600 bg-purple-100 px-3 py-1 rounded-full">
-                Step {step} of 3
+                {t('calculators.obgyn.endometrial_cancer_risk.step_indicator', { step })}
               </span>
             </div>
             
@@ -282,7 +282,7 @@ const EndometrialCancerRiskCalculator: React.FC = () => {
                   <User className="w-6 h-6 text-purple-600" />
                   {t('calculators.obgyn.endometrial_cancer_risk.demographics')} & {t('calculators.obgyn.endometrial_cancer_risk.physical_characteristics')}
                   <span className="text-sm bg-purple-100 text-purple-700 px-2 py-1 rounded-full ml-auto">
-                    Step 1 of 3
+                    {t('calculators.obgyn.endometrial_cancer_risk.step_indicator', { step: 1 })}
                   </span>
               </CardTitle>
             </CardHeader>
@@ -296,7 +296,7 @@ const EndometrialCancerRiskCalculator: React.FC = () => {
                     placeholder={t('calculators.obgyn.endometrial_cancer_risk.age_placeholder')}
                     min={18}
                     max={100}
-                    unit="years"
+                    unit={t('calculators.obgyn.endometrial_cancer_risk.years')}
                     error={errors.age}
                     helpText={t('calculators.obgyn.endometrial_cancer_risk.age_help')}
                     icon={User}
@@ -312,7 +312,7 @@ const EndometrialCancerRiskCalculator: React.FC = () => {
                     min={15}
                     max={60}
                     step={0.1}
-                    unit="kg/m²"
+                    unit={t('calculators.obgyn.endometrial_cancer_risk.kg_m2')}
                     error={errors.bmi}
                     helpText={t('calculators.obgyn.endometrial_cancer_risk.bmi_help')}
                     icon={Scale}
@@ -359,7 +359,7 @@ const EndometrialCancerRiskCalculator: React.FC = () => {
                   <Heart className="w-6 h-6 text-purple-600" />
                   {t('calculators.obgyn.endometrial_cancer_risk.medical_history')} & {t('calculators.obgyn.endometrial_cancer_risk.risk_factors')}
                   <span className="text-sm bg-purple-100 text-purple-700 px-2 py-1 rounded-full ml-auto">
-                    Step 2 of 3
+                    {t('calculators.obgyn.endometrial_cancer_risk.step_indicator', { step: 2 })}
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -468,7 +468,7 @@ const EndometrialCancerRiskCalculator: React.FC = () => {
                   <Activity className="w-6 h-6 text-purple-600" />
                   {t('calculators.obgyn.endometrial_cancer_risk.risk_assessment_review')}
                   <span className="text-sm bg-purple-100 text-purple-700 px-2 py-1 rounded-full ml-auto">
-                    Step 3 of 3
+                    {t('calculators.obgyn.endometrial_cancer_risk.step_indicator', { step })}
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -481,8 +481,8 @@ const EndometrialCancerRiskCalculator: React.FC = () => {
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div>
-                      <p><strong>{t('calculators.obgyn.endometrial_cancer_risk.age_label')}:</strong> {formData.age} years</p>
-                      <p><strong>{t('calculators.obgyn.endometrial_cancer_risk.bmi_label')}:</strong> {formData.bmi} kg/m²</p>
+                      <p><strong>{t('calculators.obgyn.endometrial_cancer_risk.age_label')}:</strong> {formData.age} {t('calculators.obgyn.endometrial_cancer_risk.years')}</p>
+                      <p><strong>{t('calculators.obgyn.endometrial_cancer_risk.bmi_label')}:</strong> {formData.bmi} {t('calculators.obgyn.endometrial_cancer_risk.kg_m2')}</p>
                       <p><strong>{t('calculators.obgyn.endometrial_cancer_risk.diabetes_short')}:</strong> {formData.diabetes ? t('calculators.obgyn.endometrial_cancer_risk.yes') : t('calculators.obgyn.endometrial_cancer_risk.no')}</p>
                       <p><strong>{t('calculators.obgyn.endometrial_cancer_risk.nulliparity_short')}:</strong> {formData.nulliparity ? t('calculators.obgyn.endometrial_cancer_risk.yes') : t('calculators.obgyn.endometrial_cancer_risk.no')}</p>
                     </div>
@@ -538,7 +538,7 @@ const EndometrialCancerRiskCalculator: React.FC = () => {
             <div id="endometrial-results">
               <ResultsDisplay
                 title={t('calculators.obgyn.endometrial_cancer_risk.title')}
-                value={result.category.charAt(0).toUpperCase() + result.category.slice(1) + ' ' + t('calculators.obgyn.endometrial_cancer_risk.risk')}
+                value={`${t(`calculators.obgyn.endometrial_cancer_risk.service.risk_${result.category.replace('-', '_')}`)} ${t('calculators.obgyn.endometrial_cancer_risk.risk_level')}`}
                 category={result.category === 'low' ? 'low' : result.category === 'moderate' ? 'intermediate' : 'high'}
                 interpretation={result.interpretation}
                 icon={Shield}
@@ -549,7 +549,7 @@ const EndometrialCancerRiskCalculator: React.FC = () => {
                     {getRiskIcon(result.category)}
                     <div>
                       <h3 className="text-xl font-bold">
-                        {result.category.charAt(0).toUpperCase() + result.category.slice(1)} {t('calculators.obgyn.endometrial_cancer_risk.risk_level')}
+                        {t(`calculators.obgyn.endometrial_cancer_risk.service.risk_${result.category.replace('-', '_')}`)} {t('calculators.obgyn.endometrial_cancer_risk.risk_level')}
                       </h3>
                       <p className="text-sm font-medium">{t('calculators.obgyn.endometrial_cancer_risk.lifetime_risk')}: {result.lifetimeRisk}%</p>
                     </div>
@@ -619,11 +619,11 @@ const EndometrialCancerRiskCalculator: React.FC = () => {
                   calculatorName={t('calculators.obgyn.endometrial_cancer_risk.title')}
                   calculatorId="endometrial-cancer-risk"
                   results={{
-                    riskLevel: result.category,
-                    lifetimeRisk: `${result.lifetimeRisk}%`,
-                    annualRisk: `${result.annualRisk}%`,
-                    screeningRecommendation: result.screeningRecommendation,
-                    protectiveFactors: result.protectiveFactors.join(', ')
+                    [t('calculators.common.riskLevel')]: t(`calculators.obgyn.endometrial_cancer_risk.service.risk_${result.category.replace('-', '_')}`),
+                    [t('calculators.common.lifetime_risk')]: `${result.lifetimeRisk}%`,
+                    [t('calculators.common.annual_risk')]: `${result.annualRisk}%`,
+                    [t('calculators.common.screening_recommendation')]: result.screeningRecommendation,
+                    [t('calculators.common.protective_factors')]: result.protectiveFactors.join(', ')
                   }}
                   interpretation={result.interpretation}
                   recommendations={result.recommendations}

@@ -179,5 +179,16 @@ export const bishopScoreCalculator = {
   ref_acog_bulletin: 'ACOG Practice Bulletin No. 107: Induction of Labor',
   ref_bishop_original: 'Bishop EH. Pelvic scoring for elective induction. Obstet Gynecol. 1964;24:266-8',
   ref_who_recommendations: 'WHO Recommendations: Induction of Labour at or beyond Term',
-  ref_cochrane_review: 'Cochrane Review: Mechanical methods for induction of labour'
+  ref_cochrane_review: 'Cochrane Review: Mechanical methods for induction of labour',
+  
+  // Result field labels (for UI display)
+  bishop_score_label: 'Bishop Score',
+  induction_success_label: 'Induction Success',
+  cesarean_risk_label: 'Cesarean Risk',
+  
+  // Induction success values
+  unlikely: 'Unlikely',
+  possible: 'Possible', 
+  likely: 'Likely',
+  very_likely: 'Very Likely',
 }; 

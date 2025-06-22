@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calculator, Heart, Activity, Zap, Wrench, HeartHandshake, Dna, Baby, Shield, TestTube, Calendar, Menu, X, Grid3X3, Sparkles, Star, Award, TrendingUp, ArrowRight, ChevronRight } from 'lucide-react';
+import { Calculator, Heart, Activity, Zap, Wrench, HeartHandshake, Dna, Baby, Shield, TestTube, Calendar, Menu, Grid3X3, Sparkles, Star, Award, ArrowRight, ChevronRight, Stethoscope, Brain, Target, CheckCircle, Users, Globe, Rocket, BookOpen, Filter, Search, Play, Crown, Diamond, Zap as ZapIcon } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { useSpecialty, MedicalSpecialty } from '../../contexts/SpecialtyContext';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -96,10 +96,12 @@ interface CalculatorCategory {
 export const Calculators: React.FC = () => {
   const { specialty } = useSpecialty();
   const { t } = useTranslation();
-  const [activeCategory, setActiveCategory] = useState<string>('risk-assessment');
+  const [activeCategory, setActiveCategory] = useState<string>('pregnancy-dating');
   const [activeCalculator, setActiveCalculator] = useState<CalculatorType | null>(null);
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [showStats, setShowStats] = useState<boolean>(false);
   const [isCategoryListView, setIsCategoryListView] = useState<boolean>(false);
 
 // Cardiology Calculator Categories
@@ -298,8 +300,8 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
     calculators: [
       {
         id: 'apgar-score',
-          name: t('calculators.apgar_score.title'),
-          description: t('calculators.apgar_score.subtitle')
+          name: t('calculators.obgyn.apgar_score.title'),
+          description: t('calculators.obgyn.apgar_score.subtitle')
       },
       {
         id: 'pph-risk',
@@ -433,8 +435,7 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
   };
 
   const renderOBGYNCalculator = () => {
-    switch (activeCalculator) {
-      // Antenatal Risk Assessment
+    switch (activeCalculator as OBGYNCalculatorType) {
       case 'edd-calculator':
         return <EDDCalculator />;
       case 'gestational-age':
@@ -445,20 +446,14 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
         return <PretermBirthRiskCalculator />;
       case 'gdm-screening':
         return <GDMScreeningCalculator />;
-      
-      // Labor Management
       case 'bishop-score':
         return <BishopScoreCalculator />;
       case 'vbac-success':
         return <VBACSuccessCalculator />;
-      
-      // Assessment Tools
       case 'apgar-score':
         return <ApgarScoreCalculator />;
       case 'pph-risk':
         return <PPHRiskCalculator />;
-      
-      // TODO: Implement remaining calculators
       case 'cervical-cancer-risk':
         return <CervicalCancerRiskCalculator />;
       case 'ovarian-cancer-risk':
@@ -469,7 +464,6 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
         return <OvarianReserveCalculator />;
       case 'menopause-assessment':
         return <MenopauseAssessmentCalculator />;
-      
       default:
         return null;
     }
@@ -517,6 +511,12 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
 
   const activeCategory_data = calculatorCategories.find(cat => cat.id === activeCategory);
 
+  // Filter calculators based on search
+  const filteredCalculators = activeCategory_data?.calculators.filter(calc =>
+    calc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    calc.description.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
+
   // Individual calculator view with mobile optimization
   if (activeCalculator) {
     return (
@@ -562,297 +562,434 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
   return (
     <ChatProvider>
       <PageContainer>
-        <div className={`space-y-6 sm:space-y-8 ${isMobile ? 'mobile-container' : ''}`}>
-          {/* Stunning Header Section */}
-          <div className="text-center space-y-6">
-            {/* Hero Section */}
-            <div className="relative">
-              {/* Background gradient */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-900/10 dark:via-indigo-900/10 dark:to-purple-900/10 rounded-3xl blur-3xl scale-110 opacity-60"></div>
-              
-              <div className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-white/20 dark:border-gray-800/20 rounded-2xl p-8 shadow-2xl">
-                {/* Icon with animated background */}
-                <div className="relative inline-flex items-center justify-center mb-6 float-animation">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-600 rounded-2xl blur-xl opacity-20 animate-pulse gradient-pulse"></div>
-                  <div className="relative p-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl shadow-lg glass-morphism">
-                    <specialtyInfo.icon className="w-8 h-8 text-white" />
-                  </div>
-                  <Sparkles className="absolute -top-1 -right-1 w-5 h-5 text-yellow-400 animate-pulse icon-pulse" />
-                </div>
-
-                {/* Title */}
-                <h1 className={`
-                  font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-indigo-900 dark:from-gray-100 dark:via-blue-200 dark:to-indigo-200 bg-clip-text text-transparent mb-4
-                  ${isMobile ? 'text-2xl' : 'text-4xl'}
-                `}>
-                  {specialtyInfo.title}
-                </h1>
-                
-                {/* Description */}
-                <p className={`text-gray-600 dark:text-gray-300 font-medium ${isMobile ? 'text-base px-2' : 'text-lg max-w-2xl mx-auto'}`}>
-                  {specialtyInfo.description}
-                </p>
-                
-                {/* Premium Progress Badge - Fixed overlapping issue */}
-                <div className={`
-                  mt-6 inline-flex items-center justify-center flex-wrap gap-2 ${specialtyInfo.progress.color} backdrop-blur-sm px-4 sm:px-6 py-3 rounded-2xl border border-white/30 shadow-lg
-                  ${isMobile ? 'text-xs max-w-full' : 'text-sm max-w-4xl'}
-                `}>
-                  <div className="flex items-center space-x-2 flex-shrink-0">
-                    <div className={`w-3 h-3 ${specialtyInfo.progress.dotColor} rounded-full animate-pulse shadow-lg`}></div>
-                    <Award className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                  </div>
-                  <span className={`font-semibold ${specialtyInfo.progress.textColor} text-center leading-tight ${isMobile ? 'text-xs' : 'text-sm'}`}>
-                    {isMobile 
-                      ? '✅ 16 Calculators (100% Validated)' 
-                      : specialtyInfo.progress.message
-                    }
-                  </span>
-                  <Star className="w-4 h-4 text-yellow-500 fill-current flex-shrink-0" />
-                </div>
-              </div>
-            </div>
-
-            {/* Statistics Row */}
-            <div className="grid grid-cols-3 gap-4 max-w-md mx-auto">
-              <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-100 dark:border-blue-800/30">
-                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">16</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">{t('calculators.stats.calculators')}</div>
-              </div>
-              <div className="text-center p-4 bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-xl border border-emerald-100 dark:border-emerald-800/30">
-                <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">100%</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">{t('calculators.stats.validated')}</div>
-              </div>
-              <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl border border-purple-100 dark:border-purple-800/30">
-                <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">6</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">{t('calculators.stats.categories')}</div>
-              </div>
-            </div>
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900/20">
+          {/* Animated background elements */}
+          <div className="fixed inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-400/20 to-purple-600/20 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-pink-400/20 to-indigo-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
           </div>
 
-          {/* Mobile Navigation Toggle - Fixed spacing and overflow */}
-          {isMobile && (
-            <div className="flex items-center justify-between gap-3 mb-6 px-2">
-              <button
-                onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className="flex-1 max-w-[160px] inline-flex items-center justify-center space-x-2 px-3 py-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-700 dark:hover:to-gray-600 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105"
-                aria-label="Toggle categories menu"
-              >
-                <Menu className="w-4 h-4 text-gray-600 dark:text-gray-300 flex-shrink-0" />
-                <span className="font-semibold text-gray-700 dark:text-gray-200 text-sm truncate">{t('calculators.categories_label')}</span>
-                <div className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-xs font-bold text-blue-600 dark:text-blue-400 flex-shrink-0">
-                  {calculatorCategories.length}
-                </div>
-              </button>
-              
-              <button
-                onClick={() => setIsCategoryListView(!isCategoryListView)}
-                className="flex-1 max-w-[120px] inline-flex items-center justify-center space-x-2 px-3 py-3 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 hover:from-indigo-100 hover:to-purple-100 dark:hover:from-indigo-800/30 dark:hover:to-purple-800/30 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105"
-                aria-label="Toggle view mode"
-              >
-                <Grid3X3 className="w-4 h-4 text-indigo-600 dark:text-indigo-400 flex-shrink-0" />
-                <span className="font-semibold text-indigo-700 dark:text-indigo-300 text-sm truncate">{isCategoryListView ? t('calculators.view_grid') : t('calculators.view_list')}</span>
-              </button>
-            </div>
-          )}
-
-          {/* Enhanced Mobile Menu Overlay */}
-          {isMobile && showMobileMenu && (
-            <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" onClick={() => setShowMobileMenu(false)}>
-              <div className="absolute inset-x-0 top-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 p-6 space-y-4 shadow-2xl">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-blue-600 dark:from-gray-100 dark:to-blue-400 bg-clip-text text-transparent">{t('calculators.calculator_categories')}</h3>
-                  <button
-                    onClick={() => setShowMobileMenu(false)}
-                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
-                    aria-label="Close menu"
-                  >
-                    <X className="w-6 h-6 text-gray-500" />
-                  </button>
-                </div>
-                
-                {calculatorCategories.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => {
-                      setActiveCategory(category.id);
-                      setShowMobileMenu(false);
-                    }}
-                    className={`
-                      w-full flex items-center justify-between p-4 rounded-xl text-left transition-all duration-200 transform hover:scale-105
-                      ${activeCategory === category.id 
-                        ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-700 dark:text-blue-300 shadow-lg border-2 border-blue-200 dark:border-blue-700' 
-                        : 'hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800 dark:hover:to-gray-700 border-2 border-transparent'
-                      }
-                    `}
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className={`p-2 rounded-lg ${activeCategory === category.id ? 'bg-blue-100 dark:bg-blue-800/30' : 'bg-gray-100 dark:bg-gray-800'}`}>
-                        <category.icon className={`w-5 h-5 ${activeCategory === category.id ? 'text-blue-600 dark:text-blue-400' : category.color}`} />
-                      </div>
-                      <div>
-                        <div className="font-semibold text-lg">{category.label}</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                          {category.calculators.length} calculator{category.calculators.length !== 1 ? 's' : ''}
-                        </div>
-                      </div>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-gray-400" />
-                  </button>
-                ))}
+          <div className={`relative z-10 space-y-12 ${isMobile ? 'mobile-container px-4' : 'px-6 lg:px-8'} py-12`}>
+            {/* Spectacular Header Section */}
+            <div className="text-center space-y-8">
+              {/* Hero Badge */}
+              <div className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-emerald-100 to-blue-100 dark:from-emerald-900/30 dark:to-blue-900/30 rounded-full border border-emerald-200 dark:border-emerald-700 shadow-lg">
+                <Crown className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                <span className="text-sm font-bold bg-gradient-to-r from-emerald-600 to-blue-600 dark:from-emerald-400 dark:to-blue-400 bg-clip-text text-transparent">
+                  World's Most Advanced Medical Calculator Suite
+                </span>
+                <Diamond className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
-            </div>
-          )}
 
-          {/* Desktop Tabs / Mobile Category Display */}
-          {!isMobile ? (
-            <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
-              {/* Enhanced TabsList - Fixed overlapping text with custom CSS */}
-              <TabsList className={`tab-grid-6 w-full p-1 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-2xl shadow-inner border border-gray-200 dark:border-gray-600`}>
-                {calculatorCategories.map((category) => (
-                  <TabsTrigger 
-                    key={category.id} 
-                    value={category.id}
-                    className="tab-container text-xs font-semibold rounded-xl transition-all duration-200 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-lg data-[state=active]:scale-105 hover:scale-102 transform py-2 px-1"
-                  >
-                    <div className="p-1.5 rounded-lg bg-gradient-to-br from-white to-gray-50 dark:from-gray-700 dark:to-gray-800 shadow-sm">
-                      <category.icon className="w-3.5 h-3.5" />
+              {/* Main Hero Section */}
+              <div className="relative">
+                {/* Animated background orb */}
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-pink-600/10 rounded-3xl blur-3xl scale-150 animate-pulse"></div>
+                
+                <div className="relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-2xl border border-white/20 dark:border-gray-700/20 rounded-3xl p-12 shadow-2xl">
+                  {/* Floating medical icons */}
+                  <div className="absolute -top-4 -left-4 p-3 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl shadow-lg animate-bounce">
+                    <Stethoscope className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="absolute -top-4 -right-4 p-3 bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl shadow-lg animate-bounce" style={{ animationDelay: '1s' }}>
+                    <Brain className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 p-3 bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl shadow-lg animate-bounce" style={{ animationDelay: '2s' }}>
+                    <Target className="w-6 h-6 text-white" />
+                  </div>
+
+                  {/* Main icon with spectacular effects */}
+                  <div className="relative inline-flex items-center justify-center mb-8">
+                    {/* Multiple animated rings */}
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-600 opacity-20 animate-ping"></div>
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-pink-400 to-indigo-600 opacity-30 animate-pulse scale-110"></div>
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-400 to-blue-600 opacity-10 animate-spin"></div>
+                    
+                    {/* Main icon container */}
+                    <div className="relative p-8 bg-gradient-to-r from-blue-500 via-purple-600 to-pink-600 rounded-3xl shadow-2xl">
+                      <specialtyInfo.icon className="w-12 h-12 text-white" />
                     </div>
-                    <span className="tab-text-wrapper hidden sm:block text-[10px] font-bold">
-                      {category.label}
+                    
+                    {/* Floating sparkles */}
+                    <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-yellow-400 animate-spin" />
+                    <Sparkles className="absolute -bottom-2 -left-2 w-4 h-4 text-pink-400 animate-ping" />
+                    <Zap className="absolute top-0 left-0 w-5 h-5 text-blue-400 animate-pulse" />
+                  </div>
+
+                  {/* Spectacular title */}
+                  <h1 className={`
+                    font-black mb-6 leading-tight
+                    ${isMobile ? 'text-3xl' : 'text-6xl lg:text-7xl'}
+                  `}>
+                    <span className="bg-gradient-to-r from-gray-900 via-blue-800 to-purple-900 dark:from-white dark:via-blue-200 dark:to-purple-300 bg-clip-text text-transparent">
+                      OB/GYN
                     </span>
-                    <div className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-full text-[9px] font-bold text-gray-600 dark:text-gray-300">
-                      {category.calculators.length}
+                    <br />
+                    <span className="bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 dark:from-pink-400 dark:via-purple-400 dark:to-blue-400 bg-clip-text text-transparent">
+                      Calculator Suite
+                    </span>
+                  </h1>
+                  
+                  {/* Enhanced description */}
+                  <p className={`text-gray-600 dark:text-gray-300 font-medium leading-relaxed mb-8 ${isMobile ? 'text-lg px-4' : 'text-xl max-w-4xl mx-auto'}`}>
+                    Revolutionary obstetrics and gynecology assessment tools powered by evidence-based medicine. 
+                    <span className="bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent font-semibold">
+                      Transform clinical decision-making with precision, confidence, and speed.
+                    </span>
+                  </p>
+                  
+                  {/* Spectacular stats row */}
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto mb-8">
+                    <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/40 rounded-2xl border border-blue-200 dark:border-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer" onClick={() => setShowStats(!showStats)}>
+                      <div className="text-3xl font-black text-blue-600 dark:text-blue-400 mb-2 group-hover:scale-110 transition-transform">16</div>
+                      <div className="text-sm font-bold text-gray-700 dark:text-gray-300">Professional Calculators</div>
                     </div>
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              
-              {calculatorCategories.map((category) => (
-                <TabsContent key={category.id} value={category.id} className="mt-8">
-                  {/* Category Header */}
-                  <div className="text-center mb-8">
-                    <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-600">
-                      <category.icon className={`w-6 h-6 ${category.color}`} />
-                      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{category.label}</h2>
-                      <div className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 rounded-full text-sm font-bold text-blue-600 dark:text-blue-400">
-                        {category.calculators.length} Tools
-                      </div>
+                    <div className="text-center p-6 bg-gradient-to-br from-emerald-50 to-green-100 dark:from-emerald-900/30 dark:to-green-900/40 rounded-2xl border border-emerald-200 dark:border-emerald-700 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer">
+                      <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400 mb-2 group-hover:scale-110 transition-transform">100%</div>
+                      <div className="text-sm font-bold text-gray-700 dark:text-gray-300">Clinical Validation</div>
+                    </div>
+                    <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/40 rounded-2xl border border-purple-200 dark:border-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer">
+                      <div className="text-3xl font-black text-purple-600 dark:text-purple-400 mb-2 group-hover:scale-110 transition-transform">6</div>
+                      <div className="text-sm font-bold text-gray-700 dark:text-gray-300">Specialty Categories</div>
+                    </div>
+                    <div className="text-center p-6 bg-gradient-to-br from-orange-50 to-yellow-100 dark:from-orange-900/30 dark:to-yellow-900/40 rounded-2xl border border-orange-200 dark:border-orange-700 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer">
+                      <div className="text-3xl font-black text-orange-600 dark:text-orange-400 mb-2 group-hover:scale-110 transition-transform">∞</div>
+                      <div className="text-sm font-bold text-gray-700 dark:text-gray-300">Clinical Accuracy</div>
                     </div>
                   </div>
 
-                  {/* Enhanced Calculator Grid */}
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {category.calculators.map((calc, index) => (
-                      <Card 
-                        key={calc.id}
-                        className="calculator-card card-entrance group cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 border-2 border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-800 dark:to-gray-700/50 backdrop-blur-sm overflow-hidden glow-effect"
-                        onClick={() => setActiveCalculator(calc.id)}
-                        style={{ animationDelay: `${index * 100}ms` }}
+                  {/* Premium status badge */}
+                  <div className="inline-flex items-center space-x-3 px-8 py-4 bg-gradient-to-r from-emerald-100 via-green-100 to-blue-100 dark:from-emerald-900/30 dark:via-green-900/30 dark:to-blue-900/30 rounded-2xl border border-emerald-200 dark:border-emerald-700 shadow-lg">
+                    <CheckCircle className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                    <Award className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                    <span className="font-bold bg-gradient-to-r from-emerald-600 via-green-600 to-blue-600 dark:from-emerald-400 dark:via-green-400 dark:to-blue-400 bg-clip-text text-transparent text-lg">
+                      100% Validated • Clinical Grade • Evidence-Based
+                    </span>
+                    <Star className="w-6 h-6 text-yellow-500 fill-current" />
+                    <Rocket className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Advanced feature highlights */}
+              <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                <div className="group p-6 bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-blue-900/20 rounded-2xl border border-blue-200 dark:border-blue-700 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+                  <div className="p-4 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl mb-4 group-hover:scale-110 transition-transform">
+                    <Globe className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Global Standards</h3>
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">ACOG, SGO, and international guidelines compliance for worldwide clinical excellence.</p>
+                </div>
+                
+                <div className="group p-6 bg-gradient-to-br from-white to-purple-50 dark:from-gray-800 dark:to-purple-900/20 rounded-2xl border border-purple-200 dark:border-purple-700 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+                  <div className="p-4 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl mb-4 group-hover:scale-110 transition-transform">
+                    <ZapIcon className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">AI-Powered</h3>
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">Intelligent recommendations and contextual guidance powered by advanced medical AI.</p>
+                </div>
+                
+                <div className="group p-6 bg-gradient-to-br from-white to-emerald-50 dark:from-gray-800 dark:to-emerald-900/20 rounded-2xl border border-emerald-200 dark:border-emerald-700 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+                  <div className="p-4 bg-gradient-to-r from-emerald-500 to-green-600 rounded-xl mb-4 group-hover:scale-110 transition-transform">
+                    <Users className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Collaborative Care</h3>
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">Seamless integration with clinical workflows and multidisciplinary care teams.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Advanced Search and Filter Section */}
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-6 p-6 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg">
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search calculators..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-12 pr-4 py-3 w-80 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  />
+                </div>
+                <button className="flex items-center space-x-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl">
+                  <Filter className="w-5 h-5" />
+                  <span className="font-semibold">Filter</span>
+                </button>
+              </div>
+              
+              <div className="flex items-center space-x-3">
+                <span className="text-sm text-gray-600 dark:text-gray-400">View:</span>
+                <button 
+                  onClick={() => setIsCategoryListView(false)}
+                  className={`p-2 rounded-lg transition-all duration-200 ${!isCategoryListView ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                >
+                  <Grid3X3 className="w-5 h-5" />
+                </button>
+                <button 
+                  onClick={() => setIsCategoryListView(true)}
+                  className={`p-2 rounded-lg transition-all duration-200 ${isCategoryListView ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                >
+                  <Menu className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Revolutionary Category Navigation */}
+            <div className="space-y-8">
+              {/* Enhanced Desktop Tabs */}
+              {!isMobile ? (
+                <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
+                  <TabsList className="w-full p-2 bg-gradient-to-r from-gray-50 via-white to-gray-50 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-600 grid grid-cols-6 gap-2">
+                    {calculatorCategories.map((category) => (
+                      <TabsTrigger 
+                        key={category.id} 
+                        value={category.id}
+                        className="group relative flex flex-col items-center space-y-2 p-4 rounded-2xl transition-all duration-300 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-2xl data-[state=active]:scale-105 hover:scale-102 transform"
                       >
-                        {/* Card Background Gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-indigo-50/50 dark:from-blue-900/10 dark:to-indigo-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        {/* Icon container with stunning effects */}
+                        <div className={`p-3 rounded-xl transition-all duration-300 ${
+                          activeCategory === category.id 
+                            ? 'bg-white/20 shadow-lg' 
+                            : 'bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 group-hover:from-blue-100 group-hover:to-indigo-100 dark:group-hover:from-blue-900/30 dark:group-hover:to-indigo-900/30'
+                        }`}>
+                          <category.icon className={`w-6 h-6 transition-all duration-300 ${
+                            activeCategory === category.id 
+                              ? 'text-white' 
+                              : `${category.color} group-hover:scale-110`
+                          }`} />
+                        </div>
                         
-                        <CardHeader className="relative space-y-4 p-6">
-                          {/* Calculator Icon & Badge */}
-                          <div className="flex items-start justify-between">
-                            <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-xl group-hover:scale-110 transition-transform duration-200 icon-pulse">
-                              <Calculator className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                        {/* Label */}
+                        <span className="text-xs font-bold text-center leading-tight">
+                          {category.label}
+                        </span>
+                        
+                        {/* Calculator count badge */}
+                        <div className={`px-2 py-1 rounded-full text-xs font-bold transition-all duration-300 ${
+                          activeCategory === category.id 
+                            ? 'bg-white/20 text-white' 
+                            : 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 group-hover:bg-blue-100 group-hover:text-blue-600 dark:group-hover:bg-blue-900/30 dark:group-hover:text-blue-400'
+                        }`}>
+                          {category.calculators.length}
+                        </div>
+                        
+                        {/* Active state glow */}
+                        {activeCategory === category.id && (
+                          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-indigo-600/20 rounded-2xl blur-xl -z-10 animate-pulse"></div>
+                        )}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                  
+                  {/* Enhanced Tab Content */}
+                  {calculatorCategories.map((category) => (
+                    <TabsContent key={category.id} value={category.id} className="mt-12">
+                      {/* Spectacular Category Header */}
+                      <div className="text-center mb-20">
+                        <div className="relative inline-block">
+                          {/* Background glow - reduced scale to prevent overlap */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-purple-400/20 to-pink-400/20 rounded-3xl blur-lg scale-110"></div>
+                          
+                          <div className="relative flex items-center space-x-6 px-10 py-6 bg-gradient-to-r from-white via-blue-50/50 to-white dark:from-gray-800 dark:via-blue-900/20 dark:to-gray-800 rounded-3xl shadow-2xl border border-blue-200 dark:border-blue-700">
+                            {/* Animated icon */}
+                            <div className="relative">
+                              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-600 rounded-2xl blur-lg opacity-30 animate-pulse"></div>
+                              <div className="relative p-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-lg">
+                                <category.icon className="w-10 h-10 text-white" />
+                              </div>
                             </div>
-                            <div className="flex items-center space-x-1 px-2 py-1 bg-emerald-100 dark:bg-emerald-900/30 rounded-full glass-morphism">
-                              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">Validated</span>
+                            
+                            {/* Title and description */}
+                            <div className="text-left">
+                              <h2 className="text-3xl font-black bg-gradient-to-r from-gray-900 via-blue-800 to-purple-900 dark:from-white dark:via-blue-200 dark:to-purple-300 bg-clip-text text-transparent mb-2">
+                                {category.label}
+                              </h2>
+                              <p className="text-gray-600 dark:text-gray-300 font-medium">
+                                {category.calculators.length} professional-grade clinical tools
+                              </p>
+                            </div>
+                            
+                            {/* Tools badge */}
+                            <div className="px-6 py-3 bg-gradient-to-r from-emerald-100 to-blue-100 dark:from-emerald-900/30 dark:to-blue-900/30 rounded-2xl border border-emerald-200 dark:border-emerald-700 shadow-lg">
+                              <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mb-1">{category.calculators.length}</div>
+                              <div className="text-xs font-bold text-gray-600 dark:text-gray-300">TOOLS</div>
                             </div>
                           </div>
+                        </div>
+                      </div>
 
-                          {/* Title & Description */}
-                          <div className="space-y-3">
-                            <CardTitle className="text-lg font-bold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200 leading-tight">
+                      {/* Revolutionary Calculator Grid */}
+                      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                        {(searchQuery ? filteredCalculators : category.calculators).map((calc, index) => (
+                          <Card 
+                            key={calc.id}
+                            className="group relative cursor-pointer transition-all duration-500 hover:shadow-2xl hover:-translate-y-3 border-2 border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 bg-gradient-to-br from-white via-blue-50/30 to-white dark:from-gray-800 dark:via-blue-900/10 dark:to-gray-800 backdrop-blur-sm overflow-hidden rounded-2xl"
+                            onClick={() => setActiveCalculator(calc.id)}
+                            style={{ animationDelay: `${index * 100}ms` }}
+                          >
+                            {/* Animated background */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            
+                            {/* Floating orb effect */}
+                            <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-r from-blue-400/20 to-purple-600/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 group-hover:animate-pulse"></div>
+                            
+                            <CardHeader className="relative space-y-6 p-8">
+                              {/* Top row with icon and status */}
+                              <div className="flex items-start justify-between">
+                                {/* Calculator icon with spectacular effects */}
+                                <div className="relative">
+                                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-600 rounded-2xl blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-300"></div>
+                                  <div className="relative p-4 bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-2xl group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                                    <Calculator className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                                  </div>
+                                  {/* Floating sparkle */}
+                                  <Sparkles className="absolute -top-1 -right-1 w-4 h-4 text-yellow-400 opacity-0 group-hover:opacity-100 animate-spin transition-opacity duration-300" />
+                                </div>
+                                
+                                {/* Validation badge */}
+                                <div className="flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-emerald-100 to-green-100 dark:from-emerald-900/30 dark:to-green-900/30 rounded-xl border border-emerald-200 dark:border-emerald-700 shadow-lg">
+                                  <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                                  <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">VALIDATED</span>
+                                </div>
+                              </div>
+
+                              {/* Title and description */}
+                              <div className="space-y-4">
+                                <CardTitle className="text-xl font-bold text-gray-900 dark:text-gray-100 group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300 leading-tight">
+                                  {calc.name}
+                                </CardTitle>
+                                <CardDescription className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                                  {calc.description}
+                                </CardDescription>
+                              </div>
+
+                              {/* Enhanced bottom row */}
+                              <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
+                                {/* Clinical grade indicator */}
+                                <div className="flex items-center space-x-2">
+                                  <div className="flex items-center space-x-1">
+                                    <Activity className="w-4 h-4 text-blue-500 animate-pulse" />
+                                    <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">Clinical Grade</span>
+                                  </div>
+                                  <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
+                                  <div className="flex items-center space-x-1">
+                                    <BookOpen className="w-4 h-4 text-purple-500" />
+                                    <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">Evidence-Based</span>
+                                  </div>
+                                </div>
+                                
+                                {/* Action button */}
+                                <div className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 group-hover:text-purple-600 dark:group-hover:text-purple-400 group-hover:translate-x-2 transition-all duration-300">
+                                  <span className="text-sm font-bold">Launch</span>
+                                  <div className="p-1 bg-blue-100 dark:bg-blue-900/30 rounded-lg group-hover:bg-purple-100 dark:group-hover:bg-purple-900/30 transition-colors duration-300">
+                                    <Play className="w-4 h-4" />
+                                  </div>
+                                </div>
+                              </div>
+                            </CardHeader>
+                          </Card>
+                        ))}
+                      </div>
+                    </TabsContent>
+                  ))}
+                </Tabs>
+              ) : (
+                /* Enhanced Mobile Experience */
+                <div className="space-y-8">
+                  {/* Mobile category selector */}
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowMobileMenu(!showMobileMenu)}
+                      className="w-full flex items-center justify-between p-6 bg-gradient-to-r from-white to-blue-50 dark:from-gray-800 dark:to-blue-900/20 rounded-2xl border border-blue-200 dark:border-blue-700 shadow-lg hover:shadow-xl transition-all duration-300"
+                    >
+                      <div className="flex items-center space-x-4">
+                        {activeCategory_data && (
+                          <>
+                            <div className="p-3 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl">
+                              <activeCategory_data.icon className="w-6 h-6 text-white" />
+                            </div>
+                            <div className="text-left">
+                              <div className="text-lg font-bold text-gray-900 dark:text-white">{activeCategory_data.label}</div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">{activeCategory_data.calculators.length} calculators</div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${showMobileMenu ? 'rotate-90' : ''}`} />
+                    </button>
+
+                    {/* Mobile menu overlay */}
+                    {showMobileMenu && (
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-2xl z-50 overflow-hidden">
+                        {calculatorCategories.map((category) => (
+                          <button
+                            key={category.id}
+                            onClick={() => {
+                              setActiveCategory(category.id);
+                              setShowMobileMenu(false);
+                            }}
+                            className={`w-full flex items-center space-x-4 p-4 transition-all duration-200 ${
+                              activeCategory === category.id 
+                                ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-700 dark:text-blue-300' 
+                                : 'hover:bg-gray-50 dark:hover:bg-gray-800'
+                            }`}
+                          >
+                            <div className={`p-2 rounded-lg ${activeCategory === category.id ? 'bg-blue-100 dark:bg-blue-800/30' : 'bg-gray-100 dark:bg-gray-800'}`}>
+                              <category.icon className={`w-5 h-5 ${activeCategory === category.id ? 'text-blue-600 dark:text-blue-400' : category.color}`} />
+                            </div>
+                            <div className="flex-1 text-left">
+                              <div className="font-semibold">{category.label}</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">{category.calculators.length} tools</div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Mobile Calculator Cards */}
+                  {activeCategory_data && (
+                    <div className="space-y-6">
+                      {(searchQuery ? filteredCalculators : activeCategory_data.calculators).map((calc, index) => (
+                        <Card 
+                          key={calc.id}
+                          className="group cursor-pointer transition-all duration-500 hover:shadow-2xl border-2 border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 bg-gradient-to-r from-white to-blue-50/30 dark:from-gray-800 dark:to-blue-900/10 shadow-lg rounded-2xl overflow-hidden"
+                          onClick={() => setActiveCalculator(calc.id)}
+                          style={{ animationDelay: `${index * 150}ms` }}
+                        >
+                          <CardHeader className="p-6">
+                            <div className="flex items-center justify-between mb-4">
+                              <div className="flex items-center space-x-3">
+                                <div className="p-3 bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                                  <Calculator className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                                </div>
+                                <div className="px-3 py-1 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                                  ✓ VALIDATED
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 group-hover:translate-x-1 transition-transform duration-300">
+                                <span className="text-sm font-bold">Launch</span>
+                                <ArrowRight className="w-5 h-5" />
+                              </div>
+                            </div>
+                            
+                            <CardTitle className="text-lg font-bold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-3">
                               {calc.name}
                             </CardTitle>
+                            
                             <CardDescription className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                               {calc.description}
                             </CardDescription>
-                          </div>
-
-                          {/* Interactive Elements */}
-                          <div className="flex items-center justify-between pt-2">
-                            <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
-                              <TrendingUp className="w-3 h-3" />
-                              <span>Clinical Grade</span>
-                            </div>
-                            <div className="flex items-center space-x-1 text-blue-600 dark:text-blue-400 group-hover:translate-x-1 transition-transform duration-200 enhanced-button">
-                              <span className="text-sm font-semibold">Open</span>
-                              <ArrowRight className="w-4 h-4" />
-                            </div>
-                          </div>
-                        </CardHeader>
-                      </Card>
-                    ))}
-                  </div>
-                </TabsContent>
-              ))}
-            </Tabs>
-          ) : (
-            /* Enhanced Mobile Calculator List */
-            <div className="space-y-6">
-              {/* Active Category Header */}
-              {activeCategory_data && (
-                <div className="p-6 bg-gradient-to-r from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-600">
-                  <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-xl">
-                      <activeCategory_data.icon className={`w-6 h-6 ${activeCategory_data.color}`} />
+                          </CardHeader>
+                        </Card>
+                      ))}
                     </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">{activeCategory_data.label}</h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {activeCategory_data.calculators.length} professional calculator{activeCategory_data.calculators.length !== 1 ? 's' : ''}
-                      </p>
-                    </div>
-                    <div className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 rounded-full text-sm font-bold text-blue-600 dark:text-blue-400">
-                      100% Validated
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Calculator Cards - Mobile Optimized */}
-              {activeCategory_data && (
-                <div className="space-y-4">
-                  {activeCategory_data.calculators.map((calc, index) => (
-                    <Card 
-                      key={calc.id}
-                      className="calculator-card card-entrance group cursor-pointer transition-all duration-300 border-2 border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 active:scale-95 bg-gradient-to-r from-white to-gray-50/50 dark:from-gray-800 dark:to-gray-700/50 shadow-lg hover:shadow-xl mobile-card-tap glow-effect"
-                      onClick={() => setActiveCalculator(calc.id)}
-                      style={{ animationDelay: `${index * 150}ms` }}
-                    >
-                      <CardHeader className="p-5">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center space-x-3">
-                            <div className="p-2 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-lg icon-pulse">
-                              <Calculator className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                            </div>
-                            <div className="px-2 py-1 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg text-xs font-bold text-emerald-600 dark:text-emerald-400 glass-morphism">
-                              ✓ Validated
-                            </div>
-                          </div>
-                          <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 group-hover:translate-x-1 transition-all duration-200 enhanced-button" />
-                        </div>
-                        
-                        <CardTitle className="text-base font-bold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-2">
-                          {calc.name}
-                        </CardTitle>
-                        
-                        <CardDescription className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-                          {calc.description}
-                        </CardDescription>
-                      </CardHeader>
-                    </Card>
-                  ))}
+                  )}
                 </div>
               )}
             </div>
-          )}
+          </div>
         </div>
       </PageContainer>
     </ChatProvider>

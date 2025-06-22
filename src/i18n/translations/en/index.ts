@@ -9,7 +9,13 @@ import validation from './validation';
 import knowledgeBase from './knowledgeBase';
 
 export default {
-  common,
+  common: {
+    ...common,
+    getStarted: 'Get Started',
+    evidenceBased: 'Evidence-based',
+    clinicallyValidated: 'Clinically validated',
+    hipaaCompliant: 'HIPAA compliant'
+  },
   navigation,
   auth,
   calculators,
@@ -143,6 +149,7 @@ export default {
   
   // Profile management
   profile: {
+    language: 'Language',
     profileInfo: 'Profile Information',
     security: 'Security',
     preferences: 'Preferences',
@@ -177,7 +184,60 @@ export default {
     updateError: 'Failed to update profile. Please try again.',
     passwordUpdateSuccess: 'Password updated successfully!',
     comingSoon: 'Coming Soon',
-    preferencesDesc: 'Preferences and settings will be available in a future update.'
+    preferencesDesc: 'Advanced preferences including notifications, themes, language settings, and AI assistant customization will be available soon.',
+    
+    // Enhanced profile page elements
+    personalInformation: 'Personal Information',
+    professionalDetails: 'Professional Details',
+    quickActions: 'Quick Actions',
+    viewAnalytics: 'View Analytics',
+    achievements: 'Achievements',
+    securitySettings: 'Security Settings',
+    keepAccountSecure: 'Keep your account secure with strong authentication',
+    profileStats: 'Profile Stats',
+    profileComplete: 'Profile Complete',
+    securityScore: 'Security Score',
+    lastActive: 'Last Active',
+    now: 'Now',
+    uploadNewPhoto: 'Upload New Photo',
+    changePhoto: 'Change Photo',
+    photoGuidelines: 'Photo Guidelines',
+    squareImageRecommended: 'Square image, minimum 200×200 pixels recommended',
+    maxFileSize: 'Maximum file size: 5MB',
+    supportedFormats: 'Supported formats: JPG, PNG, GIF',
+    settings: 'Settings',
+    systemStatus: 'System Status',
+    online: 'Online',
+    mediMindExpert: 'MediMind Expert v2.0',
+    medicalAiAssistant: 'Medical AI Assistant',
+    display: 'Display',
+    themeLayout: 'Theme & Layout',
+    notifications: 'Notifications',
+    alertsUpdates: 'Alerts & Updates',
+    aiAssistant: 'AI Assistant',
+    personalization: 'Personalization',
+    
+    // Password change form
+    changePassword: 'Change Password',
+    currentPassword: 'Current Password',
+    newPassword: 'New Password',
+    confirmNewPassword: 'Confirm New Password',
+    enterCurrentPassword: 'Enter your current password',
+    enterNewPassword: 'Enter your new password',
+    confirmNewPasswordPlaceholder: 'Confirm your new password',
+    passwordRequirements: 'Password must be at least 8 characters with uppercase, lowercase, and number',
+    updatePassword: 'Update Password',
+    updating: 'Updating...',
+    
+    // Password validation messages
+    currentPasswordRequired: 'Current password is required',
+    newPasswordRequired: 'New password is required',
+    newPasswordMinLength: 'New password must be at least 8 characters long',
+    newPasswordDifferent: 'New password must be different from current password',
+    passwordsDoNotMatch: 'New password and confirmation do not match',
+    passwordComplexity: 'New password must contain at least one uppercase letter, one lowercase letter, and one number',
+    noAuthenticatedUser: 'No authenticated user found',
+    passwordUpdateFailed: 'Failed to update password. Please try again.'
   },
   
   // Landing page
@@ -307,23 +367,86 @@ export default {
     aboutMe: {
       title: "Tell us about yourself",
       subtitle: "Help us personalize your AI assistant by sharing context about your practice and experience",
-      label: "About your practice and experience",
-      placeholder: "Share any details that would help the AI provide more relevant assistance. For example, your years of experience, practice setting, areas of special interest, or typical case types you encounter...",
-      wordCount: "{{count}} words • Optional but recommended for better personalization",
+      label: "Share your professional story",
+      placeholder: "I am a cardiologist with 8 years of experience working in a tertiary care hospital. I specialize in interventional cardiology and have a particular interest in complex coronary interventions. I completed my fellowship at...",
+      
+      // Progress indicators
+      wordCount: "{{count}} words",
+      progressMessages: {
+        gettingStarted: "Getting started...",
+        goodProgress: "Good progress!",
+        lookingGreat: "Looking great!",
+        perfectDetail: "Perfect detail level!"
+      },
+      charactersCount: "{{count}} characters",
+      recommended: "Recommended: 50-200 words",
       keepConcise: "Consider keeping it concise for best results",
-      suggestionsTitle: "Consider including:",
+      
+      // Suggestions section
+      suggestionsTitle: "Quick prompts to get you started",
+      suggestionsSubtitle: "Click on any topic below to add it to your profile. These help our AI provide more relevant assistance.",
+      
+      // Suggestion cards
       suggestions: {
+        experience: {
+          title: "Your Experience",
+          description: "Years of practice, specializations, certifications",
+          prompt: "Share your medical experience and background"
+        },
+        practiceSetting: {
+          title: "Practice Setting", 
+          description: "Hospital, clinic, private practice, academic",
+          prompt: "Describe your current workplace environment"
+        },
+        clinicalInterests: {
+          title: "Clinical Interests",
+          description: "Areas of expertise, research interests, subspecialties", 
+          prompt: "What are your main clinical focus areas?"
+        },
+        patientPopulation: {
+          title: "Patient Population",
+          description: "Demographics, case complexity, patient types",
+          prompt: "Tell us about the patients you typically treat"
+        },
+        clinicalApproach: {
+          title: "Clinical Approach", 
+          description: "Treatment philosophy, decision-making style",
+          prompt: "Describe your approach to patient care"
+        },
+        education: {
+          title: "Education & Training",
+          description: "Medical school, residency, fellowships, continuing education",
+          prompt: "Share your educational background"
+        }
+      },
+      
+      // Example section
+      exampleTitle: "Example professional profile",
+      exampleText: "\"I am a board-certified cardiologist with 10 years of experience practicing at a large academic medical center. I specialize in interventional cardiology with a focus on complex coronary interventions and structural heart disease. I completed my fellowship at Johns Hopkins and have particular expertise in TAVR procedures. I see a high volume of acute coronary syndrome patients and enjoy teaching medical students and residents.\"",
+      
+      // Buttons and actions
+      back: "Back",
+      skipForNow: "Skip for now", 
+      completeSetup: "Complete Setup",
+      creatingWorkspace: "Creating workspace...",
+      
+      // Success animation
+      profileCreated: "Profile Created!",
+      settingUpPersonalized: "Setting up your personalized workspace...",
+      
+      // Legacy support
+      wordCountLegacy: "{{count}} words • Optional but recommended for better personalization",
+      suggestionsLegacyTitle: "Consider including:",
+      suggestionsLegacy: {
         experience: "Years of experience in practice",
         workplace: "Current workplace setting (hospital, clinic, private practice)",
-        interests: "Areas of special interest within your specialty",
+        interests: "Areas of special interest within your specialty", 
         cases: "Types of cases you see most frequently",
         approaches: "Preferred treatment approaches or methodologies",
         education: "Continuing education focus areas"
       },
-      exampleTitle: "Example:",
-      exampleText: "\"I'm a cardiologist with 8 years of experience working in a large hospital system. I specialize in interventional cardiology and frequently handle complex PCI cases. I'm particularly interested in the latest evidence on TAVR procedures and managing patients with multiple comorbidities.\"",
-      skipForNow: "Skip for now",
-      completeSetup: "Complete Setup"
+      exampleLegacyTitle: "Example:",
+      exampleLegacyText: "\"I'm a cardiologist with 8 years of experience working in a large hospital system. I specialize in interventional cardiology and frequently handle complex PCI cases. I'm particularly interested in the latest evidence on TAVR procedures and managing patients with multiple comorbidities.\""
     }
   },
   

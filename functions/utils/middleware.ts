@@ -18,7 +18,7 @@ export interface SecurityMiddlewareOptions {
 
 export const DEFAULT_SECURITY_OPTIONS: SecurityMiddlewareOptions = {
   requireAuth: true,
-  requireCSRF: true,
+  requireCSRF: false, // Disabled for Bearer token auth
   rateLimit: {
     windowMs: 15 * 60 * 1000, // 15 minutes
     maxRequests: 100
@@ -192,7 +192,7 @@ export function withMedicalSecurity(
     return await handler(event, context);
   }, {
     requireAuth: true,
-    requireCSRF: true,
+    requireCSRF: false, // Disabled for Bearer token auth
     rateLimit: {
       windowMs: 15 * 60 * 1000,
       maxRequests: 50 // Moderate limit for medical operations

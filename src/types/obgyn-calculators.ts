@@ -148,6 +148,17 @@ export interface BishopScoreResult extends BaseCalculatorResult {
   inductionSuccess: 'unlikely' | 'possible' | 'likely' | 'very-likely';
   cesareanRisk: number;
   inductionRecommendation: string;
+  labels?: {
+    bishopScore: string;
+    inductionSuccess: string;
+    cesareanRisk: string;
+  };
+  successLabels?: {
+    unlikely: string;
+    possible: string;
+    likely: string;
+    very_likely: string;
+  };
 }
 
 export interface VBACSuccessInput extends BaseCalculatorInput {
@@ -180,7 +191,7 @@ export interface ApgarScoreInput extends BaseCalculatorInput {
   timepoint: '1-min' | '5-min' | '10-min';
 }
 
-export interface ApgarScoreResult extends BaseCalculatorResult {
+export interface ApgarScoreResult extends Omit<BaseCalculatorResult, 'interpretation'> {
   totalScore: number;
   assessment: 'severely-depressed' | 'moderately-depressed' | 'excellent';
   resuscitationNeeded: boolean;
@@ -195,6 +206,13 @@ export interface ApgarScoreResult extends BaseCalculatorResult {
   clinicalActions: string[];
   resuscitationGuidance: string[];
   timepoint: '1-min' | '5-min' | '10-min';
+  interpretationData: {
+    score: number;
+    timepoint: string;
+    timeKey: string;
+    conditionKey: string;
+    needsFollowup: boolean;
+  };
 }
 
 export interface PPHRiskInput extends BaseCalculatorInput {

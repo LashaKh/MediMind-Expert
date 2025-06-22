@@ -40,14 +40,14 @@ export const gdmScreeningCalculator = {
   // Race/Ethnicity Section
   race_ethnicity: "რასა/ეთნიკური კუთვნილება",
   race_ethnicity_label: "რასა/ეთნიკური კუთვნილება",
-  race_ethnicity_help: "გარკვეულ ეთნიკურ ჯგუფებს აქვთ მაღალი გშდ გავრცელება",
+  race_ethnicity_help: "გარკვეულ ეთნიკურ ჯგუფებს აქვთ მაღალი გშდ რისკი",
   
   // Race Options
   white_caucasian: "თეთრი/კავკასიური",
   hispanic_latino: "ლათინო-ამერიკული",
   african_american: "აფრო-ამერიკული",
   asian: "აზიური",
-  native_american: "მშობლიური ამერიკული",
+  native_american: "აბორიგენ-ამერიკული",
   other_mixed: "სხვა/შერეული",
   
   // High-Risk Ethnic Groups
@@ -55,7 +55,7 @@ export const gdmScreeningCalculator = {
   hispanic_risk: "• ლათინო-ამერიკული: რისკი გაზრდილია 2-3-ჯერ",
   asian_risk: "• აზიური: რისკი გაზრდილია 2-4-ჯერ (განსაკუთრებით სამხრეთ-აზიური)",
   african_american_risk: "• აფრო-ამერიკული: რისკი გაზრდილია 1.5-2-ჯერ",
-  native_american_risk: "• მშობლიური ამერიკული: რისკი გაზრდილია 3-5-ჯერ",
+  native_american_risk: "• აბორიგენ-ამერიკული: რისკი გაზრდილია 3-5-ჯერ",
   
   // Step Navigation
   next_clinical_history: "შემდეგი: კლინიკური ისტორია",
@@ -157,8 +157,8 @@ export const gdmScreeningCalculator = {
   // Clinical Interpretations and Recommendations (ENHANCED - GEORGIAN PROFESSIONAL MEDICAL LANGUAGE)
   interpretations: {
     low: "გესტაციური შაქრიანი დიაბეტის დაბალი რისკი (რისკის ქულა: {score}). სტანდარტული სკრინინგის პროტოკოლები შესაფერისია.",
-    moderate: "გესტაციური შაქრიანი დიაბეტის ზომიერი რისკი (რისკის ქულა: {score}). სტანდარტული სკრინინგი გაძლიერებული კონსულტაციით რეკომენდირებულია.",
-    high: "გესტაციური შაქრიანი დიაბეტის მაღალი რისკი (რისკის ქულა: {score}). ადრეული სკრინინგი და ინტენსიური მართვის პროტოკოლები რეკომენდირებულია."
+    moderate: "გესტაციური შაქრიანი დიაბეტის ზომიერი რისკი (რისკის ქულა: {score}).რეკომენდირებულია სტანდარტული სკრინინგი გაძლიერებული კონსულტაციით.",
+    high: "გესტაციური შაქრიანი დიაბეტის მაღალი რისკი (რისკის ქულა: {score}). რეკომენდირებულია ადრეული სკრინინგი და ინტენსიური მართვის პროტოკოლები."
   },
 
   recommendations: {

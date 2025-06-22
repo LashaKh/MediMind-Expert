@@ -396,48 +396,61 @@ export const MessageInput: React.FC<MessageInputProps> = ({
             disabled={disabled || isSubmitting}
             rows={1}
             className={`
-              w-full resize-none rounded-xl border-0
-              px-4 py-3 text-base
-              bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm text-gray-900 dark:text-white
-              placeholder-gray-500 dark:placeholder-gray-400
-              focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:bg-white/80 dark:focus:bg-gray-800/80
+              w-full resize-none rounded-2xl border-0
+              px-6 py-4 text-base
+              bg-white/70 backdrop-blur-md text-gray-900
+              placeholder-gray-500
+              focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:bg-white/90
               disabled:opacity-50 disabled:cursor-not-allowed
-              transition-all duration-200 shadow-sm
-              border border-white/20 dark:border-gray-700/20
+              transition-all duration-300 shadow-lg hover:shadow-xl
+              border-2 border-white/30 hover:border-white/50 focus:border-blue-300/50
               ${isMobile ? 'text-base' : ''} /* Prevent iOS zoom */
             `}
             style={{
-              minHeight: isMobile ? '48px' : '44px', // Touch target height
-              maxHeight: isMobile ? '120px' : '160px'
+              minHeight: isMobile ? '56px' : '52px', // Enhanced touch target height
+              maxHeight: isMobile ? '140px' : '180px'
             }}
           />
           
-          {/* Character Counter - Hidden on mobile */}
+          {/* Character Counter - Enhanced visibility */}
           {message.length > maxLength * 0.8 && (
-            <div className="absolute -bottom-6 right-2 text-xs text-gray-500 dark:text-gray-400 hidden sm:block bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm px-2 py-1 rounded-md">
+            <div className="absolute -bottom-8 right-3 text-xs text-gray-500 hidden sm:block bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg shadow-sm border border-gray-200/50">
               {message.length}/{maxLength}
             </div>
           )}
         </div>
 
-        {/* Send Button - Modern Gradient Design */}
+        {/* Enhanced Send Button - Revolutionary Design */}
         <div className="flex-shrink-0">
           <button
             onClick={handleSendMessage}
             disabled={!canSend}
             className={`
-              touch-target p-3 rounded-xl transition-all duration-200 focus-enhanced shadow-lg
+              relative overflow-hidden touch-target p-4 rounded-2xl transition-all duration-300 focus-enhanced shadow-xl group
               ${canSend
-                ? 'bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 hover:from-blue-600 hover:via-indigo-600 hover:to-purple-600 text-white shadow-blue-500/25 hover:shadow-blue-500/40 hover:shadow-xl transform hover:scale-105 active:scale-95'
-                : 'bg-gray-200/60 dark:bg-gray-700/60 backdrop-blur-sm text-gray-400 dark:text-gray-500 cursor-not-allowed border border-white/20 dark:border-gray-700/20'
+                ? 'bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 hover:from-blue-600 hover:via-purple-600 hover:to-indigo-700 text-white hover:shadow-2xl hover:shadow-purple-500/40 transform hover:scale-105 active:scale-95'
+                : 'bg-gray-200/60 backdrop-blur-sm text-gray-400 cursor-not-allowed border-2 border-gray-300/50'
               }
             `}
             aria-label={t('chat.sendMessage')}
           >
-            {isSubmitting ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : (
-              <Send className="w-5 h-5" />
+            {/* Background animation */}
+            {canSend && (
+              <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-transparent to-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+            )}
+            
+            {/* Button content */}
+            <div className="relative z-10">
+              {isSubmitting ? (
+                <Loader2 className="w-6 h-6 animate-spin" />
+              ) : (
+                <Send className="w-6 h-6" />
+              )}
+            </div>
+            
+            {/* Glow effect */}
+            {canSend && (
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-400/20 to-purple-400/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             )}
           </button>
         </div>

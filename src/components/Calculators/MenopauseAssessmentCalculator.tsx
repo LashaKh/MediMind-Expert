@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { CalculatorResultShare } from './CalculatorResultShare';
 import { calculateOBGYN, validateOBGYNInput } from '../../services/obgynCalculatorService';
 import { MenopauseAssessmentInput, MenopauseAssessmentResult } from '../../types/obgyn-calculators';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface FormData {
   age: string;
@@ -20,6 +21,7 @@ interface FormData {
 }
 
 const MenopauseAssessmentCalculator: React.FC = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'calculator' | 'about'>('calculator');
   const [formData, setFormData] = useState<FormData>({
     age: '',
@@ -49,24 +51,24 @@ const MenopauseAssessmentCalculator: React.FC = () => {
     const newErrors: string[] = [];
 
     if (!formData.age) {
-      newErrors.push('Age is required');
+      newErrors.push(t('calculators.menopause_assessment.validation_ageRequired'));
     } else {
       const age = parseInt(formData.age);
       if (isNaN(age) || age < 35 || age > 70) {
-        newErrors.push('Age must be between 35-70 years');
+        newErrors.push(t('calculators.menopause_assessment.validation_ageRange'));
       }
     }
 
     if (!formData.lastMenstrualPeriod) {
-      newErrors.push('Last menstrual period date is required');
+      newErrors.push(t('calculators.menopause_assessment.validation_lastMenstrualPeriodRequired'));
     }
 
     if (!formData.hotFlashFrequency) {
-      newErrors.push('Hot flash frequency is required');
+      newErrors.push(t('calculators.menopause_assessment.validation_hotFlashFrequencyRequired'));
     } else {
       const frequency = parseInt(formData.hotFlashFrequency);
       if (isNaN(frequency) || frequency < 0 || frequency > 50) {
-        newErrors.push('Hot flash frequency must be between 0-50 per day');
+        newErrors.push(t('calculators.menopause_assessment.validation_hotFlashFrequencyRange'));
       }
     }
 
@@ -104,7 +106,7 @@ const MenopauseAssessmentCalculator: React.FC = () => {
       setResult(calculationResult);
       
     } catch (error) {
-      setErrors([error instanceof Error ? error.message : 'Calculation failed']);
+      setErrors([error instanceof Error ? error.message : t('calculators.menopause_assessment.errors_calculationFailed')]);
     } finally {
       setIsLoading(false);
     }
@@ -149,8 +151,8 @@ const MenopauseAssessmentCalculator: React.FC = () => {
     <div className="w-full max-w-4xl mx-auto space-y-6">
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'calculator' | 'about')} className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="calculator">Calculator</TabsTrigger>
-          <TabsTrigger value="about">About</TabsTrigger>
+          <TabsTrigger value="calculator">{t('calculators.common.calculator')}</TabsTrigger>
+          <TabsTrigger value="about">{t('calculators.common.about')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="calculator" className="space-y-6">
@@ -158,10 +160,10 @@ const MenopauseAssessmentCalculator: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Thermometer className="w-5 h-5 text-orange-600" />
-                <span>Menopause Assessment Tool</span>
+                <span>{t('calculators.menopause_assessment.title')}</span>
               </CardTitle>
               <CardDescription>
-                Comprehensive menopause status assessment using clinical symptoms and biomarkers
+                {t('calculators.menopause_assessment.subtitle')}
               </CardDescription>
             </CardHeader>
 
@@ -170,14 +172,14 @@ const MenopauseAssessmentCalculator: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Age (years) *
+                    {t('calculators.menopause_assessment.fields_age')}
                   </label>
                   <input
                     type="number"
                     value={formData.age}
                     onChange={(e) => handleInputChange('age', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="e.g., 48"
+                    placeholder={t('calculators.menopause_assessment.placeholders_age')}
                     min="35"
                     max="70"
                   />
@@ -185,7 +187,7 @@ const MenopauseAssessmentCalculator: React.FC = () => {
 
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Last Menstrual Period *
+                    {t('calculators.menopause_assessment.fields_lastMenstrualPeriod')}
                   </label>
                   <input
                     type="date"
@@ -198,34 +200,34 @@ const MenopauseAssessmentCalculator: React.FC = () => {
 
               {/* Menstrual History */}
               <div className="bg-blue-50 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Menstrual History</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">{t('calculators.menopause_assessment.sections_menstrualHistory')}</h3>
                 
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Menstrual Pattern
+                      {t('calculators.menopause_assessment.fields_menstrualPattern')}
                     </label>
                     <select
                       value={formData.menstrualPattern}
                       onChange={(e) => handleInputChange('menstrualPattern', e.target.value as 'regular' | 'irregular' | 'absent')}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="regular">Regular (monthly cycles)</option>
-                      <option value="irregular">Irregular (variable cycle length)</option>
-                      <option value="absent">Absent (no periods &gt; 3 months)</option>
+                      <option value="regular">{t('calculators.menopause_assessment.options_menstrualPattern_regular')}</option>
+                      <option value="irregular">{t('calculators.menopause_assessment.options_menstrualPattern_irregular')}</option>
+                      <option value="absent">{t('calculators.menopause_assessment.options_menstrualPattern_absent')}</option>
                     </select>
                   </div>
 
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Hot Flash Frequency (per day) *
+                      {t('calculators.menopause_assessment.fields_hotFlashFrequency')}
                     </label>
                     <input
                       type="number"
                       value={formData.hotFlashFrequency}
                       onChange={(e) => handleInputChange('hotFlashFrequency', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="e.g., 5"
+                      placeholder={t('calculators.menopause_assessment.placeholders_hotFlashFrequency')}
                       min="0"
                       max="50"
                     />
@@ -235,22 +237,22 @@ const MenopauseAssessmentCalculator: React.FC = () => {
 
               {/* Vasomotor Symptoms */}
               <div className="bg-orange-50 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Vasomotor Symptoms</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">{t('calculators.menopause_assessment.sections_vasomotorSymptoms')}</h3>
                 
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Vasomotor Symptom Severity
+                      {t('calculators.menopause_assessment.fields_vasomotorSymptomSeverity')}
                     </label>
                     <select
                       value={formData.vasomotorSymptoms}
                       onChange={(e) => handleInputChange('vasomotorSymptoms', e.target.value as 'none' | 'mild' | 'moderate' | 'severe')}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="none">None</option>
-                      <option value="mild">Mild (minimal interference)</option>
-                      <option value="moderate">Moderate (some interference)</option>
-                      <option value="severe">Severe (significant interference)</option>
+                      <option value="none">{t('calculators.menopause_assessment.options_vasomotorSymptoms_none')}</option>
+                      <option value="mild">{t('calculators.menopause_assessment.options_vasomotorSymptoms_mild')}</option>
+                      <option value="moderate">{t('calculators.menopause_assessment.options_vasomotorSymptoms_moderate')}</option>
+                      <option value="severe">{t('calculators.menopause_assessment.options_vasomotorSymptoms_severe')}</option>
                     </select>
                   </div>
                 </div>
@@ -258,7 +260,7 @@ const MenopauseAssessmentCalculator: React.FC = () => {
 
               {/* Associated Symptoms */}
               <div className="bg-green-50 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Associated Symptoms</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">{t('calculators.menopause_assessment.sections_associatedSymptoms')}</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <label className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-white">
@@ -269,8 +271,8 @@ const MenopauseAssessmentCalculator: React.FC = () => {
                       className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                     />
                     <div>
-                      <span className="text-sm font-medium text-gray-700">Sleep disturbance</span>
-                      <p className="text-xs text-gray-500">Difficulty falling or staying asleep</p>
+                      <span className="text-sm font-medium text-gray-700">{t('calculators.menopause_assessment.symptoms_sleepDisturbance_label')}</span>
+                      <p className="text-xs text-gray-500">{t('calculators.menopause_assessment.symptoms_sleepDisturbance_description')}</p>
                     </div>
                   </label>
 
@@ -282,8 +284,8 @@ const MenopauseAssessmentCalculator: React.FC = () => {
                       className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                     />
                     <div>
-                      <span className="text-sm font-medium text-gray-700">Mood changes</span>
-                      <p className="text-xs text-gray-500">Irritability, anxiety, or depression</p>
+                      <span className="text-sm font-medium text-gray-700">{t('calculators.menopause_assessment.symptoms_moodChanges_label')}</span>
+                      <p className="text-xs text-gray-500">{t('calculators.menopause_assessment.symptoms_moodChanges_description')}</p>
                     </div>
                   </label>
 
@@ -295,8 +297,8 @@ const MenopauseAssessmentCalculator: React.FC = () => {
                       className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                     />
                     <div>
-                      <span className="text-sm font-medium text-gray-700">Vaginal dryness</span>
-                      <p className="text-xs text-gray-500">Genitourinary symptoms</p>
+                      <span className="text-sm font-medium text-gray-700">{t('calculators.menopause_assessment.symptoms_vaginalDryness_label')}</span>
+                      <p className="text-xs text-gray-500">{t('calculators.menopause_assessment.symptoms_vaginalDryness_description')}</p>
                     </div>
                   </label>
                 </div>
@@ -304,41 +306,41 @@ const MenopauseAssessmentCalculator: React.FC = () => {
 
               {/* Laboratory Values */}
               <div className="bg-purple-50 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Laboratory Values (Optional)</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">{t('calculators.menopause_assessment.sections_laboratoryValues')}</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      FSH (mIU/mL)
+                      {t('calculators.menopause_assessment.fields_fsh')}
                     </label>
                     <input
                       type="number"
                       value={formData.fsh}
                       onChange={(e) => handleInputChange('fsh', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="e.g., 35"
+                      placeholder={t('calculators.menopause_assessment.placeholders_fsh')}
                       min="0"
                       max="200"
                       step="0.1"
                     />
-                    <p className="text-xs text-gray-500">Follicle stimulating hormone</p>
+                    <p className="text-xs text-gray-500">{t('calculators.menopause_assessment.descriptions_fsh')}</p>
                   </div>
 
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Estradiol (pg/mL)
+                      {t('calculators.menopause_assessment.fields_estradiol')}
                     </label>
                     <input
                       type="number"
                       value={formData.estradiol}
                       onChange={(e) => handleInputChange('estradiol', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="e.g., 15"
+                      placeholder={t('calculators.menopause_assessment.placeholders_estradiol')}
                       min="0"
                       max="500"
                       step="0.1"
                     />
-                    <p className="text-xs text-gray-500">Estradiol level</p>
+                    <p className="text-xs text-gray-500">{t('calculators.menopause_assessment.descriptions_estradiol')}</p>
                   </div>
                 </div>
               </div>
@@ -350,13 +352,13 @@ const MenopauseAssessmentCalculator: React.FC = () => {
                   disabled={isLoading || !formData.age || !formData.lastMenstrualPeriod || !formData.hotFlashFrequency}
                   className="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                 >
-                  {isLoading ? 'Calculating...' : 'Assess Menopause Status'}
+                  {isLoading ? t('calculators.common.calculating') : t('calculators.menopause_assessment.buttons_assess')}
                 </button>
                 <button
                   onClick={handleReset}
                   className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
                 >
-                  Reset
+                  {t('calculators.common.reset')}
                 </button>
               </div>
 
@@ -375,15 +377,15 @@ const MenopauseAssessmentCalculator: React.FC = () => {
           {/* Results - Coming Soon placeholder for now */}
           <Card>
             <CardHeader>
-              <CardTitle>Coming Soon</CardTitle>
+              <CardTitle>{t('calculators.menopause_assessment.comingSoon_title')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8">
                 <Shield className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">Menopause Assessment Tool</h3>
-                <p className="text-gray-600 mb-4">This calculator is currently under development.</p>
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">{t('calculators.menopause_assessment.title')}</h3>
+                <p className="text-gray-600 mb-4">{t('calculators.menopause_assessment.comingSoon_description')}</p>
                 <p className="text-sm text-gray-500">
-                  Comprehensive menopause status assessment and treatment recommendations will be available soon.
+                  {t('calculators.menopause_assessment.comingSoon_details')}
                 </p>
               </div>
             </CardContent>
@@ -393,139 +395,137 @@ const MenopauseAssessmentCalculator: React.FC = () => {
         <TabsContent value="about" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>About Menopause Assessment</CardTitle>
+              <CardTitle>{t('calculators.menopause_assessment.about_title')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="bg-orange-50 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-orange-800 mb-3">Clinical Purpose</h3>
+                <h3 className="text-lg font-semibold text-orange-800 mb-3">{t('calculators.menopause_assessment.about_clinicalPurpose_title')}</h3>
                 <p className="text-orange-700 mb-2">
-                  The Menopause Assessment Tool evaluates menopausal status and symptom severity to guide 
-                  appropriate treatment and lifestyle interventions for women in midlife transition.
+                  {t('calculators.menopause_assessment.about_clinicalPurpose_description1')}
                 </p>
                 <p className="text-orange-700">
-                  This assessment helps clinicians determine the most appropriate management strategies for 
-                  menopausal symptoms and long-term health optimization.
+                  {t('calculators.menopause_assessment.about_clinicalPurpose_description2')}
                 </p>
               </div>
 
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="bg-blue-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-blue-800 mb-3">Premenopausal</h3>
+                  <h3 className="font-semibold text-blue-800 mb-3">{t('calculators.menopause_assessment.about_stages_premenopausal_title')}</h3>
                   <ul className="text-sm text-blue-700 space-y-1">
-                    <li>• Regular cycles</li>
-                    <li>• Normal hormone levels</li>
-                    <li>• Minimal symptoms</li>
-                    <li>• Reproductive potential</li>
+                    <li>• {t('calculators.menopause_assessment.about_stages_premenopausal_features_regularCycles')}</li>
+                    <li>• {t('calculators.menopause_assessment.about_stages_premenopausal_features_normalHormones')}</li>
+                    <li>• {t('calculators.menopause_assessment.about_stages_premenopausal_features_minimalSymptoms')}</li>
+                    <li>• {t('calculators.menopause_assessment.about_stages_premenopausal_features_reproductivePotential')}</li>
                   </ul>
                 </div>
 
                 <div className="bg-orange-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-orange-800 mb-3">Perimenopausal</h3>
+                  <h3 className="font-semibold text-orange-800 mb-3">{t('calculators.menopause_assessment.about_stages_perimenopausal_title')}</h3>
                   <ul className="text-sm text-orange-700 space-y-1">
-                    <li>• Irregular cycles</li>
-                    <li>• Fluctuating hormones</li>
-                    <li>• Vasomotor symptoms</li>
-                    <li>• Variable duration</li>
+                    <li>• {t('calculators.menopause_assessment.about_stages_perimenopausal_features_irregularCycles')}</li>
+                    <li>• {t('calculators.menopause_assessment.about_stages_perimenopausal_features_fluctuatingHormones')}</li>
+                    <li>• {t('calculators.menopause_assessment.about_stages_perimenopausal_features_vasomotorSymptoms')}</li>
+                    <li>• {t('calculators.menopause_assessment.about_stages_perimenopausal_features_variableDuration')}</li>
                   </ul>
                 </div>
 
                 <div className="bg-purple-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-purple-800 mb-3">Postmenopausal</h3>
+                  <h3 className="font-semibold text-purple-800 mb-3">{t('calculators.menopause_assessment.about_stages_postmenopausal_title')}</h3>
                   <ul className="text-sm text-purple-700 space-y-1">
-                    <li>• No periods &gt; 12 months</li>
-                    <li>• Low estrogen levels</li>
-                    <li>• Stable hormone state</li>
-                    <li>• Long-term health focus</li>
+                    <li>• {t('calculators.menopause_assessment.about_stages_postmenopausal_features_noPeriods')}</li>
+                    <li>• {t('calculators.menopause_assessment.about_stages_postmenopausal_features_lowEstrogen')}</li>
+                    <li>• {t('calculators.menopause_assessment.about_stages_postmenopausal_features_stableHormones')}</li>
+                    <li>• {t('calculators.menopause_assessment.about_stages_postmenopausal_features_longTermHealth')}</li>
                   </ul>
                 </div>
               </div>
 
               <div className="bg-red-50 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-red-800 mb-3">Common Symptoms</h3>
+                <h3 className="text-lg font-semibold text-red-800 mb-3">{t('calculators.menopause_assessment.about_symptoms_title')}</h3>
                 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <h4 className="font-medium text-red-800 mb-2">Vasomotor Symptoms</h4>
+                    <h4 className="font-medium text-red-800 mb-2">{t('calculators.menopause_assessment.about_symptoms_vasomotor_title')}</h4>
                     <ul className="text-sm text-red-700 space-y-1">
-                      <li>• Hot flashes</li>
-                      <li>• Night sweats</li>
-                      <li>• Palpitations</li>
-                      <li>• Chills</li>
+                      <li>• {t('calculators.menopause_assessment.about_symptoms_vasomotor_hotFlashes')}</li>
+                      <li>• {t('calculators.menopause_assessment.about_symptoms_vasomotor_nightSweats')}</li>
+                      <li>• {t('calculators.menopause_assessment.about_symptoms_vasomotor_palpitations')}</li>
+                      <li>• {t('calculators.menopause_assessment.about_symptoms_vasomotor_chills')}</li>
                     </ul>
                   </div>
                   
                   <div>
-                    <h4 className="font-medium text-red-800 mb-2">Other Symptoms</h4>
+                    <h4 className="font-medium text-red-800 mb-2">{t('calculators.menopause_assessment.about_symptoms_other_title')}</h4>
                     <ul className="text-sm text-red-700 space-y-1">
-                      <li>• Sleep disturbances</li>
-                      <li>• Mood changes</li>
-                      <li>• Vaginal dryness</li>
-                      <li>• Cognitive changes</li>
+                      <li>• {t('calculators.menopause_assessment.about_symptoms_other_sleepDisturbances')}</li>
+                      <li>• {t('calculators.menopause_assessment.about_symptoms_other_moodChanges')}</li>
+                      <li>• {t('calculators.menopause_assessment.about_symptoms_other_vaginalDryness')}</li>
+                      <li>• {t('calculators.menopause_assessment.about_symptoms_other_cognitiveChanges')}</li>
                     </ul>
                   </div>
                 </div>
               </div>
 
               <div className="bg-green-50 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-green-800 mb-3">Management Strategies</h3>
+                <h3 className="text-lg font-semibold text-green-800 mb-3">{t('calculators.menopause_assessment.about_management_title')}</h3>
                 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-medium text-green-800">Hormone Therapy</h4>
+                    <h4 className="font-medium text-green-800">{t('calculators.menopause_assessment.about_management_hormoneTherapy_title')}</h4>
                     <ul className="text-sm text-green-700 mt-1 space-y-1">
-                      <li>• Systemic estrogen therapy</li>
-                      <li>• Combined estrogen-progestin</li>
-                      <li>• Local vaginal therapy</li>
-                      <li>• Risk-benefit assessment</li>
+                      <li>• {t('calculators.menopause_assessment.about_management_hormoneTherapy_systemicEstrogen')}</li>
+                      <li>• {t('calculators.menopause_assessment.about_management_hormoneTherapy_combinedTherapy')}</li>
+                      <li>• {t('calculators.menopause_assessment.about_management_hormoneTherapy_localVaginal')}</li>
+                      <li>• {t('calculators.menopause_assessment.about_management_hormoneTherapy_riskBenefit')}</li>
                     </ul>
                   </div>
                   
                   <div>
-                    <h4 className="font-medium text-green-800">Non-Hormonal Options</h4>
+                    <h4 className="font-medium text-green-800">{t('calculators.menopause_assessment.about_management_nonHormonal_title')}</h4>
                     <ul className="text-sm text-green-700 mt-1 space-y-1">
-                      <li>• SSRIs/SNRIs for hot flashes</li>
-                      <li>• Gabapentin for night sweats</li>
-                      <li>• Cognitive behavioral therapy</li>
-                      <li>• Lifestyle modifications</li>
+                      <li>• {t('calculators.menopause_assessment.about_management_nonHormonal_ssriSnri')}</li>
+                      <li>• {t('calculators.menopause_assessment.about_management_nonHormonal_gabapentin')}</li>
+                      <li>• {t('calculators.menopause_assessment.about_management_nonHormonal_cbt')}</li>
+                      <li>• {t('calculators.menopause_assessment.about_management_nonHormonal_lifestyle')}</li>
                     </ul>
                   </div>
                 </div>
               </div>
 
               <div className="bg-blue-50 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-blue-800 mb-3">Laboratory Assessment</h3>
+                <h3 className="text-lg font-semibold text-blue-800 mb-3">{t('calculators.menopause_assessment.about_laboratory_title')}</h3>
                 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <h4 className="font-medium text-blue-800 mb-2">Recommended Tests</h4>
+                    <h4 className="font-medium text-blue-800 mb-2">{t('calculators.menopause_assessment.about_laboratory_recommendedTests_title')}</h4>
                     <ul className="text-sm text-blue-700 space-y-1">
-                      <li>• FSH (if indicated)</li>
-                      <li>• Estradiol</li>
-                      <li>• TSH</li>
-                      <li>• Lipid profile</li>
+                      <li>• {t('calculators.menopause_assessment.about_laboratory_recommendedTests_fsh')}</li>
+                      <li>• {t('calculators.menopause_assessment.about_laboratory_recommendedTests_estradiol')}</li>
+                      <li>• {t('calculators.menopause_assessment.about_laboratory_recommendedTests_tsh')}</li>
+                      <li>• {t('calculators.menopause_assessment.about_laboratory_recommendedTests_lipidProfile')}</li>
                     </ul>
                   </div>
                   
                   <div>
-                    <h4 className="font-medium text-blue-800 mb-2">Typical Values</h4>
+                    <h4 className="font-medium text-blue-800 mb-2">{t('calculators.menopause_assessment.about_laboratory_typicalValues_title')}</h4>
                     <ul className="text-sm text-blue-700 space-y-1">
-                      <li>• Postmenopausal FSH &gt; 25</li>
-                      <li>• Estradiol &lt; 30 pg/mL</li>
-                      <li>• Variable in perimenopause</li>
-                      <li>• Clinical diagnosis primary</li>
+                      <li>• {t('calculators.menopause_assessment.about_laboratory_typicalValues_postmenopausalFsh')}</li>
+                      <li>• {t('calculators.menopause_assessment.about_laboratory_typicalValues_estradiol')}</li>
+                      <li>• {t('calculators.menopause_assessment.about_laboratory_typicalValues_variablePerimenopausal')}</li>
+                      <li>• {t('calculators.menopause_assessment.about_laboratory_typicalValues_clinicalDiagnosis')}</li>
                     </ul>
                   </div>
                 </div>
               </div>
 
               <div className="bg-gray-50 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-800 mb-3">Clinical Guidelines</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-3">{t('calculators.menopause_assessment.about_guidelines_title')}</h3>
                 <ul className="text-sm text-gray-700 space-y-2">
-                  <li><strong>NAMS Position Statements:</strong> Menopause hormone therapy</li>
-                  <li><strong>ACOG Practice Bulletin:</strong> Management of menopausal symptoms</li>
-                  <li><strong>IMS Recommendations:</strong> Global consensus on menopause</li>
-                  <li><strong>Endocrine Society:</strong> Postmenopausal hormone therapy</li>
-                  <li><strong>RCOG Guidelines:</strong> Menopause management</li>
+                  <li><strong>{t('calculators.menopause_assessment.about_guidelines_nams_title')}:</strong> {t('calculators.menopause_assessment.about_guidelines_nams_description')}</li>
+                  <li><strong>{t('calculators.menopause_assessment.about_guidelines_acog_title')}:</strong> {t('calculators.menopause_assessment.about_guidelines_acog_description')}</li>
+                  <li><strong>{t('calculators.menopause_assessment.about_guidelines_ims_title')}:</strong> {t('calculators.menopause_assessment.about_guidelines_ims_description')}</li>
+                  <li><strong>{t('calculators.menopause_assessment.about_guidelines_endocrine_title')}:</strong> {t('calculators.menopause_assessment.about_guidelines_endocrine_description')}</li>
+                  <li><strong>{t('calculators.menopause_assessment.about_guidelines_rcog_title')}:</strong> {t('calculators.menopause_assessment.about_guidelines_rcog_description')}</li>
                 </ul>
               </div>
             </CardContent>

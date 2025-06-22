@@ -95,28 +95,50 @@ export const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
             {/* Logo with responsive sizing */}
             <Link 
               to="/" 
-              className="flex items-center space-x-2 text-primary dark:text-white focus-enhanced rounded-lg p-1 -m-1 transition-all duration-200"
+              className="flex items-center space-x-2 text-primary dark:text-white focus-enhanced rounded-lg p-1 -m-1 transition-all duration-200 hover:scale-105"
             >
               <div className="flex items-center">
-                <Stethoscope className={`
-                  text-primary flex-shrink-0 transition-all duration-200
-                  ${isCondensed && isMobile ? 'w-5 h-5' : 'w-6 h-6 sm:w-8 sm:h-8'}
-                `} />
+                {/* Enhanced Medical Icon with Gradient Background */}
                 <div className={`
-                  ml-2 flex flex-col transition-all duration-200
+                  relative bg-gradient-to-br from-blue-500 via-cyan-500 to-blue-600 
+                  rounded-full flex items-center justify-center shadow-lg transition-all duration-300
+                  ${isCondensed && isMobile ? 'w-8 h-8' : 'w-10 h-10 sm:w-12 sm:h-12'}
+                  hover:shadow-xl hover:scale-110 group
+                `}>
+                  <Stethoscope className={`
+                    text-white transition-all duration-300 group-hover:rotate-12
+                    ${isCondensed && isMobile ? 'w-4 h-4' : 'w-5 h-5 sm:w-6 sm:h-6'}
+                  `} />
+                  {/* Subtle Glow Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-sm scale-110"></div>
+                </div>
+                
+                {/* Enhanced Typography */}
+                <div className={`
+                  ml-3 flex flex-col transition-all duration-300
                   ${isCondensed && isMobile ? 'opacity-0 w-0 overflow-hidden ml-0' : ''}
                 `}>
+                  <div className="flex items-baseline space-x-1">
+                    <span className={`
+                      font-bold bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-700 
+                      dark:from-blue-400 dark:via-cyan-400 dark:to-blue-500 
+                      bg-clip-text text-transparent transition-all duration-200
+                      ${isCondensed && isMobile ? 'text-base' : 'text-lg sm:text-xl lg:text-2xl'}
+                    `}>
+                      MediMind
+                    </span>
+                    <span className={`
+                      font-medium text-cyan-600 dark:text-cyan-400 transition-all duration-200
+                      ${isCondensed && isMobile ? 'text-sm' : 'text-sm sm:text-base lg:text-lg'}
+                    `}>
+                      Expert
+                    </span>
+                  </div>
                   <span className={`
-                    font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent transition-all duration-200
-                    ${isCondensed && isMobile ? 'text-base' : 'text-lg sm:text-xl'}
-                  `}>
-                    MediMind
-                  </span>
-                  <span className={`
-                    text-gray-500 dark:text-gray-400 transition-all duration-200
+                    text-gray-500 dark:text-gray-400 font-medium tracking-wide transition-all duration-200
                     ${isCondensed && isMobile ? 'hidden' : 'text-xs hidden xs:block'}
                   `}>
-                    {t('common.aiAssistant')}
+                    AI Medical Co-Pilot
                   </span>
                 </div>
               </div>

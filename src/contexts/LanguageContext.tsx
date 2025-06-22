@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { Language } from '../types/i18n';
 import { DEFAULT_LANGUAGE } from '../i18n/config';
+import i18n from '../i18n/i18n';
 
 interface LanguageContextType {
   currentLanguage: Language;
@@ -24,7 +25,18 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const setLanguage = (lang: Language) => {
     setCurrentLanguage(lang);
     localStorage.setItem('selectedLanguage', lang);
+    
+    // Update i18n library to sync with context
+    i18n.changeLanguage(lang);
+    
+    // Dispatch custom event to trigger re-renders
+    window.dispatchEvent(new CustomEvent('languageChange', { detail: { language: lang } }));
   };
+
+  // Sync i18n on mount with current language
+  useEffect(() => {
+    i18n.changeLanguage(currentLanguage);
+  }, [currentLanguage]);
 
   useEffect(() => {
     document.documentElement.lang = currentLanguage;

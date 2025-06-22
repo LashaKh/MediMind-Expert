@@ -450,7 +450,7 @@ const BishopScoreCalculator: React.FC = () => {
                       <span className="font-semibold text-pink-800 dark:text-pink-200">{t('calculators.bishop_score.total_score')}: {result.totalScore}/13</span>
                     </div>
                     <div className={`inline-flex items-center space-x-1 rounded-lg px-3 py-1 ${getScoreColor(result.totalScore)}`}>
-                      <span className="text-xs font-semibold">{t('calculators.bishop_score.induction_success')}: {result.inductionSuccess.charAt(0).toUpperCase() + result.inductionSuccess.slice(1).replace('-', ' ')}</span>
+                      <span className="text-xs font-semibold">{t('calculators.bishop_score.induction_success')}: {result.successLabels?.[result.inductionSuccess.replace('-', '_') as keyof typeof result.successLabels] || result.inductionSuccess.charAt(0).toUpperCase() + result.inductionSuccess.slice(1).replace('-', ' ')}</span>
                     </div>
                   </div>
 
@@ -461,7 +461,7 @@ const BishopScoreCalculator: React.FC = () => {
                         <Target className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                         <h4 className="font-semibold text-blue-800 dark:text-blue-200">{t('calculators.bishop_score.induction_success')}</h4>
                       </div>
-                      <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{result.inductionSuccess.charAt(0).toUpperCase() + result.inductionSuccess.slice(1).replace('-', ' ')}</p>
+                      <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{result.successLabels?.[result.inductionSuccess.replace('-', '_') as keyof typeof result.successLabels] || result.inductionSuccess.charAt(0).toUpperCase() + result.inductionSuccess.slice(1).replace('-', ' ')}</p>
                       <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">{t('calculators.bishop_score.labor_likelihood')}</p>
                     </div>
 
@@ -533,9 +533,9 @@ const BishopScoreCalculator: React.FC = () => {
                     calculatorName={t('calculators.bishop_score.title')}
                     calculatorId="bishop-score-calculator"
                     results={{
-                      bishopScore: result.totalScore,
-                      inductionSuccess: result.inductionSuccess,
-                      cesareanRisk: result.cesareanRisk
+                      [result.labels?.bishopScore || 'Bishop Score']: result.totalScore,
+                      [result.labels?.inductionSuccess || 'Induction Success']: result.successLabels?.[result.inductionSuccess.replace('-', '_') as keyof typeof result.successLabels] || result.inductionSuccess,
+                      [result.labels?.cesareanRisk || 'Cesarean Risk']: `${result.cesareanRisk}%`
                     }}
                     interpretation={result.interpretation}
                     recommendations={result.recommendations}

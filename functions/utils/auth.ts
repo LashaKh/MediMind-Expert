@@ -45,24 +45,56 @@ export function decodeSupabaseJWT(token: string): UserPayload | null {
 
 // Verify Supabase JWT token (basic verification)
 export function verifySupabaseJWT(token: string): UserPayload {
+  console.log('🔍 JWT Verification Debug:', {
+    hasToken: !!token,
+    tokenLength: token?.length,
+    tokenPrefix: token?.substring(0, 20) + '...',
+    timestamp: new Date().toISOString()
+  });
+
   if (!token) {
+    console.error('❌ JWT Verification Failed: No token provided');
     throw new AuthenticationError('No authentication token provided');
   }
 
   const payload = decodeSupabaseJWT(token);
+  console.log('🔍 JWT Decode Result:', {
+    hasPayload: !!payload,
+    payloadKeys: payload ? Object.keys(payload) : [],
+    userId: payload?.id,
+    email: payload?.email,
+    aud: payload?.aud,
+    exp: payload?.exp,
+    iat: payload?.iat
+  });
+
   if (!payload) {
+    console.error('❌ JWT Verification Failed: Invalid token format');
     throw new AuthenticationError('Invalid authentication token');
   }
 
   // Check if token is expired
   if (payload.exp && Date.now() >= payload.exp * 1000) {
+    console.error('❌ JWT Verification Failed: Token expired', {
+      exp: payload.exp,
+      expDate: new Date(payload.exp * 1000).toISOString(),
+      currentTime: new Date().toISOString(),
+      timeDiff: Date.now() - (payload.exp * 1000)
+    });
     throw new AuthenticationError('Authentication token has expired');
   }
 
   // Check if it's a Supabase token (has 'aud' field)
   if (!payload.aud) {
+    console.error('❌ JWT Verification Failed: Missing aud field');
     throw new AuthenticationError('Invalid token format');
   }
+
+  console.log('✅ JWT Verification Successful:', {
+    userId: payload.id,
+    email: payload.email,
+    aud: payload.aud
+  });
 
   return payload;
 }
@@ -79,7 +111,7 @@ async function fetchUserProfile(userId: string): Promise<{ specialty?: string; r
 
     const { data, error } = await supabase
       .from('users')
-      .select('medical_specialty, role')
+      .select('medical_specialty')
       .eq('user_id', userId)
       .single();
 
@@ -90,7 +122,7 @@ async function fetchUserProfile(userId: string): Promise<{ specialty?: string; r
 
     return {
       specialty: data?.medical_specialty,
-      role: data?.role
+      role: undefined // No role column in users table
     };
   } catch (error) {
     console.error('Error in fetchUserProfile:', error);

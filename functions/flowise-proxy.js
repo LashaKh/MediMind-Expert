@@ -339,10 +339,29 @@ async function handleFlowiseRequest(event, user) {
 exports.handler = withMedicalSecurity(
   async (event, context) => {
     try {
+      logger.info('Flowise proxy handler called', {
+        method: event.httpMethod,
+        path: event.path,
+        hasContext: !!context,
+        hasUser: !!(context && context.user)
+      });
+      
       // User is already extracted and validated by withMedicalSecurity middleware
       const { user } = context;
+      
+      if (!user) {
+        logger.error('No user found in context after security middleware');
+        throw new Error('Authentication failed - no user in context');
+      }
+      
       return await handleFlowiseRequest(event, user);
     } catch (error) {
+      logger.error('Flowise proxy handler error', {
+        error: error.message,
+        stack: error.stack,
+        method: event.httpMethod,
+        path: event.path
+      });
       return handleError(error);
     }
   }

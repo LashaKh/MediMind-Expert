@@ -65,7 +65,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 safe-area-inset layout-container">
+    <div 
+      className="min-h-screen flex flex-col bg-background safe-area-inset layout-container"
+      style={{ 
+        backgroundImage: 'none !important'
+      }}
+    >
       {/* Header with safe area support */}
       <Header onMenuToggle={handleMenuToggle} />
       
@@ -92,7 +97,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <main 
           className={`
             flex-1 transition-all duration-300 ease-in-out 
-            overflow-hidden bg-gray-50 dark:bg-gray-900
+            overflow-hidden bg-background
             ${user && isMobile && isSidebarOpen ? 'pointer-events-none' : ''}
             ${user && isMobile ? 'pb-16' : ''}
           `}
@@ -117,7 +122,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       </div>
       
       {/* Bottom safe area spacer */}
-      <div className="safe-bottom bg-gray-50 dark:bg-gray-900" />
+      <div className="safe-bottom bg-background" />
     </div>
   );
 };

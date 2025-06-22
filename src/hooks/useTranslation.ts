@@ -11,23 +11,13 @@ const translations: Record<Language, any> = {
   ru: ru
 };
 
+
 export const useTranslation = () => {
   const { currentLanguage, setLanguage } = useLanguage();
 
-  const t = useCallback((key: string, params?: Record<string, string>): string => {
+  const t = useCallback((key: string, params?: Record<string, any>): any => {
     const keys = key.split('.');
     let currentLevel: any = translations[currentLanguage];
-
-    // Debug logging
-    if (key.includes('preterm_birth_risk')) {
-      console.log('Debug translation:', {
-        key,
-        currentLanguage,
-        hasTranslations: !!translations[currentLanguage],
-        translationKeys: Object.keys(translations[currentLanguage] || {}),
-        calculatorKeys: Object.keys(translations[currentLanguage]?.calculators || {})
-      });
-    }
 
     for (const k of keys) {
       if (typeof currentLevel === 'object' && currentLevel !== null && k in currentLevel) {
@@ -52,18 +42,42 @@ export const useTranslation = () => {
       }
     }
 
-    // If still not found, or if it's an object (meaning we didn't reach a string leaf), return the key
-    if (typeof currentLevel !== 'string') {
+    // Check if returnObjects is true and we have an object/array
+    if (params?.returnObjects === true) {
+      if (Array.isArray(currentLevel)) {
+        return currentLevel; // Return the array directly
+      } else if (typeof currentLevel === 'object' && currentLevel !== null) {
+        return currentLevel; // Return the object directly
+      }
+    }
+
+    // If still not found, return empty array for map operations or the key
+    if (currentLevel === undefined || currentLevel === null) {
+      console.warn(`Translation for key: ${key} is not found. Returning ${params?.returnObjects ? 'empty array' : 'key'}.`);
+      return params?.returnObjects ? [] : key;
+    }
+
+    // If it's an object but returnObjects is not true, return the key
+    if (typeof currentLevel !== 'string' && !params?.returnObjects) {
       console.warn(`Translation for key: ${key} is not a string or not found. Returning key.`);
       return key;
     }
 
-    // Apply params if any
-    if (params) {
-      return Object.entries(params).reduce(
-        (acc, [paramKey, paramValue]) => acc.replace(`{{${paramKey}}}`, paramValue),
-        currentLevel
-      );
+    // Apply params if any (excluding returnObjects)
+    if (params && typeof params === 'object' && typeof currentLevel === 'string') {
+      const stringParams = Object.entries(params)
+        .filter(([paramKey]) => paramKey !== 'returnObjects')
+        .reduce((acc, [paramKey, paramValue]) => {
+          acc[paramKey] = String(paramValue);
+          return acc;
+        }, {} as Record<string, string>);
+
+      if (Object.keys(stringParams).length > 0) {
+        return Object.entries(stringParams).reduce(
+          (acc, [paramKey, paramValue]) => acc.replace(`{{${paramKey}}}`, paramValue),
+          currentLevel
+        );
+      }
     }
 
     return currentLevel;

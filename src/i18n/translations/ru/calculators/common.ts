@@ -1,8 +1,15 @@
-export const calculatorCommon = {
-  title: 'Медицинские калькуляторы',
-  back_to: 'Назад к калькуляторам',
+export default {
+  // Keys for Calculators.tsx main page
+  title: 'Медицинские Калькуляторы',
+  back_to: 'Назад к Калькуляторам',
   categories_label: 'Категории',
-  tools_count: '{count} инструмента | {count} инструмента | {count} инструментов',
+  tools_count: '{count} Инструмент | {count} Инструменты',
+  
+  // Common UI elements (these are the missing keys)
+  about: 'О калькуляторе',
+  calculator: 'Калькулятор',
+  validated: 'Валидирован',
+
   back: 'Назад',
   next: 'Далее',
   new_calculation: 'Новый расчет',
@@ -26,10 +33,18 @@ export const calculatorCommon = {
     categories: 'Категории'
   },
   calculate: 'Рассчитать',
-  reset: 'Сбросить',
+  calculating: 'Расчет...',
   result: 'Результат',
+  results: 'Результаты',
   interpretation: 'Интерпретация',
-  risk: 'Риск',
+  recommendations: 'Рекомендации',
+  riskLevel: 'Уровень риска',
+  lifetime_risk: 'Пожизненный риск',
+  annual_risk: 'Годовой риск',
+  risk_multiplier: 'Множитель риска',
+  screening_recommendation: 'Рекомендация по скринингу',
+  protective_factors: 'Защитные факторы',
+  prophylactic_surgery_discussion: 'Обсуждение профилактической хирургии',
   score: 'Балл',
   low: 'Низкий',
   moderate: 'Умеренный',
@@ -98,7 +113,14 @@ export const calculatorCommon = {
   recommendations_label: "Рекомендации:",
   more_recommendations: "ещё рекомендации",
   universal_recommendations: "Универсальные рекомендации",
-  share_results_description: "Поделитесь этими результатами с вашим ИИ-помощником для подробного анализа и следующих шагов"
-};
-
-export default calculatorCommon; 
+  share_results_description: "Поделитесь этими результатами с вашим ИИ-помощником для подробного анализа и следующих шагов",
+  
+  // Common risk levels
+  risk_levels: {
+    low: 'Низкий',
+    moderate: 'Умеренный',
+    intermediate: 'Промежуточный',
+    high: 'Высокий',
+    very_high: 'Очень высокий'
+  },
+}; 

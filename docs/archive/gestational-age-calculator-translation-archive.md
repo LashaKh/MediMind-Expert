@@ -42,7 +42,7 @@
 - **Gestational Age Assessment**: ორსულობის ვადის შეფასება (orsuloba vadis shefaseba)
 - **Trimester Definitions**: ტრიმესტრის განმარტებები (trimester ganmartebebi) 
 - **Clinical Guidelines**: კლინიკური მითითებები (klinikuri mititebebi)
-- **Evidence-Based Accuracy**: მტკიცებულებებზე დაფუძნებული ზუსტობა (mtkicebulebebze dafudznebuli zustoba)
+- **Evidence-Based Accuracy**: მტკიცებულებებზე დაფუძნებული სიზუსტე (mtkicebulebebze dafudznebuli zustoba)
 
 ### Medical Framework Integration
 - **Robinson-Fleming Formula**: First trimester CRL-based gestational age calculation with clinical accuracy

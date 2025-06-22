@@ -17,6 +17,7 @@ import { VectorStorePage } from './components/KnowledgeBase/VectorStorePage';
 import { Settings } from './components/Settings/Settings';
 import { Profile } from './components/Profile/Profile';
 import { HelpCenter } from './components/Help/HelpCenter';
+import { DiseasePage, DiseasesIndex } from './components/Diseases';
 import { GlobalDocumentProgressTracker } from './components/ui/DocumentProgressTracker';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { AuthProvider } from './contexts/AuthContext';
@@ -81,6 +82,8 @@ function App() {
                     <Route path="/forms" element={<Forms />} />
                     <Route path="/knowledge-base" element={<KnowledgeBase />} />
                     <Route path="/vector-store" element={<VectorStorePage />} />
+                    <Route path="/diseases" element={<DiseasesIndex />} />
+                    <Route path="/diseases/:diseaseId" element={<DiseasePage />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/help" element={<HelpCenter />} />

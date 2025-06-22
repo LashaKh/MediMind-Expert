@@ -7,9 +7,7 @@ import {
   Stethoscope,
   Search,
   ChevronRight,
-  ExternalLink,
   HelpCircle,
-  FileText,
   Bot,
   Users
 } from 'lucide-react';
@@ -378,7 +376,7 @@ ${profile?.medical_specialty === 'cardiology' ? `
 - Endometrial Cancer Risk Calculator
 
 **Reproductive Endocrinology**
-- Ovarian Reserve Assessment
+- {t('calculators.ObGyn.ovarianReserve.title')}
 - Menopause Assessment Tool
 ` : `
 ### Professional Medical Calculators

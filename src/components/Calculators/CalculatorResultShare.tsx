@@ -137,10 +137,24 @@ export const CalculatorResultShare: React.FC<CalculatorResultShareProps> = ({
                   riskLevel: t('calculators.gdm_screening.risk_level'),
                   testingProtocol: t('calculators.gdm_screening.testing_protocol'),
                   
+                  // VBAC Calculator specific fields
+                  successProbability: t('calculators.vbac_success.success_probability'),
+                  
+                  // Endometrial Cancer Risk Calculator specific fields
+                  annualRisk: t('calculators.common.annual_risk'),
+                  protectiveFactors: t('calculators.common.protective_factors'),
+                  
                   // Common calculator fields
                   ascvdRisk: t('calculators.common.ascvd_risk'),
                   tenYearRisk: t('calculators.common.ten_year_risk'),
                   lifetimeRisk: t('calculators.common.lifetime_risk'),
+                  'Lifetime Risk': t('calculators.common.lifetime_risk'),
+                  riskMultiplier: t('calculators.common.risk_multiplier'),
+                  'Risk Multiplier': t('calculators.common.risk_multiplier'),
+                  screeningRecommendation: t('calculators.common.screening_recommendation'),
+                  'Screening Recommendation': t('calculators.common.screening_recommendation'),
+                  prophylacticSurgeryDiscussion: t('calculators.common.prophylactic_surgery_discussion'),
+                  'Prophylactic Surgery Discussion': t('calculators.common.prophylactic_surgery_discussion'),
                   riskCategory: t('calculators.common.risk_category'),
                   recommendations: t('calculators.common.recommendations'),
                   

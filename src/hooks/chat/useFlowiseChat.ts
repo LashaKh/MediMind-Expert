@@ -98,11 +98,16 @@ export const useFlowiseChat = (options: UseFlowiseChatOptions = {}): UseFlowiseC
     } catch (err) {
       console.error('Failed to send message to Flowise:', err);
       
-      const errorMessage = err instanceof APIError 
+      let errorMessage = err instanceof APIError 
         ? err.message 
         : err instanceof Error 
         ? err.message 
         : 'Failed to send message. Please try again.';
+
+      // Special handling for authentication errors
+      if (err instanceof APIError && err.status === 401) {
+        errorMessage = 'Your session has expired. Please refresh the page or sign in again to continue.';
+      }
 
       setError(errorMessage);
       onError?.(errorMessage);

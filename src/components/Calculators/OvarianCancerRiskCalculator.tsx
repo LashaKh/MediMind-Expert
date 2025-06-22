@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Shield, AlertTriangle, Info, CheckCircle, Star, User, FileText, Activity, Clock, Target, Calculator, TrendingUp, Stethoscope, Award, ArrowRight, Users, Calendar, AlertCircle, Microscope, Dna, Heart, FlaskConical, Baby, Zap } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Tooltip } from '../ui/tooltip';
@@ -35,6 +37,16 @@ interface Errors {
 }
 
 const OvarianCancerRiskCalculator: React.FC = () => {
+  const { t, i18n } = useTranslation();
+  const { currentLanguage } = useLanguage();
+
+  // CRITICAL: Synchronize language between LanguageContext and i18next
+  useEffect(() => {
+    if (i18n.language !== currentLanguage) {
+      i18n.changeLanguage(currentLanguage);
+    }
+  }, [currentLanguage, i18n]);
+
   const [formData, setFormData] = useState<FormData>({
     age: '',
     familyHistory: 'none',
@@ -54,6 +66,14 @@ const OvarianCancerRiskCalculator: React.FC = () => {
   const [showResult, setShowResult] = useState(false);
   const [activeTab, setActiveTab] = useState<'calculator' | 'about'>('calculator');
 
+  // CRITICAL: Clear state on language change
+  useEffect(() => {
+    setResult(null);
+    setStep(1);
+    setShowResult(false);
+    setErrors({});
+  }, [currentLanguage]);
+
   const handleInputChange = (field: keyof FormData, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     // Clear errors when user starts typing
@@ -67,21 +87,21 @@ const OvarianCancerRiskCalculator: React.FC = () => {
 
     if (currentStep === 1) {
     if (!formData.age) {
-        newErrors.age = 'Age is required';
+        newErrors.age = t('calculators.obgyn.ovarian_cancer_risk.step1.age.required_error');
       } else if (Number(formData.age) < 18 || Number(formData.age) > 100) {
-        newErrors.age = 'Please enter a valid age (18-100 years)';
+        newErrors.age = t('calculators.obgyn.ovarian_cancer_risk.step1.age.validation_error');
     }
 
     if (!formData.parity) {
-        newErrors.parity = 'Parity is required';
+        newErrors.parity = t('calculators.obgyn.ovarian_cancer_risk.step1.parity.required_error');
       } else if (Number(formData.parity) < 0 || Number(formData.parity) > 20) {
-        newErrors.parity = 'Please enter a valid parity (0-20)';
+        newErrors.parity = t('calculators.obgyn.ovarian_cancer_risk.step1.parity.validation_error');
     }
 
     if (!formData.oralContraceptiveUse) {
-        newErrors.oralContraceptiveUse = 'Oral contraceptive use duration is required';
+        newErrors.oralContraceptiveUse = t('calculators.obgyn.ovarian_cancer_risk.step1.hormonal_history.oral_contraceptive.required_error');
       } else if (Number(formData.oralContraceptiveUse) < 0 || Number(formData.oralContraceptiveUse) > 50) {
-        newErrors.oralContraceptiveUse = 'Please enter a valid duration (0-50 years)';
+        newErrors.oralContraceptiveUse = t('calculators.obgyn.ovarian_cancer_risk.step1.hormonal_history.oral_contraceptive.validation_error');
       }
     }
 
@@ -132,7 +152,7 @@ const OvarianCancerRiskCalculator: React.FC = () => {
         return;
       }
 
-      const calculationResult = calculateOBGYN('ovarian-cancer-risk', input) as OvarianCancerRiskResult;
+      const calculationResult = calculateOBGYN('ovarian-cancer-risk', input, t) as OvarianCancerRiskResult;
       setResult(calculationResult);
       setShowResult(true);
       
@@ -145,7 +165,7 @@ const OvarianCancerRiskCalculator: React.FC = () => {
       }, 100);
     } catch (error) {
       console.error('Calculation error:', error);
-      setErrors({ age: 'An error occurred during calculation. Please try again.' });
+      setErrors({ age: t('calculators.obgyn.ovarian_cancer_risk.errors.calculation_error') });
     } finally {
       setIsLoading(false);
     }
@@ -214,8 +234,9 @@ const OvarianCancerRiskCalculator: React.FC = () => {
 
   return (
     <CalculatorContainer
-      title="Ovarian Cancer Risk Assessment"
-      subtitle="Evidence-based ovarian cancer risk evaluation with genetic and reproductive factor analysis"
+      key={currentLanguage}  // CRITICAL: Forces re-render
+      title={t('calculators.obgyn.ovarian_cancer_risk.title')}
+      subtitle={t('calculators.obgyn.ovarian_cancer_risk.subtitle')}
       icon={Shield}
       gradient="obgyn"
     >
@@ -223,11 +244,11 @@ const OvarianCancerRiskCalculator: React.FC = () => {
         <TabsList className="grid w-full grid-cols-2 bg-purple-50 border border-purple-200">
           <TabsTrigger value="calculator" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
             <Calculator className="w-4 h-4 mr-2" />
-            Calculator
+            {t('calculators.obgyn.ovarian_cancer_risk.tabs.calculator')}
           </TabsTrigger>
           <TabsTrigger value="about" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
             <Info className="w-4 h-4 mr-2" />
-            About
+            {t('calculators.obgyn.ovarian_cancer_risk.tabs.about')}
           </TabsTrigger>
         </TabsList>
 
@@ -235,9 +256,9 @@ const OvarianCancerRiskCalculator: React.FC = () => {
           {/* Progress Indicator */}
           <div className="w-full bg-purple-50 border border-purple-200 rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-purple-800">Risk Assessment Progress</h3>
+              <h3 className="text-lg font-semibold text-purple-800">{t('calculators.obgyn.ovarian_cancer_risk.progress.title')}</h3>
               <span className="text-sm text-purple-600 bg-purple-100 px-3 py-1 rounded-full">
-                Step {step} of 3
+                {t('calculators.obgyn.ovarian_cancer_risk.progress.step_label', { step })}
               </span>
             </div>
             
@@ -265,16 +286,16 @@ const OvarianCancerRiskCalculator: React.FC = () => {
             
             <div className="grid grid-cols-3 gap-4 mt-4 text-center">
               <div>
-                <p className="text-sm font-medium text-purple-800">Demographics</p>
-                <p className="text-xs text-purple-600">Age & reproductive history</p>
+                <p className="text-sm font-medium text-purple-800">{t('calculators.obgyn.ovarian_cancer_risk.progress.steps.demographics.title')}</p>
+                <p className="text-xs text-purple-600">{t('calculators.obgyn.ovarian_cancer_risk.progress.steps.demographics.description')}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-purple-800">Genetic Factors</p>
-                <p className="text-xs text-purple-600">BRCA & family history</p>
+                <p className="text-sm font-medium text-purple-800">{t('calculators.obgyn.ovarian_cancer_risk.progress.steps.genetic.title')}</p>
+                <p className="text-xs text-purple-600">{t('calculators.obgyn.ovarian_cancer_risk.progress.steps.genetic.description')}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-purple-800">Risk Assessment</p>
-                <p className="text-xs text-purple-600">Calculate & review</p>
+                <p className="text-sm font-medium text-purple-800">{t('calculators.obgyn.ovarian_cancer_risk.progress.steps.assessment.title')}</p>
+                <p className="text-xs text-purple-600">{t('calculators.obgyn.ovarian_cancer_risk.progress.steps.assessment.description')}</p>
               </div>
             </div>
           </div>
@@ -285,40 +306,40 @@ const OvarianCancerRiskCalculator: React.FC = () => {
               <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-200">
                 <CardTitle className="flex items-center gap-3 text-purple-800">
                   <User className="w-6 h-6 text-purple-600" />
-                  Demographics & Reproductive History
+                  {t('calculators.obgyn.ovarian_cancer_risk.step1.title')}
                   <span className="text-sm bg-purple-100 text-purple-700 px-2 py-1 rounded-full ml-auto">
-                    Step 1 of 3
+                    {t('calculators.obgyn.ovarian_cancer_risk.step1.step_indicator')}
                   </span>
-              </CardTitle>
-            </CardHeader>
+                </CardTitle>
+              </CardHeader>
               <CardContent className="p-6 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <CalculatorInput
-                    label="Patient Age"
+                    label={t('calculators.obgyn.ovarian_cancer_risk.step1.age.label')}
                     value={formData.age}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('age', e.target.value)}
                     type="number"
                     placeholder="45"
                     min={18}
                     max={100}
-                    unit="years"
+                    unit={t('calculators.obgyn.ovarian_cancer_risk.step1.age.unit')}
                     error={errors.age}
-                    helpText="Current age in years"
+                    helpText={t('calculators.obgyn.ovarian_cancer_risk.step1.age.help_text')}
                     icon={User}
                     required
                   />
 
                   <CalculatorInput
-                    label="Parity (Number of Births)"
+                    label={t('calculators.obgyn.ovarian_cancer_risk.step1.parity.label')}
                     value={formData.parity}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('parity', e.target.value)}
                     type="number"
                     placeholder="2"
                     min={0}
                     max={20}
-                    unit="births"
+                    unit={t('calculators.obgyn.ovarian_cancer_risk.step1.parity.unit')}
                     error={errors.parity}
-                    helpText="Total number of live births"
+                    helpText={t('calculators.obgyn.ovarian_cancer_risk.step1.parity.help_text')}
                     icon={Baby}
                     required
                   />
@@ -327,11 +348,11 @@ const OvarianCancerRiskCalculator: React.FC = () => {
                 <div className="bg-pink-50 p-4 rounded-lg border border-pink-200">
                   <h4 className="font-semibold text-pink-800 mb-4 flex items-center gap-2">
                     <Zap className="w-5 h-5" />
-                    Hormonal History
+                    {t('calculators.obgyn.ovarian_cancer_risk.step1.hormonal_history.title')}
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <CalculatorInput
-                      label="Oral Contraceptive Use"
+                      label={t('calculators.obgyn.ovarian_cancer_risk.step1.hormonal_history.oral_contraceptive.label')}
                       value={formData.oralContraceptiveUse}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('oralContraceptiveUse', e.target.value)}
                       type="number"
@@ -339,19 +360,19 @@ const OvarianCancerRiskCalculator: React.FC = () => {
                       min={0}
                       max={50}
                       step={0.5}
-                      unit="years"
+                      unit={t('calculators.obgyn.ovarian_cancer_risk.step1.hormonal_history.oral_contraceptive.unit')}
                       error={errors.oralContraceptiveUse}
-                      helpText="Enter 0 if never used oral contraceptives"
+                      helpText={t('calculators.obgyn.ovarian_cancer_risk.step1.hormonal_history.oral_contraceptive.help_text')}
                       icon={Target}
                       required
                     />
 
                     <div className="space-y-3 pt-6">
                       <CalculatorCheckbox
-                        label="Hormone Replacement Therapy"
+                        label={t('calculators.obgyn.ovarian_cancer_risk.step1.hormonal_history.hormone_therapy.label')}
                         checked={formData.hormonetherapy}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('hormonetherapy', e.target.checked)}
-                        description="Current or previous HRT use"
+                        description={t('calculators.obgyn.ovarian_cancer_risk.step1.hormonal_history.hormone_therapy.description')}
                       />
                     </div>
                   </div>
@@ -363,7 +384,7 @@ const OvarianCancerRiskCalculator: React.FC = () => {
                     disabled={!formData.age || !formData.parity || !formData.oralContraceptiveUse}
                     className="bg-purple-600 hover:bg-purple-700 text-white px-8"
                   >
-                    Next: Genetic Factors
+                    {t('calculators.obgyn.ovarian_cancer_risk.step1.next_button')}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </CalculatorButton>
                 </div>
@@ -377,9 +398,9 @@ const OvarianCancerRiskCalculator: React.FC = () => {
               <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-200">
                 <CardTitle className="flex items-center gap-3 text-purple-800">
                   <Dna className="w-6 h-6 text-purple-600" />
-                  Genetic Risk Factors
+                  {t('calculators.obgyn.ovarian_cancer_risk.step2.title')}
                   <span className="text-sm bg-purple-100 text-purple-700 px-2 py-1 rounded-full ml-auto">
-                    Step 2 of 3
+                    {t('calculators.obgyn.ovarian_cancer_risk.step2.step_indicator')}
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -388,20 +409,20 @@ const OvarianCancerRiskCalculator: React.FC = () => {
                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                   <h4 className="font-semibold text-blue-800 mb-4 flex items-center gap-2">
                     <Users className="w-5 h-5" />
-                    Family History of Cancer
+                    {t('calculators.obgyn.ovarian_cancer_risk.step2.family_history.title')}
                   </h4>
                   
                   <CalculatorSelect
-                    label="Family Cancer History"
+                    label={t('calculators.obgyn.ovarian_cancer_risk.step2.family_history.label')}
                     value={formData.familyHistory}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleInputChange('familyHistory', e.target.value)}
                     options={[
-                      { value: 'none', label: 'No family history of cancer' },
-                      { value: 'ovarian', label: 'Ovarian cancer history' },
-                      { value: 'breast', label: 'Breast cancer history' },
-                      { value: 'both', label: 'Both ovarian and breast cancer history' }
+                      { value: 'none', label: t('calculators.obgyn.ovarian_cancer_risk.step2.family_history.options.none') },
+                      { value: 'ovarian', label: t('calculators.obgyn.ovarian_cancer_risk.step2.family_history.options.ovarian') },
+                      { value: 'breast', label: t('calculators.obgyn.ovarian_cancer_risk.step2.family_history.options.breast') },
+                      { value: 'both', label: t('calculators.obgyn.ovarian_cancer_risk.step2.family_history.options.both') }
                     ]}
-                    helpText="First or second-degree relatives with cancer history"
+                    helpText={t('calculators.obgyn.ovarian_cancer_risk.step2.family_history.help_text')}
                     icon={Users}
                   />
                   </div>
@@ -410,35 +431,35 @@ const OvarianCancerRiskCalculator: React.FC = () => {
                 <div className="bg-red-50 p-4 rounded-lg border border-red-200">
                   <h4 className="font-semibold text-red-800 mb-4 flex items-center gap-2">
                     <FlaskConical className="w-5 h-5" />
-                    Known Genetic Mutations
+                    {t('calculators.obgyn.ovarian_cancer_risk.step2.genetic_mutations.title')}
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <CalculatorCheckbox
-                      label="BRCA1 Mutation"
+                      label={t('calculators.obgyn.ovarian_cancer_risk.step2.genetic_mutations.brca1.label')}
                         checked={formData.brca1}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('brca1', e.target.checked)}
-                      description="Known pathogenic BRCA1 variant (17q21)"
+                      description={t('calculators.obgyn.ovarian_cancer_risk.step2.genetic_mutations.brca1.description')}
                       />
 
                     <CalculatorCheckbox
-                      label="BRCA2 Mutation"
+                      label={t('calculators.obgyn.ovarian_cancer_risk.step2.genetic_mutations.brca2.label')}
                         checked={formData.brca2}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('brca2', e.target.checked)}
-                      description="Known pathogenic BRCA2 variant (13q13)"
+                      description={t('calculators.obgyn.ovarian_cancer_risk.step2.genetic_mutations.brca2.description')}
                       />
 
                     <CalculatorCheckbox
-                      label="Lynch Syndrome"
+                      label={t('calculators.obgyn.ovarian_cancer_risk.step2.genetic_mutations.lynch_syndrome.label')}
                         checked={formData.lynchSyndrome}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('lynchSyndrome', e.target.checked)}
-                      description="Hereditary nonpolyposis colorectal cancer (MLH1, MSH2, MSH6, PMS2)"
+                      description={t('calculators.obgyn.ovarian_cancer_risk.step2.genetic_mutations.lynch_syndrome.description')}
                       />
 
                     <CalculatorCheckbox
-                      label="Personal Breast Cancer History"
+                      label={t('calculators.obgyn.ovarian_cancer_risk.step2.genetic_mutations.personal_breast_cancer.label')}
                         checked={formData.personalBreastCancer}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('personalBreastCancer', e.target.checked)}
-                      description="Previous diagnosis of breast cancer"
+                      description={t('calculators.obgyn.ovarian_cancer_risk.step2.genetic_mutations.personal_breast_cancer.description')}
                       />
                   </div>
                 </div>
@@ -449,13 +470,13 @@ const OvarianCancerRiskCalculator: React.FC = () => {
                     variant="outline"
                     className="px-8"
                   >
-                    Previous
+                    {t('calculators.obgyn.ovarian_cancer_risk.step2.buttons.previous')}
                   </CalculatorButton>
                   <CalculatorButton
                     onClick={handleNext}
                     className="bg-purple-600 hover:bg-purple-700 text-white px-8 flex-1"
                   >
-                    Next: Calculate Risk
+                    {t('calculators.obgyn.ovarian_cancer_risk.step2.buttons.next')}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </CalculatorButton>
               </div>
@@ -469,9 +490,9 @@ const OvarianCancerRiskCalculator: React.FC = () => {
               <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-200">
                 <CardTitle className="flex items-center gap-3 text-purple-800">
                   <Activity className="w-6 h-6 text-purple-600" />
-                  Risk Assessment Review
+                  {t('calculators.obgyn.ovarian_cancer_risk.step3.title')}
                   <span className="text-sm bg-purple-100 text-purple-700 px-2 py-1 rounded-full ml-auto">
-                    Step 3 of 3
+                    {t('calculators.obgyn.ovarian_cancer_risk.step3.step_indicator')}
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -480,20 +501,20 @@ const OvarianCancerRiskCalculator: React.FC = () => {
                 <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
                   <h4 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
                     <FileText className="w-5 h-5" />
-                    Assessment Summary
+                    {t('calculators.obgyn.ovarian_cancer_risk.step3.summary.title')}
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div>
-                      <p><strong>Age:</strong> {formData.age} years</p>
-                      <p><strong>Parity:</strong> {formData.parity} births</p>
-                      <p><strong>OC Use:</strong> {formData.oralContraceptiveUse} years</p>
-                      <p><strong>HRT:</strong> {formData.hormonetherapy ? 'Yes' : 'No'}</p>
+                      <p><strong>{t('calculators.obgyn.ovarian_cancer_risk.step3.summary.labels.age')}:</strong> {formData.age} {t('calculators.obgyn.ovarian_cancer_risk.step3.summary.values.years')}</p>
+                      <p><strong>{t('calculators.obgyn.ovarian_cancer_risk.step3.summary.labels.parity')}:</strong> {formData.parity} {t('calculators.obgyn.ovarian_cancer_risk.step3.summary.values.births')}</p>
+                      <p><strong>{t('calculators.obgyn.ovarian_cancer_risk.step3.summary.labels.oc_use')}:</strong> {formData.oralContraceptiveUse} {t('calculators.obgyn.ovarian_cancer_risk.step3.summary.values.years')}</p>
+                      <p><strong>{t('calculators.obgyn.ovarian_cancer_risk.step3.summary.labels.hrt')}:</strong> {formData.hormonetherapy ? t('calculators.obgyn.ovarian_cancer_risk.step3.summary.values.yes') : t('calculators.obgyn.ovarian_cancer_risk.step3.summary.values.no')}</p>
                   </div>
                     <div>
-                      <p><strong>Family History:</strong> {formData.familyHistory === 'none' ? 'None' : formData.familyHistory}</p>
-                      <p><strong>BRCA1:</strong> {formData.brca1 ? 'Positive' : 'Negative'}</p>
-                      <p><strong>BRCA2:</strong> {formData.brca2 ? 'Positive' : 'Negative'}</p>
-                      <p><strong>Lynch Syndrome:</strong> {formData.lynchSyndrome ? 'Positive' : 'Negative'}</p>
+                      <p><strong>{t('calculators.obgyn.ovarian_cancer_risk.step3.summary.labels.family_history')}:</strong> {formData.familyHistory === 'none' ? t('calculators.obgyn.ovarian_cancer_risk.step3.summary.values.none') : formData.familyHistory}</p>
+                      <p><strong>{t('calculators.obgyn.ovarian_cancer_risk.step3.summary.labels.brca1')}:</strong> {formData.brca1 ? t('calculators.obgyn.ovarian_cancer_risk.step3.summary.values.positive') : t('calculators.obgyn.ovarian_cancer_risk.step3.summary.values.negative')}</p>
+                      <p><strong>{t('calculators.obgyn.ovarian_cancer_risk.step3.summary.labels.brca2')}:</strong> {formData.brca2 ? t('calculators.obgyn.ovarian_cancer_risk.step3.summary.values.positive') : t('calculators.obgyn.ovarian_cancer_risk.step3.summary.values.negative')}</p>
+                      <p><strong>{t('calculators.obgyn.ovarian_cancer_risk.step3.summary.labels.lynch_syndrome')}:</strong> {formData.lynchSyndrome ? t('calculators.obgyn.ovarian_cancer_risk.step3.summary.values.positive') : t('calculators.obgyn.ovarian_cancer_risk.step3.summary.values.negative')}</p>
                     </div>
                   </div>
                 </div>
@@ -504,7 +525,7 @@ const OvarianCancerRiskCalculator: React.FC = () => {
                     variant="outline"
                     className="px-8"
                   >
-                    Previous
+                    {t('calculators.obgyn.ovarian_cancer_risk.step3.buttons.previous')}
                   </CalculatorButton>
                   <CalculatorButton
                     onClick={handleCalculate}
@@ -514,12 +535,12 @@ const OvarianCancerRiskCalculator: React.FC = () => {
                     {isLoading ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Calculating Risk...
+                        {t('calculators.obgyn.ovarian_cancer_risk.step3.buttons.calculating')}
                       </>
                     ) : (
                       <>
                         <Calculator className="w-4 h-4 mr-2" />
-                        Calculate Risk Assessment
+                        {t('calculators.obgyn.ovarian_cancer_risk.step3.buttons.calculate')}
                       </>
                     )}
                   </CalculatorButton>
@@ -530,7 +551,7 @@ const OvarianCancerRiskCalculator: React.FC = () => {
                   variant="outline"
                   className="w-full mt-4"
                 >
-                  Reset All Fields
+                  {t('calculators.obgyn.ovarian_cancer_risk.step3.buttons.reset')}
                 </CalculatorButton>
               </CardContent>
             </Card>
@@ -540,8 +561,8 @@ const OvarianCancerRiskCalculator: React.FC = () => {
           {showResult && result && (
             <div id="ovarian-results">
               <ResultsDisplay
-                title="Ovarian Cancer Risk Assessment"
-                value={result.category.charAt(0).toUpperCase() + result.category.slice(1) + ' Risk'}
+                title={t('calculators.obgyn.ovarian_cancer_risk.results.title')}
+                value={result.category.charAt(0).toUpperCase() + result.category.slice(1) + ' ' + t('calculators.obgyn.ovarian_cancer_risk.results.risk_levels.low')}
                 category={result.category === 'low' ? 'low' : result.category === 'moderate' ? 'intermediate' : 'high'}
                 interpretation={result.interpretation}
                 icon={Shield}
@@ -552,9 +573,9 @@ const OvarianCancerRiskCalculator: React.FC = () => {
                     {getRiskIcon(result.category)}
                     <div>
                       <h3 className="text-xl font-bold">
-                        {result.category.charAt(0).toUpperCase() + result.category.slice(1)} Risk Level
+                        {result.category.charAt(0).toUpperCase() + result.category.slice(1)} {t('calculators.obgyn.ovarian_cancer_risk.results.risk_levels.low')}
                       </h3>
-                      <p className="text-sm font-medium">Lifetime Risk: {result.lifetimeRisk}%</p>
+                      <p className="text-sm font-medium">{t('calculators.obgyn.ovarian_cancer_risk.results.lifetime_risk_label')} {result.lifetimeRisk}%</p>
                     </div>
                   </div>
                   <p className="text-sm leading-relaxed">{result.interpretation}</p>
@@ -565,17 +586,17 @@ const OvarianCancerRiskCalculator: React.FC = () => {
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <div className="flex items-center gap-3 mb-3">
                       <Stethoscope className="w-5 h-5 text-blue-600" />
-                      <h4 className="font-semibold text-blue-800">Management Recommendation</h4>
+                      <h4 className="font-semibold text-blue-800">{t('calculators.obgyn.ovarian_cancer_risk.results.management.title')}</h4>
                     </div>
                     <p className="text-sm text-blue-700">
-                      Based on risk assessment, follow evidence-based guidelines for monitoring and prevention.
+                      {t('calculators.obgyn.ovarian_cancer_risk.results.management.description')}
                     </p>
                   </div>
 
                   <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                     <div className="flex items-center gap-3 mb-3">
                       <Clock className="w-5 h-5 text-purple-600" />
-                      <h4 className="font-semibold text-purple-800">Screening Recommendation</h4>
+                      <h4 className="font-semibold text-purple-800">{t('calculators.obgyn.ovarian_cancer_risk.results.screening.title')}</h4>
                     </div>
                     <p className="text-sm text-purple-700">
                       {result.screeningRecommendation}
@@ -588,11 +609,11 @@ const OvarianCancerRiskCalculator: React.FC = () => {
                   <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
                     <h4 className="font-semibold text-orange-800 mb-3 flex items-center gap-2">
                       <FlaskConical className="w-5 h-5" />
-                      Prophylactic Surgery Discussion Recommended
+                      {t('calculators.obgyn.ovarian_cancer_risk.results.prophylactic_surgery.title')}
                     </h4>
                     <div className="text-sm text-orange-700 flex items-start gap-3">
                       <CheckCircle className="w-4 h-4 text-orange-600 mt-0.5 flex-shrink-0" />
-                      <span>Discuss prophylactic bilateral salpingo-oophorectomy with genetic counselor for high-risk patients</span>
+                      <span>{t('calculators.obgyn.ovarian_cancer_risk.results.prophylactic_surgery.description')}</span>
                     </div>
                   </div>
                 )}
@@ -601,7 +622,7 @@ const OvarianCancerRiskCalculator: React.FC = () => {
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
                   <h4 className="font-semibold text-green-800 mb-3 flex items-center gap-2">
                     <Award className="w-5 h-5" />
-                    Clinical Recommendations
+                    {t('calculators.obgyn.ovarian_cancer_risk.results.clinical_recommendations.title')}
                   </h4>
                   <div className="space-y-2">
                     {result.recommendations.map((rec: string, index: number) => (
@@ -615,14 +636,14 @@ const OvarianCancerRiskCalculator: React.FC = () => {
 
                 {/* Share Results */}
                 <CalculatorResultShare
-                  calculatorName="Ovarian Cancer Risk Assessment"
+                  calculatorName={t('calculators.obgyn.ovarian_cancer_risk.results.share.calculator_name')}
                   calculatorId="ovarian-cancer-risk"
                   results={{
                     riskLevel: result.category,
                     lifetimeRisk: `${result.lifetimeRisk}%`,
                     riskMultiplier: `${result.riskMultiplier}x`,
                     screeningRecommendation: result.screeningRecommendation,
-                    prophylacticSurgeryDiscussion: result.prophylacticSurgeryDiscussion ? 'Yes' : 'No'
+                    prophylacticSurgeryDiscussion: result.prophylacticSurgeryDiscussion ? t('calculators.obgyn.ovarian_cancer_risk.results.share.values.yes') : t('calculators.obgyn.ovarian_cancer_risk.results.share.values.no')
                   }}
                   interpretation={result.interpretation}
                   recommendations={result.recommendations}
@@ -634,67 +655,51 @@ const OvarianCancerRiskCalculator: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="about" className="space-y-6">
-          <Card className="border-purple-200 shadow-lg">
+          <Card className="border-purple-200">
             <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-200">
-              <CardTitle className="flex items-center gap-3 text-purple-800">
-                <Info className="w-6 h-6 text-purple-600" />
-                About Ovarian Cancer Risk Assessment
-              </CardTitle>
+              <CardTitle className="text-purple-800">{t('calculators.obgyn.ovarian_cancer_risk.about.title')}</CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-purple-800 mb-3 flex items-center gap-2">
-                  <Target className="w-5 h-5" />
-                  Clinical Purpose
+              {/* Clinical Purpose */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <h3 className="font-semibold text-blue-800 mb-4 flex items-center gap-2">
+                  <Stethoscope className="w-5 h-5" />
+                  {t('calculators.obgyn.ovarian_cancer_risk.about.clinical_purpose.title')}
                 </h3>
-                <p className="text-purple-700 mb-3">
-                  This calculator provides comprehensive ovarian cancer risk assessment incorporating genetic, 
-                  family history, and reproductive factors to guide screening and prevention strategies.
-                </p>
-                <p className="text-purple-700">
-                  Ovarian cancer has the highest mortality among gynecologic cancers, making risk stratification 
-                  crucial for early detection and prevention in high-risk populations. Risk-based management 
-                  optimizes surveillance while minimizing unnecessary interventions.
-                </p>
+                <div className="space-y-3 text-sm text-blue-700">
+                  <p>{t('calculators.obgyn.ovarian_cancer_risk.about.clinical_purpose.description_1')}</p>
+                  <p>{t('calculators.obgyn.ovarian_cancer_risk.about.clinical_purpose.description_2')}</p>
+                </div>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                   <h3 className="font-semibold text-red-800 mb-3 flex items-center gap-2">
                     <AlertTriangle className="w-5 h-5" />
-                    High-Risk Factors
+                    {t('calculators.obgyn.ovarian_cancer_risk.about.risk_factors.high_risk.title')}
                   </h3>
                   <ul className="text-sm text-red-700 space-y-1">
-                    <li>• BRCA1 mutation (39-46% lifetime risk)</li>
-                    <li>• BRCA2 mutation (12-20% lifetime risk)</li>
-                    <li>• Lynch syndrome (9-12% lifetime risk)</li>
-                    <li>• Strong family history (2+ relatives)</li>
-                    <li>• Personal breast cancer history</li>
-                    <li>• Ashkenazi Jewish ancestry</li>
-                    <li>• Nulliparity (no pregnancies)</li>
-                    <li>• Late menopause (&gt;55 years)</li>
-                    <li>• Hormone replacement therapy</li>
-                    <li>• Endometriosis</li>
-                    <li>• Talc exposure (perineal use)</li>
+                    {(() => {
+                      const items = t('calculators.obgyn.ovarian_cancer_risk.about.risk_factors.high_risk.items', { returnObjects: true });
+                      return Array.isArray(items) ? items.map((item: any, index: number) => (
+                        <li key={index}>• {item}</li>
+                      )) : null;
+                    })()}
                   </ul>
                 </div>
 
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                   <h3 className="font-semibold text-green-800 mb-3 flex items-center gap-2">
                     <Shield className="w-5 h-5" />
-                    Protective Factors
+                    {t('calculators.obgyn.ovarian_cancer_risk.about.risk_factors.protective.title')}
                   </h3>
                   <ul className="text-sm text-green-700 space-y-1">
-                    <li>• Oral contraceptive use (5+ years)</li>
-                    <li>• Multiparity (2+ pregnancies)</li>
-                    <li>• Extended breastfeeding (&gt;12 months)</li>
-                    <li>• Tubal ligation</li>
-                    <li>• Hysterectomy (with ovaries retained)</li>
-                    <li>• Early menopause (&lt;45 years)</li>
-                    <li>• Prophylactic oophorectomy</li>
-                    <li>• Lower BMI (&lt;25 kg/m²)</li>
-                    <li>• NSAID use (aspirin)</li>
-                    <li>• Mediterranean diet</li>
+                    {(() => {
+                      const items = t('calculators.obgyn.ovarian_cancer_risk.about.risk_factors.protective.items', { returnObjects: true });
+                      return Array.isArray(items) ? items.map((item: any, index: number) => (
+                        <li key={index}>• {item}</li>
+                      )) : null;
+                    })()}
                   </ul>
                 </div>
               </div>
@@ -702,38 +707,43 @@ const OvarianCancerRiskCalculator: React.FC = () => {
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-blue-800 mb-4 flex items-center gap-2">
                   <Shield className="w-5 h-5" />
-                  Risk-Based Management Strategies
+                  {t('calculators.obgyn.ovarian_cancer_risk.about.management_strategies.title')}
                 </h3>
                 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-medium text-blue-800 mb-2">Very High Risk (BRCA1/2, Lynch Syndrome)</h4>
+                    <h4 className="font-medium text-blue-800 mb-2">{t('calculators.obgyn.ovarian_cancer_risk.about.management_strategies.very_high_risk.title')}</h4>
                     <ul className="text-sm text-blue-700 space-y-1">
-                      <li>• Consider prophylactic bilateral salpingo-oophorectomy (PBSO)</li>
-                      <li>• Enhanced surveillance: CA-125 + transvaginal ultrasound q6months</li>
-                      <li>• Annual pelvic MRI for very high-risk patients</li>
-                      <li>• Genetic counseling and family cascade testing</li>
-                      <li>• Risk-reducing strategies counseling</li>
+                      {(() => {
+                        const strategies = t('calculators.obgyn.ovarian_cancer_risk.about.management_strategies.very_high_risk.strategies', { returnObjects: true });
+                        return Array.isArray(strategies) ? strategies.map((strategy: any, index: number) => (
+                          <li key={index}>• {strategy}</li>
+                        )) : null;
+                      })()}
                     </ul>
                   </div>
                   
                   <div>
-                    <h4 className="font-medium text-blue-800 mb-2">Moderate Risk (Family History)</h4>
+                    <h4 className="font-medium text-blue-800 mb-2">{t('calculators.obgyn.ovarian_cancer_risk.about.management_strategies.moderate_risk.title')}</h4>
                     <ul className="text-sm text-blue-700 space-y-1">
-                      <li>• Enhanced surveillance with CA-125 + TVS annually</li>
-                      <li>• Genetic counseling evaluation</li>
-                      <li>• Risk factor modification counseling</li>
-                      <li>• Symptom awareness education</li>
+                      {(() => {
+                        const strategies = t('calculators.obgyn.ovarian_cancer_risk.about.management_strategies.moderate_risk.strategies', { returnObjects: true });
+                        return Array.isArray(strategies) ? strategies.map((strategy: any, index: number) => (
+                          <li key={index}>• {strategy}</li>
+                        )) : null;
+                      })()}
                     </ul>
                   </div>
 
                   <div>
-                    <h4 className="font-medium text-blue-800 mb-2">Average Risk (General Population)</h4>
+                    <h4 className="font-medium text-blue-800 mb-2">{t('calculators.obgyn.ovarian_cancer_risk.about.management_strategies.average_risk.title')}</h4>
                     <ul className="text-sm text-blue-700 space-y-1">
-                      <li>• No routine screening recommended (insufficient evidence)</li>
-                      <li>• Symptom awareness and education</li>
-                      <li>• Risk factor modification (OC use, family planning)</li>
-                      <li>• Annual pelvic examination</li>
+                      {(() => {
+                        const strategies = t('calculators.obgyn.ovarian_cancer_risk.about.management_strategies.average_risk.strategies', { returnObjects: true });
+                        return Array.isArray(strategies) ? strategies.map((strategy: any, index: number) => (
+                          <li key={index}>• {strategy}</li>
+                        )) : null;
+                      })()}
                     </ul>
                   </div>
                 </div>
@@ -742,30 +752,31 @@ const OvarianCancerRiskCalculator: React.FC = () => {
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-yellow-800 mb-4 flex items-center gap-2">
                   <Stethoscope className="w-5 h-5" />
-                  Clinical Symptom Recognition
+                  {t('calculators.obgyn.ovarian_cancer_risk.about.symptoms.title')}
                 </h3>
                 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-medium text-yellow-800 mb-2">Early Warning Signs (Often Subtle)</h4>
+                    <h4 className="font-medium text-yellow-800 mb-2">{t('calculators.obgyn.ovarian_cancer_risk.about.symptoms.early_warning.title')}</h4>
                     <ul className="text-sm text-yellow-700 space-y-1">
-                      <li>• Persistent abdominal bloating or distension</li>
-                      <li>• Difficulty eating or feeling full quickly</li>
-                      <li>• Pelvic or abdominal pain</li>
-                      <li>• Urinary urgency or frequency</li>
-                      <li>• Unusual fatigue</li>
-                      <li>• Irregular menstrual bleeding</li>
+                      {(() => {
+                        const signs = t('calculators.obgyn.ovarian_cancer_risk.about.symptoms.early_warning.signs', { returnObjects: true });
+                        return Array.isArray(signs) ? signs.map((sign: any, index: number) => (
+                          <li key={index}>• {sign}</li>
+                        )) : null;
+                      })()}
                     </ul>
                   </div>
                   
                   <div>
-                    <h4 className="font-medium text-yellow-800 mb-2">Advanced Disease Signs</h4>
+                    <h4 className="font-medium text-yellow-800 mb-2">{t('calculators.obgyn.ovarian_cancer_risk.about.symptoms.advanced_disease.title')}</h4>
                     <ul className="text-sm text-yellow-700 space-y-1">
-                      <li>• Ascites (abdominal fluid accumulation)</li>
-                      <li>• Bowel obstruction symptoms</li>
-                      <li>• Pleural effusion (shortness of breath)</li>
-                      <li>• Palpable adnexal masses</li>
-                      <li>• Significant weight loss</li>
+                      {(() => {
+                        const signs = t('calculators.obgyn.ovarian_cancer_risk.about.symptoms.advanced_disease.signs', { returnObjects: true });
+                        return Array.isArray(signs) ? signs.map((sign: any, index: number) => (
+                          <li key={index}>• {sign}</li>
+                        )) : null;
+                      })()}
                     </ul>
                   </div>
                 </div>
@@ -774,31 +785,31 @@ const OvarianCancerRiskCalculator: React.FC = () => {
               <div className="bg-orange-50 border border-orange-200 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-orange-800 mb-4 flex items-center gap-2">
                   <FlaskConical className="w-5 h-5" />
-                  Genetic Testing Considerations
+                  {t('calculators.obgyn.ovarian_cancer_risk.about.genetic_testing.title')}
                 </h3>
                 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-medium text-orange-800 mb-2">BRCA Testing Indications</h4>
+                    <h4 className="font-medium text-orange-800 mb-2">{t('calculators.obgyn.ovarian_cancer_risk.about.genetic_testing.brca_testing.title')}</h4>
                     <ul className="text-sm text-orange-700 space-y-1">
-                      <li>• Personal history: Breast cancer ≤45 years</li>
-                      <li>• Personal history: Triple-negative breast cancer ≤60 years</li>
-                      <li>• Personal history: Ovarian cancer at any age</li>
-                      <li>• Family history: ≥2 breast cancers (same side of family)</li>
-                      <li>• Family history: Breast and ovarian cancer</li>
-                      <li>• Family history: Male breast cancer</li>
-                      <li>• Ashkenazi Jewish ancestry with relevant history</li>
+                      {(() => {
+                        const indications = t('calculators.obgyn.ovarian_cancer_risk.about.genetic_testing.brca_testing.indications', { returnObjects: true });
+                        return Array.isArray(indications) ? indications.map((indication: any, index: number) => (
+                          <li key={index}>• {indication}</li>
+                        )) : null;
+                      })()}
                     </ul>
                   </div>
 
                   <div>
-                    <h4 className="font-medium text-orange-800 mb-2">Lynch Syndrome Testing</h4>
+                    <h4 className="font-medium text-orange-800 mb-2">{t('calculators.obgyn.ovarian_cancer_risk.about.genetic_testing.lynch_testing.title')}</h4>
                     <ul className="text-sm text-orange-700 space-y-1">
-                      <li>• Colorectal cancer &lt;50 years</li>
-                      <li>• Endometrial cancer &lt;50 years</li>
-                      <li>• Multiple Lynch-associated cancers</li>
-                      <li>• Family history meeting Amsterdam criteria</li>
-                      <li>• Tumor microsatellite instability (MSI-H)</li>
+                      {(() => {
+                        const indications = t('calculators.obgyn.ovarian_cancer_risk.about.genetic_testing.lynch_testing.indications', { returnObjects: true });
+                        return Array.isArray(indications) ? indications.map((indication: any, index: number) => (
+                          <li key={index}>• {indication}</li>
+                        )) : null;
+                      })()}
                     </ul>
                   </div>
                 </div>
@@ -807,16 +818,15 @@ const OvarianCancerRiskCalculator: React.FC = () => {
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
                   <FileText className="w-5 h-5" />
-                  Clinical Guidelines & Evidence
+                  {t('calculators.obgyn.ovarian_cancer_risk.about.guidelines.title')}
                 </h3>
                 <ul className="text-sm text-gray-700 space-y-2">
-                  <li><strong>NCCN Guidelines v2024.1:</strong> Ovarian cancer screening and risk reduction strategies</li>
-                  <li><strong>SGO Clinical Practice Statement:</strong> Genetic testing for hereditary breast and ovarian cancer</li>
-                  <li><strong>ACOG Practice Bulletin No. 182:</strong> Hereditary cancer syndromes and risk assessment</li>
-                  <li><strong>USPSTF 2018:</strong> Risk assessment, genetic counseling, and genetic testing for BRCA-related cancer</li>
-                  <li><strong>ESMO Guidelines:</strong> Hereditary breast and ovarian cancer syndrome management</li>
-                  <li><strong>NICE Guidelines CG164:</strong> Familial breast cancer classification and care</li>
-                  <li><strong>CDC Tier 1 Evidence:</strong> BRCA testing for women with family history</li>
+                  {(() => {
+                    const references = t('calculators.obgyn.ovarian_cancer_risk.about.guidelines.references', { returnObjects: true });
+                    return Array.isArray(references) ? references.map((reference: any, index: number) => (
+                      <li key={index}>{reference}</li>
+                    )) : null;
+                  })()}
                 </ul>
               </div>
             </CardContent>

@@ -4,12 +4,21 @@ import eurscoreII from './euroscore-ii';
 import hcmRiskSCD from './hcm-risk-scd';
 import hcmAFRisk from './hcm-af-risk';
 import { 
+  ovarianReserve,
+  ovarianReserveCalculator,
   gestationalAgeCalculator,
   eddCalculator,
   preeclampsiaRiskCalculator,
   pretermBirthRiskCalculator,
   gdmScreeningCalculator,
-  bishopScoreCalculator
+  bishopScoreCalculator,
+  vbacSuccessCalculator,
+  apgarScoreCalculator,
+  pphRiskCalculator,
+  cervicalCancerRiskCalculator,
+  ovarianCancerRiskCalculator,
+  endometrialCancerRiskCalculator,
+  menopauseAssessmentCalculator
 } from './ObGyn';
 
 export default {
@@ -17,27 +26,68 @@ export default {
   cardiology,
   eurscoreII,
   
-  // Individual OB/GYN calculators with direct access
+  // OB/GYN namespace - this is what makes t('calculators.obgyn.apgar_score.title') work
+  obgyn: {
+    apgar_score: apgarScoreCalculator,
+    bishop_score: bishopScoreCalculator,
+    cervical_cancer_risk: cervicalCancerRiskCalculator,
+    edd_calculator: eddCalculator,
+    endometrial_cancer_risk: endometrialCancerRiskCalculator,
+    gdm_screening: gdmScreeningCalculator,
+    gestational_age: gestationalAgeCalculator,
+    menopause_assessment: menopauseAssessmentCalculator,
+    ovarian_cancer_risk: ovarianCancerRiskCalculator,
+    ovarian_reserve: ovarianReserve,
+    ovarian_reserve_calculator: ovarianReserveCalculator,
+    pph_risk: pphRiskCalculator,
+    preeclampsia_risk: preeclampsiaRiskCalculator,
+    preterm_birth_risk: pretermBirthRiskCalculator,
+    vbac_success: vbacSuccessCalculator
+  },
+  
+  // Direct access ObGyn namespace for the useTranslation hook
+  ObGyn: {
+    ovarianReserve: ovarianReserve,
+    ovarianReserveCalculator: ovarianReserveCalculator,
+    gestationalAgeCalculator: gestationalAgeCalculator,
+    eddCalculator: eddCalculator,
+    preeclampsiaRiskCalculator: preeclampsiaRiskCalculator,
+    pretermBirthRiskCalculator: pretermBirthRiskCalculator,
+    gdmScreeningCalculator: gdmScreeningCalculator,
+    bishopScoreCalculator: bishopScoreCalculator,
+    vbacSuccessCalculator: vbacSuccessCalculator,
+    apgarScoreCalculator: apgarScoreCalculator,
+    pphRiskCalculator: pphRiskCalculator,
+    cervicalCancerRiskCalculator: cervicalCancerRiskCalculator,
+    ovarianCancerRiskCalculator: ovarianCancerRiskCalculator,
+    endometrialCancerRiskCalculator: endometrialCancerRiskCalculator,
+    menopauseAssessmentCalculator: menopauseAssessmentCalculator
+  },
+  
+  // Individual OB/GYN calculators with direct access (for backward compatibility)
   gestational_age: gestationalAgeCalculator,
   edd: eddCalculator,
   preeclampsia_risk: preeclampsiaRiskCalculator,
   preterm_birth_risk: pretermBirthRiskCalculator,
   gdm_screening: gdmScreeningCalculator,
   bishop_score: bishopScoreCalculator,
+  vbac_success: vbacSuccessCalculator,
+  apgar_score: apgarScoreCalculator,
+  pph_risk_calculator: pphRiskCalculator,
   
   // Top-level keys for Calculator landing page
   specialty: {
     cardiology: {
-      title: 'კარდიოლოგიური კალკულატორები',
-      description: 'პროფესიონალური გულ-სისხლძარღვთა რისკის შეფასება და კლინიკური გადაწყვეტილების მხარდაჭერის ხელსაწყოები',
-      status: 'მზად არის წარმოებისთვის', 
+      title: 'კარდიოლოგიის კალკულატორები',
+      description: 'პროფესიონალური გულ-სისხლძარღვთა რისკის შეფასება და კლინიკური გადაწყვეტილების მხარდაჭერის ინსტრუმენტები',
+      status: 'PRODUCTION READY', 
       message: '✅ 16 კალკულატორი • 100% ვალიდირებული • 6 კატეგორია'
     },
     obgyn: {
-      title: 'მეან-გინეკოლოგიური კალკულატორები',
-      description: 'ყოვლისმომცველი მეანობისა და გინეკოლოგიის შეფასების ხელსაწყოები',
-      status: 'მზად არის განხორციელებისთვის',
-      message: '⚠️ 14 კალკულატორი • განხორციელების ეტაპი • პროფესიონალური ხარისხი'
+      title: 'OB/GYN კალკულატორები',
+      description: 'კომპლექსური აკუშერობისა და გინეკოლოგიის შეფასების ინსტრუმენტები',
+      status: 'IMPLEMENTATION READY',
+      message: '⚠️ 14 კალკულატორი • იმპლემენტაციის ფაზა • პროფესიონალური კლასი'
     }
   },
   
@@ -49,23 +99,23 @@ export default {
   
   categories: {
     risk_assessment: 'რისკის შეფასება',
-    acute_care: 'მწვავე მდგომარეობა',
-    therapy_management: 'თერაპიის მართვა',
+    acute_care: 'მწვავე მოვლა',
+    therapy_management: 'თერაპიის მენეჯმენტი',
     heart_failure: 'გულის უკმარისობა',
     surgical_risk: 'ქირურგიული რისკი',
     cardiomyopathy: 'კარდიომიოპათია',
-    pregnancy_dating: 'ორსულობის თარიღი',
+    pregnancy_dating: 'ორსულობის ვადა',
     antenatal_risk: 'ანტენატალური რისკი',
-    labor_management: 'მშობიარობის მართვა',
+    labor_management: 'მშობიარობის მენეჯმენტი',
     assessment_tools: 'შეფასების ხელსაწყოები',
     gynecologic_oncology: 'გინეკოლოგიური ონკოლოგია',
-    reproductive_health: 'რეპროდუქციული ჯანმრთელობა'
+    reproductive_endocrinology: 'რეპროდუქციული ენდოკრინოლოგია'
   },
   
   // Calculator title/subtitle shortcuts for cards
   dapt: {
-    title: 'DAPT ქულების კალკულატორი',
-    subtitle: 'ორმაგი ანტითრომბოციტული თერაპიის ხანგრძლივობა • რისკ-სარგებლობის შეფასება'
+    title: 'DAPT Score კალკულატორი',
+    subtitle: 'ორმაგი ანტითრომბოციტული თერაპიის ხანგრძლივობა • სარგებლობა-რისკის შეფასება'
   },
   
   precise_dapt: {
@@ -85,17 +135,17 @@ export default {
   
   atrial_fibrillation: {
     title: 'წინაგულების ფიბრილაციის კალკულატორები',
-    subtitle: 'CHA₂DS₂-VASc • HAS-BLED • ყოვლისმომცველი AF შეფასება'
+    subtitle: 'CHA₂DS₂-VASc • HAS-BLED • ყოვლისმომცველი ფიბრილაციის შეფასება'
   },
   
   timi_risk: {
     title: 'TIMI რისკის კალკულატორი',
-    subtitle: 'მიოკარდის ინფარქტში თრომბოლიზის რისკის შეფასება'
+    subtitle: 'მიოკარდის ინფარქტში თრომბოლიზისის რისკის შეფასება'
   },
   
   grace_acs: {
     title: 'GRACE ACS კალკულატორი',
-    subtitle: 'მწვავე კორონარული მოვლენების გლობალური რეესტრის რისკის შეფასება'
+    subtitle: 'მწვავე კორონარული მოვლენების გლობალური რეგისტრი - რისკის შეფასება'
   },
   
   heart_failure_staging: {
@@ -105,12 +155,12 @@ export default {
   
   gwtg_hf: {
     title: 'GWTG-HF კალკულატორი',
-    subtitle: 'მიიღე სახელმძღვანელოებთან ერთად - გულის უკმარისობის რისკის ქულა'
+    subtitle: 'გიდლაინებთან შესაბამისობა - გულის უკმარისობის რისკის ქულა'
   },
   
   maggic: {
     title: 'MAGGIC კალკულატორი',
-    subtitle: 'ქრონიკული გულის უკმარისობის მეტა-ანალიზის გლობალური ჯგუფი'
+    subtitle: 'ქრონიკული გულის უკმარისობის გლობალური ჯგუფის მეტა-ანალიზი'
   },
   
   shfm: {
@@ -120,12 +170,12 @@ export default {
   
   sts: {
     title: 'STS კალკულატორი',
-    subtitle: 'ქირურგიული საზოგადოების რისკის შეფასება'
+    subtitle: 'თორაკალური ქირურგების საზოგადოება - რისკის შეფასება'
   },
   
   euroscore: {
     title: 'EuroSCORE II კალკულატორი',
-    subtitle: 'ევროპული კარდიაკური ოპერაციების რისკის შეფასების სისტემა'
+    subtitle: 'ევროპული გულის ოპერაციული რისკის შეფასების სისტემა'
   },
   
   hcm_risk_scd: hcmRiskSCD,
@@ -134,10 +184,38 @@ export default {
   hcm_af_risk: hcmAFRisk,
   
   categories_label: 'კატეგორიები',
-  calculator_categories: 'კალკულატორების კატეგორიები',
+  calculator_categories: 'კალკულატორის კატეგორიები',
   back_to: 'უკან',
   view_grid: 'ბადე',
   view_list: 'სია',
+  
+  // OB/GYN Calculator entries
+  pph_risk: {
+    title: 'PPH რისკის კალკულატორი',
+    subtitle: 'მშობიარობის შემდგომი სისხლდენის რისკის შეფასება'
+  },
+  
+  cervical_cancer_risk: {
+    title: 'საშვილოსნოს ყელის კიბოს რისკის კალკულატორი',
+    subtitle: 'HPV-ზე დაფუძნებული საშვილოსნოს ყელის კიბოს რისკის შეფასება'
+  },
+  
+  ovarian_cancer_risk: {
+    title: 'საკვერცხეების კიბოს რისკის კალკულატორი',
+    subtitle: 'მემკვიდრეობითი საკვერცხეების კიბოს რისკის შეფასება'
+  },
+  
+  endometrial_cancer_risk: {
+    title: 'ენდომეტრიუმის კიბოს რისკის კალკულატორი',
+    subtitle: 'ენდომეტრიუმის კიბოს სიცოცხლისგან რისკის შეფასება'
+  },
+  
+  ovarian_reserve: {
+    title: 'საკვერცხეების რეზერვის კალკულატორი',
+    subtitle: 'AMH-ზე დაფუძნებული ნაყოფიერების შეფასება'
+  },
+  
+  menopause_assessment: menopauseAssessmentCalculator,
 };
 
 export {

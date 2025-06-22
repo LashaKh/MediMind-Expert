@@ -2,6 +2,7 @@ export const chat = {
   title: 'ИИ Чат',
   placeholder: 'Введите ваше сообщение...',
   send: 'Отправить',
+  sendMessage: 'Отправить сообщение',
   typing: 'Набирает...',
   connecting: 'Подключение...',
   connected: 'Подключено',

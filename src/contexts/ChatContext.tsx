@@ -271,6 +271,7 @@ interface ChatContextType {
   // Vector Store management methods
   setVectorStoreInfo: (info: { vectorStoreId: string | null; documentCount: number }) => void;
   updateVectorStoreStats: (stats: { documentCount: number; totalSize: number }) => void;
+  clearCachedData: () => boolean;
 }
 
 // Create Context
@@ -315,10 +316,18 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
   // Use refs to track initialization state without causing re-renders
   const hasLoadedInitialData = useRef(false);
   const isInitializing = useRef(true);
+  const isInitializingVectorStore = useRef(false);
 
   // Vector Store initialization
   const initializeVectorStore = useCallback(async () => {
+    // Prevent multiple simultaneous calls
+    if (isInitializingVectorStore.current) {
+      console.log('Vector Store initialization already in progress, skipping...');
+      return;
+    }
+
     try {
+      isInitializingVectorStore.current = true;
       const { hasVectorStore, vectorStore } = await checkUserVectorStore();
       
       if (hasVectorStore && vectorStore) {
@@ -352,12 +361,26 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
       }
     } catch (error) {
       console.error('Error initializing Vector Store in ChatContext:', error);
-      // Don't fail completely, just set empty state
-      dispatch({ 
-        type: 'SET_VECTOR_STORE_INFO', 
-        payload: { vectorStoreId: null, documentCount: 0 }
-      });
-      dispatch({ type: 'SET_PERSONAL_DOCUMENT_COUNT', payload: 0 });
+      
+      // Handle rate limiting specifically
+      if (error instanceof Error && error.message.includes('Rate limit exceeded')) {
+        console.log('Rate limit encountered in ChatContext, will retry later...');
+        // Don't set error state for rate limiting, just use default values
+        dispatch({ 
+          type: 'SET_VECTOR_STORE_INFO', 
+          payload: { vectorStoreId: null, documentCount: 0 }
+        });
+        dispatch({ type: 'SET_PERSONAL_DOCUMENT_COUNT', payload: 0 });
+      } else {
+        // Don't fail completely, just set empty state
+        dispatch({ 
+          type: 'SET_VECTOR_STORE_INFO', 
+          payload: { vectorStoreId: null, documentCount: 0 }
+        });
+        dispatch({ type: 'SET_PERSONAL_DOCUMENT_COUNT', payload: 0 });
+      }
+    } finally {
+      isInitializingVectorStore.current = false;
     }
   }, []);
 
@@ -391,22 +414,29 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
       const stored = localStorage.getItem('medimind-conversations');
       if (stored) {
         const parsed = JSON.parse(stored);
-        // Convert date strings back to Date objects
-        const conversations = parsed.conversations.map((conv: any) => ({
-          ...conv,
-          createdAt: new Date(conv.createdAt),
-          updatedAt: new Date(conv.updatedAt),
-          messages: conv.messages.map((msg: any) => ({
-            ...msg,
-            timestamp: new Date(msg.timestamp)
-          })),
-          metadata: conv.metadata ? {
-            ...conv.metadata,
-            lastActivity: new Date(conv.metadata.lastActivity)
-          } : undefined
-        }));
         
-        dispatch({ type: 'SET_CONVERSATIONS', payload: conversations });
+        // Validate that parsed data has conversations property and it's an array
+        if (parsed && Array.isArray(parsed.conversations)) {
+          // Convert date strings back to Date objects
+          const conversations = parsed.conversations.map((conv: any) => ({
+            ...conv,
+            createdAt: new Date(conv.createdAt),
+            updatedAt: new Date(conv.updatedAt),
+            messages: conv.messages.map((msg: any) => ({
+              ...msg,
+              timestamp: new Date(msg.timestamp)
+            })),
+            metadata: conv.metadata ? {
+              ...conv.metadata,
+              lastActivity: new Date(conv.metadata.lastActivity)
+            } : undefined
+          }));
+          
+          dispatch({ type: 'SET_CONVERSATIONS', payload: conversations });
+        } else {
+          console.warn('Invalid conversation data structure in localStorage, clearing...');
+          localStorage.removeItem('medimind-conversations');
+        }
       }
       
       // Mark that we've loaded initial data
@@ -419,6 +449,8 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
       
     } catch (error) {
       console.error('Failed to load conversations from localStorage:', error);
+      // Clear corrupted data
+      localStorage.removeItem('medimind-conversations');
       dispatch({ type: 'SET_ERROR', payload: 'Failed to load conversation history' });
       hasLoadedInitialData.current = true;
       isInitializing.current = false;
@@ -582,27 +614,36 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
       const stored = localStorage.getItem('medimind-cases');
       if (stored) {
         const parsed = JSON.parse(stored);
-        // Convert date strings back to Date objects
-        const cases = parsed.cases.map((caseItem: any) => ({
-          ...caseItem,
-          createdAt: new Date(caseItem.createdAt),
-          updatedAt: new Date(caseItem.updatedAt)
-        }));
         
-        dispatch({ type: 'SET_CASE_HISTORY', payload: cases });
-        
-        // Restore active case if it exists
-        if (parsed.activeCase) {
-          const activeCase = {
-            ...parsed.activeCase,
-            createdAt: new Date(parsed.activeCase.createdAt),
-            updatedAt: new Date(parsed.activeCase.updatedAt)
-          };
-          dispatch({ type: 'SET_ACTIVE_CASE', payload: activeCase });
+        // Validate that parsed data has cases property and it's an array
+        if (parsed && Array.isArray(parsed.cases)) {
+          // Convert date strings back to Date objects
+          const cases = parsed.cases.map((caseItem: any) => ({
+            ...caseItem,
+            createdAt: new Date(caseItem.createdAt),
+            updatedAt: new Date(caseItem.updatedAt)
+          }));
+          
+          dispatch({ type: 'SET_CASE_HISTORY', payload: cases });
+          
+          // Restore active case if it exists
+          if (parsed.activeCase) {
+            const activeCase = {
+              ...parsed.activeCase,
+              createdAt: new Date(parsed.activeCase.createdAt),
+              updatedAt: new Date(parsed.activeCase.updatedAt)
+            };
+            dispatch({ type: 'SET_ACTIVE_CASE', payload: activeCase });
+          }
+        } else {
+          console.warn('Invalid case data structure in localStorage, clearing...');
+          localStorage.removeItem('medimind-cases');
         }
       }
     } catch (error) {
       console.error('Failed to load cases from localStorage:', error);
+      // Clear corrupted data
+      localStorage.removeItem('medimind-cases');
     }
   }, []);
 
@@ -617,6 +658,40 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
       saveCasesToStorage();
     }
   }, [state.caseContext.caseHistory, state.caseContext.activeCase, saveCasesToStorage]);
+
+  // Add function to clear cached data
+  const clearCachedData = useCallback(() => {
+    try {
+      // Clear conversation localStorage
+      localStorage.removeItem('medimind_conversation');
+      localStorage.removeItem('medimind_conversation_metadata');
+      
+      // Clear any other PPH calculator related cache
+      const keysToRemove = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && (
+          key.includes('pph') || 
+          key.includes('calculator') || 
+          key.includes('obgyn') ||
+          key.includes('medimind_')
+        )) {
+          keysToRemove.push(key);
+        }
+      }
+      
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+      
+      // Reset chat state
+      dispatch({ type: 'CLEAR_MESSAGES' });
+      
+      console.log('Cached data cleared successfully');
+      return true;
+    } catch (error) {
+      console.error('Error clearing cached data:', error);
+      return false;
+    }
+  }, []);
 
   const value: ChatContextType = {
     state,
@@ -647,7 +722,8 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
     setPersonalDocumentCount: (count: number) => dispatch({ type: 'SET_PERSONAL_DOCUMENT_COUNT', payload: count }),
     // Vector store management methods
     setVectorStoreInfo: (info: { vectorStoreId: string | null; documentCount: number }) => dispatch({ type: 'SET_VECTOR_STORE_INFO', payload: info }),
-    updateVectorStoreStats: (stats: { documentCount: number; totalSize: number }) => dispatch({ type: 'UPDATE_VECTOR_STORE_STATS', payload: stats })
+    updateVectorStoreStats: (stats: { documentCount: number; totalSize: number }) => dispatch({ type: 'UPDATE_VECTOR_STORE_STATS', payload: stats }),
+    clearCachedData,
   };
 
   return (

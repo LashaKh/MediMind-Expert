@@ -2,6 +2,7 @@ export const chat = {
   title: 'AI ჩატი',
   placeholder: 'შეიყვანეთ თქვენი შეტყობინება...',
   send: 'გაგზავნა',
+  sendMessage: 'შეტყობინების გაგზავნა',
   typing: 'იწერს...',
   connecting: 'დაკავშირება...',
   connected: 'დაკავშირებულია',

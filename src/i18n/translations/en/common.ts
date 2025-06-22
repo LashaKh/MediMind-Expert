@@ -1,4 +1,6 @@
 export const common = {
+  account: 'Account',
+  medicalAssistant: 'Medical Assistant',
   save: 'Save',
   cancel: 'Cancel',
   delete: 'Delete',
@@ -288,7 +290,8 @@ export const common = {
   // UI Components
   calculator: 'Calculator',
   results: 'Results',
-  clinical_purpose: 'Clinical Purpose'
+  clinical_purpose: 'Clinical Purpose',
+  about_calculator: 'About Calculator'
 };
 
 export default common; 

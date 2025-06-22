@@ -330,7 +330,7 @@ export const PersonalKnowledgeBasePage: React.FC = () => {
             <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Total Documents</p>
+                  <p className="text-sm text-gray-600">{t('documents.stats.totalDocuments')}</p>
                   <p className="text-2xl font-bold text-gray-900">{documentStats.total}</p>
                 </div>
                 <File className={`w-8 h-8 ${theme.primary}`} />
@@ -339,7 +339,7 @@ export const PersonalKnowledgeBasePage: React.FC = () => {
             <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Completed</p>
+                  <p className="text-sm text-gray-600">{t('documents.stats.completed')}</p>
                   <p className="text-2xl font-bold text-green-600">{documentStats.completed}</p>
                 </div>
                 <CheckCircle className="w-8 h-8 text-green-600" />
@@ -348,7 +348,7 @@ export const PersonalKnowledgeBasePage: React.FC = () => {
             <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Processing</p>
+                  <p className="text-sm text-gray-600">{t('documents.stats.processing')}</p>
                   <p className="text-2xl font-bold text-yellow-600">{documentStats.pending}</p>
                 </div>
                 <Loader className="w-8 h-8 text-yellow-600" />
@@ -357,7 +357,7 @@ export const PersonalKnowledgeBasePage: React.FC = () => {
             <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Storage Used</p>
+                  <p className="text-sm text-gray-600">{t('documents.stats.storageUsed')}</p>
                   <p className="text-2xl font-bold text-gray-900">{formatFileSize(documentStats.totalSize)}</p>
                 </div>
                 <TrendingUp className={`w-8 h-8 ${theme.primary}`} />
@@ -373,7 +373,7 @@ export const PersonalKnowledgeBasePage: React.FC = () => {
                 className={`${theme.primaryBg} text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2 font-medium transform hover:scale-105`}
               >
                 <Upload className="w-5 h-5" />
-                <span>Upload Document</span>
+                <span>{t('documents.actions.uploadDocument')}</span>
               </button>
               <button
                 onClick={handleRefresh}
@@ -381,7 +381,7 @@ export const PersonalKnowledgeBasePage: React.FC = () => {
                 className="bg-white text-gray-700 border border-gray-300 px-4 py-3 rounded-xl hover:bg-gray-50 transition-all duration-200 flex items-center space-x-2"
               >
                 <RefreshCw className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
-                <span>Refresh</span>
+                <span>{t('documents.actions.refresh')}</span>
               </button>
             </div>
 
@@ -391,7 +391,7 @@ export const PersonalKnowledgeBasePage: React.FC = () => {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search documents..."
+                  placeholder={t('documents.actions.searchPlaceholder')}
                   value={filters.searchTerm}
                   onChange={(e) => setFilters(prev => ({ ...prev, searchTerm: e.target.value }))}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"

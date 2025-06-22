@@ -77,6 +77,13 @@ export function validateCSRFToken(event: HandlerEvent, expectedToken?: string): 
     return true;
   }
 
+  // For now, disable CSRF validation for API endpoints that use Bearer token authentication
+  // since we're using JWT tokens from Supabase for authentication
+  const authHeader = event.headers.authorization || event.headers.Authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return true;
+  }
+
   const tokenFromHeader = event.headers[CSRF_TOKEN_HEADER] || event.headers[CSRF_TOKEN_HEADER.toLowerCase()];
   const tokenFromCookie = event.headers.cookie?.split(';')
     .find(c => c.trim().startsWith(`${CSRF_TOKEN_COOKIE}=`))

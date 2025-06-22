@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Shield, AlertTriangle, Info, CheckCircle, Star, User, FileText, Activity, Clock, Target, Calculator, TrendingUp, Stethoscope, Award, ArrowRight, Users, Calendar, AlertCircle, Microscope, Dna, Heart } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Tooltip } from '../ui/tooltip';
@@ -15,6 +15,8 @@ import {
 import { CalculatorResultShare } from './CalculatorResultShare';
 import { calculateOBGYN, validateOBGYNInput } from '../../services/obgynCalculatorService';
 import { CervicalCancerRiskInput, CervicalCancerRiskResult } from '../../types/obgyn-calculators';
+import { useTranslation } from '../../hooks/useTranslation';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface FormData {
   age: string;
@@ -33,6 +35,9 @@ interface Errors {
 }
 
 const CervicalCancerRiskCalculator: React.FC = () => {
+  const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
+  
   const [formData, setFormData] = useState<FormData>({
     age: '',
     hpvStatus: 'unknown',
@@ -50,6 +55,13 @@ const CervicalCancerRiskCalculator: React.FC = () => {
   const [showResult, setShowResult] = useState(false);
   const [activeTab, setActiveTab] = useState<'calculator' | 'about'>('calculator');
 
+  // Clear state on language change to ensure fresh translations
+  useEffect(() => {
+    setResult(null);
+    setStep(1);
+    setShowResult(false);
+  }, [currentLanguage]);
+
   const handleInputChange = (field: keyof FormData, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     // Clear errors when user starts typing
@@ -63,9 +75,9 @@ const CervicalCancerRiskCalculator: React.FC = () => {
 
     if (currentStep === 1) {
     if (!formData.age) {
-        newErrors.age = 'Age is required';
+        newErrors.age = t('calculators.obgyn.cervical_cancer_risk.demographics.patient_age.required_error');
       } else if (Number(formData.age) < 18 || Number(formData.age) > 100) {
-        newErrors.age = 'Please enter a valid age (18-100 years)';
+        newErrors.age = t('calculators.obgyn.cervical_cancer_risk.demographics.patient_age.validation_error');
       }
     }
 
@@ -114,7 +126,7 @@ const CervicalCancerRiskCalculator: React.FC = () => {
         return;
       }
 
-      const calculationResult = calculateOBGYN('cervical-cancer-risk', input) as CervicalCancerRiskResult;
+      const calculationResult = calculateOBGYN('cervical-cancer-risk', input, t) as CervicalCancerRiskResult;
       setResult(calculationResult);
       setShowResult(true);
       
@@ -127,7 +139,7 @@ const CervicalCancerRiskCalculator: React.FC = () => {
       }, 100);
     } catch (error) {
       console.error('Calculation error:', error);
-      setErrors({ age: 'An error occurred during calculation. Please try again.' });
+      setErrors({ age: t('calculators.obgyn.cervical_cancer_risk.errors.calculation_error') });
     } finally {
       setIsLoading(false);
     }
@@ -194,8 +206,9 @@ const CervicalCancerRiskCalculator: React.FC = () => {
 
   return (
     <CalculatorContainer
-      title="Cervical Cancer Risk Assessment"
-      subtitle="ASCCP guideline-based cervical cancer risk assessment and management recommendations"
+      key={currentLanguage}  // Force re-render on language change
+      title={t('calculators.obgyn.cervical_cancer_risk.title')}
+      subtitle={t('calculators.obgyn.cervical_cancer_risk.subtitle')}
       icon={Shield}
       gradient="obgyn"
     >
@@ -203,11 +216,11 @@ const CervicalCancerRiskCalculator: React.FC = () => {
         <TabsList className="grid w-full grid-cols-2 bg-purple-50 border border-purple-200">
           <TabsTrigger value="calculator" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
             <Calculator className="w-4 h-4 mr-2" />
-            Calculator
+            {t('calculators.obgyn.cervical_cancer_risk.calculator_tab')}
           </TabsTrigger>
           <TabsTrigger value="about" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
             <Info className="w-4 h-4 mr-2" />
-            About
+            {t('calculators.obgyn.cervical_cancer_risk.about_tab')}
           </TabsTrigger>
         </TabsList>
 
@@ -215,9 +228,9 @@ const CervicalCancerRiskCalculator: React.FC = () => {
           {/* Progress Indicator */}
           <div className="w-full bg-purple-50 border border-purple-200 rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-purple-800">Assessment Progress</h3>
+              <h3 className="text-lg font-semibold text-purple-800">{t('calculators.obgyn.cervical_cancer_risk.progress.title')}</h3>
               <span className="text-sm text-purple-600 bg-purple-100 px-3 py-1 rounded-full">
-                Step {step} of 3
+                {t('calculators.obgyn.cervical_cancer_risk.progress.step_indicator', { step })}
               </span>
             </div>
             
@@ -245,16 +258,16 @@ const CervicalCancerRiskCalculator: React.FC = () => {
             
             <div className="grid grid-cols-3 gap-4 mt-4 text-center">
               <div>
-                <p className="text-sm font-medium text-purple-800">Demographics</p>
-                <p className="text-xs text-purple-600">Basic information</p>
+                <p className="text-sm font-medium text-purple-800">{t('calculators.obgyn.cervical_cancer_risk.progress.steps.demographics.title')}</p>
+                <p className="text-xs text-purple-600">{t('calculators.obgyn.cervical_cancer_risk.progress.steps.demographics.description')}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-purple-800">Test Results</p>
-                <p className="text-xs text-purple-600">HPV & cytology</p>
+                <p className="text-sm font-medium text-purple-800">{t('calculators.obgyn.cervical_cancer_risk.progress.steps.test_results.title')}</p>
+                <p className="text-xs text-purple-600">{t('calculators.obgyn.cervical_cancer_risk.progress.steps.test_results.description')}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-purple-800">Risk Factors</p>
-                <p className="text-xs text-purple-600">Clinical history</p>
+                <p className="text-sm font-medium text-purple-800">{t('calculators.obgyn.cervical_cancer_risk.progress.steps.risk_factors.title')}</p>
+                <p className="text-xs text-purple-600">{t('calculators.obgyn.cervical_cancer_risk.progress.steps.risk_factors.description')}</p>
               </div>
             </div>
           </div>
@@ -265,39 +278,39 @@ const CervicalCancerRiskCalculator: React.FC = () => {
               <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-200">
                 <CardTitle className="flex items-center gap-3 text-purple-800">
                   <User className="w-6 h-6 text-purple-600" />
-                  Patient Demographics
+                  {t('calculators.obgyn.cervical_cancer_risk.demographics.title')}
                   <span className="text-sm bg-purple-100 text-purple-700 px-2 py-1 rounded-full ml-auto">
-                    Step 1 of 3
+                    {t('calculators.obgyn.cervical_cancer_risk.demographics.step_label')}
                   </span>
               </CardTitle>
             </CardHeader>
               <CardContent className="p-6 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <CalculatorInput
-                    label="Patient Age"
+                    label={t('calculators.obgyn.cervical_cancer_risk.demographics.patient_age.label')}
                     value={formData.age}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('age', e.target.value)}
                     type="number"
-                    placeholder="32"
+                    placeholder={t('calculators.obgyn.cervical_cancer_risk.demographics.patient_age.placeholder')}
                     min={18}
                     max={100}
-                    unit="years"
+                    unit={t('calculators.obgyn.cervical_cancer_risk.demographics.patient_age.unit')}
                     error={errors.age}
-                    helpText="Current age in years"
+                    helpText={t('calculators.obgyn.cervical_cancer_risk.demographics.patient_age.help')}
                     icon={User}
                     required
                   />
 
                   <CalculatorSelect
-                    label="Screening History"
+                    label={t('calculators.obgyn.cervical_cancer_risk.demographics.screening_history.label')}
                     value={formData.screeningHistory}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleInputChange('screeningHistory', e.target.value)}
                     options={[
-                      { value: 'adequate', label: 'Adequate screening history' },
-                      { value: 'inadequate', label: 'Inadequate screening history' },
-                      { value: 'never-screened', label: 'Never been screened' }
+                      { value: 'adequate', label: t('calculators.obgyn.cervical_cancer_risk.demographics.screening_history.options.adequate') },
+                      { value: 'inadequate', label: t('calculators.obgyn.cervical_cancer_risk.demographics.screening_history.options.inadequate') },
+                      { value: 'never-screened', label: t('calculators.obgyn.cervical_cancer_risk.demographics.screening_history.options.never_screened') }
                     ]}
-                    helpText="Previous cervical cancer screening participation"
+                    helpText={t('calculators.obgyn.cervical_cancer_risk.demographics.screening_history.help')}
                     icon={Calendar}
                   />
                 </div>
@@ -308,7 +321,7 @@ const CervicalCancerRiskCalculator: React.FC = () => {
                     disabled={!formData.age}
                     className="bg-purple-600 hover:bg-purple-700 text-white px-8"
                   >
-                    Next: Test Results
+                    {t('calculators.obgyn.cervical_cancer_risk.demographics.next_button')}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </CalculatorButton>
                 </div>
@@ -322,9 +335,9 @@ const CervicalCancerRiskCalculator: React.FC = () => {
               <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-200">
                 <CardTitle className="flex items-center gap-3 text-purple-800">
                   <Microscope className="w-6 h-6 text-purple-600" />
-                  HPV & Cytology Test Results
+                  {t('calculators.obgyn.cervical_cancer_risk.test_results.title')}
                   <span className="text-sm bg-purple-100 text-purple-700 px-2 py-1 rounded-full ml-auto">
-                    Step 2 of 3
+                    {t('calculators.obgyn.cervical_cancer_risk.test_results.step_label')}
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -333,46 +346,46 @@ const CervicalCancerRiskCalculator: React.FC = () => {
                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                   <h4 className="font-semibold text-blue-800 mb-4 flex items-center gap-2">
                     <Dna className="w-5 h-5" />
-                    HPV Test Result
+                    {t('calculators.obgyn.cervical_cancer_risk.test_results.hpv_test.title')}
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-3">
                       <CalculatorCheckbox
-                        label="HPV Positive (High-risk types)"
+                        label={t('calculators.obgyn.cervical_cancer_risk.test_results.hpv_test.positive_high_risk.label')}
                           checked={formData.hpvStatus === 'positive-high-risk'}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
                           handleInputChange('hpvStatus', e.target.checked ? 'positive-high-risk' : 'unknown')
                         }
-                        description="Types 16, 18, 31, 33, 35, 39, 45, 51, 52, 56, 58, 59, 68"
+                        description={t('calculators.obgyn.cervical_cancer_risk.test_results.hpv_test.positive_high_risk.description')}
                       />
                       
                       <CalculatorCheckbox
-                        label="HPV Positive (Low-risk types)"
+                        label={t('calculators.obgyn.cervical_cancer_risk.test_results.hpv_test.positive_low_risk.label')}
                           checked={formData.hpvStatus === 'positive-low-risk'}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
                           handleInputChange('hpvStatus', e.target.checked ? 'positive-low-risk' : 'unknown')
                         }
-                        description="Types 6, 11, and other low-risk types"
+                        description={t('calculators.obgyn.cervical_cancer_risk.test_results.hpv_test.positive_low_risk.description')}
                       />
                   </div>
 
                   <div className="space-y-3">
                       <CalculatorCheckbox
-                        label="HPV Negative"
+                        label={t('calculators.obgyn.cervical_cancer_risk.test_results.hpv_test.negative.label')}
                         checked={formData.hpvStatus === 'negative'}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
                           handleInputChange('hpvStatus', e.target.checked ? 'negative' : 'unknown')
                         }
-                        description="No HPV DNA detected"
+                        description={t('calculators.obgyn.cervical_cancer_risk.test_results.hpv_test.negative.description')}
                         />
                       
                       <CalculatorCheckbox
-                        label="HPV Unknown/Not tested"
+                        label={t('calculators.obgyn.cervical_cancer_risk.test_results.hpv_test.unknown.label')}
                         checked={formData.hpvStatus === 'unknown'}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
                           handleInputChange('hpvStatus', e.target.checked ? 'unknown' : 'negative')
                         }
-                        description="HPV testing not performed or results unavailable"
+                        description={t('calculators.obgyn.cervical_cancer_risk.test_results.hpv_test.unknown.description')}
                       />
                     </div>
                   </div>
@@ -382,22 +395,22 @@ const CervicalCancerRiskCalculator: React.FC = () => {
                 <div className="bg-pink-50 p-4 rounded-lg border border-pink-200">
                   <h4 className="font-semibold text-pink-800 mb-4 flex items-center gap-2">
                     <Target className="w-5 h-5" />
-                    Cytology (Pap Test) Result
+                    {t('calculators.obgyn.cervical_cancer_risk.test_results.cytology_test.title')}
                   </h4>
                   
                   <CalculatorSelect
-                    label="Cytology Result"
+                    label={t('calculators.obgyn.cervical_cancer_risk.test_results.cytology_test.label')}
                     value={formData.cytologyResult}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleInputChange('cytologyResult', e.target.value)}
                     options={[
-                      { value: 'normal', label: 'Normal/NILM (Negative for Intraepithelial Lesion)' },
-                      { value: 'ascus', label: 'ASCUS (Atypical Squamous Cells of Undetermined Significance)' },
-                      { value: 'lsil', label: 'LSIL (Low-grade Squamous Intraepithelial Lesion)' },
-                      { value: 'hsil', label: 'HSIL (High-grade Squamous Intraepithelial Lesion)' },
-                      { value: 'asc-h', label: 'ASC-H (Atypical Squamous Cells, Cannot Exclude HSIL)' },
-                      { value: 'agc', label: 'AGC (Atypical Glandular Cells)' }
+                      { value: 'normal', label: t('calculators.obgyn.cervical_cancer_risk.test_results.cytology_test.options.normal') },
+                      { value: 'ascus', label: t('calculators.obgyn.cervical_cancer_risk.test_results.cytology_test.options.ascus') },
+                      { value: 'lsil', label: t('calculators.obgyn.cervical_cancer_risk.test_results.cytology_test.options.lsil') },
+                      { value: 'hsil', label: t('calculators.obgyn.cervical_cancer_risk.test_results.cytology_test.options.hsil') },
+                      { value: 'asc-h', label: t('calculators.obgyn.cervical_cancer_risk.test_results.cytology_test.options.asc_h') },
+                      { value: 'agc', label: t('calculators.obgyn.cervical_cancer_risk.test_results.cytology_test.options.agc') }
                     ]}
-                    helpText="Most recent cervical cytology (Pap test) result"
+                    helpText={t('calculators.obgyn.cervical_cancer_risk.test_results.cytology_test.help')}
                     icon={Microscope}
                   />
               </div>
@@ -408,13 +421,13 @@ const CervicalCancerRiskCalculator: React.FC = () => {
                     variant="outline"
                     className="px-8"
                   >
-                    Previous
+                    {t('calculators.obgyn.cervical_cancer_risk.test_results.previous_button')}
                   </CalculatorButton>
                   <CalculatorButton
                     onClick={handleNext}
                     className="bg-purple-600 hover:bg-purple-700 text-white px-8 flex-1"
                   >
-                    Next: Risk Factors
+                    {t('calculators.obgyn.cervical_cancer_risk.test_results.next_button')}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </CalculatorButton>
                 </div>
@@ -428,9 +441,9 @@ const CervicalCancerRiskCalculator: React.FC = () => {
               <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-200">
                 <CardTitle className="flex items-center gap-3 text-purple-800">
                   <Activity className="w-6 h-6 text-purple-600" />
-                  Clinical Risk Factors
+                  {t('calculators.obgyn.cervical_cancer_risk.risk_factors.title')}
                   <span className="text-sm bg-purple-100 text-purple-700 px-2 py-1 rounded-full ml-auto">
-                    Step 3 of 3
+                    {t('calculators.obgyn.cervical_cancer_risk.risk_factors.step_label')}
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -439,21 +452,21 @@ const CervicalCancerRiskCalculator: React.FC = () => {
                 <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
                   <h4 className="font-semibold text-orange-800 mb-4 flex items-center gap-2">
                     <Clock className="w-5 h-5" />
-                    Medical History
+                    {t('calculators.obgyn.cervical_cancer_risk.risk_factors.medical_history.title')}
                   </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <CalculatorCheckbox
-                      label="Previous Abnormal Screening"
+                      label={t('calculators.obgyn.cervical_cancer_risk.risk_factors.medical_history.previous_abnormal_screening.label')}
                       checked={formData.previousAbnormalScreening}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('previousAbnormalScreening', e.target.checked)}
-                      description="History of abnormal Pap tests or HPV results"
+                      description={t('calculators.obgyn.cervical_cancer_risk.risk_factors.medical_history.previous_abnormal_screening.description')}
                     />
                     
                     <CalculatorCheckbox
-                      label="Immunocompromised Status"
+                      label={t('calculators.obgyn.cervical_cancer_risk.risk_factors.medical_history.immunocompromised.label')}
                       checked={formData.immunocompromised}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('immunocompromised', e.target.checked)}
-                      description="HIV, organ transplant, immunosuppressive therapy"
+                      description={t('calculators.obgyn.cervical_cancer_risk.risk_factors.medical_history.immunocompromised.description')}
                     />
                   </div>
                     </div>
@@ -462,14 +475,14 @@ const CervicalCancerRiskCalculator: React.FC = () => {
                 <div className="bg-red-50 p-4 rounded-lg border border-red-200">
                   <h4 className="font-semibold text-red-800 mb-4 flex items-center gap-2">
                     <Heart className="w-5 h-5" />
-                    Lifestyle Factors
+                    {t('calculators.obgyn.cervical_cancer_risk.risk_factors.lifestyle_factors.title')}
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <CalculatorCheckbox
-                      label="Current Smoker"
+                      label={t('calculators.obgyn.cervical_cancer_risk.risk_factors.lifestyle_factors.smoking_status.label')}
                       checked={formData.smokingStatus}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('smokingStatus', e.target.checked)}
-                      description="Active tobacco use (increases cervical cancer risk)"
+                      description={t('calculators.obgyn.cervical_cancer_risk.risk_factors.lifestyle_factors.smoking_status.description')}
                     />
                   </div>
                 </div>
@@ -480,7 +493,7 @@ const CervicalCancerRiskCalculator: React.FC = () => {
                     variant="outline"
                     className="px-8"
                   >
-                    Previous
+                    {t('calculators.obgyn.cervical_cancer_risk.risk_factors.previous_button')}
                   </CalculatorButton>
                   <CalculatorButton
                     onClick={handleCalculate}
@@ -490,12 +503,12 @@ const CervicalCancerRiskCalculator: React.FC = () => {
                     {isLoading ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Calculating Risk...
+                        {t('calculators.obgyn.cervical_cancer_risk.risk_factors.calculating')}
                       </>
                     ) : (
                       <>
                         <Calculator className="w-4 h-4 mr-2" />
-                        Calculate Risk Assessment
+                        {t('calculators.obgyn.cervical_cancer_risk.risk_factors.calculate_button')}
                       </>
                     )}
                   </CalculatorButton>
@@ -506,7 +519,7 @@ const CervicalCancerRiskCalculator: React.FC = () => {
                   variant="outline"
                   className="w-full mt-4"
                 >
-                  Reset All Fields
+                  {t('calculators.obgyn.cervical_cancer_risk.risk_factors.reset_button')}
                 </CalculatorButton>
               </CardContent>
             </Card>
@@ -516,8 +529,10 @@ const CervicalCancerRiskCalculator: React.FC = () => {
           {showResult && result && (
             <div id="cervical-results">
               <ResultsDisplay
-                title="Cervical Cancer Risk Assessment"
-                value={result.riskLevel.charAt(0).toUpperCase() + result.riskLevel.slice(1) + ' Risk'}
+                title={t('calculators.obgyn.cervical_cancer_risk.results.title')}
+                value={t('calculators.obgyn.cervical_cancer_risk.results.risk_level', { 
+                  level: t(`calculators.obgyn.cervical_cancer_risk.results.categories.${result.riskLevel}`) 
+                })}
                 category={result.riskLevel === 'minimal' || result.riskLevel === 'low' ? 'low' : result.riskLevel === 'intermediate' ? 'intermediate' : 'high'}
                 interpretation={result.interpretation}
                 icon={Shield}
@@ -528,9 +543,11 @@ const CervicalCancerRiskCalculator: React.FC = () => {
                     {getRiskIcon(result.riskLevel)}
                     <div>
                       <h3 className="text-xl font-bold">
-                        {result.riskLevel.charAt(0).toUpperCase() + result.riskLevel.slice(1)} Risk Level
+                        {t('calculators.obgyn.cervical_cancer_risk.results.risk_level', { 
+                          level: t(`calculators.obgyn.cervical_cancer_risk.results.categories.${result.riskLevel}`) 
+                        })}
                       </h3>
-                      <p className="text-sm font-medium">Follow-up: {result.followUpInterval}</p>
+                      <p className="text-sm font-medium">{t('calculators.obgyn.cervical_cancer_risk.results.management.follow_up_title')}: {result.followUpInterval}</p>
                     </div>
                   </div>
                   <p className="text-sm leading-relaxed">{result.interpretation}</p>
@@ -541,7 +558,7 @@ const CervicalCancerRiskCalculator: React.FC = () => {
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <div className="flex items-center gap-3 mb-3">
                       <Stethoscope className="w-5 h-5 text-blue-600" />
-                      <h4 className="font-semibold text-blue-800">Management Recommendation</h4>
+                      <h4 className="font-semibold text-blue-800">{t('calculators.obgyn.cervical_cancer_risk.results.management.title')}</h4>
                     </div>
                     <p className="text-sm text-blue-700">
                       {result.managementRecommendation}
@@ -551,7 +568,7 @@ const CervicalCancerRiskCalculator: React.FC = () => {
                   <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                     <div className="flex items-center gap-3 mb-3">
                       <Clock className="w-5 h-5 text-purple-600" />
-                      <h4 className="font-semibold text-purple-800">Follow-up Interval</h4>
+                      <h4 className="font-semibold text-purple-800">{t('calculators.obgyn.cervical_cancer_risk.results.management.follow_up_title')}</h4>
                     </div>
                     <p className="text-sm text-purple-700">
                       {result.followUpInterval}
@@ -563,7 +580,7 @@ const CervicalCancerRiskCalculator: React.FC = () => {
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
                   <h4 className="font-semibold text-green-800 mb-3 flex items-center gap-2">
                     <Award className="w-5 h-5" />
-                    ASCCP Management Recommendations
+                    {t('calculators.obgyn.cervical_cancer_risk.results.asccp_recommendations.title')}
                   </h4>
                   <div className="space-y-2">
                     <div className="text-sm text-green-700 flex items-start gap-3">
@@ -573,7 +590,7 @@ const CervicalCancerRiskCalculator: React.FC = () => {
                     {result.colposcopyRecommended && (
                       <div className="text-sm text-green-700 flex items-start gap-3">
                         <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        <span>Colposcopy examination recommended</span>
+                        <span>{t('calculators.obgyn.cervical_cancer_risk.results.asccp_recommendations.colposcopy_recommended')}</span>
                       </div>
                     )}
                 </div>
@@ -583,7 +600,7 @@ const CervicalCancerRiskCalculator: React.FC = () => {
                 <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
                   <h4 className="font-semibold text-orange-800 mb-3 flex items-center gap-2">
                     <AlertTriangle className="w-5 h-5" />
-                    Clinical Recommendations
+                    {t('calculators.obgyn.cervical_cancer_risk.results.clinical_recommendations.title')}
                   </h4>
                   <div className="space-y-2">
                     {result.recommendations.map((rec: string, index: number) => (
@@ -597,13 +614,13 @@ const CervicalCancerRiskCalculator: React.FC = () => {
 
                 {/* Share Results */}
                 <CalculatorResultShare
-                  calculatorName="Cervical Cancer Risk Assessment"
+                  calculatorName={t('calculators.obgyn.cervical_cancer_risk.results.share.calculator_name')}
                   calculatorId="cervical-cancer-risk"
                   results={{
-                    riskLevel: result.riskLevel,
-                    followUpInterval: result.followUpInterval,
-                    managementRecommendation: result.managementRecommendation,
-                    colposcopyRecommended: result.colposcopyRecommended ? 'Yes' : 'No'
+                    [t('calculators.obgyn.cervical_cancer_risk.results.share.results_summary.risk_level')]: t(`calculators.obgyn.cervical_cancer_risk.results.categories.${result.riskLevel}`),
+                    [t('calculators.obgyn.cervical_cancer_risk.results.share.results_summary.follow_up_interval')]: result.followUpInterval,
+                    [t('calculators.obgyn.cervical_cancer_risk.results.share.results_summary.management_recommendation')]: result.managementRecommendation,
+                    [t('calculators.obgyn.cervical_cancer_risk.results.share.results_summary.colposcopy_recommended')]: result.colposcopyRecommended ? t('calculators.obgyn.cervical_cancer_risk.results.share.results_summary.yes') : t('calculators.obgyn.cervical_cancer_risk.results.share.results_summary.no')
                   }}
                   interpretation={result.interpretation}
                   recommendations={result.recommendations}
@@ -619,22 +636,20 @@ const CervicalCancerRiskCalculator: React.FC = () => {
             <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-200">
               <CardTitle className="flex items-center gap-3 text-purple-800">
                 <Info className="w-6 h-6 text-purple-600" />
-                About Cervical Cancer Risk Assessment
+                {t('calculators.obgyn.cervical_cancer_risk.about.title')}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
               <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-purple-800 mb-3 flex items-center gap-2">
                   <Target className="w-5 h-5" />
-                  Clinical Purpose
+                  {t('calculators.obgyn.cervical_cancer_risk.about.clinical_purpose.title')}
                 </h3>
                 <p className="text-purple-700 mb-3">
-                  This calculator provides comprehensive cervical cancer risk assessment based on ASCCP 
-                  (American Society for Colposcopy and Cervical Pathology) guidelines and established clinical risk factors.
+                  {t('calculators.obgyn.cervical_cancer_risk.about.clinical_purpose.description_1')}
                 </p>
                 <p className="text-purple-700">
-                  Cervical cancer is highly preventable through effective screening and vaccination. Risk-based 
-                  management optimizes outcomes while reducing overtreatment and patient anxiety.
+                  {t('calculators.obgyn.cervical_cancer_risk.about.clinical_purpose.description_2')}
                 </p>
               </div>
 
@@ -642,34 +657,24 @@ const CervicalCancerRiskCalculator: React.FC = () => {
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                   <h3 className="font-semibold text-red-800 mb-3 flex items-center gap-2">
                     <AlertTriangle className="w-5 h-5" />
-                    High-Risk Factors
+                    {t('calculators.obgyn.cervical_cancer_risk.about.risk_factors.high_risk.title')}
                   </h3>
                   <ul className="text-sm text-red-700 space-y-1">
-                    <li>• High-risk HPV infection (16, 18, others)</li>
-                    <li>• High-grade cytology (HSIL, ASC-H)</li>
-                    <li>• Immunocompromised status</li>
-                    <li>• Prior abnormal screening</li>
-                    <li>• Smoking (current)</li>
-                    <li>• Multiple sexual partners</li>
-                    <li>• Early age at first intercourse</li>
-                    <li>• Long-term oral contraceptive use</li>
+                    {(t('calculators.obgyn.cervical_cancer_risk.about.risk_factors.high_risk.items', { returnObjects: true }) as string[]).map((item: string, index: number) => (
+                      <li key={index}>• {item}</li>
+                    ))}
                   </ul>
                 </div>
 
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                   <h3 className="font-semibold text-green-800 mb-3 flex items-center gap-2">
                     <Shield className="w-5 h-5" />
-                    Protective Factors
+                    {t('calculators.obgyn.cervical_cancer_risk.about.risk_factors.protective.title')}
                   </h3>
                   <ul className="text-sm text-green-700 space-y-1">
-                    <li>• HPV vaccination</li>
-                    <li>• Regular screening participation</li>
-                    <li>• HPV-negative status</li>
-                    <li>• Normal cytology</li>
-                    <li>• Monogamous relationships</li>
-                    <li>• No smoking history</li>
-                    <li>• Normal immune function</li>
-                    <li>• Adequate screening history</li>
+                    {(t('calculators.obgyn.cervical_cancer_risk.about.risk_factors.protective.items', { returnObjects: true }) as string[]).map((item: string, index: number) => (
+                      <li key={index}>• {item}</li>
+                    ))}
                   </ul>
                 </div>
               </div>
@@ -677,27 +682,25 @@ const CervicalCancerRiskCalculator: React.FC = () => {
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-blue-800 mb-4 flex items-center gap-2">
                   <Shield className="w-5 h-5" />
-                  ASCCP Risk-Based Management
+                  {t('calculators.obgyn.cervical_cancer_risk.about.asccp_management.title')}
                 </h3>
                 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-medium text-blue-800 mb-2">Immediate Risk Categories</h4>
+                    <h4 className="font-medium text-blue-800 mb-2">{t('calculators.obgyn.cervical_cancer_risk.about.asccp_management.immediate_risk.title')}</h4>
                     <ul className="text-sm text-blue-700 space-y-1">
-                      <li>• <strong>CIN 3+ risk ≥60%:</strong> Immediate treatment recommended</li>
-                      <li>• <strong>CIN 3+ risk 25-59%:</strong> Colposcopy recommended</li>
-                      <li>• <strong>CIN 3+ risk &lt;25%:</strong> Surveillance or routine screening</li>
+                      {(t('calculators.obgyn.cervical_cancer_risk.about.asccp_management.immediate_risk.items', { returnObjects: true }) as string[]).map((item: string, index: number) => (
+                        <li key={index}>• {item}</li>
+                      ))}
                     </ul>
                   </div>
                   
                   <div>
-                    <h4 className="font-medium text-blue-800 mb-2">Management Strategies</h4>
+                    <h4 className="font-medium text-blue-800 mb-2">{t('calculators.obgyn.cervical_cancer_risk.about.asccp_management.management_strategies.title')}</h4>
                     <ul className="text-sm text-blue-700 space-y-1">
-                      <li>• Risk-based colposcopy referral thresholds</li>
-                      <li>• HPV testing algorithms</li>
-                      <li>• Enhanced surveillance protocols</li>
-                      <li>• HPV vaccination recommendations</li>
-                      <li>• Patient counseling guidelines</li>
+                      {(t('calculators.obgyn.cervical_cancer_risk.about.asccp_management.management_strategies.items', { returnObjects: true }) as string[]).map((item: string, index: number) => (
+                        <li key={index}>• {item}</li>
+                      ))}
                     </ul>
                   </div>
                 </div>
@@ -706,27 +709,25 @@ const CervicalCancerRiskCalculator: React.FC = () => {
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-yellow-800 mb-4 flex items-center gap-2">
                   <Microscope className="w-5 h-5" />
-                  Screening Guidelines Summary
+                  {t('calculators.obgyn.cervical_cancer_risk.about.screening_guidelines.title')}
                 </h3>
                 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-medium text-yellow-800 mb-2">Age-Based Screening</h4>
+                    <h4 className="font-medium text-yellow-800 mb-2">{t('calculators.obgyn.cervical_cancer_risk.about.screening_guidelines.age_based.title')}</h4>
                     <ul className="text-sm text-yellow-700 space-y-1">
-                      <li>• Ages 21-29: Cytology alone every 3 years</li>
-                      <li>• Ages 30-65: HPV testing every 5 years (preferred) OR</li>
-                      <li>• Ages 30-65: HPV/cytology co-testing every 5 years OR</li>
-                      <li>• Ages 30-65: Cytology alone every 3 years</li>
-                      <li>• Ages &gt;65: Discontinue if adequate screening history</li>
+                      {(t('calculators.obgyn.cervical_cancer_risk.about.screening_guidelines.age_based.items', { returnObjects: true }) as string[]).map((item: string, index: number) => (
+                        <li key={index}>• {item}</li>
+                      ))}
                     </ul>
                   </div>
                   
                   <div>
-                    <h4 className="font-medium text-yellow-800 mb-2">Special Populations</h4>
+                    <h4 className="font-medium text-yellow-800 mb-2">{t('calculators.obgyn.cervical_cancer_risk.about.screening_guidelines.special_populations.title')}</h4>
                     <ul className="text-sm text-yellow-700 space-y-1">
-                      <li>• Immunocompromised: More frequent screening</li>
-                      <li>• Post-hysterectomy: Generally discontinue if no CIN 2+ history</li>
-                      <li>• HPV vaccinated: Follow standard guidelines</li>
+                      {(t('calculators.obgyn.cervical_cancer_risk.about.screening_guidelines.special_populations.items', { returnObjects: true }) as string[]).map((item: string, index: number) => (
+                        <li key={index}>• {item}</li>
+                      ))}
                     </ul>
                   </div>
                 </div>
@@ -735,14 +736,12 @@ const CervicalCancerRiskCalculator: React.FC = () => {
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
                   <FileText className="w-5 h-5" />
-                  Clinical Guidelines
+                  {t('calculators.obgyn.cervical_cancer_risk.about.clinical_guidelines.title')}
                 </h3>
                 <ul className="text-sm text-gray-700 space-y-2">
-                  <li><strong>ASCCP Guidelines 2019:</strong> Risk-based management of cervical screening abnormalities</li>
-                  <li><strong>USPSTF 2018:</strong> Screening for cervical cancer recommendations</li>
-                  <li><strong>ACOG Practice Bulletin No. 168:</strong> Cervical cancer screening and prevention</li>
-                  <li><strong>ACS/ASCCP/ASCP Guidelines:</strong> Cervical cancer prevention and early detection</li>
-                  <li><strong>CDC Guidelines:</strong> Cervical cancer screening guidelines for healthcare providers</li>
+                  {(t('calculators.obgyn.cervical_cancer_risk.about.clinical_guidelines.items', { returnObjects: true }) as string[]).map((item: string, index: number) => (
+                    <li key={index}>{item}</li>
+                  ))}
                 </ul>
               </div>
             </CardContent>
