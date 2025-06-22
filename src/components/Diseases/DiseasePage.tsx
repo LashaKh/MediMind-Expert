@@ -5,6 +5,7 @@ import {
   ChevronDown,
   ChevronUp,
   ChevronRight,
+  ChevronLeft,
   Clock,
   Calendar,
   Tag,
@@ -20,7 +21,9 @@ import {
   Share2,
   FileText,
   AlertCircle,
-  BarChart3
+  BarChart3,
+  Menu,
+  X
 } from 'lucide-react';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Button } from '../../components/ui/button';
@@ -34,6 +37,7 @@ export const DiseasePage: React.FC = () => {
   
   const [searchTerm, setSearchTerm] = useState('');
   const [activeSection, setActiveSection] = useState<string>('background');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   
   // List of sections that should be expanded by default (so content is visible)
   const expandedSectionsList = [
@@ -98,67 +102,127 @@ export const DiseasePage: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex gap-8">
           {/* Sidebar Navigation */}
-          <div className="w-80 flex-shrink-0">
+          <div className={`${sidebarCollapsed ? 'w-16' : 'w-80'} flex-shrink-0 transition-all duration-300 ease-in-out`}>
             <div className="bg-white/80 backdrop-blur-sm rounded-xl border border-white/20 shadow-lg sticky top-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
               <div className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Contents</h3>
-                
-                {/* Search */}
-                <div className="relative mb-4">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search sections..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
+                <div className="flex items-center justify-between mb-4">
+                  {!sidebarCollapsed && (
+                    <h3 className="text-lg font-semibold text-gray-900">Contents</h3>
+                  )}
+                  <button
+                    onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                    className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                    title={sidebarCollapsed ? 'Expand Contents' : 'Collapse Contents'}
+                  >
+                    {sidebarCollapsed ? (
+                      <ChevronRight className="h-4 w-4 text-gray-600" />
+                    ) : (
+                      <ChevronLeft className="h-4 w-4 text-gray-600" />
+                    )}
+                  </button>
                 </div>
+                
+                {!sidebarCollapsed && (
+                  <>
+                    {/* Search */}
+                    <div className="relative mb-4">
+                      <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Search sections..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
 
-                {/* Navigation Links */}
-                <nav className="space-y-2">
-                  <a 
-                    href="#background" 
-                    className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                  >
-                    Background
-                  </a>
-                  <a 
-                    href="#clinical-findings" 
-                    className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                  >
-                    Clinical Findings
-                  </a>
-                  <a 
-                    href="#studies" 
-                    className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                  >
-                    Studies
-                  </a>
-                  <a 
-                    href="#guidelines" 
-                    className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                  >
-                    Guidelines
-                  </a>
-                  
-                  {filteredSections.map((section: GuidelineSection) => (
-                    <a
-                      key={section.id}
-                      href={`#${section.id}`}
-                      className="block px-6 py-1 text-sm text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border-l-2 border-gray-200 ml-3"
+                    {/* Navigation Links */}
+                    <nav className="space-y-2">
+                      <a 
+                        href="#background" 
+                        className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      >
+                        Background
+                      </a>
+                      <a 
+                        href="#clinical-findings" 
+                        className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      >
+                        Clinical Findings
+                      </a>
+                      <a 
+                        href="#studies" 
+                        className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      >
+                        Studies
+                      </a>
+                      <a 
+                        href="#guidelines" 
+                        className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      >
+                        Guidelines
+                      </a>
+                      
+                      {filteredSections.map((section: GuidelineSection) => (
+                        <a
+                          key={section.id}
+                          href={`#${section.id}`}
+                          className="block px-6 py-1 text-sm text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border-l-2 border-gray-200 ml-3"
+                        >
+                          {section.title}
+                        </a>
+                      ))}
+                      
+                      <a 
+                        href="#references" 
+                        className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      >
+                        References
+                      </a>
+                    </nav>
+                  </>
+                )}
+
+                {/* Collapsed state - show minimal navigation icons */}
+                {sidebarCollapsed && (
+                  <nav className="space-y-3">
+                    <a 
+                      href="#background" 
+                      className="flex justify-center p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Background"
                     >
-                      {section.title}
+                      <FileText className="h-4 w-4" />
                     </a>
-                  ))}
-                  
-                  <a 
-                    href="#references" 
-                    className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                  >
-                    References
-                  </a>
-                </nav>
+                    <a 
+                      href="#clinical-findings" 
+                      className="flex justify-center p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Clinical Findings"
+                    >
+                      <Activity className="h-4 w-4" />
+                    </a>
+                    <a 
+                      href="#studies" 
+                      className="flex justify-center p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Studies"
+                    >
+                      <BarChart3 className="h-4 w-4" />
+                    </a>
+                    <a 
+                      href="#guidelines" 
+                      className="flex justify-center p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Guidelines"
+                    >
+                      <BookOpen className="h-4 w-4" />
+                    </a>
+                    <a 
+                      href="#references" 
+                      className="flex justify-center p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="References"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                    </a>
+                  </nav>
+                )}
               </div>
             </div>
           </div>
@@ -169,13 +233,41 @@ export const DiseasePage: React.FC = () => {
               {/* Header */}
               <div className="px-6 py-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <h1 className="text-3xl font-bold text-gray-900">{diseaseData.title}</h1>
-                    <p className="text-gray-600 mt-1">
-                      Last updated: {diseaseData.lastUpdated} • {diseaseData.category}
-                    </p>
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                      className="p-2 rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
+                      title={sidebarCollapsed ? 'Show Contents' : 'Hide Contents'}
+                    >
+                      <Menu className="h-5 w-5 text-gray-600" />
+                    </button>
+                    <div>
+                      <h1 className="text-3xl font-bold text-gray-900">{diseaseData.title}</h1>
+                      <p className="text-gray-600 mt-1">
+                        Last updated: {diseaseData.lastUpdated} • {diseaseData.category}
+                      </p>
+                    </div>
                   </div>
                   <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                      className="hidden lg:flex"
+                      title={sidebarCollapsed ? 'Show Contents' : 'Hide Contents'}
+                    >
+                      {sidebarCollapsed ? (
+                        <>
+                          <ChevronRight className="h-4 w-4 mr-2" />
+                          Show Contents
+                        </>
+                      ) : (
+                        <>
+                          <ChevronLeft className="h-4 w-4 mr-2" />
+                          Hide Contents
+                        </>
+                      )}
+                    </Button>
                     <Button variant="outline" size="sm">
                       <Printer className="h-4 w-4 mr-2" />
                       Print
