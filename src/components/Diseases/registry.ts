@@ -393,13 +393,13 @@ export const diseaseIndex: DiseaseIndexItem[] = [
   {
     id: 'hypernatremia',
     title: 'Hypernatremia',
-    category: 'Endocrine/Metabolic',
-    lastUpdated: 'January 19, 2025',
-    readTime: '18 min',
+    category: 'Emergency Cardiology',
+    lastUpdated: 'May 22, 2025',
+    readTime: '15 min',
     severity: 'high',
-    description: 'A disorder of elevated serum sodium concentration that can lead to serious neurological complications if not properly managed. Classification based on severity: mild (146-149 mmol/L), moderate (150-159 mmol/L), severe (>160 mmol/L).',
-    tags: ['Electrolyte', 'Sodium', 'Central Diabetes Insipidus', 'Dehydration', 'Fluid Management', 'Emergency'],
-    prevalence: 'Common in elderly and critically ill',
+    description: 'Hypernatremia is defined as serum sodium concentration above normal range, typically > 145 mmol/L, resulting from water loss or sodium gain. Requires careful correction to avoid cerebral edema and neurological complications.',
+    tags: ['Electrolyte', 'Sodium', 'Emergency', 'Central Diabetes Insipidus', 'Fluid Management', 'Vasopressin'],
+    prevalence: 'Common in elderly and critically ill patients',
     specialty: 'cardiology'
   },
   {

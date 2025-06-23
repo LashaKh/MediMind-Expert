@@ -1,8 +1,8 @@
 # Hypernatremia
 
-**Source:** [Pathway.md - Hypernatremia](https://www.pathway.md/diseases/hypernatremia-recKPjTDGRNixyzlI)
+*Updated May 22, 2025*
 
-**Updated:** May 22, 2025
+**Source:** [Pathway.md - Hypernatremia](https://www.pathway.md/diseases/hypernatremia-recKPjTDGRNixyzlI)
 
 ## Related Calculators
 
@@ -19,7 +19,7 @@ The following summarized guidelines for the evaluation and management of hyperna
 
 ### Symptoms
 - Increased thirst
-- Irritability  
+- Irritability
 - Polyuria
 - Seizure
 - Urinary frequency
@@ -35,20 +35,16 @@ The following summarized guidelines for the evaluation and management of hyperna
 ### Classification
 As per SE 2018 guidelines, classify hypernatremia according to the serum sodium level:
 
-| Situation | Guidance |
-|-----------|----------|
-| **Mild** | 146-149 mmol/L |
-| **Moderate** | 150-159 mmol/L |
-| **Severe** | > 160 mmol/L |
-
-**Evidence Level:** E
+| Situation | Serum Sodium Level | Evidence Level |
+|-----------|-------------------|----------------|
+| Mild | 146-149 mmol/L | E |
+| Moderate | 150-159 mmol/L | E |
+| Severe | > 160 mmol/L | E |
 
 ## Medical Management
 
 ### Fluid Replacement
-As per AAFP 2023 guidelines, consider correcting hypernatremia in adult patients at a rate of 12 mEq/L over 24 hours. Avoid increasing serum sodium again for therapeutic purposes if the recommended correction rate is exceeded.
-
-**Evidence Level:** C
+As per AAFP 2023 guidelines, consider correcting hypernatremia in adult patients at a rate of 12 mEq/L over 24 hours. Avoid increasing serum sodium again for therapeutic purposes if the recommended correction rate is exceeded. **Evidence Level: C**
 
 ## Specific Circumstances
 
@@ -56,13 +52,17 @@ As per AAFP 2023 guidelines, consider correcting hypernatremia in adult patients
 
 As per SE 2018 guidelines:
 
-- **Acute Hypernatremia (developed within 48 hours):** Correct serum sodium at a rate of 5 mmol/L in the first hour (or until symptoms improve) and limited to 10 mmol/L per 24 hours in symptomatic patients. **Evidence Level:** E
+1. **Acute Hypernatremia (Symptomatic patients with hypernatremia developed within 48 hours):**
+   - Correct serum sodium at a rate of 5 mmol/L in the first hour (or until symptoms improve) and limited to 10 mmol/L per 24 hours. **Evidence Level: E**
 
-- **Mild or No Symptoms:** Correct hypernatremia at a rate not exceeding 0.5 mmol/L per hour and limited to 10 mmol/L per 24 hours in patients with no or mild symptoms. **Evidence Level:** E
+2. **Chronic Hypernatremia (Patients with no or mild symptoms):**
+   - Correct hypernatremia at a rate not exceeding 0.5 mmol/L per hour and limited to 10 mmol/L per 24 hours. **Evidence Level: E**
 
-- **Fluid Replacement Strategy:** Decide on the type and volume of fluid replacement in patients with hypernatremia reflecting the standard daily fluid and electrolyte requirement together with a component of the estimated fluid deficit such that correction of hypernatremia is controlled. **Evidence Level:** E
+3. **Fluid Replacement Strategy:**
+   - Decide on the type and volume of fluid replacement in patients with hypernatremia reflecting the standard daily fluid and electrolyte requirement together with a component of the estimated fluid deficit such that correction of hypernatremia is controlled. **Evidence Level: E**
 
-- **Vasopressin Administration:** Administer IV or IM vasopressin 1-2 mcg in patients with known central diabetes insipidus and excessive, inappropriately dilute urine output, with close observation of the clinical and biochemical response. Consider administering further doses of desmopressin when production of higher volumes of dilute (100 mosmol/kg) urine returns to avoid the development of overly rapid correction of hypernatremia through the combination of high fluid loads together with the obligate antidiuresis of exogenous desmopressin. **Evidence Level:** E
+4. **Vasopressin Administration:**
+   - Administer IV or IM vasopressin 1-2 mcg in patients with known central diabetes insipidus and excessive, inappropriately dilute urine output, with close observation of the clinical and biochemical response. Consider administering further doses of desmopressin when production of higher volumes of dilute (100 mosmol/kg) urine returns to avoid the development of overly rapid correction of hypernatremia through the combination of high fluid loads together with the obligate antidiuresis of exogenous desmopressin. **Evidence Level: E**
 
 ## References
 
@@ -82,4 +82,11 @@ As per SE 2018 guidelines:
 
 ---
 
-**Note:** This content is extracted from Pathway.md and includes all available guidelines, clinical findings, and evidence-based recommendations for hypernatremia management. All reference links have been preserved and formatted as clickable PubMed links for easy access to the original research. 
+**Evidence Levels:**
+- **A**: Evidence from high-quality randomized controlled trials
+- **B**: Evidence from moderate-quality randomized controlled trials
+- **C**: Evidence from observational studies or low-quality randomized controlled trials
+- **D**: Evidence from case series or expert opinion
+- **E**: Expert consensus or clinical experience
+
+*This content is extracted from Pathway.md and formatted for educational purposes. All references and evidence levels are preserved from the original source.* 

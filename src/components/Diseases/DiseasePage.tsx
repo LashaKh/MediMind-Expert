@@ -71,7 +71,19 @@ export const DiseasePage: React.FC = () => {
     'follow-up-surveillance',
     'vasopressors',
     'nonvasopressor-medications',
-    'management-of-arrhythmias'
+    'management-of-arrhythmias',
+    'classification-risk-stratification',
+    'acute-hypernatremia',
+    'chronic-hypernatremia',
+    'fluid-replacement-strategy',
+    'vasopressin-administration',
+    'central-diabetes-insipidus-overview',
+    'monitoring-follow-up',
+    'laboratory-studies',
+    'related-calculators',
+    'monitoring-parameters',
+    'classification-table',
+    'fluid-replacement'
   ];
   
   const [expandedSections, setExpandedSections] = useState<string[]>(expandedSectionsList);
