@@ -20,7 +20,7 @@ mcp__puppeteer__puppeteer_evaluate("document.title")
 // Should return article title, not registration page
 ```
 
-## Step 2: Expand all collapsed fields Extract Full Content all the sources included
+## Step 2: EXPAND ALL collapsed fields Extract Full Content all the sources included !!!!!
 
 ### 2.1 Expand All Content
 

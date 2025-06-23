@@ -363,4 +363,3 @@ In patients with cardiomyopathy and monomorphic VT with an indication for ICD im
 
 ---
 
-*This comprehensive medical article was extracted from [Pathway.md](https://www.pathway.md/diseases/arrhythmogenic-right-ventricular-cardiomyopathy-recz9kA5SG2bQxyZB) with all references and calculator links preserved for clinical reference.* 

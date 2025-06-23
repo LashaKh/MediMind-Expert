@@ -28,6 +28,7 @@ import { coarctationOfAortaData } from './cardiology/coarctation-of-aorta';
 import { digoxinToxicityData } from './cardiology/digoxin-toxicity';
 import { disseminatedIntravascularCoagulationData } from './cardiology/disseminated-intravascular-coagulation';
 import { focalAtrialTachycardiaData } from './cardiology/focal-atrial-tachycardia';
+import { hypernatremiaDiseaseData } from './cardiology/hypernatremia';
 
 // Disease registry - maps disease ID to actual data
 export const diseaseRegistry: Record<string, DiseaseData> = {
@@ -58,6 +59,7 @@ export const diseaseRegistry: Record<string, DiseaseData> = {
   'digoxin-toxicity': digoxinToxicityData,
   'disseminated-intravascular-coagulation': disseminatedIntravascularCoagulationData,
   'focal-atrial-tachycardia': focalAtrialTachycardiaData,
+  'hypernatremia': hypernatremiaDiseaseData,
 };
 
 // Disease index for listing pages - includes summary information
@@ -384,6 +386,18 @@ export const diseaseIndex: DiseaseIndexItem[] = [
     description: 'A type of supraventricular tachycardia originating from a single atrial focus outside the sinoatrial node. FAT accounts for approximately 10-15% of all supraventricular tachycardias and has good prognosis with effective treatment options.',
     tags: ['Arrhythmia', 'SVT', 'Tachycardia', 'Catheter Ablation', 'Adenosine', 'Rate Control', 'Rhythm Control'],
     prevalence: '10-15% of SVT cases',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'hypernatremia',
+    title: 'Hypernatremia',
+    category: 'Endocrine/Metabolic',
+    lastUpdated: 'January 19, 2025',
+    readTime: '18 min',
+    severity: 'high',
+    description: 'A disorder of elevated serum sodium concentration that can lead to serious neurological complications if not properly managed. Classification based on severity: mild (146-149 mmol/L), moderate (150-159 mmol/L), severe (>160 mmol/L).',
+    tags: ['Electrolyte', 'Sodium', 'Central Diabetes Insipidus', 'Dehydration', 'Fluid Management', 'Emergency'],
+    prevalence: 'Common in elderly and critically ill',
     specialty: 'cardiology'
   }
 ];
