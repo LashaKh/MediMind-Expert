@@ -28,6 +28,7 @@ import { coarctationOfAortaData } from './cardiology/coarctation-of-aorta';
 import { digoxinToxicityData } from './cardiology/digoxin-toxicity';
 import { disseminatedIntravascularCoagulationData } from './cardiology/disseminated-intravascular-coagulation';
 import { focalAtrialTachycardiaData } from './cardiology/focal-atrial-tachycardia';
+import { hyperkalemiaData } from './cardiology/hyperkalemia';
 import { hypernatremiaDiseaseData } from './cardiology/hypernatremia';
 
 // Disease registry - maps disease ID to actual data
@@ -59,6 +60,7 @@ export const diseaseRegistry: Record<string, DiseaseData> = {
   'digoxin-toxicity': digoxinToxicityData,
   'disseminated-intravascular-coagulation': disseminatedIntravascularCoagulationData,
   'focal-atrial-tachycardia': focalAtrialTachycardiaData,
+  'hyperkalemia': hyperkalemiaData,
   'hypernatremia': hypernatremiaDiseaseData,
 };
 
@@ -398,6 +400,18 @@ export const diseaseIndex: DiseaseIndexItem[] = [
     description: 'A disorder of elevated serum sodium concentration that can lead to serious neurological complications if not properly managed. Classification based on severity: mild (146-149 mmol/L), moderate (150-159 mmol/L), severe (>160 mmol/L).',
     tags: ['Electrolyte', 'Sodium', 'Central Diabetes Insipidus', 'Dehydration', 'Fluid Management', 'Emergency'],
     prevalence: 'Common in elderly and critically ill',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'hyperkalemia',
+    title: 'Hyperkalemia',
+    category: 'Electrolyte Disorders',
+    lastUpdated: 'May 21, 2025',
+    readTime: '25 min',
+    severity: 'high',
+    description: 'Hyperkalemia is defined as an increase in serum potassium levels > 5.0 mmol/L. Severe untreated hyperkalemia can lead to life-threatening cardiac arrhythmias and cardiac arrest.',
+    tags: ['Electrolyte', 'Potassium', 'ECG Changes', 'Cardiac Arrhythmias', 'Emergency', 'Dialysis', 'RAAS Inhibitors'],
+    prevalence: '1,550 per 100,000 population',
     specialty: 'cardiology'
   }
 ];

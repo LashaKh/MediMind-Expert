@@ -25,3 +25,4 @@ export { coarctationOfAortaData } from './coarctation-of-aorta';
 export { digoxinToxicityData } from './digoxin-toxicity';
 export { disseminatedIntravascularCoagulationData } from './disseminated-intravascular-coagulation';
 export { focalAtrialTachycardiaData } from './focal-atrial-tachycardia';
+export { hyperkalemiaData } from './hyperkalemia';

@@ -70,10 +70,17 @@ studies: [
     year: "Publication year", 
     description: "Copy COMPLETE description without shortening",
     authors: "All authors as listed",
-    journal: "Complete journal citation"
+    journal: "Complete journal citation",
+    link: "https://pubmed.ncbi.nlm.nih.gov/PMID/" // ⚠️ CRITICAL: Include PubMed link for clickability
   }
 ]
 ```
+
+**⚠️ CRITICAL: STUDIES MUST HAVE CLICKABLE LINKS**
+- Every study MUST include a working PubMed link
+- Use exact PubMed URLs from the MD file
+- If MD doesn't have links, search PubMed for the exact study
+- Studies without links are NOT clickable in the UI
 
 ### **STEP 4: Convert Guidelines Section**
 
@@ -163,6 +170,7 @@ Convert to:
 
 ### **Links and References**
 - [ ] **All PubMed links** are functional and correct
+- [ ] **All studies have clickable links** in the link field
 - [ ] **Reference count** matches MD file exactly
 - [ ] **Citation format** is preserved exactly
 - [ ] **All external links** are included
@@ -186,6 +194,7 @@ Convert to:
 
 ### **❌ Link Issues** 
 - Not including PubMed links for references
+- **Missing clickable links in studies section**
 - Using incorrect PMID numbers
 - Missing external guideline links
 - Broken or non-functional URLs
@@ -195,6 +204,13 @@ Convert to:
 - Missing subsections for complex guidelines
 - Incorrect nesting of content arrays
 - Wrong recommendation level format
+
+### **❌ UI Display Issues**
+- **CRITICAL**: Sections not appearing expanded in UI even though content exists
+- **ROOT CAUSE**: Section IDs not included in `expandedSectionsList` in `/src/components/Diseases/DiseasePage.tsx`
+- **SYMPTOMS**: Section headers appear but clicking shows no content underneath
+- **SOLUTION**: Add section IDs to the `expandedSectionsList` array (lines 43-59)
+- **MUST ADD**: Any new major guideline section IDs like 'vasopressors', 'nonvasopressor-medications', 'management-of-arrhythmias'
 
 ---
 
@@ -342,6 +358,7 @@ Your conversion is successful when:
 
 ### **Links & References**
 - [ ] Add PubMed link for every reference
+- [ ] **Add clickable link for every study**
 - [ ] Verify each PMID opens correct article
 - [ ] Include all external guideline links
 - [ ] Test every link functionality
@@ -365,14 +382,18 @@ Your conversion is successful when:
 - [ ] Click every reference link
 - [ ] Read through UI version for completeness
 - [ ] Verify medical accuracy
+- [ ] **CRITICAL**: Check all major sections are expanded in UI (not just showing headers)
+- [ ] **If sections appear collapsed**: Add section IDs to `expandedSectionsList` in DiseasePage.tsx
 
 ## 🚨 **Red Flags** (Stop and Fix)
 - ❌ Any content missing from original MD
 - ❌ Recommendation levels modified or missing  
 - ❌ Adding "Class" prefix to level field (creates "Class Class B" display)
+- ❌ **Studies missing clickable links in link field**
 - ❌ Non-functional reference links
 - ❌ TypeScript build errors
 - ❌ Shortened medical descriptions
+- ❌ **Major sections showing only headers in UI (missing from expandedSectionsList)**
 
 ## ⚠️ **IMPORTANT: NO AUTO-COMMITS**
 - **DO NOT** automatically commit changes when task is complete

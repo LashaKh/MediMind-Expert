@@ -79,6 +79,7 @@ In patients with HFrEF and hyperkalemia or a history of hyperkalemia, patiromer 
 
 ### 2016 • AKIKI
 In patients with severe AKI who required mechanical ventilation, catecholamine infusion, or both and did not have a potentially life-threatening complication directly related to renal failure, early RRT was not superior to delayed RRT with respect to death at day 60.
+[PubMed](https://pubmed.ncbi.nlm.nih.gov/33812488/)
 
 ## Screening and diagnosis
 

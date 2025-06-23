@@ -72,6 +72,209 @@ export const cardiacArrestData: DiseaseData = {
           ]
         },
         {
+          title: 'Clinical Findings',
+          id: 'clinical-findings',
+          content: [],
+          subsections: [
+            {
+              title: 'Symptoms',
+              id: 'symptoms',
+              content: [
+                {
+                  statement: 'Fainting',
+                  level: 'clinical',
+                  source: 'Clinical observation'
+                },
+                {
+                  statement: 'Loss of consciousness',
+                  level: 'clinical',
+                  source: 'Clinical observation'
+                }
+              ]
+            },
+            {
+              title: 'Past Events',
+              id: 'past-events',
+              content: [
+                {
+                  statement: 'Blunt chest trauma',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Drowning',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Lightning',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                }
+              ]
+            },
+            {
+              title: 'Past Medical History',
+              id: 'past-medical-history',
+              content: [
+                {
+                  statement: 'Arrhythmogenic RV cardiomyopathy',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Brugada syndrome',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'CKD',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Cardiac amyloidosis',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Cardiac sarcoidosis',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Catecholaminergic polymorphic VT',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Congenital heart disease',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Coronary artery disease',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Diabetes mellitus',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Dilated cardiomyopathy',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Dyslipidemia',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'HCM',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'HF',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Hypertension',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'LV noncompaction',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Long QT syndrome',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Myocardial infarction',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Myocarditis',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Obesity',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Obstructive sleep apnea',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'PE',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Short QT syndrome',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Substance use disorder',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Takotsubo cardiomyopathy',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'Valvular heart disease',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                },
+                {
+                  statement: 'WPW syndrome',
+                  level: 'clinical',
+                  source: 'Clinical history'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          title: 'Recent Studies',
+          id: 'recent-studies',
+          content: [],
+          subsections: [
+            {
+              title: '2025 Studies',
+              id: 'studies-2025',
+              content: [
+                {
+                  statement: '2025 • DEVICE (secondary analysis): In critically ill patients undergoing tracheal intubation after cardiac arrest, video laryngoscopy was superior to direct laryngoscopy with respect to successful intubation on the first attempt.',
+                  level: 'A',
+                  source: 'PubMed 39805516'
+                },
+                {
+                  statement: '2025 • TTM2 (post-hoc analysis): In out-of-hospital cardiac arrest patients who received therapeutic hypothermia, intravascular cooling was superior to surface device cooling with respect to proportion of patients successfully reaching target temperature within 4 hours.',
+                  level: 'A',
+                  source: 'PubMed 40293464'
+                }
+              ]
+            }
+          ]
+        },
+        {
           title: 'Diagnostic Investigations',
           id: 'diagnostic-investigations',
           content: [],
@@ -757,41 +960,181 @@ export const cardiacArrestData: DiseaseData = {
                   ]
                 },
                 {
-                  title: 'Atrial Fibrillation and Atrial Flutter',
-                  id: 'atrial-fibrillation-flutter',
+                  title: 'AF/Atrial Flutter - Cardioversion',
+                  id: 'af-cardioversion',
                   content: [
                     {
-                      statement: 'As per AHA 2020 guidelines, for unstable atrial fibrillation with rapid ventricular response, perform synchronized cardioversion.',
+                      statement: 'As per AHA 2020 guidelines, perform electric cardioversion in hemodynamically unstable patients with AF or atrial flutter with a rapid ventricular response.',
                       level: 'B',
                       source: 'AHA 2020 guidelines'
                     },
                     {
-                      statement: 'As per AHA 2020 guidelines, consider rate control medications for stable atrial fibrillation with rapid ventricular response.',
+                      statement: 'As per AHA 2020 guidelines, perform urgent direct-current cardioversion of new-onset AF in the setting of ACS in patients with hemodynamic compromise, ongoing ischemia, or inadequate rate control.',
+                      level: 'B',
+                      source: 'AHA 2020 guidelines'
+                    },
+                    {
+                      statement: 'As per AHA 2020 guidelines, consider using an initial energy of 120-200 J, depending on the specific defibrillator being used, for synchronized cardioversion of AF using biphasic energy.',
+                      level: 'C',
+                      source: 'AHA 2020 guidelines'
+                    },
+                    {
+                      statement: 'As per AHA 2020 guidelines, consider using an initial energy of 50-100 J, depending on the specific defibrillator being used, for synchronized cardioversion of atrial flutter using biphasic energy.',
                       level: 'C',
                       source: 'AHA 2020 guidelines'
                     }
                   ]
                 },
                 {
-                  title: 'Bradycardia',
-                  id: 'bradycardia',
+                  title: 'AF/Atrial Flutter - Pharmacotherapy',
+                  id: 'af-pharmacotherapy',
                   content: [
                     {
-                      statement: 'As per AHA 2020 guidelines, consider atropine for symptomatic bradycardia.',
+                      statement: 'As per AHA 2020 guidelines, administer IV β-blocker or nondihydropyridine calcium channel antagonist to slow the ventricular HR in the acute setting in patients with AF or atrial flutter with a rapid ventricular response without preexcitation.',
+                      level: 'B',
+                      source: 'AHA 2020 guidelines'
+                    },
+                    {
+                      statement: 'As per AHA 2020 guidelines, consider administering IV amiodarone for rate control in critically ill patients with AF with a rapid ventricular response without preexcitation.',
                       level: 'C',
                       source: 'AHA 2020 guidelines'
                     },
                     {
-                      statement: 'As per AHA 2020 guidelines, consider transcutaneous pacing for symptomatic bradycardia that does not respond to atropine.',
+                      statement: 'As per AHA 2020 guidelines, do not use digoxin, nondihydropyridine calcium channel antagonists, β-blockers, and IV amiodarone in patients with AF or atrial flutter in the setting of preexcitation because of the risk of increased ventricular response and VF.',
+                      level: 'D',
+                      source: 'AHA 2020 guidelines'
+                    },
+                    {
+                      statement: 'As per AHA 2020 guidelines, do not use nondihydropyridine calcium channel antagonists and IV β-blockers in patients with LV systolic dysfunction and decompensated HF because of the risk of further hemodynamic compromise.',
+                      level: 'D',
+                      source: 'AHA 2020 guidelines'
+                    }
+                  ]
+                },
+                {
+                  title: 'Bradycardia - Pharmacotherapy',
+                  id: 'bradycardia-pharmacotherapy',
+                  content: [
+                    {
+                      statement: 'As per AHA 2020 guidelines, evaluate for and treat reversible causes in patients presenting with acute symptomatic bradycardia.',
+                      level: 'B',
+                      source: 'AHA 2020 guidelines'
+                    },
+                    {
+                      statement: 'As per AHA 2020 guidelines, consider administering atropine to increase HR in patients with acute bradycardia associated with hemodynamic compromise.',
                       level: 'C',
                       source: 'AHA 2020 guidelines'
                     },
                     {
-                      statement: 'As per AHA 2020 guidelines, consider dopamine or epinephrine infusion for symptomatic bradycardia.',
+                      statement: 'As per AHA 2020 guidelines, consider administering IV adrenergic agonists with rate-accelerating effects (such as epinephrine) or performing transcutaneous pacing in patients with bradycardia unresponsive to atropine, while the patient is prepared for emergent transvenous temporary pacing.',
                       level: 'C',
                       source: 'AHA 2020 guidelines'
                     }
                   ]
+                },
+                {
+                  title: 'Bradycardia - Transvenous Pacing',
+                  id: 'bradycardia-pacing',
+                  content: [
+                    {
+                      statement: 'As per AHA 2020 guidelines, consider performing immediate pacing in unstable patients with high-degree AV block when IV/intraosseous access is not available.',
+                      level: 'C',
+                      source: 'AHA 2020 guidelines'
+                    },
+                    {
+                      statement: 'As per AHA 2020 guidelines, consider performing temporary transvenous pacing to increase HR and improve symptoms in patients with persistent hemodynamically unstable bradycardia refractory to medical therapy.',
+                      level: 'C',
+                      source: 'AHA 2020 guidelines'
+                    },
+                    {
+                      statement: 'As per AHA 2020 guidelines, consider performing transcutaneous pacing in patients with bradycardia unresponsive to atropine, while the patient is prepared for emergent transvenous temporary pacing.',
+                      level: 'C',
+                      source: 'AHA 2020 guidelines'
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              title: 'Monitoring of Resuscitation',
+              id: 'monitoring-of-resuscitation',
+              content: [
+                {
+                  statement: 'As per AHA 2020 guidelines, consider using audiovisual feedback devices during CPR for real-time optimization of CPR performance.',
+                  level: 'C',
+                  source: 'AHA 2020 guidelines'
+                },
+                {
+                  statement: 'As per AHA 2020 guidelines, consider using physiological parameters, such as arterial BP or ETCO2, when feasible to monitor and optimize CPR quality.',
+                  level: 'C',
+                  source: 'AHA 2020 guidelines'
+                },
+                {
+                  statement: 'As per AHA 2020 guidelines, consider using an abrupt increase in ETCO2 to detect ROSC during compressions or when a rhythm check reveals an organized rhythm.',
+                  level: 'C',
+                  source: 'AHA 2020 guidelines'
+                },
+                {
+                  statement: 'As per AHA 2020 guidelines, consider obtaining arterial pressure monitoring by arterial line to detect ROSC during chest compressions or when a rhythm check reveals an organized rhythm.',
+                  level: 'C',
+                  source: 'AHA 2020 guidelines'
+                },
+                {
+                  statement: 'As per AHA 2020 guidelines, insufficient evidence to recommend routine measurement of arterial blood gases during CPR.',
+                  level: 'I',
+                  source: 'AHA 2020 guidelines'
+                }
+              ]
+            },
+            {
+              title: 'Discontinuation of Resuscitation',
+              id: 'discontinuation-of-resuscitation',
+              content: [
+                {
+                  statement: 'As per AHA 2020 guidelines, use basic life support termination of resuscitation rule by basic life support emergency medical services when considering termination of resuscitation where advanced life support is not available or may be significantly delayed.',
+                  level: 'B',
+                  source: 'AHA 2020 guidelines'
+                },
+                {
+                  statement: 'As per AHA 2020 guidelines, consider using the adult advanced life support termination of resuscitation rule by prehospital advanced life support providers to terminate resuscitation efforts in the field for adult victims of out-of-hospital cardiac arrest.',
+                  level: 'C',
+                  source: 'AHA 2020 guidelines'
+                },
+                {
+                  statement: 'As per AHA 2020 guidelines, consider using failure to achieve an ETCO2 of > 10 mmHg by waveform capnography after 20 minutes of advanced life support resuscitation as a component of a multimodal approach to decide when to end resuscitative efforts in intubated patients.',
+                  level: 'C',
+                  source: 'AHA 2020 guidelines'
+                },
+                {
+                  statement: 'As per AHA 2020 guidelines, avoid obtaining point-of-care ultrasound for prognostication during CPR.',
+                  level: 'D',
+                  source: 'AHA 2020 guidelines'
+                },
+                {
+                  statement: 'As per AHA 2020 guidelines, do not use a specific ETCO2 cutoff value at any time during CPR as an indication to end resuscitative efforts in non-intubated patients.',
+                  level: 'D',
+                  source: 'AHA 2020 guidelines'
+                }
+              ]
+            },
+            {
+              title: 'ECMO',
+              id: 'ecmo',
+              content: [
+                {
+                  statement: 'As per AHA 2023 guidelines, consider performing venoarterial ECMO for persistent cardiogenic shock or cardiac arrest due to poisoning not responding to maximal treatment measures.',
+                  level: 'C',
+                  source: 'AHA 2023 guidelines'
+                },
+                {
+                  statement: 'As per AHA 2023 guidelines, consider performing venoarterial ECMO for persistent arrhythmias due to poisoning when other treatment measures fail.',
+                  level: 'C',
+                  source: 'AHA 2023 guidelines'
+                },
+                {
+                  statement: 'As per AHA 2023 guidelines, insufficient evidence to recommend venoarterial ECMO in patients with cardiovascular collapse from causes other than cardiogenic shock.',
+                  level: 'I',
+                  source: 'AHA 2023 guidelines'
                 }
               ]
             }
@@ -856,6 +1199,21 @@ export const cardiacArrestData: DiseaseData = {
             {
               statement: 'As per AHA 2020 guidelines, do not perform electric pacing routinely in patients with established cardiac arrest.',
               level: 'D',
+              source: 'AHA 2020 guidelines'
+            },
+            {
+              statement: 'As per AHA 2020 guidelines, consider performing fist (percussion) pacing as a temporizing measure in exceptional circumstances such as witnessed, monitored in-hospital arrest (cardiac catheterization laboratory) for bradyasystole before a loss of consciousness, while not delaying definitive therapy.',
+              level: 'C',
+              source: 'AHA 2020 guidelines'
+            },
+            {
+              statement: 'As per AHA 2020 guidelines, consider performing immediate pacing in unstable patients with high-degree AV block when IV/intraosseous access is not available.',
+              level: 'C',
+              source: 'AHA 2020 guidelines'
+            },
+            {
+              statement: 'As per AHA 2020 guidelines, consider performing temporary transvenous pacing to increase HR and improve symptoms in patients with persistent hemodynamically unstable bradycardia refractory to medical therapy.',
+              level: 'C',
               source: 'AHA 2020 guidelines'
             }
           ]
@@ -1246,6 +1604,414 @@ export const cardiacArrestData: DiseaseData = {
               statement: 'As per AHA 2023 guidelines, administer naloxone in addition to providing standard basic life support and/or advanced life support care in patients with suspected opioid overdose having a definite pulse but no normal breathing or only gasping (respiratory arrest).',
               level: 'B',
               source: 'AHA 2023 guidelines'
+            }
+          ]
+        },
+        {
+          title: 'Patients with CCB Overdose',
+          id: 'ccb-overdose',
+          content: [
+            {
+              statement: 'As per AHA 2023 guidelines, administer vasopressors for hypotension from CCB poisoning.',
+              level: 'B',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, administer high-dose insulin for hypotension from CCB poisoning.',
+              level: 'B',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering IV calcium for CCB poisoning.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering atropine for hemodynamically significant bradycardia from CCB poisoning.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider initiating extracorporeal life support, such as venoarterial ECMO, for cardiogenic shock from CCB poisoning refractory to pharmacological interventions.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider attempting electrical pacing for refractory bradycardia from CCB poisoning.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AAPCC/ACMT/CAEP 2017 guidelines, administer IV calcium, even if previously administered, and lipid-emulsion therapy, if not administered previously, in addition to standard advanced cardiac life-support in patients with CCB poisoning in cardiac arrest.',
+              level: 'B',
+              source: 'AAPCC/ACMT/CAEP 2017 guidelines'
+            }
+          ]
+        },
+        {
+          title: 'Patients with Sodium Channel Blocker Overdose',
+          id: 'sodium-channel-blocker-overdose',
+          content: [
+            {
+              statement: 'As per AHA 2023 guidelines, administer sodium bicarbonate for life-threatening cardiotoxicity from tricyclic and/or tetracyclic antidepressant poisoning.',
+              level: 'B',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering sodium bicarbonate for life-threatening cardiotoxicity from sodium channel blockers poisoning other than tricyclic or tetracyclic antidepressants.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider initiating extracorporeal life support, such as venoarterial ECMO, for refractory cardiogenic shock from sodium channel blocker poisoning.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering class Ib antiarrhythmics (such as lidocaine) for life-threatening cardiotoxicity from class Ia or Ic sodium channel blockers.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering IV lipid emulsion for life-threatening sodium channel blocker poisoning refractory to other treatment modalities.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            }
+          ]
+        },
+        {
+          title: 'Patients with Cardiac Glycoside Overdose',
+          id: 'cardiac-glycoside-overdose',
+          content: [
+            {
+              statement: 'As per AHA 2023 guidelines, administer digoxin immune Fab for digoxin or digitoxin poisoning.',
+              level: 'B',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering digoxin immune Fab for poisoning due to Bufo toad venom and yellow oleander.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering atropine for bradyarrhythmias caused by digoxin or other cardiac glycoside poisoning.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider attempting electrical pacing for bradyarrhythmias from digoxin or other cardiac glycoside poisoning.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering lidocaine, phenytoin, or bretylium for ventricular arrhythmias from digitalis and other cardiac glycoside poisoning until digoxin immune fab can be administered.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            }
+          ]
+        },
+        {
+          title: 'Patients with Local Anesthetic Overdose',
+          id: 'local-anesthetic-overdose',
+          content: [
+            {
+              statement: 'As per AHA 2023 guidelines, administer IV lipid emulsion for local anesthetic poisoning.',
+              level: 'B',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, administer benzodiazepines for seizures from local anesthetic systemic toxicity.',
+              level: 'B',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering sodium bicarbonate for life-threatening wide-complex tachycardia from local anesthetic systemic toxicity.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering atropine for life-threatening bradycardia from local anesthetic systemic toxicity.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider initiating extracorporeal life support, such as venoarterial ECMO, for refractory cardiogenic shock from local anesthetic systemic toxicity.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            }
+          ]
+        },
+        {
+          title: 'Patients with Opioid Overdose',
+          id: 'opioid-overdose',
+          content: [
+            {
+              statement: 'As per AHA 2023 guidelines, maintain rescue breathing or bag-mask ventilation until spontaneous breathing returns in patients in respiratory arrest and continue standard basic life support, advanced life support, and/or pediatric advanced life support measures if return of spontaneous breathing does not occur.',
+              level: 'B',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, perform standard resuscitative measures as a priority over naloxone administration with a focus on high-quality CPR (compressions plus ventilation) in patients with known or suspected cardiac arrest.',
+              level: 'B',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, administer naloxone in addition to providing standard basic life support and/or advanced life support care in patients with suspected opioid overdose having a definite pulse but no normal breathing or only gasping (respiratory arrest).',
+              level: 'B',
+              source: 'AHA 2023 guidelines'
+            }
+          ]
+        },
+        {
+          title: 'Patients with Cocaine Overdose',
+          id: 'cocaine-overdose',
+          content: [
+            {
+              statement: 'As per AHA 2023 guidelines, perform rapid external cooling for life-threatening hyperthermia from cocaine poisoning.',
+              level: 'B',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering sodium bicarbonate for wide-complex tachycardia or cardiac arrest from cocaine poisoning.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering lidocaine for wide-complex tachycardia from cocaine poisoning.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering vasodilators (such as nitrates, phentolamine, and CCBs) in patients with cocaine-induced coronary vasospasm or hypertensive emergencies.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            }
+          ]
+        },
+        {
+          title: 'Patients with Benzodiazepine Overdose',
+          id: 'benzodiazepine-overdose',
+          content: [
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering naloxone (before other antidotes) for respiratory depression/respiratory arrest in patients with suspected combined opioid and benzodiazepine poisoning.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering flumazenil, if not contraindicated, in selected patients with respiratory depression/respiratory arrest caused by pure benzodiazepine poisoning.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, recognize that flumazenil has no role in cardiac arrest related to benzodiazepine poisoning.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            }
+          ]
+        },
+        {
+          title: 'Patients with Sympathomimetic Overdose',
+          id: 'sympathomimetic-overdose',
+          content: [
+            {
+              statement: 'As per AHA 2023 guidelines, administer sedation for severe agitation from sympathomimetic poisoning.',
+              level: 'B',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, perform rapid external cooling for life-threatening hyperthermia from sympathomimetic poisoning.',
+              level: 'B',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering vasodilators, such as phentolamine and/or nitrates, for coronary vasospasm from sympathomimetic poisoning.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider initiating mechanical circulatory support, such as intra-aortic balloon pump or venoarterial ECMO, for cardiogenic shock from sympathomimetic poisoning refractory to other treatment measures.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            }
+          ]
+        },
+        {
+          title: 'Patients with CO Poisoning',
+          id: 'co-poisoning',
+          content: [
+            {
+              statement: 'As per AHA 2020 guidelines, consider administering hyperbaric oxygen therapy for the treatment of acute CO poisoning in patients with severe toxicity.',
+              level: 'C',
+              source: 'AHA 2020 guidelines'
+            }
+          ]
+        },
+        {
+          title: 'Patients with Cyanide Poisoning',
+          id: 'cyanide-poisoning',
+          content: [
+            {
+              statement: 'As per AHA 2023 guidelines, administer hydroxocobalamin for cyanide poisoning. Administer sodium nitrite if hydroxocobalamin is unavailable.',
+              level: 'B',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering sodium thiosulfate in addition to hydroxocobalamin or sodium nitrite for cyanide poisoning.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering 100% oxygen for cyanide poisoning.',
+              level: 'C',
+              source: 'AHA 2023 guidelines'
+            }
+          ]
+        },
+        {
+          title: 'Patients with Organophosphate or Carbamate Poisoning',
+          id: 'organophosphate-carbamate-poisoning',
+          content: [
+            {
+              statement: 'As per AHA 2023 guidelines, administer atropine immediately for severe manifestations, such as bronchospasm, bronchorrhea, seizures, or significant bradycardia, from organophosphate or carbamate poisoning.',
+              level: 'A',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, perform early endotracheal intubation for life-threatening organophosphate or carbamate poisoning.',
+              level: 'B',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, administer benzodiazepines for seizures and agitation from organophosphate or carbamate poisoning.',
+              level: 'B',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, perform dermal decontamination for external organophosphate or carbamate exposure.',
+              level: 'B',
+              source: 'AHA 2023 guidelines'
+            },
+            {
+              statement: 'As per AHA 2023 guidelines, consider administering pralidoxime for organophosphate poisoning.',
+              level: 'B',
+              source: 'AHA 2023 guidelines'
+            }
+          ]
+        },
+        {
+          title: 'Neonatal Patients - Therapeutic Temperature Management',
+          id: 'neonatal-temperature-management',
+          content: [
+            {
+              statement: 'As per ILCOR 2019 guidelines, consider administering targeted therapeutic management in the post-cardiac arrest period to maintain a central temperature < 37.5°C in infants and pediatric patients with out-of-hospital cardiac arrest.',
+              level: 'C',
+              source: 'ILCOR 2019 guidelines'
+            }
+          ]
+        },
+        {
+          title: 'Neonatal Patients - Supplemental Oxygen',
+          id: 'neonatal-supplemental-oxygen',
+          content: [
+            {
+              statement: 'As per ILCOR 2019 guidelines, consider administering 21% oxygen in infants at ≥ 35 weeks of gestation receiving respiratory support at birth.',
+              level: 'C',
+              source: 'ILCOR 2019 guidelines'
+            },
+            {
+              statement: 'As per ILCOR 2019 guidelines, do not administer 100% oxygen.',
+              level: 'B',
+              source: 'ILCOR 2019 guidelines'
+            },
+            {
+              statement: 'As per ILCOR 2019 guidelines, consider administering lower oxygen concentrations (21-30%) in preterm infants (< 35 weeks of gestation) receiving respiratory support at birth. Consider titrating oxygen concentration subsequently based on pulse oximetry.',
+              level: 'C',
+              source: 'ILCOR 2019 guidelines'
+            }
+          ]
+        },
+        {
+          title: 'Patients with PE',
+          id: 'patients-with-pe',
+          content: [
+            {
+              statement: 'As per AHA 2020 guidelines, consider performing thrombolysis, surgical embolectomy, or mechanical embolectomy as emergency treatment options in patients with confirmed PE as the precipitant of cardiac arrest.',
+              level: 'C',
+              source: 'AHA 2020 guidelines'
+            },
+            {
+              statement: 'As per AHA 2020 guidelines, consider performing thrombolysis when cardiac arrest is suspected to be caused by PE.',
+              level: 'C',
+              source: 'AHA 2020 guidelines'
+            }
+          ]
+        },
+        {
+          title: 'Patients with Asthma',
+          id: 'patients-with-asthma',
+          content: [
+            {
+              statement: 'As per AHA 2020 guidelines, obtain prompt evaluation for tension pneumothorax in patients with asthma with cardiac arrest, sudden elevation in peak inspiratory pressures, or difficulty ventilating.',
+              level: 'B',
+              source: 'AHA 2020 guidelines'
+            },
+            {
+              statement: 'As per AHA 2020 guidelines, consider using a low respiratory rate and tidal volume ventilation strategy due to the potential effects of intrinsic PEEP and risk of barotrauma in patients with asthma with cardiac arrest.',
+              level: 'C',
+              source: 'AHA 2020 guidelines'
+            },
+            {
+              statement: 'As per AHA 2020 guidelines, consider performing a brief disconnection from the bag mask or ventilator with compression of the chest wall to relieve air-trapping when increased intrinsic PEEP or sudden decrease in BP is noted in patients with asthma receiving assisted ventilation in a periarrest state.',
+              level: 'C',
+              source: 'AHA 2020 guidelines'
+            }
+          ]
+        },
+        {
+          title: 'Patients with Anaphylaxis',
+          id: 'patients-with-anaphylaxis',
+          content: [
+            {
+              statement: 'As per AHA 2020 guidelines, undertake standard resuscitative measures and administer immediate epinephrine in patients in cardiac arrest secondary to anaphylaxis.',
+              level: 'B',
+              source: 'AHA 2020 guidelines'
+            },
+            {
+              statement: 'As per AHA 2020 guidelines, administer early epinephrine (IM or autoinjector) in all patients with signs of a systemic allergic reaction, especially hypotension, airway swelling, or difficulty breathing.',
+              level: 'B',
+              source: 'AHA 2020 guidelines'
+            },
+            {
+              statement: 'As per AHA 2020 guidelines, administer epinephrine at a dose of 0.2-0.5 mg (1:1, 000) IM, and repeat every 5-15 minutes as needed.',
+              level: 'B',
+              source: 'AHA 2020 guidelines'
+            },
+            {
+              statement: 'As per AHA 2020 guidelines, refer patients immediately to a health professional with expertise in advanced airway placement, including surgical airway management, given the potential for the rapid development of oropharyngeal or laryngeal edema.',
+              level: 'B',
+              source: 'AHA 2020 guidelines'
+            }
+          ]
+        },
+        {
+          title: 'Patients with Blunt Trauma',
+          id: 'patients-with-blunt-trauma',
+          content: [
+            {
+              statement: 'As per ACEP 2024 guidelines, do not perform resuscitative endovascular balloon aortic occlusion over resuscitative thoracotomy routinely in adult patients with blunt trauma in cardiac arrest or periarrest.',
+              level: 'D',
+              source: 'ACEP 2024 guidelines'
+            }
+          ]
+        },
+        {
+          title: 'Patients after Lightning Injury',
+          id: 'patients-after-lightning-injury',
+          content: [
+            {
+              statement: 'As per WMS 2014 guidelines, initiate resuscitation in victims of lightning strike immediately if the scene otherwise is deemed safe. Recognize that these victims do not carry residual electrical charge. Use the basic and advanced life support algorithms, including trauma when appropriate, as the standard of care.',
+              level: 'B',
+              source: 'WMS 2014 guidelines'
             }
           ]
         },
