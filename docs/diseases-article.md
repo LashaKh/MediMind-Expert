@@ -381,3 +381,5 @@ Your conversion is successful when:
 - Let user handle git operations manually
 
 ## 🎯 **Success = 100% Content Preservation + All Links Working** 
+
+# make sure article is added to to the disease index system to make it appear in UI 

@@ -16,6 +16,12 @@ import { bicuspidAorticValveData } from './cardiology/bicuspid-aortic-valve';
 import { bloodGasAnalysisData } from './cardiology/blood-gas-analysis';
 import { bluntCardiacInjuryData } from './cardiology/blunt-cardiac-injury';
 import { brugadaSyndromeData } from './cardiology/brugada-syndrome';
+import { calciumChannelBlockerToxicityData } from './cardiology/calcium-channel-blocker-toxicity';
+import { cardiacAmyloidosisData } from './cardiology/cardiac-amyloidosis';
+import { cardiacArrestData } from './cardiology/cardiac-arrest';
+import { cardiogenicShockData } from './cardiology/cardiogenic-shock';
+import { chestPainData } from './cardiology/chest-pain';
+import { chronicThromboembolicPulmonaryHypertensionData } from './cardiology/chronic-thromboembolic-pulmonary-hypertension';
 
 // Disease registry - maps disease ID to actual data
 export const diseaseRegistry: Record<string, DiseaseData> = {
@@ -34,6 +40,12 @@ export const diseaseRegistry: Record<string, DiseaseData> = {
   'blood-gas-analysis': bloodGasAnalysisData,
   'blunt-cardiac-injury': bluntCardiacInjuryData,
   'brugada-syndrome': brugadaSyndromeData,
+  'calcium-channel-blocker-toxicity': calciumChannelBlockerToxicityData,
+  'cardiac-amyloidosis': cardiacAmyloidosisData,
+  'cardiac-arrest': cardiacArrestData,
+  'cardiogenic-shock': cardiogenicShockData,
+  'chest-pain': chestPainData,
+  'chronic-thromboembolic-pulmonary-hypertension': chronicThromboembolicPulmonaryHypertensionData,
 };
 
 // Disease index for listing pages - includes summary information
@@ -216,6 +228,78 @@ export const diseaseIndex: DiseaseIndexItem[] = [
     description: 'A genetic disorder characterized by a specific pattern on ECG and an increased risk of sudden cardiac death due to ventricular arrhythmia. Caused by mutations in SCN5A gene encoding cardiac sodium channels.',
     tags: ['Genetic', 'Arrhythmia', 'Sudden Death', 'ECG Pattern', 'ICD', 'Drug Challenge', 'Sodium Channel'],
     prevalence: 'Variable by population',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'calcium-channel-blocker-toxicity',
+    title: 'Calcium Channel Blocker Toxicity',
+    category: 'Emergency/Toxicology',
+    lastUpdated: 'May 22, 2025',
+    readTime: '20 min',
+    severity: 'high',
+    description: 'Life-threatening overdose of calcium channel blocking medications requiring immediate medical intervention. Presents with bradycardia, hypotension, altered mental status, and potential cardiovascular collapse.',
+    tags: ['Toxicology', 'Emergency', 'CCB Overdose', 'High-dose Insulin', 'IV Calcium', 'ECMO', 'Vasopressors'],
+    prevalence: 'Significant cause of cardiovascular drug mortality',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'cardiac-amyloidosis',
+    title: 'Cardiac Amyloidosis',
+    category: 'Cardiomyopathy',
+    lastUpdated: 'May 21, 2025',
+    readTime: '30 min',
+    severity: 'high',
+    description: 'Infiltration of the heart muscle by amyloid proteins, resulting in cardiomyopathy. Unadjusted 5-year mortality rates are estimated at 65% in patients with AL cardiac amyloidosis and 44% in patients with ATTR cardiac amyloidosis.',
+    tags: ['Cardiomyopathy', 'Amyloidosis', 'Heart Failure', 'Restrictive', 'Tafamidis', 'Biopsy', 'Genetics'],
+    prevalence: 'Variable by type and population',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'cardiac-arrest',
+    title: 'Cardiac Arrest',
+    category: 'Emergency Cardiology',
+    lastUpdated: 'May 28, 2025',
+    readTime: '45 min',
+    severity: 'high',
+    description: 'Functional loss of mechanical cardiac activity leading to cessation of systemic circulation. 30-day survival is 5.8% without CPR and 13.5-13.8% with CPR in out-of-hospital cases. Requires immediate emergency intervention.',
+    tags: ['Emergency', 'CPR', 'Resuscitation', 'ROSC', 'Defibrillation', 'Epinephrine', 'Post-arrest Care', 'Temperature Control'],
+    prevalence: '55 per 100,000 person-years',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'cardiogenic-shock',
+    title: 'Cardiogenic Shock',
+    category: 'Emergency Cardiology',
+    lastUpdated: 'May 31, 2025',
+    readTime: '35 min',
+    severity: 'high',
+    description: 'A life-threatening condition characterized by the inability of the heart to pump sufficient blood to meet the body\'s metabolic demands, resulting in tissue hypoperfusion and end-organ dysfunction. Mortality rates range from 40-80% depending on underlying cause and timing of intervention.',
+    tags: ['Emergency', 'Cardiogenic Shock', 'Mechanical Support', 'IABP', 'ECMO', 'Inotropes', 'Revascularization', 'Critical Care'],
+    prevalence: '5-10% of acute MI cases',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'chest-pain',
+    title: 'Chest Pain',
+    category: 'Emergency/Acute Care',
+    lastUpdated: 'May 1, 2025',
+    readTime: '30 min',
+    severity: 'high',
+    description: 'A common presenting symptom requiring systematic evaluation to identify potentially life-threatening conditions including acute coronary syndrome, aortic dissection, pulmonary embolism, and other cardiac and non-cardiac causes.',
+    tags: ['Emergency', 'ACS', 'Diagnosis', 'Risk Stratification', 'ECG', 'Troponin', 'Clinical Decision', 'Guidelines'],
+    prevalence: 'Common emergency presentation',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'chronic-thromboembolic-pulmonary-hypertension',
+    title: 'Chronic Thromboembolic Pulmonary Hypertension',
+    category: 'Pulmonary Vascular Disease',
+    lastUpdated: 'May 22, 2025',
+    readTime: '35 min',
+    severity: 'high',
+    description: 'A rare and underdiagnosed complication of pulmonary embolism characterized by persistent perfusion defects that can range from asymptomatic to established CTEPH with pulmonary hypertension and right heart failure.',
+    tags: ['Pulmonary Hypertension', 'Pulmonary Embolism', 'CTEPH', 'Pulmonary Endarterectomy', 'Balloon Angioplasty', 'Anticoagulation', 'Right Heart Failure'],
+    prevalence: 'Rare complication of PE',
     specialty: 'cardiology'
   }
 ];
