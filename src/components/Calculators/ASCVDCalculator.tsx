@@ -230,7 +230,7 @@ export const ASCVDCalculator: React.FC = () => {
     const ln_hdl = Math.log(hdl);
     const ln_sbp = Math.log(sbp);
 
-    let coefficient_sum = 
+    const coefficient_sum = 
       coeff.ln_age * ln_age +
       coeff.ln_age_squared * ln_age * ln_age +
       coeff.ln_total_chol * ln_total_chol +

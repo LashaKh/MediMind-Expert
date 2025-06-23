@@ -599,7 +599,7 @@ export const CuratedKnowledgeBasePage: React.FC = () => {
 
   // Filter and search resources
   const filteredResources = useMemo(() => {
-    let filtered = resources.filter(resource => {
+    const filtered = resources.filter(resource => {
       // Search filter
       const searchLower = searchTerm.toLowerCase();
       const matchesSearch = !searchTerm || 

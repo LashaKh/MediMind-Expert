@@ -6,6 +6,7 @@ import { antidromicAVRTData } from './cardiology/antidromic-atrioventricular-ree
 import { aorticIntramuralHematomaData } from './cardiology/aortic-intramural-hematoma';
 import { aorticRegurgitationData } from './cardiology/aortic-regurgitation';
 import { aorticStenosisData } from './cardiology/aortic-stenosis';
+import { arrhythmogenicRightVentricularCardiomyopathyData } from './cardiology/arrhythmogenic-right-ventricular-cardiomyopathy';
 import { atrialFibrillationData } from './cardiology/atrial-fibrillation';
 import { atrialFlutterData } from './cardiology/atrial-flutter';
 
@@ -16,6 +17,7 @@ export const diseaseRegistry: Record<string, DiseaseData> = {
   'aortic-intramural-hematoma': aorticIntramuralHematomaData,
   'aortic-regurgitation': aorticRegurgitationData,
   'aortic-stenosis': aorticStenosisData,
+  'arrhythmogenic-right-ventricular-cardiomyopathy': arrhythmogenicRightVentricularCardiomyopathyData,
   'atrial-fibrillation': atrialFibrillationData,
   'atrial-flutter': atrialFlutterData,
 };
@@ -80,6 +82,18 @@ export const diseaseIndex: DiseaseIndexItem[] = [
     description: 'A chronic fibrocalcific disease that results in narrowing of the aortic valve. Overall survival of elderly patients with severe AS is 3 years from symptom onset without intervention.',
     tags: ['Valvular Disease', 'TAVR', 'SAVR', 'Heart Failure', 'Syncope', 'Stenosis'],
     prevalence: '400 per 100,000',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'arrhythmogenic-right-ventricular-cardiomyopathy',
+    title: 'Arrhythmogenic Right Ventricular Cardiomyopathy',
+    category: 'Cardiomyopathy',
+    lastUpdated: 'May 21, 2025',
+    readTime: '25 min',
+    severity: 'high',
+    description: 'A genetically inherited cardiomyopathy characterized by fibrofatty replacement of myocardium, predominantly in the right ventricle. Associated with increased risk of sudden cardiac death, particularly in young individuals.',
+    tags: ['Cardiomyopathy', 'Genetic', 'Sudden Death', 'ICD', 'Family Screening', 'Arrhythmia'],
+    prevalence: '20 per 100,000',
     specialty: 'cardiology'
   },
   {

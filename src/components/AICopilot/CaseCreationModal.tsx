@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X, FileText, AlertTriangle, Sparkles, Heart, Stethoscope, CheckCircle, User, Shield, Brain, ArrowRight, ArrowLeft, Save, Plus, Info, Clock, Activity } from 'lucide-react';
+import { X, FileText, AlertTriangle, Sparkles, Heart, Stethoscope, CheckCircle, User, Shield, Brain, ArrowRight, ArrowLeft, Save, Info, Activity } from 'lucide-react';
 import { Button } from '../ui/button';
 import { PatientCase } from '../../types/chat';
-import { useTranslation } from '../../hooks/useTranslation';
 
 interface CaseCreationModalProps {
   isOpen: boolean;
@@ -37,7 +36,6 @@ export const CaseCreationModal: React.FC<CaseCreationModalProps> = ({
   specialty,
   className = ''
 }) => {
-  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
@@ -74,7 +72,7 @@ export const CaseCreationModal: React.FC<CaseCreationModalProps> = ({
           newErrors.description = 'Brief description is required';
         }
         break;
-      case 2:
+      case 2: {
         if (!formData.anonymizedInfo.trim()) {
           newErrors.anonymizedInfo = 'Patient information is required';
         } else if (formData.anonymizedInfo.length < 50) {
@@ -93,6 +91,7 @@ export const CaseCreationModal: React.FC<CaseCreationModalProps> = ({
           newErrors.anonymizedInfo = 'Please remove names, dates, and identifying information';
         }
         break;
+      }
       case 3:
         if (!formData.complexity) {
           newErrors.complexity = 'Please select complexity level';

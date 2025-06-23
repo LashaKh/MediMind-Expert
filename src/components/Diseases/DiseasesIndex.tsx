@@ -21,12 +21,13 @@ import { DiseaseIndexItem } from './types';
 
 const categories = [
   'All Categories',
-  'Vascular Cardiology',
-  'Valvular Heart Disease',
-  'Interventional Cardiology',
+  'Cardiomyopathy',
   'Electrophysiology',
   'Heart Failure',
-  'Preventive Cardiology'
+  'Interventional Cardiology',
+  'Preventive Cardiology',
+  'Valvular Heart Disease',
+  'Vascular Cardiology'
 ];
 
 export const DiseasesIndex: React.FC = () => {

@@ -1568,7 +1568,7 @@ export function calculatePPHRisk(input: PPHRiskInput, t?: (key: string) => strin
 
 function calculateCervicalCancerRisk(input: CervicalCancerRiskInput, t?: (key: string) => string): CervicalCancerRiskResult {
   let riskScore = 0;
-  let riskFactors: string[] = [];
+  const riskFactors: string[] = [];
   
   const age = parseInt(input.age);
   
@@ -1727,8 +1727,8 @@ function calculateCervicalCancerRisk(input: CervicalCancerRiskInput, t?: (key: s
 function calculateEndometrialCancerRisk(input: EndometrialCancerRiskInput, t?: (key: string) => string): EndometrialCancerRiskResult {
   let lifetimeRisk = 2.8; // Base lifetime risk for general population
   let riskMultiplier = 1.0;
-  let riskFactors: string[] = [];
-  let protectiveFactors: string[] = [];
+  const riskFactors: string[] = [];
+  const protectiveFactors: string[] = [];
   
   const age = parseInt(input.age);
   const bmi = parseFloat(input.bmi);
@@ -1890,8 +1890,8 @@ function calculateEndometrialCancerRisk(input: EndometrialCancerRiskInput, t?: (
 }
 
 function calculateOvarianCancerRisk(input: OvarianCancerRiskInput, t?: (key: string) => string): OvarianCancerRiskResult {
-  let riskScore = 0;
-  let riskFactors: string[] = [];
+  const riskScore = 0;
+  const riskFactors: string[] = [];
   
   const age = parseInt(input.age);
   const parity = parseInt(input.parity);

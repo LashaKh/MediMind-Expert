@@ -1,3 +1,4 @@
+
 # Pathway.md Content Extraction Guide Using Puppeteer MCP
 
 Quick guide for extracting complete content from Pathway.md medical articles using Puppeteer MCP. 
