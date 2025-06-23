@@ -15,6 +15,7 @@ import { betaBlockerToxicityData } from './cardiology/beta-blocker-toxicity';
 import { bicuspidAorticValveData } from './cardiology/bicuspid-aortic-valve';
 import { bloodGasAnalysisData } from './cardiology/blood-gas-analysis';
 import { bluntCardiacInjuryData } from './cardiology/blunt-cardiac-injury';
+import { brugadaSyndromeData } from './cardiology/brugada-syndrome';
 
 // Disease registry - maps disease ID to actual data
 export const diseaseRegistry: Record<string, DiseaseData> = {
@@ -32,6 +33,7 @@ export const diseaseRegistry: Record<string, DiseaseData> = {
   'bicuspid-aortic-valve': bicuspidAorticValveData,
   'blood-gas-analysis': bloodGasAnalysisData,
   'blunt-cardiac-injury': bluntCardiacInjuryData,
+  'brugada-syndrome': brugadaSyndromeData,
 };
 
 // Disease index for listing pages - includes summary information
@@ -202,6 +204,18 @@ export const diseaseIndex: DiseaseIndexItem[] = [
     description: 'An injury sustained due to blunt trauma to the heart, ranging from minor bruise to specific post-contusion cardiac conditions such as free-wall rupture. Associated with an overall mortality rate of 13.9%.',
     tags: ['Trauma', 'Emergency', 'Cardiac Contusion', 'Thoracotomy', 'Imaging', 'Monitoring'],
     prevalence: '13.9% mortality rate',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'brugada-syndrome',
+    title: 'Brugada Syndrome',
+    category: 'Electrophysiology',
+    lastUpdated: 'May 21, 2025',
+    readTime: '25 min',
+    severity: 'high',
+    description: 'A genetic disorder characterized by a specific pattern on ECG and an increased risk of sudden cardiac death due to ventricular arrhythmia. Caused by mutations in SCN5A gene encoding cardiac sodium channels.',
+    tags: ['Genetic', 'Arrhythmia', 'Sudden Death', 'ECG Pattern', 'ICD', 'Drug Challenge', 'Sodium Channel'],
+    prevalence: 'Variable by population',
     specialty: 'cardiology'
   }
 ];
