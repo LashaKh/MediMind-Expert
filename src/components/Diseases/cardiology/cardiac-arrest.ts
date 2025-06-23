@@ -51,7 +51,13 @@ export const cardiacArrestData: DiseaseData = {
         {
           title: 'Screening and Diagnosis',
           id: 'screening-diagnosis',
-          content: [],
+          content: [
+            {
+              statement: 'Early recognition and diagnosis of cardiac arrest is critical for optimal patient outcomes. Healthcare providers should follow established guidelines for recognition and initial assessment.',
+              level: 'clinical',
+              source: 'AHA 2020 guidelines'
+            }
+          ],
           subsections: [
             {
               title: 'Recognition',
@@ -74,7 +80,13 @@ export const cardiacArrestData: DiseaseData = {
         {
           title: 'Clinical Findings',
           id: 'clinical-findings',
-          content: [],
+          content: [
+            {
+              statement: 'Clinical findings in cardiac arrest include loss of consciousness, absence of pulse, and abnormal or absent breathing. Recognition of these key findings enables prompt initiation of resuscitation.',
+              level: 'clinical',
+              source: 'Clinical assessment'
+            }
+          ],
           subsections: [
             {
               title: 'Symptoms',
@@ -254,7 +266,13 @@ export const cardiacArrestData: DiseaseData = {
         {
           title: 'Recent Studies',
           id: 'recent-studies',
-          content: [],
+          content: [
+            {
+              statement: 'Recent clinical studies provide evidence-based insights into cardiac arrest management, from intubation techniques to post-resuscitation care strategies.',
+              level: 'clinical',
+              source: 'Recent literature'
+            }
+          ],
           subsections: [
             {
               title: '2025 Studies',
@@ -277,7 +295,13 @@ export const cardiacArrestData: DiseaseData = {
         {
           title: 'Diagnostic Investigations',
           id: 'diagnostic-investigations',
-          content: [],
+          content: [
+            {
+              statement: 'Appropriate diagnostic investigations are essential for identifying the underlying cause of cardiac arrest and guiding targeted treatment strategies.',
+              level: 'clinical',
+              source: 'Clinical guidelines'
+            }
+          ],
           subsections: [
             {
               title: 'Cardiac Imaging',
@@ -305,7 +329,13 @@ export const cardiacArrestData: DiseaseData = {
         {
           title: 'Respiratory Support',
           id: 'respiratory-support',
-          content: [],
+          content: [
+            {
+              statement: 'Appropriate respiratory support is crucial during cardiac arrest management to ensure adequate oxygenation and ventilation while minimizing interruptions to chest compressions.',
+              level: 'clinical',
+              source: 'AHA guidelines'
+            }
+          ],
           subsections: [
             {
               title: 'Supplemental Oxygen',
@@ -323,7 +353,13 @@ export const cardiacArrestData: DiseaseData = {
         {
           title: 'Initiation of Resuscitation',
           id: 'initiation-of-resuscitation',
-          content: [],
+          content: [
+            {
+              statement: 'Prompt initiation of resuscitation is critical for survival in cardiac arrest. Early recognition and immediate action by both lay rescuers and healthcare providers can significantly improve outcomes.',
+              level: 'clinical',
+              source: 'AHA 2020 guidelines'
+            }
+          ],
           subsections: [
             {
               title: 'Lay Rescuer',
@@ -362,7 +398,13 @@ export const cardiacArrestData: DiseaseData = {
         {
           title: 'CPR Technique',
           id: 'cpr-technique',
-          content: [],
+          content: [
+            {
+              statement: 'High-quality CPR with proper technique is fundamental to successful resuscitation. Key components include adequate compression depth, rate, and minimal interruptions.',
+              level: 'clinical',
+              source: 'AHA 2020 guidelines'
+            }
+          ],
           subsections: [
             {
               title: 'Positioning',
@@ -594,7 +636,13 @@ export const cardiacArrestData: DiseaseData = {
         {
           title: 'Defibrillation',
           id: 'defibrillation',
-          content: [],
+          content: [
+            {
+              statement: 'Early defibrillation is critical for survival in patients with ventricular fibrillation (VF) or pulseless ventricular tachycardia (pVT). Time to defibrillation is directly related to survival outcomes.',
+              level: 'clinical',
+              source: 'AHA 2020 guidelines'
+            }
+          ],
           subsections: [
             {
               title: 'Indications',
@@ -622,7 +670,13 @@ export const cardiacArrestData: DiseaseData = {
         {
           title: 'Medical Management',
           id: 'medical-management',
-          content: [],
+          content: [
+            {
+              statement: 'Comprehensive medical management during cardiac arrest includes pharmacological interventions, advanced airway management, and post-resuscitation care to optimize patient outcomes.',
+              level: 'clinical',
+              source: 'AHA guidelines'
+            }
+          ],
           subsections: [
             {
               title: 'Setting of Care',
@@ -669,7 +723,13 @@ export const cardiacArrestData: DiseaseData = {
             {
               title: 'Vasopressors',
               id: 'vasopressors',
-              content: [],
+              content: [
+                {
+                  statement: 'Vasopressors, particularly epinephrine, are essential medications in cardiac arrest management to restore spontaneous circulation.',
+                  level: 'clinical',
+                  source: 'AHA guidelines'
+                }
+              ],
               subsections: [
                 {
                   title: 'Epinephrine - Indications',
@@ -776,7 +836,13 @@ export const cardiacArrestData: DiseaseData = {
             {
               title: 'Nonvasopressor Medications',
               id: 'nonvasopressor-medications',
-              content: [],
+              content: [
+                {
+                  statement: 'Nonvasopressor medications such as antiarrhythmics play important roles in managing specific cardiac arrest scenarios and post-resuscitation care.',
+                  level: 'clinical',
+                  source: 'AHA guidelines'
+                }
+              ],
               subsections: [
                 {
                   title: 'Amiodarone and Lidocaine',
@@ -846,7 +912,13 @@ export const cardiacArrestData: DiseaseData = {
             {
               title: 'Management of Arrhythmias',
               id: 'management-of-arrhythmias',
-              content: [],
+              content: [
+                {
+                  statement: 'Specific arrhythmia management during cardiac arrest requires targeted interventions based on the underlying rhythm and clinical presentation.',
+                  level: 'clinical',
+                  source: 'AHA guidelines'
+                }
+              ],
               subsections: [
                 {
                   title: 'Narrow-Complex Tachycardia - Cardioversion',
@@ -1441,7 +1513,13 @@ export const cardiacArrestData: DiseaseData = {
         {
           title: 'Pregnant Patients',
           id: 'pregnant-patients',
-          content: [],
+          content: [
+            {
+              statement: 'Cardiac arrest in pregnant patients requires specialized management approaches that consider both maternal and fetal outcomes.',
+              level: 'clinical',
+              source: 'AHA and specialized obstetric guidelines'
+            }
+          ],
           subsections: [
             {
               title: 'Planning and Preparation',

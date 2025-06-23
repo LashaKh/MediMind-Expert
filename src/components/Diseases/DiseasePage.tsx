@@ -252,7 +252,7 @@ export const DiseasePage: React.FC = () => {
               onClick={() => navigate('/diseases')} 
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-colors"
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4 mr-2" />
               Browse All Diseases
             </Button>
             <Button 
@@ -261,7 +261,7 @@ export const DiseasePage: React.FC = () => {
               className="border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-3 rounded-xl font-medium transition-colors"
             >
               Go Back
-            </Button>
+          </Button>
           </div>
         </div>
       </div>
@@ -560,8 +560,8 @@ export const DiseasePage: React.FC = () => {
                     <FileText className="w-6 h-6 text-blue-600" />
                   </div>
                   <h2 className="text-3xl font-bold text-gray-900">Background</h2>
-                </div>
-                
+              </div>
+
                 {diseaseData.content.background?.overview && (
                   <div className="space-y-6">
                     <div className="grid md:grid-cols-2 gap-6">
@@ -571,7 +571,7 @@ export const DiseasePage: React.FC = () => {
                           Definition
                         </h3>
                         <p className="text-gray-700 leading-relaxed">{diseaseData.content.background.overview.definition}</p>
-                      </div>
+                        </div>
                       
                       <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-100">
                         <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
@@ -579,8 +579,8 @@ export const DiseasePage: React.FC = () => {
                           Pathophysiology
                         </h3>
                         <p className="text-gray-700 leading-relaxed">{diseaseData.content.background.overview.pathophysiology}</p>
-                      </div>
-                    </div>
+                        </div>
+                        </div>
                     
                     <div className="grid md:grid-cols-3 gap-6">
                       <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-100">
@@ -589,7 +589,7 @@ export const DiseasePage: React.FC = () => {
                           Epidemiology
                         </h3>
                         <p className="text-gray-700 leading-relaxed">{diseaseData.content.background.overview.epidemiology}</p>
-                      </div>
+                        </div>
                       
                       <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-6 border border-orange-100">
                         <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
@@ -597,7 +597,7 @@ export const DiseasePage: React.FC = () => {
                           Disease Course
                         </h3>
                         <p className="text-gray-700 leading-relaxed">{diseaseData.content.background.overview.diseaseCourse}</p>
-                      </div>
+                            </div>
                       
                       <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-100">
                         <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
@@ -609,47 +609,47 @@ export const DiseasePage: React.FC = () => {
                     </div>
                   </div>
                 )}
-              </section>
+                </section>
 
-              {/* Clinical Findings Section */}
-              {diseaseData.content.clinicalFindings && (
+                {/* Clinical Findings Section */}
+                {diseaseData.content.clinicalFindings && (
                 <section id="clinical-findings" className="p-8 border-b border-gray-100">
                   <div className="flex items-center space-x-3 mb-6">
                     <div className="p-3 bg-green-100 rounded-xl">
                       <Stethoscope className="w-6 h-6 text-green-600" />
-                    </div>
+                          </div>
                     <h2 className="text-3xl font-bold text-gray-900">Clinical Findings</h2>
-                  </div>
+                        </div>
                   
                   <div className="grid md:grid-cols-2 gap-6">
-                    {diseaseData.content.clinicalFindings.symptoms && (
+                      {diseaseData.content.clinicalFindings.symptoms && (
                       <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-2xl p-6 border border-red-100">
                         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                           <AlertTriangle className="w-5 h-5 mr-2 text-red-600" />
                           Symptoms
                         </h3>
                         <ul className="space-y-2">
-                          {diseaseData.content.clinicalFindings.symptoms.map((symptom, index) => (
+                            {diseaseData.content.clinicalFindings.symptoms.map((symptom, index) => (
                             <li key={index} className="flex items-center space-x-2 text-gray-700">
                               <div className="w-2 h-2 bg-red-400 rounded-full"></div>
                               <span>{symptom}</span>
                             </li>
                           ))}
                         </ul>
-                      </div>
-                    )}
-                  </div>
-                </section>
-              )}
+                        </div>
+                      )}
+                    </div>
+                  </section>
+                )}
 
               {/* Guidelines Section */}
               <section id="guidelines" className="p-8">
                 <div className="flex items-center space-x-3 mb-6">
                   <div className="p-3 bg-purple-100 rounded-xl">
                     <BookOpen className="w-6 h-6 text-purple-600" />
-                  </div>
+                          </div>
                   <h2 className="text-3xl font-bold text-gray-900">Clinical Guidelines</h2>
-                </div>
+                          </div>
                 
                 {diseaseData.content.guidelines?.keySources && (
                   <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100 mb-8">
@@ -658,17 +658,17 @@ export const DiseasePage: React.FC = () => {
                       Key Sources
                     </h3>
                     <p className="text-gray-700 leading-relaxed">{diseaseData.content.guidelines.keySources}</p>
-                  </div>
+                    </div>
                 )}
 
                 {/* Guidelines Sections */}
-                <div className="space-y-6">
+                  <div className="space-y-6">
                   {diseaseData.content.guidelines?.sections?.map((section: GuidelineSection) => (
                     <div key={section.id} id={section.id} className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                      <button
-                        onClick={() => toggleSection(section.id)}
+                        <button
+                          onClick={() => toggleSection(section.id)}
                         className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                      >
+                        >
                         <div className="flex items-center space-x-3">
                           <ChevronRight className="w-5 h-5 text-blue-600" />
                           <h3 className="text-lg font-semibold text-gray-900">{section.title}</h3>
@@ -683,28 +683,39 @@ export const DiseasePage: React.FC = () => {
                           <ChevronUpIcon className="w-5 h-5 text-gray-400" />
                         ) : (
                           <ChevronDownIcon className="w-5 h-5 text-gray-400" />
-                        )}
-                      </button>
-                      
-                      {expandedSections.includes(section.id) && (
+                          )}
+                        </button>
+                        
+                        {expandedSections.includes(section.id) && (
                         <div className="px-6 pb-6 space-y-4">
-                          {section.content?.map((content, index) => (
+                          {/* Show direct content if it exists */}
+                          {section.content && section.content.length > 0 && section.content.map((content, index) => (
                             <div key={index} className="bg-gray-50 rounded-xl p-4">
                               <p className="text-gray-700 leading-relaxed mb-2">{content.statement}</p>
                               <div className="flex items-center space-x-4 text-sm text-gray-500">
                                 {content.level && (
                                   <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
                                     Level {content.level}
-                                  </span>
+                                      </span>
                                 )}
                                 <span className="flex items-center">
                                   <ExternalLink className="w-3 h-3 mr-1" />
                                   {content.source}
-                                </span>
-                              </div>
-                            </div>
-                          ))}
+                                            </span>
+                                        </div>
+                                      </div>
+                                    ))}
                           
+                          {/* Show message if no direct content but has subsections */}
+                          {(!section.content || section.content.length === 0) && section.subsections && section.subsections.length > 0 && (
+                            <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                              <p className="text-blue-800 text-sm font-medium">
+                                This section contains {section.subsections.length} subsection{section.subsections.length > 1 ? 's' : ''}. Click to expand each subsection below.
+                              </p>
+                                  </div>
+                          )}
+                          
+                          {/* Show subsections */}
                           {section.subsections?.map((subsection) => (
                             <div key={subsection.id} className="ml-4 border-l-2 border-blue-200 pl-4">
                               <button
@@ -717,28 +728,44 @@ export const DiseasePage: React.FC = () => {
                                   <ChevronRight className="w-4 h-4" />
                                 )}
                                 <span className="font-medium">{subsection.title}</span>
+                                {subsection.content && (
+                                  <span className="text-xs text-gray-500">
+                                    ({subsection.content.length} guideline{subsection.content.length > 1 ? 's' : ''})
+                                  </span>
+                                )}
                               </button>
                               
                               {expandedSubsections.includes(subsection.id) && subsection.content && (
                                 <div className="space-y-2 ml-6">
                                   {subsection.content.map((content, index) => (
                                     <div key={index} className="bg-white rounded-lg p-3 border border-gray-100">
-                                      <p className="text-gray-700 text-sm leading-relaxed">{content.statement}</p>
+                                      <p className="text-gray-700 text-sm leading-relaxed mb-2">{content.statement}</p>
+                                      <div className="flex items-center space-x-4 text-xs text-gray-500">
+                                        {content.level && (
+                                          <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
+                                            Level {content.level}
+                                          </span>
+                                        )}
+                                        <span className="flex items-center">
+                                          <ExternalLink className="w-3 h-3 mr-1" />
+                                          {content.source}
+                                        </span>
+                                      </div>
                                     </div>
                                   ))}
                                 </div>
                               )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </section>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </section>
 
-              {/* References Section */}
-              {diseaseData.content.references && (
+                {/* References Section */}
+                {diseaseData.content.references && (
                 <section id="references" className="p-8 border-t border-gray-100">
                   <div className="flex items-center space-x-3 mb-6">
                     <div className="p-3 bg-teal-100 rounded-xl">
@@ -748,36 +775,36 @@ export const DiseasePage: React.FC = () => {
                   </div>
                   
                   <div className="space-y-4">
-                    {diseaseData.content.references.map((reference: Reference) => (
+                      {diseaseData.content.references.map((reference: Reference) => (
                       <div key={reference.id} className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
                         <div className="flex items-start space-x-4">
                           <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0">
                             <span className="text-sm font-bold text-teal-600">{reference.id}</span>
                           </div>
-                          <div className="flex-1">
+                            <div className="flex-1">
                             <p className="text-gray-900 font-medium mb-1">{reference.title}</p>
                             <p className="text-gray-600 text-sm mb-2">
                               {reference.authors} • {reference.journal} • {reference.year}
-                            </p>
-                            {reference.link && (
-                              <a
-                                href={reference.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                              </p>
+                              {reference.link && (
+                                <a 
+                                  href={reference.link} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
                                 className="inline-flex items-center text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors"
-                              >
+                                >
                                 <ExternalLink className="w-3 h-3 mr-1" />
-                                View Article
-                              </a>
-                            )}
+                                  View Article
+                                </a>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              )}
-            </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+              </div>
           </div>
         </div>
       </div>
@@ -813,10 +840,10 @@ export const DiseasePage: React.FC = () => {
                 <p className="text-sm text-gray-500">
                   Link copied to clipboard!
                 </p>
-              </div>
             </div>
           </div>
         </div>
+      </div>
       )}
     </div>
   );

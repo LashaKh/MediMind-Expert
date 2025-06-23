@@ -514,8 +514,8 @@ export const DiseasesIndex: React.FC = () => {
         ) : (
           <div className={
             viewMode === 'grid' 
-              ? 'grid grid-cols-1 lg:grid-cols-2 gap-8' 
-              : 'space-y-6'
+              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4' 
+              : 'space-y-3'
           }>
             {filteredAndSortedDiseases.map((disease) => {
               const severityConfig = getSeverityConfig(disease.severity);
@@ -524,111 +524,87 @@ export const DiseasesIndex: React.FC = () => {
               return (
                 <div
                   key={disease.id}
-                  className="group bg-white/80 backdrop-blur-xl rounded-3xl border border-white/50 shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer overflow-hidden hover:-translate-y-1"
+                  className="group bg-white/90 backdrop-blur-sm rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden hover:-translate-y-0.5 hover:border-blue-300/50"
                   onClick={() => navigate(`/diseases/${disease.id}`)}
                 >
-                  <div className="p-8">
-                    {/* Header */}
-                    <div className="flex items-start justify-between mb-6">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-4 mb-3">
-                          <h3 className="text-2xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight">
-                            {disease.title}
-                          </h3>
-                          <div className={`px-3 py-1 text-xs font-bold rounded-full flex items-center space-x-1 ${severityConfig.color} shadow-lg`}>
-                            <SeverityIcon className="w-3 h-3" />
-                            <span>{severityConfig.label}</span>
-                          </div>
-                        </div>
+                  <div className="p-4">
+                    {/* Compact Header */}
+                    <div className="mb-3">
+                      <div className="flex items-start justify-between mb-2">
+                        <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight pr-2 flex-1">
+                          {disease.title}
+                        </h3>
                         
-                        <div className="flex items-center space-x-6 text-sm text-gray-600 mb-4">
-                          <div className="flex items-center space-x-2">
-                            <Tag className="w-4 h-4 text-blue-500" />
-                            <span className="font-medium">{disease.category}</span>
+                        <div className="flex items-center space-x-1 ml-2 flex-shrink-0">
+                          <button
+                            onClick={(e) => toggleBookmark(disease.id, e)}
+                            className={`p-1.5 rounded-lg transition-all duration-200 ${
+                              bookmarkedDiseases.has(disease.id)
+                                ? 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200'
+                                : 'bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600'
+                            }`}
+                            title={bookmarkedDiseases.has(disease.id) ? 'Remove bookmark' : 'Add bookmark'}
+                          >
+                            <Bookmark className={`w-3.5 h-3.5 ${bookmarkedDiseases.has(disease.id) ? 'fill-current' : ''}`} />
+                          </button>
+                          <div className="p-1.5 rounded-lg bg-blue-50 text-blue-600 group-hover:bg-blue-100 transition-colors">
+                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <Calendar className="w-4 h-4 text-green-500" />
-                            <span>Updated {disease.lastUpdated}</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Clock className="w-4 h-4 text-purple-500" />
-                            <span>{disease.readTime} read</span>
-                          </div>
-                          {disease.prevalence && (
-                            <div className="flex items-center space-x-2">
-                              <BarChart3 className="w-4 h-4 text-orange-500" />
-                              <span>{disease.prevalence}</span>
-                            </div>
-                          )}
                         </div>
                       </div>
                       
-                      <div className="flex items-center space-x-2 ml-4">
-                        <button
-                          onClick={(e) => toggleBookmark(disease.id, e)}
-                          className={`p-3 rounded-xl transition-all duration-300 ${
-                            bookmarkedDiseases.has(disease.id)
-                              ? 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200'
-                              : 'bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600'
-                          }`}
-                          title={bookmarkedDiseases.has(disease.id) ? 'Remove bookmark' : 'Add bookmark'}
-                        >
-                          <Bookmark className={`w-5 h-5 ${bookmarkedDiseases.has(disease.id) ? 'fill-current' : ''}`} />
-                        </button>
-                        <div className="p-3 rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-100 transition-colors">
-                          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      <div className="flex items-center space-x-2">
+                        <div className={`px-2 py-0.5 text-xs font-semibold rounded-full flex items-center space-x-1 ${severityConfig.color}`}>
+                          <SeverityIcon className="w-2.5 h-2.5" />
+                          <span>{severityConfig.label}</span>
                         </div>
+                        <span className="text-xs text-gray-500">{disease.category}</span>
                       </div>
                     </div>
                     
-                    {/* Description */}
-                    <p className="text-gray-700 leading-relaxed mb-6 text-lg">
+                    {/* Compact Description */}
+                    <p className="text-sm text-gray-600 leading-relaxed mb-3 line-clamp-2">
                       {disease.description}
                     </p>
                     
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {disease.tags.slice(0, 6).map((tag) => (
+                    {/* Compact Tags */}
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      {disease.tags.slice(0, 3).map((tag) => (
                         <span
                           key={tag}
-                          className="px-3 py-1 text-sm font-medium bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 rounded-full border border-indigo-200/50 hover:from-indigo-200 hover:to-purple-200 transition-all duration-200"
+                          className="px-2 py-0.5 text-xs font-medium bg-indigo-50 text-indigo-600 rounded-md border border-indigo-100 hover:bg-indigo-100 transition-all duration-200"
                         >
                           {tag}
                         </span>
                       ))}
-                      {disease.tags.length > 6 && (
-                        <span className="px-3 py-1 text-sm font-medium bg-gray-100 text-gray-600 rounded-full">
-                          +{disease.tags.length - 6} more
+                      {disease.tags.length > 3 && (
+                        <span className="px-2 py-0.5 text-xs font-medium bg-gray-50 text-gray-500 rounded-md">
+                          +{disease.tags.length - 3}
                         </span>
                       )}
                     </div>
 
-                    {/* Action Bar */}
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                      <div className="flex items-center space-x-4 text-sm text-gray-500">
+                    {/* Compact Meta Info */}
+                    <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-100">
+                      <div className="flex items-center space-x-3">
                         <div className="flex items-center space-x-1">
-                          <Eye className="w-4 h-4" />
-                          <span>Clinical Guidelines</span>
+                          <Clock className="w-3 h-3" />
+                          <span>{disease.readTime}</span>
                         </div>
                         <div className="flex items-center space-x-1">
-                          <BookOpen className="w-4 h-4" />
-                          <span>Evidence-Based</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Award className="w-4 h-4" />
-                          <span>Latest Research</span>
+                          <Calendar className="w-3 h-3" />
+                          <span>{disease.lastUpdated}</span>
                         </div>
                       </div>
                       
                       <div className="flex items-center text-blue-600 font-medium group-hover:text-blue-700 transition-colors">
-                        <span className="mr-2">Read More</span>
-                        <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                       </div>
                     </div>
                   </div>
 
-                  {/* Hover Effect Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-blue-600/0 to-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl"></div>
+                  {/* Subtle Hover Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-blue-600/0 to-blue-600/3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl"></div>
                 </div>
               );
             })}
