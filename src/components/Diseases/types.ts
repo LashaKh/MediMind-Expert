@@ -18,10 +18,12 @@ export interface DiseaseData {
       sections: GuidelineSection[];
     };
     clinicalFindings?: {
-      patientDemographics: string[];
-      pastMedicalHistory: string[];
-      symptoms: string[];
-      likelihoodRatios: {
+      patientDemographics?: string[];
+      pastMedicalHistory?: string[];
+      symptoms?: string[];
+      neurologicalExam?: string[];
+      vitalSigns?: string[];
+      likelihoodRatios?: {
         finding: string;
         lrPlus: string;
         value: string;
@@ -43,6 +45,7 @@ export interface GuidelineSection {
   title: string;
   id: string;
   content: GuidelineContent[];
+  subsections?: GuidelineSubsection[];
 }
 
 export interface GuidelineContent {

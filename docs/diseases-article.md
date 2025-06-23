@@ -97,7 +97,7 @@ guidelines: {
       content: [
         {
           statement: "Copy EXACT guideline statement",
-          level: "Class I, Level A", // ⚠️ CRITICAL: Don't miss recommendation levels
+          level: "A", // ⚠️ CRITICAL: Use ONLY the letter (A, B, C, D) - NOT "Class A"
           source: "Specific guideline source",
           subsections: [ // If applicable
             {
@@ -106,7 +106,7 @@ guidelines: {
               content: [
                 {
                   statement: "Detailed recommendation",
-                  level: "Class IIa, Level B",
+                  level: "B", // ⚠️ CRITICAL: Just the letter, UI adds "Class" automatically
                   source: "Source guideline"
                 }
               ]
@@ -156,9 +156,9 @@ Convert to:
 - [ ] **All statistics/percentages** are included
 
 ### **Recommendation Levels** 
-- [ ] **Class recommendations** (I, IIa, IIb, III) are preserved
-- [ ] **Evidence levels** (A, B, C) are included  
-- [ ] **Recommendation format** matches: "Class I, Level A"
+- [ ] **Class recommendations** are converted to single letters only (A, B, C, D)
+- [ ] **Evidence levels** are NOT included (UI handles display formatting)  
+- [ ] **Level format** is just the letter: "A", "B", "C", or "D" (NO "Class" prefix)
 - [ ] **No recommendation levels** are missing or modified
 
 ### **Links and References**
@@ -182,6 +182,7 @@ Convert to:
 - Shortening long medical descriptions
 - Omitting subsections or bullet points
 - Missing recommendation levels
+- Adding "Class" prefix to level field (UI adds this automatically)
 
 ### **❌ Link Issues** 
 - Not including PubMed links for references
@@ -272,11 +273,11 @@ export const atrialFlutterData: DiseaseData = {
         title: 'Acute Rate Control', // Exact header
         content: [{
           statement: 'Beta-blockers for rate control',
-          level: 'Class I, Level A', // Exact recommendation level
+          level: 'A', // Just the letter - UI adds "Class" automatically
           source: 'ACC/AHA Guidelines'
         }, {
           statement: 'Calcium channel blockers',
-          level: 'Class IIa, Level B', // Exact recommendation level  
+          level: 'B', // Just the letter - UI adds "Class" automatically
           source: 'ACC/AHA Guidelines'
         }]
       }]
@@ -368,8 +369,15 @@ Your conversion is successful when:
 ## 🚨 **Red Flags** (Stop and Fix)
 - ❌ Any content missing from original MD
 - ❌ Recommendation levels modified or missing  
+- ❌ Adding "Class" prefix to level field (creates "Class Class B" display)
 - ❌ Non-functional reference links
 - ❌ TypeScript build errors
 - ❌ Shortened medical descriptions
+
+## ⚠️ **IMPORTANT: NO AUTO-COMMITS**
+- **DO NOT** automatically commit changes when task is complete
+- **DO NOT** run git commands without explicit user request
+- Focus ONLY on content conversion and file updates
+- Let user handle git operations manually
 
 ## 🎯 **Success = 100% Content Preservation + All Links Working** 

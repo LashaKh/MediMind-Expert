@@ -7,8 +7,14 @@ import { aorticIntramuralHematomaData } from './cardiology/aortic-intramural-hem
 import { aorticRegurgitationData } from './cardiology/aortic-regurgitation';
 import { aorticStenosisData } from './cardiology/aortic-stenosis';
 import { arrhythmogenicRightVentricularCardiomyopathyData } from './cardiology/arrhythmogenic-right-ventricular-cardiomyopathy';
+import { aspirinOverdoseData } from './cardiology/aspirin-overdose';
 import { atrialFibrillationData } from './cardiology/atrial-fibrillation';
 import { atrialFlutterData } from './cardiology/atrial-flutter';
+import { atrioventricularNodalReentrantTachycardiaData } from './cardiology/atrioventricular-nodal-reentrant-tachycardia';
+import { betaBlockerToxicityData } from './cardiology/beta-blocker-toxicity';
+import { bicuspidAorticValveData } from './cardiology/bicuspid-aortic-valve';
+import { bloodGasAnalysisData } from './cardiology/blood-gas-analysis';
+import { bluntCardiacInjuryData } from './cardiology/blunt-cardiac-injury';
 
 // Disease registry - maps disease ID to actual data
 export const diseaseRegistry: Record<string, DiseaseData> = {
@@ -18,8 +24,14 @@ export const diseaseRegistry: Record<string, DiseaseData> = {
   'aortic-regurgitation': aorticRegurgitationData,
   'aortic-stenosis': aorticStenosisData,
   'arrhythmogenic-right-ventricular-cardiomyopathy': arrhythmogenicRightVentricularCardiomyopathyData,
+  'aspirin-overdose': aspirinOverdoseData,
   'atrial-fibrillation': atrialFibrillationData,
   'atrial-flutter': atrialFlutterData,
+  'atrioventricular-nodal-reentrant-tachycardia': atrioventricularNodalReentrantTachycardiaData,
+  'beta-blocker-toxicity': betaBlockerToxicityData,
+  'bicuspid-aortic-valve': bicuspidAorticValveData,
+  'blood-gas-analysis': bloodGasAnalysisData,
+  'blunt-cardiac-injury': bluntCardiacInjuryData,
 };
 
 // Disease index for listing pages - includes summary information
@@ -97,6 +109,18 @@ export const diseaseIndex: DiseaseIndexItem[] = [
     specialty: 'cardiology'
   },
   {
+    id: 'aspirin-overdose',
+    title: 'Aspirin Overdose',
+    category: 'Toxicology',
+    lastUpdated: 'May 21, 2025',
+    readTime: '20 min',
+    severity: 'high',
+    description: 'Acute aspirin overdose results in salicylate poisoning with mild, moderate, or severe toxicity. Severe salicylate poisoning results in 5% mortality and requires immediate emergency management.',
+    tags: ['Toxicology', 'Emergency', 'Poisoning', 'Hemodialysis', 'ECTR', 'Bicarbonate'],
+    prevalence: 'Variable exposure',
+    specialty: 'cardiology'
+  },
+  {
     id: 'atrial-fibrillation',
     title: 'Atrial Fibrillation',
     category: 'Electrophysiology',
@@ -118,6 +142,66 @@ export const diseaseIndex: DiseaseIndexItem[] = [
     description: 'A supraventricular arrhythmia characterized by rapid, regular atrial contractions, primarily confined to the right atrium. Often involves reentrant circuits around the tricuspid valve.',
     tags: ['Arrhythmia', 'Cardioversion', 'Catheter Ablation', 'Anticoagulation', 'Rate Control'],
     prevalence: '1.5 per 100,000 (neonatal)',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'atrioventricular-nodal-reentrant-tachycardia',
+    title: 'Atrioventricular Nodal Reentrant Tachycardia (AVNRT)',
+    category: 'Electrophysiology',
+    lastUpdated: 'May 21, 2025',
+    readTime: '15 min',
+    severity: 'medium',
+    description: 'A type of SVT characterized by a reentry circuit within the atrioventricular node. The incidence of AVNRT in patients receiving ICDs is estimated at 3.5%. The prognosis is generally good but can cause significant morbidity.',
+    tags: ['Arrhythmia', 'SVT', 'Reentry', 'Catheter Ablation', 'Vagal Maneuvers', 'Adenosine'],
+    prevalence: '3.5% (in ICD patients)',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'beta-blocker-toxicity',
+    title: 'Beta-blocker Toxicity',
+    category: 'Toxicology',
+    lastUpdated: 'May 21, 2025',
+    readTime: '18 min',
+    severity: 'high',
+    description: 'An overdose or excessive exposure to β-blocker medications causing bradycardia, hypotension, and AV block. Incidence is 5.1% among hospitalized patients with acute poisoning.',
+    tags: ['Toxicology', 'Emergency', 'Bradycardia', 'Glucagon', 'High-dose Insulin', 'ECMO'],
+    prevalence: '5.1% of acute poisoning cases',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'bicuspid-aortic-valve',
+    title: 'Bicuspid Aortic Valve',
+    category: 'Valvular Heart Disease',
+    lastUpdated: 'May 31, 2025',
+    readTime: '25 min',
+    severity: 'high',
+    description: 'A common congenital cardiac abnormality consisting of two cusps instead of three that is characterized by dilatation of the thoracic aorta. Associated with 9% in-hospital mortality in patients with infective endocarditis.',
+    tags: ['Congenital', 'Valvular Disease', 'Aortic Stenosis', 'Aortic Regurgitation', 'Aortopathy', 'Genetic Screening'],
+    prevalence: 'Most common congenital heart defect',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'blood-gas-analysis',
+    title: 'Blood Gas Analysis',
+    category: 'Diagnostic Tests',
+    lastUpdated: 'May 21, 2025',
+    readTime: '12 min',
+    severity: 'medium',
+    description: 'A common diagnostic tool to interpret respiratory, circulatory, and metabolic derangements through arterial and pulmonary/central venous blood gas and electrolyte analysis.',
+    tags: ['Diagnostic', 'ICU', 'Emergency', 'Acid-Base', 'Oxygenation', 'Ventilation'],
+    prevalence: 'Common in ICU/Emergency settings',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'blunt-cardiac-injury',
+    title: 'Blunt Cardiac Injury',
+    category: 'Trauma Cardiology',
+    lastUpdated: 'May 21, 2025',
+    readTime: '20 min',
+    severity: 'high',
+    description: 'An injury sustained due to blunt trauma to the heart, ranging from minor bruise to specific post-contusion cardiac conditions such as free-wall rupture. Associated with an overall mortality rate of 13.9%.',
+    tags: ['Trauma', 'Emergency', 'Cardiac Contusion', 'Thoracotomy', 'Imaging', 'Monitoring'],
+    prevalence: '13.9% mortality rate',
     specialty: 'cardiology'
   }
 ];

@@ -333,63 +333,97 @@ export const DiseasePage: React.FC = () => {
                     </h2>
                     
                     <div className="space-y-6">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-800 mb-3">Patient Demographics</h3>
-                        <div className="flex flex-wrap gap-2">
-                          {diseaseData.content.clinicalFindings.patientDemographics.map((demo, index) => (
-                            <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                              {demo}
-                            </span>
-                          ))}
+                      {diseaseData.content.clinicalFindings.patientDemographics && (
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-800 mb-3">Patient Demographics</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {diseaseData.content.clinicalFindings.patientDemographics.map((demo, index) => (
+                              <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                                {demo}
+                              </span>
+                            ))}
+                          </div>
                         </div>
-                      </div>
+                      )}
 
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-800 mb-3">Past Medical History</h3>
-                        <div className="flex flex-wrap gap-2">
-                          {diseaseData.content.clinicalFindings.pastMedicalHistory.map((history, index) => (
-                            <span key={index} className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm">
-                              {history}
-                            </span>
-                          ))}
+                      {diseaseData.content.clinicalFindings.pastMedicalHistory && (
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-800 mb-3">Past Medical History</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {diseaseData.content.clinicalFindings.pastMedicalHistory.map((history, index) => (
+                              <span key={index} className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm">
+                                {history}
+                              </span>
+                            ))}
+                          </div>
                         </div>
-                      </div>
+                      )}
 
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-800 mb-3">Symptoms</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                          {diseaseData.content.clinicalFindings.symptoms.map((symptom, index) => (
-                            <span key={index} className="px-3 py-1 bg-purple-100 text-purple-800 rounded-lg text-sm">
-                              {symptom}
-                            </span>
-                          ))}
+                      {diseaseData.content.clinicalFindings.symptoms && (
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-800 mb-3">Symptoms</h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                            {diseaseData.content.clinicalFindings.symptoms.map((symptom, index) => (
+                              <span key={index} className="px-3 py-1 bg-purple-100 text-purple-800 rounded-lg text-sm">
+                                {symptom}
+                              </span>
+                            ))}
+                          </div>
                         </div>
-                      </div>
+                      )}
 
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-800 mb-3">Likelihood Ratios</h3>
-                        <p className="text-gray-600 mb-3">The following findings increase the probability of this condition in adults.</p>
-                        <div className="bg-gray-50 rounded-lg overflow-hidden">
-                          <table className="w-full">
-                            <thead className="bg-gray-100">
-                              <tr>
-                                <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Finding</th>
-                                <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">LR+</th>
-                                <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Value</th>
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200">
-                              {diseaseData.content.clinicalFindings.likelihoodRatios.map((ratio, index) => (
-                                <tr key={index}>
-                                  <td className="px-4 py-3 text-sm text-gray-900">{ratio.finding}</td>
-                                  <td className="px-4 py-3 text-sm font-semibold text-blue-600">{ratio.lrPlus}</td>
-                                  <td className="px-4 py-3 text-sm text-gray-600">{ratio.value}</td>
+                      {diseaseData.content.clinicalFindings.neurologicalExam && (
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-800 mb-3">Neurological Exam</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {diseaseData.content.clinicalFindings.neurologicalExam.map((exam, index) => (
+                              <span key={index} className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm">
+                                {exam}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {diseaseData.content.clinicalFindings.vitalSigns && (
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-800 mb-3">Vital Signs</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {diseaseData.content.clinicalFindings.vitalSigns.map((vital, index) => (
+                              <span key={index} className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">
+                                {vital}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {diseaseData.content.clinicalFindings.likelihoodRatios && (
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-800 mb-3">Likelihood Ratios</h3>
+                          <p className="text-gray-600 mb-3">The following findings increase the probability of this condition in adults.</p>
+                          <div className="bg-gray-50 rounded-lg overflow-hidden">
+                            <table className="w-full">
+                              <thead className="bg-gray-100">
+                                <tr>
+                                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Finding</th>
+                                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">LR+</th>
+                                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Value</th>
                                 </tr>
-                              ))}
-                            </tbody>
-                          </table>
+                              </thead>
+                              <tbody className="divide-y divide-gray-200">
+                                {diseaseData.content.clinicalFindings.likelihoodRatios.map((ratio, index) => (
+                                  <tr key={index}>
+                                    <td className="px-4 py-3 text-sm text-gray-900">{ratio.finding}</td>
+                                    <td className="px-4 py-3 text-sm font-semibold text-blue-600">{ratio.lrPlus}</td>
+                                    <td className="px-4 py-3 text-sm text-gray-600">{ratio.value}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </section>
                 )}
@@ -447,6 +481,7 @@ export const DiseasePage: React.FC = () => {
                         
                         {expandedSections.includes(section.id) && (
                           <div className="px-6 py-4 space-y-4">
+                            {/* Section-level content */}
                             {section.content.map((content: GuidelineContent, contentIndex: number) => (
                               <div key={contentIndex}>
                                 <div className="mb-3">
@@ -491,6 +526,33 @@ export const DiseasePage: React.FC = () => {
                                         </div>
                                       </div>
                                     ))}
+                                  </div>
+                                ))}
+                              </div>
+                            ))}
+
+                            {/* Section-level subsections */}
+                            {section.subsections && section.subsections.map((subsection: GuidelineSubsection, subIndex: number) => (
+                              <div key={`section-sub-${subIndex}`} className="mt-6 border-l-4 border-blue-200 pl-4">
+                                <h4 className="text-lg font-semibold text-gray-800 mb-3">{subsection.title}</h4>
+                                {subsection.content && subsection.content.map((subContent: GuidelineContent, subContentIndex: number) => (
+                                  <div key={subContentIndex} className="mb-3">
+                                    <div className="flex-1">
+                                      <p className="text-gray-700">
+                                        {subContent.statement}{' '}
+                                        <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-semibold ml-2 ${
+                                          subContent.level === 'A' ? 'bg-blue-100 text-blue-800' :
+                                          subContent.level === 'B' ? 'bg-green-100 text-green-800' :
+                                          subContent.level === 'C' ? 'bg-yellow-100 text-yellow-800' :
+                                          subContent.level === 'D' ? 'bg-red-100 text-red-800' :
+                                          subContent.level === 'I' ? 'bg-gray-100 text-gray-800' :
+                                          'bg-gray-100 text-gray-800'
+                                        }`}>
+                                          Class {subContent.level}
+                                        </span>
+                                      </p>
+                                      <p className="text-sm text-gray-500 mt-1">{subContent.source}</p>
+                                    </div>
                                   </div>
                                 ))}
                               </div>
