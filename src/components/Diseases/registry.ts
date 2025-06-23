@@ -18,10 +18,16 @@ import { bluntCardiacInjuryData } from './cardiology/blunt-cardiac-injury';
 import { brugadaSyndromeData } from './cardiology/brugada-syndrome';
 import { calciumChannelBlockerToxicityData } from './cardiology/calcium-channel-blocker-toxicity';
 import { cardiacAmyloidosisData } from './cardiology/cardiac-amyloidosis';
+import { chagasCardiomyopathyData } from './cardiology/chagas-cardiomyopathy';
 import { cardiacArrestData } from './cardiology/cardiac-arrest';
+import { cardiotoxicityOfCancerTherapyData } from './cardiology/cardiotoxicity-of-cancer-therapy';
 import { cardiogenicShockData } from './cardiology/cardiogenic-shock';
 import { chestPainData } from './cardiology/chest-pain';
 import { chronicThromboembolicPulmonaryHypertensionData } from './cardiology/chronic-thromboembolic-pulmonary-hypertension';
+import { coarctationOfAortaData } from './cardiology/coarctation-of-aorta';
+import { digoxinToxicityData } from './cardiology/digoxin-toxicity';
+import { disseminatedIntravascularCoagulationData } from './cardiology/disseminated-intravascular-coagulation';
+import { focalAtrialTachycardiaData } from './cardiology/focal-atrial-tachycardia';
 
 // Disease registry - maps disease ID to actual data
 export const diseaseRegistry: Record<string, DiseaseData> = {
@@ -42,10 +48,16 @@ export const diseaseRegistry: Record<string, DiseaseData> = {
   'brugada-syndrome': brugadaSyndromeData,
   'calcium-channel-blocker-toxicity': calciumChannelBlockerToxicityData,
   'cardiac-amyloidosis': cardiacAmyloidosisData,
+  'chagas-cardiomyopathy': chagasCardiomyopathyData,
   'cardiac-arrest': cardiacArrestData,
+  'cardiotoxicity-of-cancer-therapy': cardiotoxicityOfCancerTherapyData,
   'cardiogenic-shock': cardiogenicShockData,
   'chest-pain': chestPainData,
   'chronic-thromboembolic-pulmonary-hypertension': chronicThromboembolicPulmonaryHypertensionData,
+  'coarctation-of-aorta': coarctationOfAortaData,
+  'digoxin-toxicity': digoxinToxicityData,
+  'disseminated-intravascular-coagulation': disseminatedIntravascularCoagulationData,
+  'focal-atrial-tachycardia': focalAtrialTachycardiaData,
 };
 
 // Disease index for listing pages - includes summary information
@@ -255,6 +267,18 @@ export const diseaseIndex: DiseaseIndexItem[] = [
     specialty: 'cardiology'
   },
   {
+    id: 'chagas-cardiomyopathy',
+    title: 'Chagas Cardiomyopathy',
+    category: 'Cardiomyopathy',
+    lastUpdated: 'May 22, 2025',
+    readTime: '25 min',
+    severity: 'high',
+    description: 'A form of dilated cardiomyopathy caused by chronic infection with Trypanosoma cruzi, representing the most serious manifestation of chronic Chagas disease. Characterized by progressive myocardial damage, arrhythmias, heart failure, and increased risk of sudden cardiac death.',
+    tags: ['Cardiomyopathy', 'Chagas Disease', 'Tropical Medicine', 'Heart Failure', 'Ventricular Arrhythmias', 'ICD', 'Amiodarone'],
+    prevalence: '20-30% of chronic Chagas disease patients',
+    specialty: 'cardiology'
+  },
+  {
     id: 'cardiac-arrest',
     title: 'Cardiac Arrest',
     category: 'Emergency Cardiology',
@@ -264,6 +288,18 @@ export const diseaseIndex: DiseaseIndexItem[] = [
     description: 'Functional loss of mechanical cardiac activity leading to cessation of systemic circulation. 30-day survival is 5.8% without CPR and 13.5-13.8% with CPR in out-of-hospital cases. Requires immediate emergency intervention.',
     tags: ['Emergency', 'CPR', 'Resuscitation', 'ROSC', 'Defibrillation', 'Epinephrine', 'Post-arrest Care', 'Temperature Control'],
     prevalence: '55 per 100,000 person-years',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'cardiotoxicity-of-cancer-therapy',
+    title: 'Cardiotoxicity of Cancer Therapy',
+    category: 'Cardio-Oncology',
+    lastUpdated: 'June 10, 2025',
+    readTime: '60 min',
+    severity: 'high',
+    description: 'The spectrum of cardiovascular complications that can arise from the use of anticancer treatments, including chemotherapy, targeted therapies, immunotherapy, and radiation therapy. These complications can range from asymptomatic cardiac dysfunction to life-threatening cardiovascular events.',
+    tags: ['Cardio-Oncology', 'Chemotherapy', 'Radiation Therapy', 'Heart Failure', 'Hypertension', 'Arrhythmias', 'Monitoring', 'Prevention'],
+    prevalence: 'Variable by treatment type',
     specialty: 'cardiology'
   },
   {
@@ -300,6 +336,54 @@ export const diseaseIndex: DiseaseIndexItem[] = [
     description: 'A rare and underdiagnosed complication of pulmonary embolism characterized by persistent perfusion defects that can range from asymptomatic to established CTEPH with pulmonary hypertension and right heart failure.',
     tags: ['Pulmonary Hypertension', 'Pulmonary Embolism', 'CTEPH', 'Pulmonary Endarterectomy', 'Balloon Angioplasty', 'Anticoagulation', 'Right Heart Failure'],
     prevalence: 'Rare complication of PE',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'coarctation-of-aorta',
+    title: 'Coarctation of Aorta',
+    category: 'Congenital Heart Disease',
+    lastUpdated: 'May 31, 2025',
+    readTime: '30 min',
+    severity: 'high',
+    description: 'A congenital heart defect characterized by discrete narrowing of the thoracic aorta, typically distal to the left subclavian artery. The 15-year survival rate after CoA repair in patients aged < 21 years is 92%.',
+    tags: ['Congenital', 'Aortic Stenosis', 'Hypertension', 'Turner Syndrome', 'Bicuspid Valve', 'Endovascular Repair', 'Stenting'],
+    prevalence: '1 in 3,000 to 4,000 live births',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'digoxin-toxicity',
+    title: 'Digoxin Toxicity',
+    category: 'Toxicology',
+    lastUpdated: 'May 22, 2025',
+    readTime: '20 min',
+    severity: 'high',
+    description: 'A clinical condition resulting from excessive levels of digoxin or digitoxin, characterized by cardiac arrhythmias, gastrointestinal symptoms, and neurological manifestations. Requires immediate management with digoxin immune Fab when indicated.',
+    tags: ['Toxicology', 'Emergency', 'Digoxin', 'Immune Fab', 'Bradycardia', 'Arrhythmia', 'Poisoning'],
+    prevalence: 'Higher risk in elderly patients',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'disseminated-intravascular-coagulation',
+    title: 'Disseminated Intravascular Coagulation',
+    category: 'Hematology/Coagulation',
+    lastUpdated: 'May 21, 2025',
+    readTime: '25 min',
+    severity: 'high',
+    description: 'A clinicopathologic syndrome characterized by systemic activation of widespread coagulation resulting in severe bleeding and organ failure. In-hospital mortality of DIC in critically ill patients is 45%.',
+    tags: ['DIC', 'Coagulation', 'Bleeding', 'Thrombosis', 'Sepsis', 'Emergency', 'Transfusion', 'Critical Care'],
+    prevalence: '18.6 per 100,000 person-years',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'focal-atrial-tachycardia',
+    title: 'Focal Atrial Tachycardia',
+    category: 'Electrophysiology',
+    lastUpdated: 'January 19, 2025',
+    readTime: '15 min',
+    severity: 'medium',
+    description: 'A type of supraventricular tachycardia originating from a single atrial focus outside the sinoatrial node. FAT accounts for approximately 10-15% of all supraventricular tachycardias and has good prognosis with effective treatment options.',
+    tags: ['Arrhythmia', 'SVT', 'Tachycardia', 'Catheter Ablation', 'Adenosine', 'Rate Control', 'Rhythm Control'],
+    prevalence: '10-15% of SVT cases',
     specialty: 'cardiology'
   }
 ];
