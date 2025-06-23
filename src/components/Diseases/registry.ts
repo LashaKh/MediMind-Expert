@@ -28,6 +28,7 @@ import { coarctationOfAortaData } from './cardiology/coarctation-of-aorta';
 import { digoxinToxicityData } from './cardiology/digoxin-toxicity';
 import { disseminatedIntravascularCoagulationData } from './cardiology/disseminated-intravascular-coagulation';
 import { focalAtrialTachycardiaData } from './cardiology/focal-atrial-tachycardia';
+import { heparinInducedThrombocytopeniaData } from './cardiology/heparin-induced-thrombocytopenia';
 import { hyperkalemiaData } from './cardiology/hyperkalemia';
 import { hypernatremiaDiseaseData } from './cardiology/hypernatremia';
 
@@ -60,6 +61,7 @@ export const diseaseRegistry: Record<string, DiseaseData> = {
   'digoxin-toxicity': digoxinToxicityData,
   'disseminated-intravascular-coagulation': disseminatedIntravascularCoagulationData,
   'focal-atrial-tachycardia': focalAtrialTachycardiaData,
+  'heparin-induced-thrombocytopenia': heparinInducedThrombocytopeniaData,
   'hyperkalemia': hyperkalemiaData,
   'hypernatremia': hypernatremiaDiseaseData,
 };
@@ -388,6 +390,18 @@ export const diseaseIndex: DiseaseIndexItem[] = [
     description: 'A type of supraventricular tachycardia originating from a single atrial focus outside the sinoatrial node. FAT accounts for approximately 10-15% of all supraventricular tachycardias and has good prognosis with effective treatment options.',
     tags: ['Arrhythmia', 'SVT', 'Tachycardia', 'Catheter Ablation', 'Adenosine', 'Rate Control', 'Rhythm Control'],
     prevalence: '10-15% of SVT cases',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'heparin-induced-thrombocytopenia',
+    title: 'Heparin-Induced Thrombocytopenia',
+    category: 'Hematology/Coagulation',
+    lastUpdated: 'May 22, 2025',
+    readTime: '25 min',
+    severity: 'high',
+    description: 'A prothrombotic disorder caused by antibodies that recognize complexes of platelet factor 4 (PF4) and heparin, leading to platelet activation, consumption, and thrombosis. Without appropriate treatment, HIT carries up to 50% risk of thrombotic complications.',
+    tags: ['HIT', 'Heparin', 'Thrombocytopenia', 'Thrombosis', '4Ts Score', 'Argatroban', 'Bivalirudin', 'Anticoagulation', 'Emergency'],
+    prevalence: '0.2-5% of patients receiving heparin',
     specialty: 'cardiology'
   },
   {
