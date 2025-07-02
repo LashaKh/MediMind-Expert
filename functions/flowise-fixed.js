@@ -171,9 +171,9 @@ async function sendToFlowise(message, user, conversationId, uploads, knowledgeBa
     };
   }
 
-  // Extended timeout for direct server - no Netlify CLI limits
+  // Reduced timeout for Netlify Function limits (development: 10s, production: 26s)
   const timeoutPromise = new Promise((_, reject) => {
-    setTimeout(() => reject(new Error('Flowise request timeout after 90 seconds')), 90000);
+    setTimeout(() => reject(new Error('Flowise request timeout after 25 seconds')), 25000);
   });
 
   // Make the fetch request with timeout
@@ -336,7 +336,12 @@ exports.handler = async (event, context) => {
     };
 
   } catch (error) {
-    console.error('Flowise handler error:', error);
+    console.error('Flowise handler error:', {
+      message: error.message,
+      stack: error.stack,
+      type: error.constructor.name,
+      timestamp: new Date().toISOString()
+    });
     
     // If it's a timeout error, provide a simple message
     if (error.message.includes('timeout')) {
@@ -351,7 +356,7 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({
           success: true,
           data: {
-            message: `⏳ Your medical query is being processed by the AI system. This may take up to 60 seconds for complex questions. Please check your Flowise dashboard or try asking again in a moment for the complete response.`,
+            message: `⏳ Your medical query is taking longer than expected to process. The AI system is working on complex medical analysis. Please try asking a simpler version of your question or break it into smaller parts.`,
             sources: [],
             timestamp: new Date().toISOString(),
             chatId: `processing-${Date.now()}`,

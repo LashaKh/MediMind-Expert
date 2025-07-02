@@ -184,6 +184,14 @@ export async function getUserVectorStore(): Promise<VectorStoreGetResponse> {
       },
     });
 
+    // Check content type before parsing JSON
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const responseText = await response.text();
+      console.error(`Expected JSON response but got ${contentType}:`, responseText);
+      throw new VectorStoreError(`Server returned HTML instead of JSON. Status: ${response.status}`);
+    }
+
     const responseData = await response.json();
     console.log('Raw getUserVectorStore response:', responseData);
 

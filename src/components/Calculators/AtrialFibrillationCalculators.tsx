@@ -135,16 +135,16 @@ export const AtrialFibrillationCalculators: React.FC = () => {
 
     if (score === 0) {
       riskCategory = 'low';
-      recommendation = t('calculators.cardiology.atrial_fibrillation.chads_vasc.no_anticoagulation');
+      recommendation = t('calculators.cardiology.chads_vasc.no_anticoagulation');
     } else if (score === 1 && cha2ds2vascData.sex === 'male') {
       riskCategory = 'low';
-      recommendation = t('calculators.cardiology.atrial_fibrillation.chads_vasc.no_anticoagulation');
+      recommendation = t('calculators.cardiology.chads_vasc.no_anticoagulation');
     } else if (score === 1) {
       riskCategory = 'moderate';
-      recommendation = t('calculators.cardiology.atrial_fibrillation.chads_vasc.consider_anticoagulation');
+      recommendation = t('calculators.cardiology.chads_vasc.consider_anticoagulation');
     } else {
       riskCategory = 'high';
-      recommendation = t('calculators.cardiology.atrial_fibrillation.chads_vasc.anticoagulation_recommended');
+      recommendation = t('calculators.cardiology.chads_vasc.anticoagulation_recommended');
     }
 
     return {
@@ -182,13 +182,13 @@ export const AtrialFibrillationCalculators: React.FC = () => {
 
     if (score <= 2) {
       riskCategory = 'low';
-      recommendation = t('calculators.cardiology.atrial_fibrillation.has_bled.clinical_recommendation') + ' - Low bleeding risk.';
+      recommendation = 'Low bleeding risk. Anticoagulation can be used with standard monitoring.';
     } else if (score === 3) {
       riskCategory = 'moderate';
-      recommendation = t('calculators.cardiology.atrial_fibrillation.has_bled.clinical_recommendation') + ' - Moderate bleeding risk.';
+      recommendation = 'Moderate bleeding risk. Caution with anticoagulation. More frequent monitoring and careful assessment of modifiable bleeding risk factors recommended.';
     } else {
       riskCategory = 'high';
-      recommendation = t('calculators.cardiology.atrial_fibrillation.has_bled.clinical_recommendation') + ' - High bleeding risk.';
+      recommendation = 'High bleeding risk. Address modifiable bleeding risk factors. Consider alternatives to anticoagulation or use with extreme caution and close monitoring.';
     }
 
     return {
@@ -471,36 +471,129 @@ export const AtrialFibrillationCalculators: React.FC = () => {
 
               {/* Results */}
               {cha2ds2vascResult && (
-                <div className={`p-6 rounded-lg border-2 ${getRiskBgColor(cha2ds2vascResult.riskCategory)}`}>
-                  <div className="text-center mb-4">
-                    <div className="flex items-center justify-center space-x-2 mb-2">
-                      <Heart className={`w-6 h-6 ${getRiskColor(cha2ds2vascResult.riskCategory)}`} />
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                        {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.score_label')}
-                      </h3>
+                <div className="space-y-6">
+                  {/* Main Result Card */}
+                  <div className={`p-6 rounded-lg border-2 ${getRiskBgColor(cha2ds2vascResult.riskCategory)}`}>
+                    <div className="text-center mb-4">
+                      <div className="flex items-center justify-center space-x-2 mb-2">
+                        <Heart className={`w-6 h-6 ${getRiskColor(cha2ds2vascResult.riskCategory)}`} />
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                          {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.score_label')}
+                        </h3>
+                      </div>
+                      <div className={`text-4xl font-bold ${getRiskColor(cha2ds2vascResult.riskCategory)}`}>
+                        {cha2ds2vascResult.score}
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                        {cha2ds2vascResult.annualStrokeRisk}% {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.annual_stroke_risk')}
+                      </p>
+                      <div className={`inline-block mt-2 px-3 py-1 rounded-full text-sm font-medium ${
+                        cha2ds2vascResult.riskCategory === 'low' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                        cha2ds2vascResult.riskCategory === 'moderate' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
+                        'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                      }`}>
+                        {cha2ds2vascResult.riskCategory.charAt(0).toUpperCase() + cha2ds2vascResult.riskCategory.slice(1)} Risk
+                      </div>
                     </div>
-                    <div className={`text-4xl font-bold ${getRiskColor(cha2ds2vascResult.riskCategory)}`}>
-                      {cha2ds2vascResult.score}
-                    </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                      {cha2ds2vascResult.annualStrokeRisk}% {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.annual_stroke_risk')}
-                    </p>
-                    <div className={`inline-block mt-2 px-3 py-1 rounded-full text-sm font-medium ${
-                      cha2ds2vascResult.riskCategory === 'low' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
-                      cha2ds2vascResult.riskCategory === 'moderate' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
-                      'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                    }`}>
-                      {cha2ds2vascResult.riskCategory.charAt(0).toUpperCase() + cha2ds2vascResult.riskCategory.slice(1)} Risk
+
+                    <div className="border-t border-gray-200 dark:border-gray-600 pt-4">
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                        {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.recommendation')}
+                      </h4>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">
+                        {cha2ds2vascResult.recommendation}
+                      </p>
                     </div>
                   </div>
 
-                  <div className="border-t border-gray-200 dark:border-gray-600 pt-4">
-                    <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                      {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.recommendation')}
-                    </h4>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
-                      {cha2ds2vascResult.recommendation}
-                    </p>
+                  {/* Evidence Section */}
+                  <div className="p-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
+                      {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.evidence_title')}
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.evidence_origin_title')}
+                        </h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.evidence_origin_description')}
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.evidence_validation_title')}
+                        </h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.evidence_validation_description')}
+                        </p>
+                      </div>
+
+                      <div>
+                        <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.evidence_guidelines_title')}
+                        </h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.evidence_guidelines_description')}
+                        </p>
+                      </div>
+
+                      <div className="pt-3 space-y-2">
+                        <a 
+                          href="https://www.ahajournals.org/doi/10.1161/CIR.0000000000001193"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors"
+                        >
+                          <FileText className="w-4 h-4 mr-2" />
+                          {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.evidence_link_guidelines')}
+                        </a>
+                        <br />
+                        <a 
+                          href="https://pubmed.ncbi.nlm.nih.gov/20299623/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors"
+                        >
+                          <FileText className="w-4 h-4 mr-2" />
+                          {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.evidence_link_original')}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Clinical Pearls Section */}
+                  <div className="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
+                      {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.clinical_pearls_title')}
+                    </h3>
+                    <ul className="space-y-2">
+                      <li className="flex items-start">
+                        <Brain className="w-4 h-4 text-blue-500 mt-0.5 mr-2 flex-shrink-0" />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">
+                          {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.clinical_pearl_1')}
+                        </span>
+                      </li>
+                      <li className="flex items-start">
+                        <Shield className="w-4 h-4 text-blue-500 mt-0.5 mr-2 flex-shrink-0" />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">
+                          {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.clinical_pearl_2')}
+                        </span>
+                      </li>
+                      <li className="flex items-start">
+                        <TrendingUp className="w-4 h-4 text-blue-500 mt-0.5 mr-2 flex-shrink-0" />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">
+                          {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.clinical_pearl_3')}
+                        </span>
+                      </li>
+                      <li className="flex items-start">
+                        <Pill className="w-4 h-4 text-blue-500 mt-0.5 mr-2 flex-shrink-0" />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">
+                          {t('calculators.cardiology.atrial_fibrillation.cha2ds2vasc.clinical_pearl_4')}
+                        </span>
+                      </li>
+                    </ul>
                   </div>
                 </div>
               )}

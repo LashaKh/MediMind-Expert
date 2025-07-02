@@ -7,6 +7,7 @@ import documents from './documents';
 import medical from './medical';
 import validation from './validation';
 import knowledgeBase from './knowledgeBase';
+import { podcast } from './podcast';
 
 export default {
   common: {
@@ -24,6 +25,7 @@ export default {
   medical,
   validation,
   knowledgeBase,
+  podcast,
   
   // Case management
   case: {

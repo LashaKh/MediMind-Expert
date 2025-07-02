@@ -102,13 +102,13 @@ export const KnowledgeBaseSelector: React.FC<KnowledgeBaseSelectorProps> = ({
         onClick={() => setIsOpen(!isOpen)}
         disabled={disabled}
         className={`
-          group relative h-11 px-5 py-3 rounded-2xl
+          group relative h-10 sm:h-11 px-4 sm:px-5 rounded-xl
           bg-gradient-to-r from-white/95 to-slate-50/95 border border-slate-200/60
-          shadow-lg shadow-slate-900/5 backdrop-blur-xl
-          hover:shadow-xl hover:shadow-slate-900/10 hover:scale-105 hover:-translate-y-0.5
-          transition-all duration-300 ease-out
-          ${isOpen ? 'scale-105 shadow-xl shadow-blue-500/20 border-blue-200/60 -translate-y-0.5' : ''}
-          ${disabled ? 'opacity-50 cursor-not-allowed hover:scale-100 hover:translate-y-0' : ''}
+          shadow-md backdrop-blur-xl
+          hover:shadow-lg hover:border-slate-300/60
+          transition-all duration-200 ease-out
+          ${isOpen ? 'shadow-lg border-blue-200/60' : ''}
+          ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
           focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2
         `}
         ref={buttonRef}

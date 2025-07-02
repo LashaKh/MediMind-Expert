@@ -76,16 +76,25 @@ export const useFlowiseChat = (options: UseFlowiseChatOptions = {}): UseFlowiseC
       // Process the response and create AI message
       const aiMessage: Message = {
         id: uuidv4(),
-        content: response.text || 'I apologize, but I couldn\'t generate a response. Please try again.',
+        content: response.text || response.message || 'I apologize, but I couldn\'t generate a response. Please try again.',
         type: 'ai',
         timestamp: new Date(),
-        sources: response.sources?.map((source: any) => ({
-          id: uuidv4(),
-          title: source.title || source.name || 'Medical Source',
-          url: source.url,
-          type: source.type || 'document',
-          excerpt: source.excerpt || source.content?.substring(0, 200) + '...'
-        } as SourceReference)) || []
+        sources: (response.sources || response.sourceDocuments || []).map((source: any) => {
+          // Debug log to understand the source structure
+          console.log('Processing source:', source);
+          
+          return {
+            id: uuidv4(),
+            title: source.title || source.name || source.metadata?.title || 'Medical Source',
+            url: source.url || source.metadata?.url,
+            type: source.type || source.metadata?.type || 'document',
+            excerpt: source.excerpt || 
+                    source.content?.substring(0, 200) + '...' ||
+                    source.pageContent?.substring(0, 200) + '...' ||
+                    source.text?.substring(0, 200) + '...' ||
+                    'No excerpt available'
+          } as SourceReference;
+        })
       };
 
       // Add image analysis if present (legacy support)

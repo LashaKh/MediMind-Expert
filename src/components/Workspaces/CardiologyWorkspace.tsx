@@ -43,15 +43,15 @@ export const CardiologyWorkspace: React.FC = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // Check if user should see tour
-  useEffect(() => {
-    const hasSeenTour = localStorage.getItem('tour-completed-workspace');
-    if (!hasSeenTour) {
-      // Show tour after a brief delay to allow page to load
-      const timer = setTimeout(() => setShowTour(true), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, []);
+  // Check if user should see tour - DISABLED
+  // useEffect(() => {
+  //   const hasSeenTour = localStorage.getItem('tour-completed-workspace');
+  //   if (!hasSeenTour) {
+  //     // Show tour after a brief delay to allow page to load
+  //     const timer = setTimeout(() => setShowTour(true), 1000);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, []);
 
   // Navigation handlers
   const goToAICopilot = () => navigate('/ai-copilot');

@@ -53,7 +53,7 @@ export default {
     intermediate_risk: "Intermediate risk (5-20%)",
     
     age_label: 'Age (years)',
-    age_placeholder: 'Enter age (20-79 years)',
+    age_placeholder: '20-79',
     sex_label: 'Sex',
     sex_placeholder: 'Select sex...',
     sex_male: 'Male',
@@ -64,11 +64,11 @@ export default {
     race_african_american: 'African American',
     race_other: 'Other',
     total_cholesterol_label: 'Total cholesterol (mg/dL)',
-    total_cholesterol_placeholder: 'Enter total cholesterol (130-320)',
+    total_cholesterol_placeholder: '130-320',
     hdl_cholesterol_label: 'HDL cholesterol (mg/dL)',
-    hdl_cholesterol_placeholder: 'Enter HDL cholesterol (20-100)',
+    hdl_cholesterol_placeholder: '20-100',
     systolic_bp_label: 'Systolic blood pressure (mmHg)',
-    systolic_bp_placeholder: 'Enter systolic pressure (90-200)',
+    systolic_bp_placeholder: '90-200',
     on_htn_meds_label: 'Currently on blood pressure medication',
     diabetes_label: 'Diabetes mellitus',
     smoker_label: 'Current smoker',
@@ -86,7 +86,36 @@ export default {
     aspirin_benefit: 'Aspirin therapy benefit',
     demographics_section: "Demographics",
     lab_values_section: "Lab Values",
-    risk_factors_section: "Risk Factors"
+    risk_factors_section: "Risk Factors",
+    evidence_title: "Evidence",
+    evidence_description: "This calculator is based on the 2013 ACC/AHA Guideline on the Assessment of Cardiovascular Risk and the Pooled Cohort Equations.",
+    evidence_link_text: "View Original Research Publication",
+    about_creator_title: "About the Creator",
+    creator_name: "Dr. David C. Goff, Jr., MD, PhD",
+    creator_bio: "David C. Goff, Jr., MD, PhD, is a professor of epidemiology at the University of Colorado and is the dean of the Colorado School of Public Health. He is a former recipient of the Public Policy Award from the National Forum for Heart Disease and Stroke Prevention, and he is currently the Interim Chair of the ASPPH accreditation and credentialing committee. His research interests include the prevention and understanding of heart disease and stroke.",
+    // Detailed Analysis Section
+    lifetime_risk_title: "Lifetime Risk",
+    lifetime_risk_description: "Estimated lifetime cardiovascular risk for patients aged 20-59",
+    risk_classification_title: "Risk Classification",
+    risk_classification_low: "Risk < 5% - Focus on lifestyle modifications",
+    risk_classification_borderline: "Risk 5-7.4% - Consider risk enhancing factors",
+    risk_classification_intermediate: "Risk 7.5-19.9% - Statin therapy reasonable",
+    risk_classification_high: "Risk ≥ 20% - High-intensity statin recommended",
+    therapy_reduction_title: "Estimated Risk Reduction with Therapy",
+    statin_therapy: "Statin Therapy",
+    bp_control: "BP Control",
+    smoking_cessation: "Smoking Cessation",
+    aspirin_therapy: "Aspirin (if appropriate)",
+    // Interpretation messages
+    interpretation_low: "Low cardiovascular risk. Focus on lifestyle modifications and routine preventive care.",
+    interpretation_borderline: "Borderline risk. Consider risk enhancing factors and shared decision-making for preventive therapy.",
+    interpretation_intermediate: "Intermediate risk. Moderate-intensity statin therapy is reasonable along with lifestyle modifications.",
+    interpretation_high: "High cardiovascular risk. High-intensity statin therapy recommended unless contraindicated.",
+    // Validation message
+    calibration_applied: "Calibration Applied",
+    // Footer text
+    footer_guidelines: "Based on ACC/AHA 2019 Primary Prevention Guideline and Pooled Cohort Equations",
+    footer_validated: "100% Validated"
   },
 
   // GRACE 2.0 Risk Calculator
@@ -468,7 +497,25 @@ export default {
       score_label: 'CHA₂DS₂-VASc Score',
       annual_stroke_risk: 'Annual stroke risk',
       risk_category: 'Risk category',
-      recommendation: 'Recommendation'
+      recommendation: 'Recommendation',
+      
+      // Evidence section
+      evidence_title: 'Evidence & Validation',
+      evidence_origin_title: 'Score Development',
+      evidence_origin_description: 'The CHA₂DS₂-VASc score was developed in 2010 as a refinement of the CHADS₂ score, incorporating additional stroke risk factors. It was derived from the Euro Heart Survey cohort of 5,333 patients with atrial fibrillation.',
+      evidence_validation_title: 'Validation Studies',
+      evidence_validation_description: 'The score has been extensively validated in multiple large cohorts worldwide, consistently demonstrating superior performance to CHADS₂ in identifying truly low-risk patients and providing better stroke risk stratification.',
+      evidence_guidelines_title: 'Guideline Recommendations',
+      evidence_guidelines_description: 'The CHA₂DS₂-VASc score is recommended by major international guidelines including the 2023 ACC/AHA/ACCP/HRS, 2020 ESC, and 2021 NICE guidelines for stroke risk assessment in non-valvular atrial fibrillation.',
+      evidence_link_guidelines: '2023 ACC/AHA/ACCP/HRS Guideline for AF Management',
+      evidence_link_original: 'Original CHA₂DS₂-VASc Validation Study (Lip et al., 2010)',
+      
+      // Clinical pearls
+      clinical_pearls_title: 'Clinical Pearls',
+      clinical_pearl_1: 'Female sex confers stroke risk only in the presence of ≥1 other stroke risk factor. A CHA₂DS₂-VASc score of 1 in women (sex category only) is considered low risk.',
+      clinical_pearl_2: 'The score performs best for identifying truly low-risk patients (score 0 in men, 1 in women) who may not require anticoagulation.',
+      clinical_pearl_3: 'Annual stroke risk increases progressively with higher scores, from 0.2% at score 0 to >10% at scores ≥7.',
+      clinical_pearl_4: 'Direct oral anticoagulants (DOACs) are preferred over warfarin for most patients with AF requiring anticoagulation, unless contraindicated.'
     },
     
     // HAS-BLED section
@@ -541,9 +588,9 @@ export default {
     anticoagulation_recommendation: "Anticoagulation recommendation",
     
     // Recommendations
-    no_anticoagulation: "Anticoagulation not indicated",
-    consider_anticoagulation: "Consider anticoagulation",
-    anticoagulation_recommended: "Anticoagulation recommended"
+    no_anticoagulation: "No anticoagulation indicated. Continue to monitor risk factors annually.",
+    consider_anticoagulation: "Consider oral anticoagulation based on individual patient characteristics and shared decision-making.",
+    anticoagulation_recommended: "Oral anticoagulation is recommended unless contraindicated. Prefer DOACs over warfarin in most patients."
   },
 
   // HAS-BLED Calculator - UPDATED TO PATTERN COMPLIANCE

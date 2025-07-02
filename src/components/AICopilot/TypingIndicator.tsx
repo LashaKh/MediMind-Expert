@@ -69,7 +69,6 @@ export const PulseTypingIndicator: React.FC<TypingIndicatorProps> = ({
         {showAvatar && (
           <div className="flex-shrink-0 w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center relative">
             <Bot className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-            <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping"></div>
           </div>
         )}
         

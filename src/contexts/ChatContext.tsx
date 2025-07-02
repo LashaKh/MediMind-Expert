@@ -412,11 +412,14 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
     
     try {
       const stored = localStorage.getItem('medimind-conversations');
+      console.log('Raw localStorage content:', stored);
       if (stored) {
         const parsed = JSON.parse(stored);
+        console.log('Parsed conversations:', parsed);
         
         // Validate that parsed data has conversations property and it's an array
         if (parsed && Array.isArray(parsed.conversations)) {
+          console.log('Found', parsed.conversations.length, 'conversations in localStorage');
           // Convert date strings back to Date objects
           const conversations = parsed.conversations.map((conv: any) => ({
             ...conv,
@@ -461,6 +464,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
 
   // Load conversations from localStorage on mount
   useEffect(() => {
+    console.log('ChatContext: Loading conversations from localStorage...');
     loadConversations();
   }, [loadConversations]);
 
@@ -539,6 +543,29 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
 
   const deleteConversation = (conversationId: string) => {
     dispatch({ type: 'DELETE_CONVERSATION', payload: conversationId });
+    
+    // Force clear from localStorage if this is the last conversation
+    setTimeout(() => {
+      const stored = localStorage.getItem('medimind-conversations');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        const filtered = parsed.conversations.filter((conv: any) => conv.id !== conversationId);
+        if (filtered.length === 0) {
+          // If no conversations left, clear the storage entirely
+          localStorage.removeItem('medimind-conversations');
+          console.log('All conversations deleted, localStorage cleared');
+        } else {
+          // Otherwise, save the filtered list
+          const dataToStore = {
+            conversations: filtered,
+            lastUpdated: new Date(),
+            version: '1.0'
+          };
+          localStorage.setItem('medimind-conversations', JSON.stringify(dataToStore));
+          console.log('Conversation deleted and localStorage updated');
+        }
+      }
+    }, 200);
   };
 
   const getConversationSummaries = () => {

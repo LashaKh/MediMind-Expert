@@ -148,12 +148,14 @@ Please provide clinical insights and recommendations based on this case context.
     }
 
     // Add message to thread
+    logger.info('📝 Adding message to thread', { threadId, messageLength: messageContent.length });
     await openai.beta.threads.messages.create(threadId, {
       role: 'user',
       content: messageContent
     });
 
     // Create run with the assistant
+    logger.info('🚀 Creating assistant run', { assistantId, hasVectorStore: !!vectorStoreId });
     const runParams: any = {
       assistant_id: assistantId
     };
@@ -190,23 +192,51 @@ Please provide clinical insights and recommendations based on this case context.
     // FIX: Use correct OpenAI SDK v5+ API structure - runId first, threadId as named parameter
     let runStatus = await openai.beta.threads.runs.retrieve(run.id, { thread_id: threadId });
     
-    const maxWaitTime = 60000; // 60 seconds max
+    // Adjust timeout based on environment
+    const isDevelopment = process.env.NETLIFY_DEV === 'true';
+    const maxWaitTime = isDevelopment ? 25000 : 180000; // 25s in dev, 3 minutes in production
     const startTime = Date.now();
+    
+    logger.info('⏱️ Starting assistant polling', {
+      isDevelopment,
+      maxWaitTimeSeconds: maxWaitTime / 1000,
+      environment: process.env.NODE_ENV || 'unknown'
+    });
     
     while (runStatus.status === 'queued' || runStatus.status === 'in_progress') {
       if (Date.now() - startTime > maxWaitTime) {
-        throw new Error('Assistant response timeout');
+        logger.error('Assistant response timeout', {
+          threadId,
+          runId: run.id,
+          elapsedTime: Date.now() - startTime,
+          maxWaitTime,
+          lastStatus: runStatus.status,
+          isDevelopment
+        });
+        
+        if (isDevelopment) {
+          // In development, provide helpful guidance
+          throw new Error(`Development timeout after ${maxWaitTime / 1000}s. The query is processing but may take longer. In production, this will complete successfully with a 5-minute timeout.`);
+        } else {
+          throw new Error(`Assistant response timeout after ${maxWaitTime / 1000} seconds. Please try asking a simpler question or break it into smaller parts.`);
+        }
       }
       
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+      // Optimized polling: faster initial checks, then progressive backoff
+      const elapsed = Date.now() - startTime;
+      const delayMs = elapsed < 10000 ? 500 : elapsed < 30000 ? 1000 : elapsed < 60000 ? 2000 : 3000;
       
-      // Debug: Log values in polling loop
-      logger.info('🔍 Polling API call debug', {
+      // Debug: Log polling status with timing
+      logger.info('🔄 Polling assistant run', {
         runId: run.id,
         threadId,
-        threadIdExists: !!threadId,
-        runIdExists: !!run.id
+        status: runStatus.status,
+        elapsedMs: elapsed,
+        elapsedSeconds: Math.round(elapsed / 1000),
+        nextDelayMs: delayMs
       });
+      
+      await new Promise(resolve => setTimeout(resolve, delayMs));
       
       // FIX: Use correct OpenAI SDK v5+ API structure - runId first, threadId as named parameter
       runStatus = await openai.beta.threads.runs.retrieve(run.id, { thread_id: threadId });
@@ -408,14 +438,17 @@ async function handleAssistantRequest(event: HandlerEvent, user: any) {
       userId: user?.id,
       error: (error as Error).message,
       stack: (error as Error).stack,
-      errorType: error.constructor.name
+      errorType: error.constructor.name,
+      errorDetails: error
     });
 
     if (error instanceof ValidationError) {
       return errorResponse(error.message, 400);
     }
 
-    return errorResponse('Failed to process assistant request', 500);
+    // Return more specific error message for debugging
+    const errorMessage = (error as Error).message || 'Unknown error occurred';
+    return errorResponse(`Assistant error: ${errorMessage}`, 500);
   }
 }
 
@@ -454,13 +487,17 @@ export const handler: Handler = withMedicalSecurity(async (event: HandlerEvent, 
   } catch (error) {
     logger.error('OpenAI Assistant handler error', {
       error: (error as Error).message,
-      stack: (error as Error).stack
+      stack: (error as Error).stack,
+      errorType: error.constructor.name,
+      fullError: error
     });
     
     if (error instanceof ValidationError) {
       return errorResponse(error.message, 400);
     }
     
-    return errorResponse('Failed to process assistant request', 500);
+    // Return more detailed error for debugging
+    const errorMessage = (error as Error).message || 'Unknown handler error';
+    return errorResponse(`Handler error: ${errorMessage}`, 500);
   }
 }); 

@@ -24,7 +24,7 @@ export function decodeSupabaseJWT(token: string): UserPayload | null {
       return null;
     }
 
-    const payload = JSON.parse(atob(parts[1]));
+    const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf-8'));
     
     // Map Supabase JWT structure to our UserPayload
     return {
@@ -109,21 +109,36 @@ async function fetchUserProfile(userId: string): Promise<{ specialty?: string; r
       ENV_VARS.SUPABASE_SERVICE_ROLE_KEY
     );
 
-    const { data, error } = await supabase
-      .from('users')
-      .select('medical_specialty')
-      .eq('user_id', userId)
-      .single();
+    // Try multiple possible table names and column formats (same as flowise-auth.js)
+    const possibleTables = ['profiles', 'users', 'user_profiles'];
+    
+    for (const tableName of possibleTables) {
+      try {
+        const { data, error } = await supabase
+          .from(tableName)
+          .select('medical_specialty, role, specialty')
+          .eq('id', userId)
+          .single();
 
-    if (error) {
-      console.error('Error fetching user profile:', error);
-      return {};
+        if (!error && data) {
+          console.log(`✅ Found user profile in table '${tableName}':`, {
+            userId,
+            specialty: data?.medical_specialty || data?.specialty,
+            role: data?.role
+          });
+          return {
+            specialty: data?.medical_specialty || data?.specialty,
+            role: data?.role
+          };
+        }
+      } catch (tableError) {
+        console.log(`Table '${tableName}' not accessible, trying next...`);
+        continue;
+      }
     }
 
-    return {
-      specialty: data?.medical_specialty,
-      role: undefined // No role column in users table
-    };
+    console.warn(`No profile found for user ${userId} in any table`);
+    return {};
   } catch (error) {
     console.error('Error in fetchUserProfile:', error);
     return {};

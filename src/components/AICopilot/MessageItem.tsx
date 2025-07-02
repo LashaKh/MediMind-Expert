@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { User, Bot, Clock, AlertCircle, CheckCircle, Sparkles, Brain } from 'lucide-react';
 import { Message } from '../../types/chat';
-import { useMessageFormatter } from '../../hooks/chat/useMessageFormatter';
 import { formatTimestamp } from '../../utils/chat/messageUtils';
 import { SourceReferences } from './SourceReferences';
+import { MedicalMarkdownRenderer } from './MedicalMarkdownRenderer';
 
 interface MessageItemProps {
   message: Message;
@@ -11,15 +11,13 @@ interface MessageItemProps {
 }
 
 export const UserMessageItem: React.FC<MessageItemProps> = ({ message, className = '' }) => {
-  const formattedContent = useMessageFormatter(message.content, false);
-
   return (
     <div className={`flex justify-end group ${className}`}>
       <div className="flex items-end space-x-3 max-w-2xl lg:max-w-3xl">
         <div className="relative">
           <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 text-white rounded-2xl rounded-br-md px-6 py-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
             <div className="text-sm whitespace-pre-wrap break-words leading-relaxed">
-              {formattedContent}
+              {message.content}
             </div>
             
             {/* Message metadata */}
@@ -64,16 +62,11 @@ export const UserMessageItem: React.FC<MessageItemProps> = ({ message, className
 };
 
 export const AIMessageItem: React.FC<MessageItemProps> = ({ message, className = '' }) => {
-  const formattedContent = useMessageFormatter(message.content, true);
   const [highlightedSource, setHighlightedSource] = useState<number | null>(null);
 
   // Handle clicks on inline source references
-  const handleSourceClick = (event: React.MouseEvent) => {
-    const target = event.target as HTMLElement;
-    if (target.classList.contains('inline-source-ref')) {
-      const sourceNumber = parseInt(target.getAttribute('data-source-number') || '0');
-      setHighlightedSource(highlightedSource === sourceNumber ? null : sourceNumber);
-    }
+  const handleSourceClick = (sourceNumber: number) => {
+    setHighlightedSource(highlightedSource === sourceNumber ? null : sourceNumber);
   };
 
   return (
@@ -81,21 +74,17 @@ export const AIMessageItem: React.FC<MessageItemProps> = ({ message, className =
       <div className="flex items-start space-x-3 max-w-2xl lg:max-w-3xl">
         {/* Enhanced AI avatar */}
         <div className="relative flex-shrink-0">
-          <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-xl" />
+          <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center">
             <Brain className="w-5 h-5 text-white relative z-10" />
           </div>
-          <div className="absolute -inset-1 bg-gradient-to-br from-emerald-400/30 to-blue-400/30 rounded-xl blur opacity-75 group-hover:opacity-100 transition-opacity duration-300" />
-          {/* Subtle pulse animation */}
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/20 to-blue-400/20 rounded-xl animate-pulse" />
         </div>
         
         <div className="relative">
-          <div className="bg-gradient-to-br from-white/90 to-gray-50/90 backdrop-blur-xl text-gray-900 rounded-2xl rounded-bl-md px-6 py-4 shadow-lg border border-white/30 hover:shadow-xl transition-all duration-300 hover:border-white/50">
-            <div 
-              className="text-sm whitespace-pre-wrap break-words prose prose-sm max-w-none leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: formattedContent }}
-              onClick={handleSourceClick}
+          <div className="bg-gradient-to-br from-white/95 to-gray-50/95 backdrop-blur-xl text-gray-900 rounded-2xl rounded-bl-md px-6 py-4 shadow-lg border border-white/30 hover:shadow-xl transition-all duration-300 hover:border-white/50">
+            <MedicalMarkdownRenderer 
+              content={message.content}
+              className="text-sm leading-relaxed"
+              onSourceClick={handleSourceClick}
             />
             
             {/* Source references */}

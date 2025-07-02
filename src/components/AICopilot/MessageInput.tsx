@@ -292,8 +292,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         paddingBottom: isMobile && keyboardHeight > 0 ? `${keyboardHeight}px` : undefined
       }}
     >
-      {/* Knowledge Base Indicator - Modern Glass Style */}
-      {selectedKnowledgeBase && (
+      {/* Knowledge Base Indicator - Hidden to prevent overlap */}
+      {/* {selectedKnowledgeBase && (
         <div className="flex items-center px-6 py-3 bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm border-b border-white/10 dark:border-gray-700/20">
           <div className="flex items-center space-x-3 flex-1 min-w-0">
             {React.createElement(getKnowledgeBaseIcon(), { 
@@ -304,7 +304,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
             </span>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Attachments Preview - Modern Cards */}
       {attachments.length > 0 && (

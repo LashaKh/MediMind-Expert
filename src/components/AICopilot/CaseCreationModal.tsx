@@ -87,9 +87,7 @@ export const CaseCreationModal: React.FC<CaseCreationModalProps> = ({
         const hasSensitiveInfo = sensitivePatterns.some(pattern => 
           pattern.test(formData.anonymizedInfo)
         );
-        if (hasSensitiveInfo) {
-          newErrors.anonymizedInfo = 'Please remove names, dates, and identifying information';
-        }
+        // Privacy validation removed as requested
         break;
       }
       case 3:
@@ -255,7 +253,7 @@ export const CaseCreationModal: React.FC<CaseCreationModalProps> = ({
           ? 'scale-100 opacity-100 translate-y-0' 
           : 'scale-95 opacity-0 translate-y-8'
         }
-        max-h-[90vh] overflow-hidden
+        max-h-[90vh] flex flex-col
       `}>
         {/* Dynamic Background Gradient */}
         <div className={`absolute inset-0 bg-gradient-to-br ${specialtyConfig.bgGradient} opacity-30`} />
@@ -332,7 +330,7 @@ export const CaseCreationModal: React.FC<CaseCreationModalProps> = ({
         </div>
 
         {/* Form Content */}
-        <div className="relative z-10 p-8 overflow-y-auto max-h-[60vh]">
+        <div className="relative z-10 p-8 overflow-y-auto flex-1">
           {/* Step 1: Case Overview */}
           {currentStep === 1 && (
             <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
@@ -499,7 +497,7 @@ export const CaseCreationModal: React.FC<CaseCreationModalProps> = ({
                           onChange={handleInputChange('category')}
                           className="mr-3 w-4 h-4"
                         />
-                        <span className="font-medium">{category.label}</span>
+                        <span className="font-medium text-gray-900">{category.label}</span>
                       </label>
                     ))}
                   </div>
@@ -531,7 +529,7 @@ export const CaseCreationModal: React.FC<CaseCreationModalProps> = ({
                           className="mr-3 w-4 h-4"
                         />
                         <div>
-                          <span className="font-medium block">{complexity.label}</span>
+                          <span className="font-medium block text-gray-900">{complexity.label}</span>
                           <span className="text-sm text-gray-600">{complexity.description}</span>
                         </div>
                       </label>
@@ -571,7 +569,7 @@ export const CaseCreationModal: React.FC<CaseCreationModalProps> = ({
                 <Button
                   onClick={handlePrevious}
                   variant="outline"
-                  className="px-6 py-3 rounded-xl border-2 hover:bg-gray-50 transition-all duration-200"
+                  className="px-6 py-3 rounded-xl border-2 hover:bg-gray-50 transition-all duration-200 text-gray-900"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Previous
@@ -583,7 +581,7 @@ export const CaseCreationModal: React.FC<CaseCreationModalProps> = ({
               {currentStep < 3 ? (
                 <Button
                   onClick={handleNext}
-                  className={`px-8 py-3 rounded-xl bg-gradient-to-r ${specialtyConfig.gradient} text-white hover:shadow-lg transform hover:scale-105 transition-all duration-200`}
+                  className={`px-8 py-3 rounded-xl bg-gradient-to-r ${specialtyConfig.gradient} text-white hover:shadow-lg transform hover:scale-105 transition-all duration-200 [&]:text-white [&]:hover:text-white`}
                 >
                   Next
                   <ArrowRight className="w-4 h-4 ml-2" />
@@ -594,7 +592,7 @@ export const CaseCreationModal: React.FC<CaseCreationModalProps> = ({
                   disabled={isSubmitting}
                   className={`px-8 py-3 rounded-xl bg-gradient-to-r ${specialtyConfig.gradient} text-white hover:shadow-lg transform hover:scale-105 transition-all duration-200 ${
                     isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
+                  } [&]:text-white [&]:hover:text-white`}
                 >
                   {isSubmitting ? (
                     <>

@@ -25,6 +25,9 @@ export { EuroSCOREIICalculator } from './EuroSCOREIICalculator';
 export { HCMRiskSCDCalculator } from './HCMRiskSCDCalculator';
 export { HCMAFRiskCalculator } from './HCMAFRiskCalculator';
 
+// Disease-Specific Interactive Calculators
+export { default as HIT4TsCalculator } from './HIT4TsCalculator';
+
 // Supporting Components
 export { ComingSoonCard } from './ComingSoonCard';
 

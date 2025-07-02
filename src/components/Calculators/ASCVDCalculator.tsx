@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from '../../hooks/useTranslation';
-import { Calculator, Info, AlertTriangle, TrendingUp, Heart, User, Droplet, Activity, Pill, Cigarette, Dna, Stethoscope, Target, Award, Sparkles, BarChart3, Zap, Shield } from 'lucide-react';
+import { Calculator, Info, AlertTriangle, TrendingUp, Heart, User, Droplet, Activity, Pill, Cigarette, Dna, Stethoscope, Target, Award, Sparkles, BarChart3, Zap, Shield, ExternalLink } from 'lucide-react';
 import { 
   CalculatorContainer, 
   CalculatorInput, 
@@ -345,16 +345,53 @@ export const ASCVDCalculator: React.FC = () => {
     setShowResult(false);
   };
 
+  // Real-time validation for numeric inputs
+  const validateField = (field: string, value: string) => {
+    const numValue = parseFloat(value);
+    let error = '';
+
+    if (value === '') {
+      // Clear error if field is empty
+      setErrors(prev => ({ ...prev, [field]: '' }));
+      return;
+    }
+
+    switch (field) {
+      case 'age':
+        if (isNaN(numValue) || numValue < 20 || numValue > 79) {
+          error = t('calculators.cardiology.ascvd.validation_age');
+        }
+        break;
+      case 'totalCholesterol':
+        if (isNaN(numValue) || numValue < 130 || numValue > 320) {
+          error = t('calculators.cardiology.ascvd.validation_total_cholesterol');
+        }
+        break;
+      case 'hdlCholesterol':
+        if (isNaN(numValue) || numValue < 20 || numValue > 100) {
+          error = t('calculators.cardiology.ascvd.validation_hdl_cholesterol');
+        }
+        break;
+      case 'systolicBP':
+        if (isNaN(numValue) || numValue < 90 || numValue > 200) {
+          error = t('calculators.cardiology.ascvd.validation_systolic_bp');
+        }
+        break;
+    }
+
+    setErrors(prev => ({ ...prev, [field]: error }));
+  };
+
   const getInterpretation = (category: string, risk: number) => {
     switch (category) {
       case 'low':
-        return `Low cardiovascular risk. Focus on lifestyle modifications and routine preventive care.`;
+        return t('calculators.cardiology.ascvd.interpretation_low');
       case 'borderline':
-        return `Borderline risk. Consider risk enhancing factors and shared decision-making for preventive therapy.`;
+        return t('calculators.cardiology.ascvd.interpretation_borderline');
       case 'intermediate':
-        return `Intermediate risk. Moderate-intensity statin therapy is reasonable along with lifestyle modifications.`;
+        return t('calculators.cardiology.ascvd.interpretation_intermediate');
       case 'high':
-        return `High cardiovascular risk. High-intensity statin therapy recommended unless contraindicated.`;
+        return t('calculators.cardiology.ascvd.interpretation_high');
       default:
         return '';
     }
@@ -423,9 +460,12 @@ export const ASCVDCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.ascvd.age_label')}
                     value={formData.age}
-                    onChange={(e) => setFormData({ ...formData, age: (e.target as HTMLInputElement).value })}
+                    onChange={(e) => {
+                      const value = (e.target as HTMLInputElement).value;
+                      setFormData({ ...formData, age: value });
+                      validateField('age', value);
+                    }}
                     error={errors.age}
-                    helpText={t('calculators.cardiology.ascvd.age_placeholder')}
                     icon={User}
                     type="number"
                     placeholder={t('calculators.cardiology.ascvd.age_placeholder')}
@@ -493,9 +533,12 @@ export const ASCVDCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.ascvd.total_cholesterol_label')}
                     value={formData.totalCholesterol}
-                    onChange={(e) => setFormData({ ...formData, totalCholesterol: (e.target as HTMLInputElement).value })}
+                    onChange={(e) => {
+                      const value = (e.target as HTMLInputElement).value;
+                      setFormData({ ...formData, totalCholesterol: value });
+                      validateField('totalCholesterol', value);
+                    }}
                     error={errors.totalCholesterol}
-                    helpText="Fasting total cholesterol level"
                     icon={Droplet}
                     type="number"
                     placeholder={t('calculators.cardiology.ascvd.total_cholesterol_placeholder')}
@@ -508,9 +551,12 @@ export const ASCVDCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.ascvd.hdl_cholesterol_label')}
                     value={formData.hdlCholesterol}
-                    onChange={(e) => setFormData({ ...formData, hdlCholesterol: (e.target as HTMLInputElement).value })}
+                    onChange={(e) => {
+                      const value = (e.target as HTMLInputElement).value;
+                      setFormData({ ...formData, hdlCholesterol: value });
+                      validateField('hdlCholesterol', value);
+                    }}
                     error={errors.hdlCholesterol}
-                    helpText="High-density lipoprotein cholesterol ('good' cholesterol)"
                     icon={Shield}
                     type="number"
                     placeholder={t('calculators.cardiology.ascvd.hdl_cholesterol_placeholder')}
@@ -523,9 +569,12 @@ export const ASCVDCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.ascvd.systolic_bp_label')}
                     value={formData.systolicBP}
-                    onChange={(e) => setFormData({ ...formData, systolicBP: (e.target as HTMLInputElement).value })}
+                    onChange={(e) => {
+                      const value = (e.target as HTMLInputElement).value;
+                      setFormData({ ...formData, systolicBP: value });
+                      validateField('systolicBP', value);
+                    }}
                     error={errors.systolicBP}
-                    helpText="Systolic blood pressure (top number)"
                     icon={Stethoscope}
                     type="number"
                     placeholder={t('calculators.cardiology.ascvd.systolic_bp_placeholder')}
@@ -629,13 +678,13 @@ export const ASCVDCalculator: React.FC = () => {
                     <div className="p-6 bg-white/50 dark:bg-gray-800/50 rounded-xl border border-white/20 dark:border-gray-700/20">
                       <div className="flex items-center space-x-3 mb-4">
                         <BarChart3 className="w-5 h-5 text-blue-500" />
-                        <h4 className="font-semibold text-gray-900 dark:text-gray-100">Lifetime Risk</h4>
+                        <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.ascvd.lifetime_risk_title')}</h4>
                       </div>
                       <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-2">
                         {result.lifetimeRisk.toFixed(1)}%
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Estimated lifetime cardiovascular risk for patients aged 20-59
+                        {t('calculators.cardiology.ascvd.lifetime_risk_description')}
                       </p>
                     </div>
                   )}
@@ -644,16 +693,16 @@ export const ASCVDCalculator: React.FC = () => {
                   <div className="p-6 bg-white/50 dark:bg-gray-800/50 rounded-xl border border-white/20 dark:border-gray-700/20">
                     <div className="flex items-center space-x-3 mb-4">
                       <Target className="w-5 h-5 text-purple-500" />
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">Risk Classification</h4>
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.ascvd.risk_classification_title')}</h4>
                     </div>
                     <div className="text-lg font-bold text-purple-600 dark:text-purple-400 mb-2">
                       {result.riskCategory.charAt(0).toUpperCase() + result.riskCategory.slice(1)} Risk
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {result.riskCategory === 'low' && 'Risk < 5% - Focus on lifestyle modifications'}
-                      {result.riskCategory === 'borderline' && 'Risk 5-7.4% - Consider risk enhancing factors'}
-                      {result.riskCategory === 'intermediate' && 'Risk 7.5-19.9% - Statin therapy reasonable'}
-                      {result.riskCategory === 'high' && 'Risk ≥ 20% - High-intensity statin recommended'}
+                      {result.riskCategory === 'low' && t('calculators.cardiology.ascvd.risk_classification_low')}
+                      {result.riskCategory === 'borderline' && t('calculators.cardiology.ascvd.risk_classification_borderline')}
+                      {result.riskCategory === 'intermediate' && t('calculators.cardiology.ascvd.risk_classification_intermediate')}
+                      {result.riskCategory === 'high' && t('calculators.cardiology.ascvd.risk_classification_high')}
                     </p>
                   </div>
                 </div>
@@ -663,34 +712,34 @@ export const ASCVDCalculator: React.FC = () => {
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3">
                       <Zap className="w-5 h-5 text-emerald-500" />
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">Estimated Risk Reduction with Therapy</h4>
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.ascvd.therapy_reduction_title')}</h4>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
                         <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
                           {result.therapyBenefit.statin.toFixed(1)}%
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">Statin Therapy</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">{t('calculators.cardiology.ascvd.statin_therapy')}</div>
                       </div>
                       <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-200 dark:border-green-800">
                         <div className="text-lg font-bold text-green-600 dark:text-green-400">
                           {result.therapyBenefit.bpControl.toFixed(1)}%
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">BP Control</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">{t('calculators.cardiology.ascvd.bp_control')}</div>
                       </div>
                       {result.therapyBenefit.smoking > 0 && (
                         <div className="p-4 bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 rounded-xl border border-red-200 dark:border-red-800">
                           <div className="text-lg font-bold text-red-600 dark:text-red-400">
                             {result.therapyBenefit.smoking.toFixed(1)}%
                           </div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400">Smoking Cessation</div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400">{t('calculators.cardiology.ascvd.smoking_cessation')}</div>
                         </div>
                       )}
                       <div className="p-4 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl border border-orange-200 dark:border-orange-800">
                         <div className="text-lg font-bold text-orange-600 dark:text-orange-400">
                           {result.therapyBenefit.aspirin.toFixed(1)}%
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">Aspirin (if appropriate)</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">{t('calculators.cardiology.ascvd.aspirin_therapy')}</div>
                       </div>
                     </div>
                   </div>
@@ -702,7 +751,7 @@ export const ASCVDCalculator: React.FC = () => {
                     <div className="flex items-start space-x-3">
                       <Info className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5" />
                       <div>
-                        <h5 className="font-semibold text-amber-800 dark:text-amber-200 mb-1">Calibration Applied</h5>
+                        <h5 className="font-semibold text-amber-800 dark:text-amber-200 mb-1">{t('calculators.cardiology.ascvd.calibration_applied')}</h5>
                         <p className="text-sm text-amber-700 dark:text-amber-300">{result.validationMessage}</p>
                       </div>
                     </div>
@@ -710,8 +759,42 @@ export const ASCVDCalculator: React.FC = () => {
                 )}
               </ResultsDisplay>
 
+              {/* Evidence Section */}
+              <div className="mt-8 p-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
+                  {t('calculators.cardiology.ascvd.evidence_title')}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                  {t('calculators.cardiology.ascvd.evidence_description')}
+                </p>
+                <a 
+                  href="https://www.ahajournals.org/doi/pdf/10.1161/01.cir.0000437741.48606.98"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  {t('calculators.cardiology.ascvd.evidence_link_text')}
+                </a>
+              </div>
+
+              {/* Creator Section */}
+              <div className="mt-6 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
+                  {t('calculators.cardiology.ascvd.about_creator_title')}
+                </h3>
+                <div className="space-y-3">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {t('calculators.cardiology.ascvd.creator_name')}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                    {t('calculators.cardiology.ascvd.creator_bio')}
+                  </p>
+                </div>
+              </div>
+
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
                 <CalculatorButton
                   onClick={handleReset}
                   variant="outline"
@@ -736,10 +819,10 @@ export const ASCVDCalculator: React.FC = () => {
         <div className="text-center pt-8 border-t border-white/20 dark:border-gray-800/20">
           <div className="flex items-center justify-center space-x-3 text-sm text-gray-600 dark:text-gray-400">
             <Info className="w-4 h-4" />
-            <span>Based on ACC/AHA 2019 Primary Prevention Guideline and Pooled Cohort Equations</span>
+            <span>{t('calculators.cardiology.ascvd.footer_guidelines')}</span>
             <div className="flex items-center space-x-1">
               <Award className="w-4 h-4 text-emerald-600" />
-              <span className="text-emerald-600 font-semibold">100% Validated</span>
+              <span className="text-emerald-600 font-semibold">{t('calculators.cardiology.ascvd.footer_validated')}</span>
             </div>
           </div>
         </div>

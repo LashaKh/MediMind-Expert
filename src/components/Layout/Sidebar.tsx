@@ -17,7 +17,8 @@ import {
   Zap,
   TrendingUp,
   User,
-  Database
+  Database,
+  Mic
 } from 'lucide-react';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useAuth } from '../../contexts/AuthContext';
@@ -49,6 +50,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isMobile = fa
       bgPattern: 'bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30',
       badge: 'AI',
       badgeColor: 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
+    },
+    {
+      icon: Mic,
+      iconSecondary: Sparkles,
+      label: t('navigation.podcastStudio'),
+      path: '/podcast-studio',
+      description: t('navigation.podcastStudioDesc'),
+      color: 'from-purple-500 to-pink-500',
+      bgPattern: 'bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30',
+      badge: 'NEW',
+      badgeColor: 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300'
     },
     {
       icon: Calculator,

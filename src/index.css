@@ -1,5 +1,6 @@
 /* Import Responsive Design System */
 @import './styles/responsive.css';
+@import './styles/calculator-enhancements.css';
 
 /* Import Calculator Enhancements */
 @import './styles/calculator-enhancements.css';
@@ -448,4 +449,96 @@
 
 .enhanced-button:hover {
   transform: translateX(4px);
+}
+
+/* Calculator Suggestions Animations */
+@keyframes subtle-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes notification-bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes expand-dropdown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes zap-pulse {
+  0%, 100% {
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+  50% {
+    filter: brightness(1.2) drop-shadow(0 0 8px rgba(59, 130, 246, 0.6));
+  }
+}
+
+.calculator-suggestion-compact {
+  animation: subtle-slide-in 0.3s ease-out;
+}
+
+.notification-badge {
+  animation: notification-bounce 0.4s ease-out;
+}
+
+.calculator-dropdown {
+  animation: expand-dropdown 0.2s ease-out;
+}
+
+.zap-icon-pulse {
+  animation: zap-pulse 2s ease-in-out infinite;
+}
+
+/* Micro-interactions */
+.calculator-pill {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.calculator-pill:hover {
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+
+.compact-button {
+  transition: all 0.15s ease-out;
+}
+
+.compact-button:hover {
+  transform: scale(1.05);
+}
+
+.compact-button:active {
+  transform: scale(0.98);
+}
+
+/* Glass effect for dropdown */
+.glass-dropdown {
+  backdrop-filter: blur(12px) saturate(1.8);
+  -webkit-backdrop-filter: blur(12px) saturate(1.8);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .glass-dropdown {
+  background: rgba(17, 24, 39, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }

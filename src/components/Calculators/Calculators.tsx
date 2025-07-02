@@ -5,7 +5,6 @@ import { useSpecialty, MedicalSpecialty } from '../../contexts/SpecialtyContext'
 import { useTranslation } from '../../hooks/useTranslation';
 import { ChatProvider } from '../../contexts/ChatContext';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card';
-import { PageContainer } from '../Layout/PageContainer';
 
 // Cardiology Calculator Imports
 // Phase 1: Core Risk Assessment  
@@ -561,7 +560,7 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
 
   return (
     <ChatProvider>
-      <PageContainer>
+      <div className="h-full w-full overflow-auto">
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900/20">
           {/* Animated background elements */}
           <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -569,7 +568,7 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-pink-400/20 to-indigo-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
           </div>
 
-          <div className={`relative z-10 space-y-12 ${isMobile ? 'mobile-container px-4' : 'px-6 lg:px-8'} py-12`}>
+          <div className={`relative z-10 space-y-12 ${isMobile ? 'mobile-container px-4' : 'px-6 lg:px-8 xl:px-12'} py-12 ${!isMobile ? 'max-w-7xl mx-auto' : ''}`}>
             {/* Spectacular Header Section */}
             <div className="text-center space-y-8">
               {/* Hero Badge */}
@@ -622,7 +621,7 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
                     ${isMobile ? 'text-3xl' : 'text-6xl lg:text-7xl'}
                   `}>
                     <span className="bg-gradient-to-r from-gray-900 via-blue-800 to-purple-900 dark:from-white dark:via-blue-200 dark:to-purple-300 bg-clip-text text-transparent">
-                      OB/GYN
+                      {specialty === MedicalSpecialty.OBGYN ? 'OB/GYN' : 'Cardiology'}
                     </span>
                     <br />
                     <span className="bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 dark:from-pink-400 dark:via-purple-400 dark:to-blue-400 bg-clip-text text-transparent">
@@ -632,7 +631,7 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
                   
                   {/* Enhanced description */}
                   <p className={`text-gray-600 dark:text-gray-300 font-medium leading-relaxed mb-8 ${isMobile ? 'text-lg px-4' : 'text-xl max-w-4xl mx-auto'}`}>
-                    Revolutionary obstetrics and gynecology assessment tools powered by evidence-based medicine. 
+                    {specialtyInfo.description}
                     <span className="bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent font-semibold">
                       Transform clinical decision-making with precision, confidence, and speed.
                     </span>
@@ -641,7 +640,9 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
                   {/* Spectacular stats row */}
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto mb-8">
                     <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/40 rounded-2xl border border-blue-200 dark:border-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer" onClick={() => setShowStats(!showStats)}>
-                      <div className="text-3xl font-black text-blue-600 dark:text-blue-400 mb-2 group-hover:scale-110 transition-transform">16</div>
+                      <div className="text-3xl font-black text-blue-600 dark:text-blue-400 mb-2 group-hover:scale-110 transition-transform">
+                        {calculatorCategories.reduce((total, category) => total + category.calculators.length, 0)}
+                      </div>
                       <div className="text-sm font-bold text-gray-700 dark:text-gray-300">Professional Calculators</div>
                     </div>
                     <div className="text-center p-6 bg-gradient-to-br from-emerald-50 to-green-100 dark:from-emerald-900/30 dark:to-green-900/40 rounded-2xl border border-emerald-200 dark:border-emerald-700 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer">
@@ -649,7 +650,7 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
                       <div className="text-sm font-bold text-gray-700 dark:text-gray-300">Clinical Validation</div>
                     </div>
                     <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/40 rounded-2xl border border-purple-200 dark:border-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer">
-                      <div className="text-3xl font-black text-purple-600 dark:text-purple-400 mb-2 group-hover:scale-110 transition-transform">6</div>
+                      <div className="text-3xl font-black text-purple-600 dark:text-purple-400 mb-2 group-hover:scale-110 transition-transform">{calculatorCategories.length}</div>
                       <div className="text-sm font-bold text-gray-700 dark:text-gray-300">Specialty Categories</div>
                     </div>
                     <div className="text-center p-6 bg-gradient-to-br from-orange-50 to-yellow-100 dark:from-orange-900/30 dark:to-yellow-900/40 rounded-2xl border border-orange-200 dark:border-orange-700 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer">
@@ -736,24 +737,30 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
             </div>
 
             {/* Revolutionary Category Navigation */}
-            <div className="space-y-8">
+            <div className="space-y-12 pb-16">
               {/* Enhanced Desktop Tabs */}
               {!isMobile ? (
                 <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
-                  <TabsList className="w-full p-2 bg-gradient-to-r from-gray-50 via-white to-gray-50 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-600 grid grid-cols-6 gap-2">
+                  {/* Dedicated Section Header */}
+                  <div className="text-center mb-8">
+                    <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-900 dark:from-white dark:via-blue-200 dark:to-purple-300 bg-clip-text text-transparent mb-3">
+                      Calculator Categories
+                    </h2>
+                  </div>
+                  <TabsList className="w-full max-w-6xl mx-auto p-4 bg-transparent rounded-3xl grid grid-cols-6 gap-4">
                     {calculatorCategories.map((category) => (
                       <TabsTrigger 
                         key={category.id} 
                         value={category.id}
-                        className="group relative flex flex-col items-center space-y-2 p-4 rounded-2xl transition-all duration-300 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-2xl data-[state=active]:scale-105 hover:scale-102 transform"
+                        className="group relative flex flex-col items-center space-y-3 p-6 rounded-2xl transition-all duration-300 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-2xl data-[state=active]:scale-105 hover:scale-102 transform min-h-[120px] hover:shadow-lg"
                       >
                         {/* Icon container with stunning effects */}
-                        <div className={`p-3 rounded-xl transition-all duration-300 ${
+                        <div className={`p-4 rounded-xl transition-all duration-300 ${
                           activeCategory === category.id 
                             ? 'bg-white/20 shadow-lg' 
                             : 'bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 group-hover:from-blue-100 group-hover:to-indigo-100 dark:group-hover:from-blue-900/30 dark:group-hover:to-indigo-900/30'
                         }`}>
-                          <category.icon className={`w-6 h-6 transition-all duration-300 ${
+                          <category.icon className={`w-7 h-7 transition-all duration-300 ${
                             activeCategory === category.id 
                               ? 'text-white' 
                               : `${category.color} group-hover:scale-110`
@@ -761,15 +768,15 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
                         </div>
                         
                         {/* Label */}
-                        <span className="text-xs font-bold text-center leading-tight">
+                        <span className="text-sm font-bold text-center leading-tight px-2">
                           {category.label}
                         </span>
                         
                         {/* Calculator count badge */}
-                        <div className={`px-2 py-1 rounded-full text-xs font-bold transition-all duration-300 ${
+                        <div className={`px-3 py-1.5 rounded-full text-sm font-bold transition-all duration-300 shadow-md ${
                           activeCategory === category.id 
                             ? 'bg-white/20 text-white' 
-                            : 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 group-hover:bg-blue-100 group-hover:text-blue-600 dark:group-hover:bg-blue-900/30 dark:group-hover:text-blue-400'
+                            : 'bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-600 dark:text-blue-400 group-hover:bg-gradient-to-r group-hover:from-blue-200 group-hover:to-indigo-200 dark:group-hover:from-blue-800/40 dark:group-hover:to-indigo-800/40'
                         }`}>
                           {category.calculators.length}
                         </div>
@@ -782,45 +789,48 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
                     ))}
                   </TabsList>
                   
-                  {/* Enhanced Tab Content */}
-                  {calculatorCategories.map((category) => (
-                    <TabsContent key={category.id} value={category.id} className="mt-12">
-                      {/* Spectacular Category Header */}
-                      <div className="text-center mb-20">
-                        <div className="relative inline-block">
-                          {/* Background glow - reduced scale to prevent overlap */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-purple-400/20 to-pink-400/20 rounded-3xl blur-lg scale-110"></div>
+                  {/* Category Header - Outside of tabs for better layout */}
+                  {activeCategory_data && (
+                    <div className="mt-40 mb-20 max-w-4xl mx-auto">
+                      <div className="relative">
+                        {/* Background glow - reduced scale to prevent overlap */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-purple-400/20 to-pink-400/20 rounded-2xl blur-md scale-95"></div>
+                        
+                        <div className="relative flex items-center justify-center space-x-4 px-6 py-4 bg-gradient-to-r from-white via-blue-50/50 to-white dark:from-gray-800 dark:via-blue-900/20 dark:to-gray-800 rounded-2xl shadow-xl border border-blue-200 dark:border-blue-700">
+                          {/* Animated icon */}
+                          <div className="relative flex-shrink-0">
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-600 rounded-xl blur-md opacity-30 animate-pulse"></div>
+                            <div className="relative p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg">
+                              <activeCategory_data.icon className="w-8 h-8 text-white" />
+                            </div>
+                          </div>
                           
-                          <div className="relative flex items-center space-x-6 px-10 py-6 bg-gradient-to-r from-white via-blue-50/50 to-white dark:from-gray-800 dark:via-blue-900/20 dark:to-gray-800 rounded-3xl shadow-2xl border border-blue-200 dark:border-blue-700">
-                            {/* Animated icon */}
-                            <div className="relative">
-                              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-600 rounded-2xl blur-lg opacity-30 animate-pulse"></div>
-                              <div className="relative p-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-lg">
-                                <category.icon className="w-10 h-10 text-white" />
-                              </div>
-                            </div>
-                            
-                            {/* Title and description */}
-                            <div className="text-left">
-                              <h2 className="text-3xl font-black bg-gradient-to-r from-gray-900 via-blue-800 to-purple-900 dark:from-white dark:via-blue-200 dark:to-purple-300 bg-clip-text text-transparent mb-2">
-                                {category.label}
-                              </h2>
-                              <p className="text-gray-600 dark:text-gray-300 font-medium">
-                                {category.calculators.length} professional-grade clinical tools
-                              </p>
-                            </div>
-                            
-                            {/* Tools badge */}
-                            <div className="px-6 py-3 bg-gradient-to-r from-emerald-100 to-blue-100 dark:from-emerald-900/30 dark:to-blue-900/30 rounded-2xl border border-emerald-200 dark:border-emerald-700 shadow-lg">
-                              <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mb-1">{category.calculators.length}</div>
-                              <div className="text-xs font-bold text-gray-600 dark:text-gray-300">TOOLS</div>
-                            </div>
+                          {/* Title and description */}
+                          <div className="text-center flex-1">
+                            <h2 className="text-2xl font-black bg-gradient-to-r from-gray-900 via-blue-800 to-purple-900 dark:from-white dark:via-blue-200 dark:to-purple-300 bg-clip-text text-transparent mb-1">
+                              {activeCategory_data.label}
+                            </h2>
+                            <p className="text-gray-600 dark:text-gray-300 font-medium text-sm">
+                              {activeCategory_data.calculators.length} professional-grade clinical tools
+                            </p>
+                          </div>
+                          
+                          {/* Tools badge */}
+                          <div className="px-4 py-2 bg-gradient-to-r from-emerald-100 to-blue-100 dark:from-emerald-900/30 dark:to-blue-900/30 rounded-xl border border-emerald-200 dark:border-emerald-700 shadow-md flex-shrink-0">
+                            <div className="text-xl font-black text-emerald-600 dark:text-emerald-400">{activeCategory_data.calculators.length}</div>
+                            <div className="text-xs font-bold text-gray-600 dark:text-gray-300">TOOLS</div>
                           </div>
                         </div>
                       </div>
+                    </div>
+                  )}
+                  
+                  {/* Enhanced Tab Content */}
+                  {calculatorCategories.map((category) => (
+                    <TabsContent key={category.id} value={category.id} className="mt-8">
 
                       {/* Revolutionary Calculator Grid */}
-                      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
                         {(searchQuery ? filteredCalculators : category.calculators).map((calc, index) => (
                           <Card 
                             key={calc.id}
@@ -893,6 +903,9 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
                       </div>
                     </TabsContent>
                   ))}
+                  
+                  {/* Extra bottom spacing for better scrolling */}
+                  <div className="h-20"></div>
                 </Tabs>
               ) : (
                 /* Enhanced Mobile Experience */
@@ -986,12 +999,15 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
                       ))}
                     </div>
                   )}
+                  
+                  {/* Extra bottom spacing for mobile */}
+                  <div className="h-20"></div>
                 </div>
               )}
             </div>
           </div>
         </div>
-      </PageContainer>
+      </div>
     </ChatProvider>
   );
 }; 

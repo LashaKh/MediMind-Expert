@@ -181,16 +181,16 @@ export default {
   gwtgHf: {
     title: 'GWTG-HF რისკის კალკულატორი',
     subtitle: 'გიდლაინები მკურნალობისთვის - გულის უკმარისობის რისკის შეფასება',
-    description: 'დამოწმებული რისკის პროგნოზირების ინსტრუმენტი',
+    description: 'მტკიცებულებებით დამოწმებული რისკის პროგნოზირების ინსტრუმენტი',
     
     // Alert section
     alert_title: 'GWTG-HF რისკის შეფასება',
-    alert_description: 'დამოწმებული რისკის კალკულატორი ჰოსპიტალში',
+    alert_description: 'მტკიცებულებებით დამოწმებული რისკის კალკულატორი ჰოსპიტალში',
     
     // Section headers
     section_demographics: 'დემოგრაფია და თანმხლები დაავადებები',
     section_demographics_description: 'პაციენტის დემოგრაფიული ინფორმაცია',
-    vital_signs_section: 'ცხოველმყოფელობის ნიშნები',
+    vital_signs_section: ' ნიშნები',
     vital_signs_description: 'მიმდინარე ჰემოდინამიკური სტატუსი',
     laboratory_section: 'ლაბორატორიული მონაცემები',
     laboratory_description: 'მთავარი ლაბორატორიული მარკერები',
@@ -227,7 +227,7 @@ export default {
     results_title: 'GWTG-HF რისკის შეფასების შედეგები',
     gwtg_points: 'GWTG ქულები',
     risk_score_label: 'რისკის ქულა',
-    mortality_risk_label: 'მოკვდავობის რისკი',
+    mortality_risk_label: 'სიკვდილიანობის რისკი',
     in_hospital_mortality: 'ჰოსპიტალში მოკვდავობა',
     risk_category_label: 'რისკის კატეგორია',
     risk_stratification: 'რისკის სტრატიფიკაცია',
@@ -248,13 +248,13 @@ export default {
     // Risk reference ranges
     risk_reference_title: 'GWTG-HF რისკის ქულის სახელმძღვანელო',
     low_risk_range: 'დაბალი რისკი (≤25 ქულა)',
-    low_mortality: '<2% მოკვდავობის რისკი',
+    low_mortality: '<2% სიკვდილიანობის რისკი',
     intermediate_risk_range: 'საშუალო რისკი (26-35 ქულა)',
-    intermediate_mortality: '2-4% მოკვდავობის რისკი',
+    intermediate_mortality: '2-4% სიკვდილიანობის რისკი',
     high_risk_range: 'მაღალი რისკი (36-45 ქულა)',
-    high_mortality: '4-8% მოკვდავობის რისკი',
+    high_mortality: '4-8% სიკვდილიანობის რისკი',
     very_high_risk_range: 'ძალიან მაღალი რისკი (>45 ქულა)',
-    very_high_mortality: '>8% მოკვდავობის რისკი'
+    very_high_mortality: '>8% სიკვდილიანობის რისკი'
   },
 
   // MAGGIC Risk Calculator - Basic Translation Implementation
@@ -279,10 +279,10 @@ export default {
     clinical_assessment: 'კლინიკური შეფასება',
     clinical_description: 'მიმდინარე ვიტალური ნიშნები, ლაბორატორიული მნიშვნელობები და თანმხლები დაავადებების სტატუსი',
     therapy_assessment: 'მიმდინარე თერაპიის შეფასება',
-    therapy_description: 'მიმდინარე სახელმძღვანელო-მიმართული მედიკამენტოზური თერაპიის სტატუსი',
+    therapy_description: 'მიმდინარე სახელმძღვანელო-მიმართული მედიკამენტური თერაპიის სტატუსი',
     
     // Form field labels
-    lvef_label: 'მარცხენა პარკუჭის გამოტანის ფრაქცია (LVEF)',
+    lvef_label: 'მარცხენა პარკუჭის განდევნის ფრაქცია (LVEF)',
     lvef_placeholder: 'ჩაწერეთ LVEF პროცენტი',
     nyha_class_label: 'NYHA ფუნქციური კლასი',
     nyha_class_placeholder: 'აირჩიეთ NYHA კლასი',
@@ -313,7 +313,7 @@ export default {
     
     // Clinical recommendations
     recommendation_optimal: 'ოპტიმალური მკურნალობა - სრული გაიდლაინ-მიმართული თერაპია და რეგულარული მონიტორინგი',
-    recommendation_intensive: 'ინტენსიური მკურნალობა - მაქსიმალური მედიკამენტოზური თერაპია და ხშირი შეფასება',
+    recommendation_intensive: 'ინტენსიური მკურნალობა - მაქსიმალური მედიკამენტური თერაპია და ხშირი შეფასება',
     recommendation_frequent_monitoring: 'ხშირი მონიტორინგი - რეგულარული კლინიკური შეფასება და ლაბორატორიული კონტროლი',
     recommendation_advanced_therapies: 'განვითარებული თერაპიები - განიხილეთ ICD, CRT ან გულის ტრანსპლანტაცია',
     
@@ -500,8 +500,8 @@ export default {
     validation_height_range: 'სიმაღლე უნდა იყოს 100-დან 250 სმ-მდე',
     validation_weight_required: 'წონა აუცილებელია',
     validation_weight_range: 'წონა უნდა იყოს 30-დან 300 კგ-მდე',
-    validation_ef_required: 'გამოდევნის ფრაქცია აუცილებელია',
-    validation_ef_range: 'გამოდევნის ფრაქცია უნდა იყოს 10-დან 80%-მდე',
+    validation_ef_required: 'განდევნის ფრაქცია აუცილებელია',
+    validation_ef_range: 'განდევნის ფრაქცია უნდა იყოს 10-დან 80%-მდე',
     validation_nyha_required: 'NYHA კლასი აუცილებელია',
     validation_urgency_required: 'სისწრაფე აუცილებელია',
     validation_creatinine_required: 'კრეატინინი აუცილებელია',
@@ -525,7 +525,7 @@ export default {
     recommendation_heart_team: 'გულის გუნდის შეფასება',
     recommendation_heart_team_mandatory: 'სავალდებულო გულის გუნდის შეფასება',
     recommendation_nonsurgical_alternatives: 'განიხილეთ არაქირურგიული ალტერნატივები',
-    recommendation_palliative_care: 'პალიატიური მზრუნველობის კონსულტაცია',
+    recommendation_palliative_care: 'პალიატიური მკურნალობის კონსულტაცია',
     recommendation_family_meeting: 'ოჯახური შეხვედრა მკურნალობის მიზნებისთვის',
     recommendation_alternative_access: 'განიხილეთ ალტერნატიული წვდომის გზები',
     recommendation_high_risk_programs: 'მაღალი რისკის ქირურგიული პროგრამები',
@@ -552,13 +552,13 @@ export default {
   },
   shfm: {
     title: 'სიეტლის გულის უკმარისობის მოდელი (SHFM)',
-    subtitle: 'გადარჩენის პროგნოზი და თერაპიის ზეგავლენის ანალიზი',
-    description: 'მტკიცებულებაზე დაფუძნებული გადარჩენის პროგნოზის მოდელი გულის უკმარისობის პაციენტების მკურნალობის ოპტიმიზაციისთვის.',
-    calculate_button: 'გადარჩენის გამოთვლა',
+    subtitle: 'სიცოცხლიანობის  პროგნოზი და თერაპიის ზეგავლენის ანალიზი',
+    description: 'მტკიცებულებაზე დაფუძნებული სიცოცხლიანობის  პროგნოზის მოდელი გულის უკმარისობის პაციენტების მკურნალობის ოპტიმიზაციისთვის.',
+    calculate_button: 'სიცოცხლიანობის  გამოთვლა',
     
     // Alert section
     alert_title: 'სიეტლის გულის უკმარისობის მოდელი',
-    alert_description: 'ვალიდური გადარჩენის პროგნოზის მოდელი, რომელიც აფასებს 1-, 2-, 3- და 5-წლიან გადარჩენის მაჩვენებლებს გულის უკმარისობის პაციენტებში. ეს ინსტრუმენტი ასევე აანალიზებს სხვადასხვა თერაპიის პოტენციურ ზემოქმედებას მკურნალობის გადაწყვეტილებების ოპტიმიზაციისთვის.',
+    alert_description: 'ვალიდური სიცოცხლიანობის  პროგნოზის მოდელი, რომელიც აფასებს 1-, 2-, 3- და 5-წლიან სიცოცხლიანობის  მაჩვენებლებს გულის უკმარისობის პაციენტებში. ეს ინსტრუმენტი ასევე აანალიზებს სხვადასხვა თერაპიის პოტენციურ ზემოქმედებას მკურნალობის გადაწყვეტილებების ოპტიმიზაციისთვის.',
     
     // Progress steps
     demographics_step: 'დემოგრაფია',
@@ -567,9 +567,9 @@ export default {
     therapy_step: 'თერაპია',
     
     // Step descriptions
-    demographics_description: 'პაციენტის დემოგრაფიული მონაცემები და საწყისი მახასიათებლები გადარჩენის პროგნოზისთვის',
+    demographics_description: 'პაციენტის დემოგრაფიული მონაცემები და საწყისი მახასიათებლები სიცოცხლიანობის  პროგნოზისთვის',
     clinical_description: 'კრიტიკული კლინიკური პარამეტრები, მათ შორის ფუნქციური სტატუსი და ჰემოდინამიკა',
-    laboratory_description: 'კრიტიკული ლაბორატორიული პარამეტრები გადარჩენის პროგნოზისთვის',
+    laboratory_description: 'კრიტიკული ლაბორატორიული პარამეტრები სიცოცხლიანობის  პროგნოზისთვის',
     therapy_description: 'მიმდინარე მედიკამენტები და მოწყობილობები ზემოქმედების ანალიზისთვის',
     
     // Demographics section
@@ -583,7 +583,7 @@ export default {
     
     // Clinical parameters
     clinical_parameters: 'კლინიკური პარამეტრები',
-    lvef_label: 'მარცხენა პარკუჭის გამოტანის ფრაქცია (ფვ)',
+    lvef_label: 'მარცხენა პარკუჭის განდევნის ფრაქცია (ფვ)',
     lvef_placeholder: 'ჩაწერეთ ფვ (%)',
     nyha_class_label: 'NYHA ფუნქციური კლასი',
     nyha_class_placeholder: 'აირჩიეთ NYHA კლასი',
@@ -658,7 +658,7 @@ export default {
   heartFailureStaging: {
     title: 'გულის უკმარისობის სტადიები',
     subtitle: 'ACC/AHA გულის უკმარისობის სტადიები A-D • რისკის შეფასება და მართვა',
-    description: 'ACC/AHA გულის უკმარისობის სტადიირების სისტემა რისკის შეფასებისთვის და მართვის საკითხების გაგებისთვის.',
+    description: 'ACC/AHA გულის უკმარისობის სტადიის განსაზღვრის სისტემა რისკის შეფასებისთვის და მართვის საკითხების გაგებისთვის.',
     calculate_button: 'გულის უკმარისობის სტადიის განსაზღვრა',
     risk_category: 'გულის უკმარისობის სტადია',
     recommendations: 'მართვის რეკომენდაციები',
@@ -666,8 +666,8 @@ export default {
     high_risk: 'სტადია D (განვითარებული)',
 
     // Alert section
-    alert_title: 'ACC/AHA გულის უკმარისობის სტადიირება',
-    alert_description: 'ყოვლისმომცველი სტადიირების სისტემა გულის უკმარისობისთვის რისკ ფაქტორებიდან განვითარებულ დაავადებამდე. ეს ვალიდირებული კლასიფიკაცია მართავს მტკიცებულებებზე დაფუძნებულ მართვას და ეხმარება პროგნოზის პროგნოზირებაში.',
+    alert_title: 'ACC/AHA გულის უკმარისობის სტადიის განსაზღვრა',
+    alert_description: 'ყოვლისმომცველი სტადიის განსაზღვრის სისტემა გულის უკმარისობისთვის რისკ ფაქტორებიდან განვითარებულ დაავადებამდე. ეს ვალიდირებული კლასიფიკაცია მართავს მტკიცებულებებზე დაფუძნებულ მართვას და ეხმარება პროგნოზის პროგნოზირებაში.',
 
     // Step navigation
     step_risk_factors: 'რისკ ფაქტორები',
@@ -702,18 +702,18 @@ export default {
     field_alcohol_abuse_description: 'ქრონიკული ალკოჰოლის მოხმარება',
 
     // Stage B fields
-    field_lvef_reduced: 'მარცხენა პარკუჭის შემცირებული გამოტანის ფრაქცია',
-    field_lvef_reduced_description: 'მ.პ. გამოტანის ფრაქცია <50% სიმპტომების გარეშე',
+    field_lvef_reduced: 'მარცხენა პარკუჭის შემცირებული განდევნის ფრაქცია',
+    field_lvef_reduced_description: 'მ.პ. განდევნის ფრაქცია <50% სიმპტომების გარეშე',
     field_wall_motion_abnormalities: 'რეგიონალური კედლის მოძრაობის დარღვევები',
     field_wall_motion_abnormalities_description: 'სეგმენტური კედლის მოძრაობის დეფექტები',
     field_lv_hypertrophy: 'მარცხენა პარკუჭის ჰიპერტროფია',
-    field_lv_hypertrophy_description: 'მ.პ. კედლის გაფართოებული სისქე',
+    field_lv_hypertrophy_description: 'მ.პ. კედლის გახანგრძლივებული სისქე',
     field_valvular_disease: 'მნიშვნელოვანი სარქვლოვანი დაავადება',
     field_valvular_disease_description: 'საშუალო ან მძიმე ხარისხის სარქვლოვანი დაავადება',
 
     // Stage C fields
     field_current_hf_symptoms: 'მიმდინარე გულის უკმარისობის სიმპტომები',
-    field_current_hf_symptoms_description: 'აქტიური ქოშინება, დაღლილობა ან შეშუპება',
+    field_current_hf_symptoms_description: 'აქტიური ქოშინი, დაღლილობა ან შეშუპება',
     field_previous_hf_symptoms: 'წინანდელი გულის უკმარისობის სიმპტომები',
     field_previous_hf_symptoms_description: 'წინანდელი გულის უკმარისობის სიმპტომები, ახლა გამოსწორებული',
     field_hf_hospitalizations: 'წინანდელი გულის უკმარისობის ჰოსპიტალიზაციები',
@@ -721,7 +721,7 @@ export default {
 
     // Stage D fields
     field_refractory_symptoms: 'რეფრაქტორული სიმპტომები ოპტიმალური თერაპიის მიუხედავად',
-    field_refractory_symptoms_description: 'სიმპტომები გრძელდება მაქსიმალური მედიკამენტოზური თერაპიის მიუხედავად',
+    field_refractory_symptoms_description: 'სიმპტომები გრძელდება მაქსიმალური მედიკამენტური თერაპიის მიუხედავად',
     field_recurrent_hospitalizations: 'განმეორებითი ჰოსპიტალიზაციები',
     field_recurrent_hospitalizations_description: 'მრავალი ახლანდელი გულის უკმარისობის ჰოსპიტალიზაცია',
     field_chronic_inotropic_support: 'ქრონიკული ინოტროპული მხარდაჭერა',
@@ -748,12 +748,12 @@ export default {
     results_management_focus: 'მართვის ფოკუსი',
     results_prevention: 'პრევენციის სტრატეგიები',
     results_monitoring: 'მონიტორინგი და ადრეული ჩარევა',
-    results_treatment: 'საკითხების მიხედვით მედიკამენტოზური თერაპია',
+    results_treatment: 'საკითხების მიხედვით მედიკამენტური თერაპია',
     results_advanced_care: 'განვითარებული გულის უკმარისობის მზრუნველობა',
     results_primary_management_approach: 'ძირითადი მართვის მიდგომა',
     results_management_recommendations: 'მართვის რეკომენდაციები',
     results_next_steps: 'შემდეგი ნაბიჯები',
-    results_staging_system_reference: 'ACC/AHA გულის უკმარისობის სტადიირების სახელმძღვანელო',
+    results_staging_system_reference: 'ACC/AHA გულის უკმარისობის სტადიის განსაზღვრის სახელმძღვანელო',
     
     // Stage reference results
     results_stage_a_reference: 'სტადია A - რისკის ქვეშ',
@@ -763,12 +763,12 @@ export default {
     results_stage_c_reference: 'სტადია C - სიმპტომური',
     results_stage_c_description_reference: 'სტრუქტურული დაავადება გულის უკმარისობის სიმპტომებით',
     results_stage_d_reference: 'სტადია D - განვითარებული',
-    results_stage_d_description_reference: 'რეფრაქტორული გულის უკმარისობა სპეციალიზებული მზრუნველობის საჭიროებით',
+    results_stage_d_description_reference: 'რეფრაქტორული გულის უკმარისობა სპეციალიზებული მკურნალობის საჭიროებით',
 
     // Footer
-    results_algorithm_validation_title: 'ACC/AHA გულის უკმარისობის სტადიირება',
-    results_algorithm_validation_description: '✓ ACC/AHA გაიდლაინებით ვალიდირებული • მტკიცებულებებზე დაფუძნებული სტადიირების სისტემა',
-    footer_info: 'ACC/AHA გულის უკმარისობის გაიდლაინებზე დაფუძნებული • მტკიცებულებებზე დაფუძნებული სტადიირების სისტემა',
+    results_algorithm_validation_title: 'ACC/AHA გულის უკმარისობის სტადიის განსაზღვრა',
+    results_algorithm_validation_description: '✓ ACC/AHA გაიდლაინებით ვალიდირებული • მტკიცებულებებზე დაფუძნებული სტადიის განსაზღვრის სისტემა',
+    footer_info: 'ACC/AHA გულის უკმარისობის გაიდლაინებზე დაფუძნებული • მტკიცებულებებზე დაფუძნებული სტადიის განსაზღვრის სისტემა',
     footer_validated: 'ACC/AHA ვალიდირებული'
   },
 
@@ -781,7 +781,7 @@ export default {
     // გაფრთხილების განყოფილება
     therapy_management_tool: "თერაპიის მენეჯმენტის ინსტრუმენტი",
     tool_description: "DAPT ქულების კალკულატორი ეხმარება პერკუტანული კორონარული ჩარევის (PCI) შემდეგ ორმაგი ანტითრომბოციტული თერაპიის ოპტიმალური ხანგრძლივობის განსაზღვრას იშემიური და სისხლდენის რისკების ბალანსით.",
-    study_validated: "DAPT კვლევით დამოწმებული",
+    study_validated: "DAPT კვლევით მტკიცებულებებით დამოწმებული",
     
     // პროგრესის ნაბიჯები
     patient_profile: "პაციენტის პროფილი",
@@ -803,17 +803,17 @@ export default {
     risk_factors_section: "კლინიკური რისკ ფაქტორები",
     risk_factors_description: "აირჩიეთ ყველა შესაბამისი კლინიკური რისკ ფაქტორი ამ პაციენტისთვის",
     cigarette_smoking: "სიგარეტის მოწევა",
-    cigarette_smoking_desc: "მიმდინარე მომწევი ან წყვეტილი ბოლო წლის განმავლობაში",
+    cigarette_smoking_desc: "მიმდინარე მწეველი ან წყვეტილი ბოლო წლის განმავლობაში",
     diabetes_mellitus: "შაქრიანი დიაბეტი",
     diabetes_mellitus_desc: "ტიპი 1 ან ტიპი 2 დიაბეტი, რომელიც საჭიროებს მედიკამენტებს",
     mi_at_presentation: "MI პრეზენტაციისას",
-    mi_at_presentation_desc: "STEMI ან NSTEMI როგორც მიმდინარე PCI-ის ინდიკაცია",
+    mi_at_presentation_desc: "STEMI ან NSTEMI როგორც მიმდინარე PCI-ის ჩვენება",
     prior_pci_mi: "წინა PCI ან MI",
-    prior_pci_mi_desc: "წინა პერკუტანული კორონარული ჩარევა ან მიოკარდიის ინფარქტი",
+    prior_pci_mi_desc: "წინა პერკუტანული კორონარული ჩარევა ან მიოკარდიუმის ინფარქტი",
     paclitaxel_stent: "პაკლიტაქსელ-გამომყოფი სტენტი",
     paclitaxel_stent_desc: "პაკლიტაქსელ-გამომყოფი წამლით დაფარული სტენტის გამოყენება",
     chf_lvef: "CHF ან LVEF <30%",
-    chf_lvef_desc: "კონგესტიური გულის უკმარისობა ან მარცხენა პარკუჭის ამოგდების ფრაქცია <30%",
+    chf_lvef_desc: "შეგუბებითი გულის უკმარისობა ან მარცხენა პარკუჭის განდევინის ფრაქცია <30%",
     next_specialized_factors: "შემდეგი: სპეციალიზებული ფაქტორები",
     
     // ნაბიჯი 3: სპეციალიზებული ფაქტორები
@@ -874,7 +874,7 @@ export default {
     consideration_moderate_age: "საშუალო ასაკობრივი სისხლდენის რისკი (65-74 წელი)",
     consideration_diabetes: "დიაბეტი ზრდის როგორც იშემიურ, ასევე სისხლდენის რისკს",
     consideration_mi_presentation: "ბოლოდროინდელი MI ზრდის იშემიურ რისკს და DAPT სარგებელს",
-    consideration_small_vessel: "მცირე ჭურჭლის PCI (<3მმ) ზრდის სტენტის თრომბოზის რისკს",
+    consideration_small_vessel: "მცირე სისხლძარღვის PCI (<3მმ) ზრდის სტენტის თრომბოზის რისკს",
     consideration_heart_failure: "გულის უკმარისობა ზრდის როგორც იშემიურ, ასევე სისხლდენის რისკს",
     consideration_paclitaxel_stent: "პაკლიტაქსელ-გამომყოფი სტენტები შეიძლება ისარგებლონ გახანგრძლივებული DAPT-ით",
     consideration_vein_graft: "ვენური გრაფტის PCI-ს აქვს უნიკალური რისკის პროფილი, რომელიც საჭიროებს ინდივიდუალურ მიდგომას",
@@ -903,25 +903,25 @@ export default {
     
     // მოქმედების ღილაკები
     new_assessment: "ახალი შეფასება",
-    modify_inputs: "შეცვალეთ შეყვანები"
+    modify_inputs: "შეცვალეთ მონაცემები"
   },
 
   // TIMI Risk Calculator
   timi: {
     title: 'TIMI რისკის კალკულატორი',
     subtitle: 'არასტაბილური ანგინა/NSTEMI • რისკის შეფასება',
-    description: 'რისკის სტრატიფიკაცია არასტაბილური ანგინისა და NSTEMI-ს მქონე პაციენტებისთვის.',
+    description: 'რისკის სტრატიფიკაცია არასტაბილური სტენოკარდიისა და NSTEMI-ს მქონე პაციენტებისთვის.',
     
     // Emergency alert - MISSING KEYS ADDED
     emergency_tool: 'საგანგებო რისკის შეფასების ინსტრუმენტი',
-    tool_description: 'TIMI რისკის ქულა არასტაბილური ანგინისა და NSTEMI-ს მქონე პაციენტების სწრაფი შეფასებისთვის. ეს დამოწმებული ინსტრუმენტი ეხმარება რისკის სტრატიფიკაციასა და მართვის გადაწყვეტილებების მიღებას საგანგებო პირობებში.',
+    tool_description: 'TIMI რისკის ქულა არასტაბილური სტენოკარდიისა და NSTEMI-ს მქონე პაციენტების სწრაფი შეფასებისთვის. ეს მტკიცებულებებით დამოწმებული ინსტრუმენტი ეხმარება რისკის სტრატიფიკაციასა და მართვის გადაწყვეტილებების მიღებას საგანგებო პირობებში.',
     
     // Step navigation - MISSING KEYS ADDED
     patient_info: 'პაციენტის ინფო',
     clinical_factors: 'კლინიკური ფაქტორები',
     
     alert_title: 'TIMI რისკის შეფასება',
-    alert_description: 'დამოწმებული რისკის სკორი მწვავე კორონარული სინდრომებისთვის',
+    alert_description: 'მტკიცებულებებით დამოწმებული რისკის ქულა მწვავე კორონარული სინდრომებისთვის',
     
     demographics_section: 'პაციენტის დემოგრაფია',
     demographics_description: 'ძირითადი პაციენტის ინფორმაცია',
@@ -947,15 +947,15 @@ export default {
     aspirin_use: 'ასპირინის გამოყენება ბოლო 7 დღეში',
     aspirin_use_desc: 'ასპირინის გამოყენება წინა კვირის განმავლობაში',
     severe_angina: 'მძიმე ანგინა (≥2 ეპიზოდი 24 საათში)',
-    severe_angina_desc: 'მძიმე ანგინის ორი ან მეტი ეპიზოდი ბოლო 24 საათში',
+    severe_angina_desc: 'მძიმე სტენოკარდიის ორი ან მეტი ეპიზოდი ბოლო 24 საათში',
     st_deviation: 'ST გადახრა ≥0.5მმ',
     st_deviation_desc: 'ST სეგმენტის გადახრა ≥0.5მმ',
     elevated_markers: 'მომატებული გულის მარკერები',
-    elevated_markers_desc: 'ტროპონი ან CK-MB მომატებული',
+    elevated_markers_desc: 'ტროპონინი ან CK-MB მომატებული',
     
     // Additional biomarkers key - MISSING KEY ADDED
     elevated_biomarkers: 'მომატებული გულის ბიომარკერები',
-    elevated_biomarkers_desc: 'მომატებული ტროპონი, CK-MB, ან სხვა გულის მარკერები',
+    elevated_biomarkers_desc: 'მომატებული ტროპონინი, CK-MB, ან სხვა გულის მარკერები',
     
     calculate_button: 'TIMI რისკის გამოთვლა',
     
@@ -973,10 +973,10 @@ export default {
     recommendation_intermediate: 'ადრეული ინვაზიური სტრატეგია განიხილეთ',
     recommendation_high: 'ადრეული ინვაზიური სტრატეგია რეკომენდირებულია',
     
-    algorithm_validation: 'TIMI რისკის სკორი დამოწმებულია რანდომიზებულ კონტროლირებად ცდებში და ვალიდირებულია მრავალ პოპულაციაში NSTEMI/UA შეფასებისთვის.',
+    algorithm_validation: 'TIMI რისკის ქულა მტკიცებულებებით დამოწმებულია რანდომიზებულ კონტროლირებად ცდებში და ვალიდირებულია მრავალ პოპულაციაში NSTEMI/UA შეფასებისთვის.',
     
     new_assessment: 'ახალი შეფასება',
-    modify_inputs: 'შეცვალეთ შეყვანები'
+    modify_inputs: 'შეცვალეთ მონაცემები'
   },
 
   // Atrial Fibrillation Calculators
@@ -987,7 +987,7 @@ export default {
     
     // Alert section
     alert_title: 'წინაგულების ფიბრილაციის რისკის შეფასება',
-    alert_description: 'დამოწმებული ინსტრუმენტები ინსულტისა და სისხლდენის რისკის შესაფასებლად AF პაციენტებში ანტიკოაგულაციის ოპტიმიზაციისთვის.',
+    alert_description: 'მტკიცებულებებით დამოწმებული ინსტრუმენტები ინსულტისა და სისხლდენის რისკის შესაფასებლად AF პაციენტებში ანტიკოაგულაციის ოპტიმიზაციისთვის.',
     alert_badge: 'ვალიდირებული კლინიკური ინსტრუმენტი',
     
     // Tab navigation
@@ -1024,7 +1024,7 @@ export default {
       high_risk_title: 'მაღალი რისკის ფაქტორები',
       
       // Risk factors (1 point each)
-      chf_label: 'კონგესტიური გულის უკმარისობა',
+      chf_label: 'შეგუბებითი გულის უკმარისობა',
       hypertension_label: 'ჰიპერტენზია',
       diabetes_label: 'შაქრიანი დიაბეტი',
       vascular_disease_label: 'ვასკულარული დაავადება',
@@ -1094,7 +1094,7 @@ export default {
       recommendation_high: 'ხშირი მონიტორინგი აუცილებელია - მაღალი სისხლდენის რისკი',
       
       // Algorithm validation
-      algorithm_validation: 'HAS-BLED ქულა დამოწმებულია მრავალ კლინიკურ კვლევაში და რეკომენდირებულია ESC გაიდლაინებით ანტიკოაგულაციის სისხლდენის რისკის შესაფასებლად.',
+      algorithm_validation: 'HAS-BLED ქულა მტკიცებულებებით დამოწმებულია მრავალ კლინიკურ კვლევაში და რეკომენდირებულია ESC გაიდლაინებით ანტიკოაგულაციის სისხლდენის რისკის შესაფასებლად.',
       
       // Clinical notes
       clinical_notes: 'კლინიკური შენიშვნები',
@@ -1103,7 +1103,7 @@ export default {
       
       // Action buttons
       new_assessment: 'ახალი შეფასება',
-      modify_inputs: 'შეცვალეთ შეყვანები'
+      modify_inputs: 'შეცვალეთ მონაცემები'
     },
 
     // Alternative HAS-BLED key structure for backward compatibility
@@ -1141,7 +1141,7 @@ export default {
       
       // Action buttons
       new_assessment: 'ახალი შეფასება',
-      modify_inputs: 'შეცვალეთ შეყვანები'
+      modify_inputs: 'შეცვალეთ მონაცემები'
     }
   },
 
@@ -1208,7 +1208,7 @@ export default {
     high_risk: 'მაღალი რისკი',
     
     // Interpretation messages
-    interpretation_low: 'დაბალი სისხლდენის რისკი ({risk}% 12 თვეში) - გაფართოებული DAPT შეიძლება განიხილოს',
+    interpretation_low: 'დაბალი სისხლდენის რისკი ({risk}% 12 თვეში) - გახანგრძლივებული DAPT შეიძლება განიხილოს',
     interpretation_intermediate: 'საშუალო სისხლდენის რისკი ({risk}% 12 თვეში) - სტანდარტული DAPT ფრთხილი მონიტორინგით',
     interpretation_high: 'მაღალი სისხლდენის რისკი ({risk}% 12 თვეში) - განიხილეთ მოკლე DAPT ხანგრძლივობა',
     
@@ -1227,7 +1227,7 @@ export default {
     risk_factor_previous_bleeding: 'ადრინდელი მნიშვნელოვანი სისხლდენა - მომავალი სისხლდენის მოვლენების ყველაზე ძლიერი პროგნოზისტი',
     
     // Recommendations by risk level
-    recommendation_low: 'გაფართოებული DAPT (12-30 თვე) შეიძლება უზრუნველყოს იშემიური სარგებელი მისაღები სისხლდენის რისკით',
+    recommendation_low: 'გახანგრძლივებული DAPT (12-30 თვე) შეიძლება უზრუნველყოს იშემიური სარგებელი მისაღები სისხლდენის რისკით',
     recommendation_intermediate: 'სტანდარტული DAPT ხანგრძლივობა (12 თვე) გაძლიერებული სისხლდენის მონიტორინგითა და რისკის ფაქტორების მოდიფიკაციით',
     recommendation_high: 'განიხილეთ მოკლე DAPT ხანგრძლივობა (3-6 თვე) მომატებული სისხლდენის რისკის გამო, მაგრამ უზრუნველყავით ადეკვატური იშემიური დაცვა',
     
@@ -1237,14 +1237,14 @@ export default {
     duration_high: '3-6 თვე შეფასებით',
     
     // Clinical guidance
-    guidance_low: 'დაბალი სისხლდენის რისკი იძლევა გაფართოებული DAPT-ის განხილვის საშუალებას მაღალი იშემიური რისკის პაციენტებისთვის',
+    guidance_low: 'დაბალი სისხლდენის რისკი იძლევა გახანგრძლივებული DAPT-ის განხილვის საშუალებას მაღალი იშემიური რისკის პაციენტებისთვის',
     guidance_intermediate: 'დაბალანსეთ სისხლდენისა და იშემიური რისკები ინდივიდუალური ხანგრძლივობის შეფასებით',
     guidance_high: 'მაღალი სისხლდენის რისკი საჭიროებს მოკლე DAPT ხანგრძლივობისა და სისხლდენის რისკის მოდიფიკაციის განხილვას',
     
     // Clinical benefit
-    benefit_low: 'ხელსაყრელი სისხლდენის უსაფრთხოების პროფილი მხარს უჭერს გაფართოებული DAPT-ის განხილვას იშემიური სარგებლისთვის',
+    benefit_low: 'ხელსაყრელი სისხლდენის უსაფრთხოების პროფილი მხარს უჭერს გახანგრძლივებული DAPT-ის განხილვას იშემიური სარგებლისთვის',
     benefit_intermediate: 'ზომიერი სისხლდენის რისკი საჭიროებს ფრთხილ ბალანსს იშემიური დაცვის საჭიროებებთან',
-    benefit_high: 'მომატებული სისხლდენის რისკმა შეიძლება შეზღუდოს გაფართოებული DAPT-ის სარგებელი, განიხილეთ ალტერნატიული ანტითრომბოციტული სტრატეგიები',
+    benefit_high: 'მომატებული სისხლდენის რისკმა შეიძლება შეზღუდოს გახანგრძლივებული DAPT-ის სარგებელი, განიხილეთ ალტერნატიული ანტითრომბოციტული სტრატეგიები',
     
     // Safe duration recommendations
     safe_duration_low: '12-30 თვე მონიტორინგით',
@@ -1258,7 +1258,7 @@ export default {
     // Score interpretation guide
     score_interpretation: 'PRECISE-DAPT ქულის ინტერპრეტაციის გზამკვლევი',
     score_low_range: 'დაბალი რისკი (<25 ქულა)',
-    score_low_description: 'გაფართოებული DAPT შეიძლება იყოს სასარგებლო მისაღები სისხლდენის რისკით',
+    score_low_description: 'გახანგრძლივებული DAPT შეიძლება იყოს სასარგებლო მისაღები სისხლდენის რისკით',
     score_intermediate_range: 'საშუალო რისკი (25-35 ქულა)',
     score_intermediate_description: 'სტანდარტული DAPT გაძლიერებული მონიტორინგით რეკომენდირებულია',
     score_high_range: 'მაღალი რისკი (≥35 ქულა)',
@@ -1272,7 +1272,7 @@ export default {
     
     // Action buttons
     new_assessment: 'ახალი შეფასება',
-    modify_inputs: 'შეცვალეთ შეყვანები'
+    modify_inputs: 'შეცვალეთ მონაცემები'
   },
 
   // AHA PREVENT™ Calculator - COMPLETE GEORGIAN TRANSLATION IMPLEMENTATION  
@@ -1391,7 +1391,7 @@ export default {
     
     // Action buttons
     new_assessment: 'ახალი შეფასება',
-    modify_inputs: 'შეცვალეთ შეყვანები',
+    modify_inputs: 'შეცვალეთ მონაცემები',
     
     // Footer
     footer_description: 'AHA PREVENT™ განტოლებების საფუძველზე CKM ჯანმრთელობის ფაქტორებით • მხოლოდ განათლების მიზნებისთვის',

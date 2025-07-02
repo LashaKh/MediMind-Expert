@@ -6,6 +6,141 @@ import { supabase } from '../supabase';
 import { PatientCase, Attachment, KnowledgeBaseType } from '../../types/chat';
 import { convertAttachmentsToUploads } from '../../utils/fileUpload';
 
+// Direct Flowise call function for long-running queries (CURATED KNOWLEDGE BASE ONLY)
+async function fetchAIResponseDirect(
+  message: string,
+  sessionId: string,
+  caseContext?: PatientCase,
+  attachments?: Attachment[],
+  knowledgeBaseType?: KnowledgeBaseType,
+  personalDocumentIds?: string[]
+): Promise<APIResponse> {
+  try {
+    // GUARD: This function should NEVER be used for personal knowledge base
+    if (knowledgeBaseType === 'personal') {
+      throw new APIError('Personal knowledge base should use OpenAI Assistant endpoint, not Flowise direct', 500);
+    }
+    // Get authentication and Flowise config
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      throw new APIError('Authentication required', 401);
+    }
+
+    console.log('🔐 Getting Flowise configuration...');
+    
+    // Get Flowise configuration from auth endpoint
+    const authResponse = await fetch('/api/flowise/auth', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`
+      }
+    });
+
+    if (!authResponse.ok) {
+      throw new APIError('Failed to get Flowise configuration', authResponse.status);
+    }
+
+    const authData = await authResponse.json();
+    const { flowiseUrl, specialty, userId, vectorStoreId, openaiApiKey } = authData.data;
+
+    console.log('🎯 Direct Flowise call:', {
+      url: flowiseUrl,
+      specialty,
+      hasVectorStore: !!vectorStoreId
+    });
+
+    // Prepare request payload for Flowise
+    const requestPayload: any = {
+      question: message,
+      overrideConfig: { sessionId }
+    };
+
+    // Add attachments/uploads if any
+    if (attachments && attachments.length > 0) {
+      const uploads = await convertAttachmentsToUploads(attachments);
+      if (uploads && uploads.length > 0) {
+        requestPayload.uploads = uploads;
+      }
+    }
+
+    // Handle knowledge base configuration - CURATED ONLY
+    requestPayload.knowledgeBase = {
+      type: knowledgeBaseType || 'curated'
+    };
+
+    // Add case context if provided
+    if (caseContext) {
+      const caseString = `Patient Case Context:
+- Patient: ${caseContext.patientName || 'Unknown'}
+- Age: ${caseContext.age || 'Unknown'}
+- Gender: ${caseContext.gender || 'Unknown'}
+- Chief Complaint: ${caseContext.chiefComplaint || 'Not specified'}
+- History: ${caseContext.history || 'Not provided'}
+- Current Question Context: This question relates to the above patient case.`;
+      
+      requestPayload.question = `${caseString}\n\nQuestion: ${message}`;
+    }
+
+    console.log('📡 Making direct Flowise request...');
+
+    // Make direct call to Flowise (no timeout limits!)
+    const response = await fetch(flowiseUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestPayload)
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Direct Flowise error:', {
+        status: response.status,
+        error: errorText
+      });
+      throw new APIError(`Flowise error: ${response.status} - ${errorText}`, response.status);
+    }
+
+    const result = await response.json();
+    
+    console.log('✅ Direct Flowise response received:', {
+      hasText: !!result.text,
+      hasResponse: !!result.response,
+      hasSources: !!(result.sourceDocuments && result.sourceDocuments.length > 0),
+      fullResult: result
+    });
+
+    // Extract the actual message text
+    const messageText = result.text || result.response || result.answer || 'No response text found';
+    
+    console.log('🔍 Direct Flowise message extraction:', {
+      text: result.text,
+      response: result.response, 
+      answer: result.answer,
+      extractedMessage: messageText,
+      messageLength: messageText?.length
+    });
+
+    // Format response to match expected APIResponse structure
+    const formattedResponse = {
+      text: messageText,
+      sources: result.sourceDocuments || [],
+      timestamp: new Date().toISOString(),
+      chatId: sessionId,
+      specialty: specialty
+    };
+    
+    console.log('📤 Returning formatted response:', formattedResponse);
+    
+    return formattedResponse;
+
+  } catch (error) {
+    console.error('Direct Flowise call failed:', error);
+    throw error instanceof APIError ? error : new APIError(error.message || 'Direct Flowise call failed', 500);
+  }
+}
+
 export async function fetchAIResponse(
   message: string | { text: string; imageUrl?: string },
   sessionId: string,
@@ -159,24 +294,22 @@ Please provide clinical insights and recommendations based on this case context.
         delete requestBody.uploads;
       }
     } else {
-      // Route to Flowise for curated knowledge base (existing behavior)
-      apiEndpoint = '/api/flowise/chat';
+      // Use direct Flowise call for curated knowledge base (no timeout limits!)
+      console.log('🌊 Using direct Flowise call for curated knowledge base');
       
-      // Add knowledge base context for Flowise
-      requestBody.knowledgeBase = {
-        type: knowledgeBaseType || 'curated',
-        // Legacy support for manual document IDs (fallback)
-        ...(personalDocumentIds && personalDocumentIds.length > 0 && {
-          personalDocumentIds: personalDocumentIds
-        })
-      };
-      
-      console.log('🌊 Routing to Flowise for curated knowledge base');
+      return await fetchAIResponseDirect(
+        messageText,
+        sessionId,
+        caseContext,
+        attachments,
+        knowledgeBaseType,
+        personalDocumentIds
+      );
     }
 
-    console.log(`📡 Sending ${knowledgeBaseType || 'curated'} KB request to:`, apiEndpoint);
+    console.log(`📡 Sending ${knowledgeBaseType || 'personal'} KB request to:`, apiEndpoint);
 
-    // Make the API request
+    // Make the API request (for personal KB only now)
     const response = await fetch(apiEndpoint, {
       method: 'POST',
       headers: {

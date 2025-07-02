@@ -17,7 +17,11 @@ import { VectorStorePage } from './components/KnowledgeBase/VectorStorePage';
 import { Settings } from './components/Settings/Settings';
 import { Profile } from './components/Profile/Profile';
 import { HelpCenter } from './components/Help/HelpCenter';
-import { DiseasePage, DiseasesIndex } from './components/Diseases';
+import SimpleDiseasesIndex from './components/Diseases/SimpleDiseasesIndex';
+import SimpleDiseasePage from './components/Diseases/SimpleDiseasePage';
+import { PodcastStudio } from './components/PodcastStudio';
+
+import MarkdownFileLoader from './components/Diseases/MarkdownFileLoader';
 import { GlobalDocumentProgressTracker } from './components/ui/DocumentProgressTracker';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { AuthProvider } from './contexts/AuthContext';
@@ -78,12 +82,23 @@ function App() {
                     
                     {/* Common routes available to all specialties */}
                     <Route path="/ai-copilot" element={<AICopilot />} />
+                    <Route path="/podcast-studio" element={<PodcastStudio />} />
                     <Route path="/calculators" element={<Calculators />} />
                     <Route path="/forms" element={<Forms />} />
                     <Route path="/knowledge-base" element={<KnowledgeBase />} />
                     <Route path="/vector-store" element={<VectorStorePage />} />
-                    <Route path="/diseases" element={<DiseasesIndex />} />
-                    <Route path="/diseases/:diseaseId" element={<DiseasePage />} />
+                    <Route path="/diseases" element={<SimpleDiseasesIndex />} />
+                    <Route path="/diseases/:diseaseId" element={<SimpleDiseasePage />} />
+                    
+                    {/* Test route for markdown display */}
+                    <Route path="/test-markdown" element={<MarkdownFileLoader />} />
+                    
+                    {/* New dynamic markdown test page */}
+                    <Route path="/dynamic-markdown-test" element={<MarkdownFileLoader />} />
+                    
+                    {/* Full markdown file loader */}
+                    <Route path="/markdown-loader" element={<MarkdownFileLoader />} />
+                    
                     <Route path="/settings" element={<Settings />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/help" element={<HelpCenter />} />

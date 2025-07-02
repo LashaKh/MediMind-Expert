@@ -95,16 +95,6 @@ export const MessageList: React.FC<MessageListProps> = ({
         <div ref={messagesEndRef} className="h-4" />
       </div>
 
-      {/* Modern glass scroll to bottom button */}
-      {showScrollButton && (
-        <button
-          onClick={scrollToBottom}
-          className="absolute bottom-6 right-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-white/20 dark:border-gray-700/20 text-gray-700 dark:text-gray-300 p-3 rounded-full shadow-lg hover:bg-white/90 dark:hover:bg-gray-800/90 hover:shadow-xl transition-all duration-300 z-10 group animate-in fade-in slide-in-from-bottom-2"
-          aria-label="Scroll to bottom"
-        >
-          <ArrowDown className="w-5 h-5 group-hover:translate-y-0.5 transition-transform duration-200" />
-        </button>
-      )}
     </div>
   );
 };

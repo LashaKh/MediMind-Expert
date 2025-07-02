@@ -1,0 +1,21 @@
+export const nonpharmacologicInterventions = {
+  id: 'nonpharmacologic-interventions',
+  title: 'Nonpharmacologic Interventions',
+  subsections: {
+    lifestyleModifications: {
+      title: 'Lifestyle Modifications',
+      evidenceLevel: 'B',
+      content: '**Evidence Level B**: As per ACC/AHA/AMSSM/…/SCMR 2024 guidelines: \n- Offer counseling and comprehensive lifestyle interventions to achieve and maintain weight loss and possibly reduce the risk of developing LVOTO, HF, and AF in patients with HCM and overweight or obesity.\n- Offer lifestyle modifications and medical therapy for hypertension, with a preference for β-blockers and nondihydropyridine CCBs, in patients with obstructive HCM and hypertension.'
+    },
+    physicalActivityRestrictions: {
+      title: 'Physical Activity Restrictions',
+      evidenceLevels: ['B', 'C', 'D'],
+      content: '**Evidence Level B**: As per ACC/AHA/AMSSM/…/SCMR 2024 guidelines: \n- Advise practicing mild-to-moderate-intensity recreational exercise to improve cardiorespiratory fitness, physical functioning, and QoL, and for overall health in patients with HCM, in keeping with physical activity guidelines for the general population.\n- Obtain a comprehensive evaluation and shared decision-making about sports participation with an expert professional for athletes with HCM.\n\n**Evidence Level C**: \n- Consider allowing participation in competitive sports of any intensity in genotype-positive, phenotype-negative patients.\n- Consider advising participation in vigorous recreational activities in patients with HCM after an annual comprehensive evaluation and shared decision-making with an expert professional balancing potential benefits and risks, with this process being repeated annually.\n- Consider allowing participation in competitive sports in patients with HCM capable of a high level of physical performance after review by an expert provider with experience managing athletes with HCM, conducting an annual comprehensive evaluation, and using shared decision-making balancing potential benefits and risks.\n\n**Evidence Level D**: \n- Do not implement universal restriction on vigorous physical activity or competitive sports in most patients with HCM.\n- Do not perform ICD implantation in patients with HCM for the sole purpose of participation in competitive sports.\n\n**Evidence Level B**: As per ESC 2023 guidelines: \n- Advise practicing regular low-to-moderate-intensity exercise in all able patients with cardiomyopathy.\n- Obtain an individualized risk assessment for exercise prescription in all patients with cardiomyopathy.\n- Restrict high-intensity exercise, including competitive sport, in high-risk patients and in patients with LVOTO and exercise-induced complex ventricular arrhythmias.\n\n**Evidence Level C**: \n- Consider allowing high-intensity exercise and competitive sport in genotype-positive/phenotype-negative patients seeking to do so.\n- Consider allowing high-intensity exercise and competitive sport in asymptomatic low-risk patients with morphologically mild HCM in the absence of resting or inducible LV outflow obstruction and exercise-induced complex ventricular arrhythmias.\n- As per ESC 2022 guidelines, consider allowing participation in high-intensity exercise in asymptomatic adult patients with HCM without risk markers.\n\n**Evidence Level B**: As per ESC 2018 guidelines, restrict participation in competitive sports in athletes with syncope and phenotype-positive HCM before evaluation by a specialist.'
+    },
+    psychologicalSupport: {
+      title: 'Psychological Support',
+      evidenceLevels: ['B', 'C'],
+      content: '**Evidence Level B**: As per ESC 2023 guidelines: \n- Offer psychological support by an appropriately trained health professional in all patients with inherited cardiomyopathy receiving an implantable cardioverter defibrillator.\n- Offer psychological support by an appropriately trained health professional in all persons who have experienced the premature SCD of a family member with cardiomyopathy.\n\n**Evidence Level C**: Consider offering psychological support by an appropriately trained health professional in all patients and families with inherited cardiomyopathy.'
+    }
+  }
+}; 

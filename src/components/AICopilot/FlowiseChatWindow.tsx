@@ -11,7 +11,7 @@ import { KnowledgeBaseSelector } from './KnowledgeBaseSelector';
 import { usePersonalKBPlaceholder } from './PersonalKBGuidance';
 import { NewCaseButton } from './NewCaseButton';
 import { CaseCreationModal } from './CaseCreationModal';
-import { CaseIndicator } from './CaseIndicator';
+import { HeaderCaseIndicator } from './HeaderCaseIndicator';
 import { CaseListModal } from './CaseListModal';
 import { CalculatorSuggestions } from './CalculatorSuggestions';
 import { Button } from '../ui/button';
@@ -56,6 +56,19 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
   const [showCaseModal, setShowCaseModal] = useState(false);
   const [showCaseListModal, setShowCaseListModal] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Check if we need to create a conversation when user sends first message
+  const ensureConversationExists = useCallback(() => {
+    if (!chatState.activeConversationId) {
+      const newConversationId = createNewConversation(
+        `Conversation ${new Date().toLocaleDateString()}`,
+        profile?.medical_specialty as 'cardiology' | 'obgyn'
+      );
+      setActiveConversation(newConversationId);
+      return newConversationId;
+    }
+    return chatState.activeConversationId;
+  }, [chatState.activeConversationId, createNewConversation, setActiveConversation, profile]);
 
   // Enhanced animations and interactions
   useEffect(() => {
@@ -122,6 +135,9 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
   const handleSendMessage = useCallback(async (content: string, attachments?: Attachment[]) => {
     if (!content.trim() && (!attachments || attachments.length === 0)) return;
 
+    // Ensure a conversation exists before sending the message
+    ensureConversationExists();
+
     // Create user message with enhanced metadata
     const userMessage: Message = {
       id: uuidv4(),
@@ -154,7 +170,7 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [addMessage, sendToFlowise, chatState.currentSessionId, chatState.selectedKnowledgeBase, chatState.caseContext.activeCase, setLoading, setError]);
+  }, [addMessage, sendToFlowise, chatState.currentSessionId, chatState.selectedKnowledgeBase, chatState.caseContext.activeCase, setLoading, setError, ensureConversationExists]);
 
   // Handle case creation
   const handleCaseCreate = async (caseData: Omit<PatientCase, 'id' | 'createdAt' | 'updatedAt'>) => {
@@ -367,7 +383,7 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
   return (
     <div className={`h-full w-full flex flex-col relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-50 ${className}`}>
       {/* Sophisticated Premium Header */}
-      <div className="relative bg-white/95 backdrop-blur-3xl border-b border-slate-200/60 shadow-2xl shadow-slate-900/5">
+      <div className="relative bg-white/98 backdrop-blur-xl border-b border-slate-200/50 shadow-sm">
         {/* Luxurious Background Effects */}
         <div className="absolute inset-0 overflow-hidden">
           {/* Primary gradient mesh */}
@@ -438,7 +454,7 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
             </div>
 
             {/* Premium Control Suite */}
-            <div className="flex items-center space-x-2 sm:space-x-3 lg:space-x-5 w-full lg:w-auto justify-end lg:justify-start order-last lg:order-none">
+            <div className="flex items-center space-x-2 sm:space-x-3 lg:space-x-4 w-full lg:w-auto justify-end lg:justify-start order-last lg:order-none">
               {/* Mobile: Collapsible Quick Actions */}
               <div className="hidden sm:flex items-center space-x-2 lg:space-x-3">
                 {/* Fresh Start - Premium Design */}
@@ -446,68 +462,76 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
                   variant="ghost" 
                   size="sm"
                   onClick={() => {
-                    console.log('Force clearing all chat data');
+                    console.log('Fresh Start: Clearing conversations but preserving case studies');
                     clearMessages();
-                    localStorage.removeItem('medimind-conversations');
-                    localStorage.removeItem('medimind-cases');
+                    resetCaseContext(); // Clear active case but preserve case history
+                    localStorage.removeItem('medimind-conversations'); // Only clear conversations
+                    // NOTE: Preserving medimind-cases so case studies persist
                     createNewConversation('Fresh Start', profile?.medical_specialty as 'cardiology' | 'obgyn');
                     window.location.reload();
                   }}
                   className={`
-                    group relative h-9 sm:h-10 lg:h-11 px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl
-                    bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200/60
-                    text-emerald-700 font-semibold text-xs sm:text-sm
-                    hover:shadow-2xl hover:shadow-emerald-500/25 hover:scale-105 hover:-translate-y-0.5
-                    active:scale-95 transition-all duration-300 ease-out
+                    group relative h-10 sm:h-11 px-4 sm:px-5 rounded-xl
+                    bg-gradient-to-r from-emerald-50/90 to-green-50/90 border border-emerald-200/60
+                    text-emerald-700 font-semibold text-sm
+                    hover:shadow-lg hover:shadow-emerald-500/20 hover:border-emerald-300/60
+                    active:scale-95 transition-all duration-200 ease-out
                     focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:ring-offset-2
                   `}
                 >
-                  <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-emerald-500/10 to-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <span className="relative z-10 flex items-center space-x-2">
-                    <span className="hidden lg:inline">Fresh Start</span>
-                    <span className="lg:hidden">Fresh</span>
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-500/10 to-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                  <span className="relative z-10 flex items-center">
+                    <span>Fresh Start</span>
                   </span>
                 </Button>
 
-                {/* Connection Status - Premium */}
-                <div className={`
-                  flex items-center space-x-2 sm:space-x-3 lg:space-x-4 px-2 sm:px-3 lg:px-5 py-1.5 sm:py-2 lg:py-2.5 rounded-xl sm:rounded-2xl
-                  bg-gradient-to-r from-white/90 to-slate-50/90 border border-slate-200/60
-                  shadow-lg shadow-slate-900/5 backdrop-blur-xl
-                `}>
-                  {/* Status Indicator */}
-                  <div className="flex items-center space-x-1.5 sm:space-x-2 lg:space-x-3">
-                    {isConnected ? (
-                      <>
-                        <div className="relative">
-                          <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 bg-emerald-400 rounded-full shadow-emerald-400/50 shadow-md" />
-                          <div className="absolute inset-0 w-2 sm:w-2.5 h-2 sm:h-2.5 bg-emerald-400 rounded-full animate-ping opacity-30" />
-                        </div>
-                        <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest hidden lg:inline">
-                          Connected
-                        </span>
-                        <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest lg:hidden">
-                          Online
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 bg-red-400 rounded-full animate-pulse shadow-red-400/50 shadow-md" />
-                        <span className="text-xs font-bold text-red-600 uppercase tracking-widest">
-                          Offline
-                        </span>
-                      </>
-                    )}
-                  </div>
+                {/* Header Case Indicator or Connection Status */}
+                {chatState.caseContext.activeCase ? (
+                  <HeaderCaseIndicator
+                    activeCase={chatState.caseContext.activeCase}
+                    onViewCase={handleViewCase}
+                    onResetCase={handleResetCase}
+                  />
+                ) : (
+                  <div className={`
+                    flex items-center space-x-2 sm:space-x-3 h-10 sm:h-11 px-4 sm:px-5 rounded-xl
+                    bg-gradient-to-r from-white/90 to-slate-50/90 border border-slate-200/60
+                    shadow-md backdrop-blur-xl
+                  `}>
+                    {/* Status Indicator */}
+                    <div className="flex items-center space-x-1.5 sm:space-x-2 lg:space-x-3">
+                      {isConnected ? (
+                        <>
+                          <div className="relative">
+                            <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 bg-emerald-400 rounded-full shadow-emerald-400/50 shadow-md" />
+                            <div className="absolute inset-0 w-2 sm:w-2.5 h-2 sm:h-2.5 bg-emerald-400 rounded-full animate-ping opacity-30" />
+                          </div>
+                          <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest hidden lg:inline">
+                            Connected
+                          </span>
+                          <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest lg:hidden">
+                            Online
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 bg-red-400 rounded-full animate-pulse shadow-red-400/50 shadow-md" />
+                          <span className="text-xs font-bold text-red-600 uppercase tracking-widest">
+                            Offline
+                          </span>
+                        </>
+                      )}
+                    </div>
 
-                  {/* Elegant Divider - Hidden on mobile */}
-                  <div className="hidden sm:block w-px h-3 lg:h-4 bg-gradient-to-b from-transparent via-slate-300 to-transparent" />
+                    {/* Elegant Divider - Hidden on mobile */}
+                    <div className="hidden sm:block w-px h-3 lg:h-4 bg-gradient-to-b from-transparent via-slate-300 to-transparent" />
 
-                  {/* Session Time - Enhanced */}
-                  <div className="hidden sm:block text-xs font-medium text-slate-500 tabular-nums">
-                    {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {/* Session Time - Enhanced */}
+                    <div className="hidden sm:block text-xs font-medium text-slate-500 tabular-nums">
+                      {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Knowledge Base Selector - Enhanced with responsive sizing */}
@@ -521,6 +545,9 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
                 />
               </div>
 
+              {/* Visual Separator */}
+              <div className="hidden lg:block w-px h-8 bg-gradient-to-b from-transparent via-slate-300/50 to-transparent" />
+
               {/* Sophisticated Action Group */}
               <div className="flex items-center space-x-1 sm:space-x-2">
                 {/* History - Elevated */}
@@ -529,17 +556,17 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
                   size="sm"
                   onClick={() => setShowConversationList(true)}
                   className={`
-                    group relative h-9 w-9 sm:h-10 sm:w-10 lg:h-11 lg:w-11 p-0 rounded-xl sm:rounded-2xl
-                    bg-gradient-to-br from-slate-50 to-slate-100/80 border border-slate-200/60
-                    text-slate-600 hover:text-slate-800 shadow-lg shadow-slate-900/5
-                    hover:shadow-xl hover:shadow-slate-900/10 hover:scale-105 hover:-translate-y-0.5
-                    active:scale-95 transition-all duration-300 ease-out
+                    group relative h-10 w-10 sm:h-11 sm:w-11 p-0 rounded-xl
+                    bg-gradient-to-br from-slate-50/90 to-slate-100/90 border border-slate-200/60
+                    text-slate-600 hover:text-slate-800 shadow-md
+                    hover:shadow-lg hover:border-slate-300/60
+                    active:scale-95 transition-all duration-200 ease-out
                     focus:outline-none focus:ring-2 focus:ring-slate-500/20 focus:ring-offset-2
                   `}
                   title="View conversation history"
                 >
-                  <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-slate-500/5 to-gray-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <History className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 transition-transform duration-300 group-hover:scale-110" />
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-slate-500/5 to-gray-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                  <History className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
                 </Button>
 
                 {/* Cases - Premium */}
@@ -548,17 +575,17 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
                   size="sm"
                   onClick={() => setShowCaseListModal(true)}
                   className={`
-                    group relative h-9 w-9 sm:h-10 sm:w-10 lg:h-11 lg:w-11 p-0 rounded-xl sm:rounded-2xl
-                    bg-gradient-to-br from-purple-50 to-violet-100/80 border border-purple-200/60
-                    text-purple-600 hover:text-purple-800 shadow-lg shadow-purple-900/5
-                    hover:shadow-xl hover:shadow-purple-500/20 hover:scale-105 hover:-translate-y-0.5
-                    active:scale-95 transition-all duration-300 ease-out
+                    group relative h-10 w-10 sm:h-11 sm:w-11 p-0 rounded-xl
+                    bg-gradient-to-br from-purple-50/90 to-violet-100/90 border border-purple-200/60
+                    text-purple-600 hover:text-purple-800 shadow-md
+                    hover:shadow-lg hover:border-purple-300/60
+                    active:scale-95 transition-all duration-200 ease-out
                     focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:ring-offset-2
                   `}
                   title={`View cases (${chatState.caseContext.caseHistory.length} created)`}
                 >
-                  <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-500/5 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <FileText className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 transition-transform duration-300 group-hover:scale-110" />
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-500/5 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                  <FileText className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
                   {/* Enhanced Case Badge */}
                   {chatState.caseContext.caseHistory.length > 0 && (
                     <div className="absolute -top-1 -right-1 sm:-top-1.5 sm:-right-1.5 min-w-[16px] sm:min-w-[20px] h-4 sm:h-5 px-0.5 sm:px-1 rounded-full bg-gradient-to-r from-purple-500 to-violet-600 text-white text-xs font-bold flex items-center justify-center shadow-lg shadow-purple-500/30">
@@ -567,6 +594,9 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
                   )}
                 </Button>
 
+                {/* Visual Separator */}
+                <div className="w-px h-6 bg-gradient-to-b from-transparent via-slate-300/50 to-transparent mx-1" />
+
                 {/* New Case - Refined */}
                 <NewCaseButton
                   onClick={() => setShowCaseModal(true)}
@@ -574,34 +604,15 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
                   variant="ghost"
                   size="sm"
                   className={`
-                    group relative h-9 w-9 sm:h-10 sm:w-10 lg:h-11 lg:w-11 p-0 rounded-xl sm:rounded-2xl
-                    bg-gradient-to-br from-blue-50 to-indigo-100/80 border border-blue-200/60
-                    text-blue-600 hover:text-blue-800 shadow-lg shadow-blue-900/5
-                    hover:shadow-xl hover:shadow-blue-500/20 hover:scale-105 hover:-translate-y-0.5
-                    active:scale-95 transition-all duration-300 ease-out
+                    group relative h-10 sm:h-11 px-4 sm:px-5 rounded-xl
+                    bg-gradient-to-br from-blue-50/90 to-indigo-100/90 border border-blue-200/60
+                    text-blue-600 hover:text-blue-800 shadow-md
+                    hover:shadow-lg hover:border-blue-300/60
+                    active:scale-95 transition-all duration-200 ease-out
                     disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0
                     focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2
                   `}
                 />
-
-                {/* New Conversation - Sophisticated */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleNewConversation}
-                  className={`
-                    group relative h-9 w-9 sm:h-10 sm:w-10 lg:h-11 lg:w-11 p-0 rounded-xl sm:rounded-2xl
-                    bg-gradient-to-br from-emerald-50 to-green-100/80 border border-emerald-200/60
-                    text-emerald-600 hover:text-emerald-800 shadow-lg shadow-emerald-900/5
-                    hover:shadow-xl hover:shadow-emerald-500/20 hover:scale-105 hover:-translate-y-0.5
-                    active:scale-95 transition-all duration-300 ease-out
-                    focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:ring-offset-2
-                  `}
-                  title="Start a new conversation (clears current chat and case)"
-                >
-                  <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500/5 to-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <Plus className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-90" />
-                </Button>
               </div>
             </div>
 
@@ -638,18 +649,6 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
 
       {/* Enhanced Main Content Area */}
       <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative">
-        {/* Advanced Case Indicator */}
-        {chatState.caseContext.activeCase && (
-          <div className="flex-shrink-0 px-6 pt-6 pb-4">
-            <CaseIndicator
-              activeCase={chatState.caseContext.activeCase}
-              onViewCase={handleViewCase}
-              onResetCase={handleResetCase}
-              className="transform transition-all duration-500 hover:scale-[1.01]"
-            />
-          </div>
-        )}
-
         {/* Messages Area with Enhanced Styling */}
         <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative">
           {chatState.messages.length === 0 ? (
@@ -673,11 +672,6 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
                 caseHistory={chatState.caseContext.caseHistory}
               />
               
-              {/* Welcome Screen Glow Effect */}
-              <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-radial from-blue-500/5 to-transparent rounded-full" />
-                <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-gradient-radial from-purple-500/5 to-transparent rounded-full" />
-              </div>
             </div>
           ) : (
             // Enhanced Chat Messages
@@ -688,11 +682,6 @@ export const FlowiseChatWindow: React.FC<FlowiseChatWindowProps> = ({
                 className="flex-1"
               />
               
-              {/* Message Area Glow Effect */}
-              <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-radial from-blue-500/3 to-transparent rounded-full" />
-                <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-radial from-purple-500/3 to-transparent rounded-full" />
-              </div>
             </div>
           )}
         </div>

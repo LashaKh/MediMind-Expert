@@ -1,4 +1,3 @@
-
 # Pathway.md Content Extraction Guide Using Puppeteer MCP
 
 Quick guide for extracting complete content from Pathway.md medical articles using Puppeteer MCP. 
@@ -36,43 +35,74 @@ mcp__puppeteer__puppeteer_click("text=Expand All Topics")
 mcp__puppeteer__puppeteer_evaluate("document.body.innerText.length")
 ```
 
-### 2.3 Extract Content in Chunks
+### 2.3 Extract Content in Chunks **WITH IMMEDIATE STUDY LINK CAPTURE**
 
 **CRITICAL FOR LARGE CONTENT (>10,000 characters)**: Use step-by-step extraction and file building approach:
 
 #### For Content >10,000 Characters: 
-**DO NOT extract all content at once**. Instead, use this step-by-step approach:
+**DO NOT extract all content at once**. Instead, use this **MANDATORY** step-by-step approach:
 
-1. **Extract first chunk and write to file immediately**
-2. **Extract subsequent chunks and append to file one by one**
-3. **Continue until all content is extracted**
+**🚨 CRITICAL PATTERN: EXTRACT → WRITE TO FILE → VERIFY STUDY LINKS → EXTRACT NEXT CHUNK**
 
 ```javascript
 // STEP 1: Check total content size first
 mcp__puppeteer__puppeteer_evaluate("document.body.innerText.length")
 
 // STEP 2: If >10,000 characters, use chunk-by-chunk approach
-// Extract Chunk 1 (0-10,000) and WRITE TO FILE immediately
+// ===== CHUNK 1 EXTRACTION (0-10,000) =====
 mcp__puppeteer__puppeteer_evaluate("document.body.innerText.slice(0, 10000)")
-// → Write/append this chunk to markdown file before proceeding
+// → **IMMEDIATELY WRITE** this chunk to markdown file before proceeding
 
-// Extract Chunk 2 (10,000-20,000) and APPEND TO FILE immediately  
+// ===== CRITICAL: VERIFY STUDY LINKS IN CHUNK 1 =====
+// Check for study names that need PubMed links
+mcp__puppeteer__puppeteer_evaluate(`(() => {
+  const chunkText = document.body.innerText.slice(0, 10000);
+  const studyPattern = /\\b[A-Z]{2,}[\\s-][A-Z]{2,}\\b|\\b[A-Z]+\\s(?:study|trial|Study|Trial)\\b/g;
+  const studies = chunkText.match(studyPattern) || [];
+  return studies.length > 0 ? 'STUDIES FOUND: ' + studies.join(', ') : 'No studies detected';
+})()`)
+// → **ADD PUBMED LINKS** for any detected studies before proceeding
+
+// ===== CHUNK 2 EXTRACTION (10,000-20,000) =====
 mcp__puppeteer__puppeteer_evaluate("document.body.innerText.slice(10000, 20000)")
-// → Append this chunk to markdown file before proceeding
+// → **IMMEDIATELY APPEND** this chunk to markdown file before proceeding
 
-// Extract Chunk 3 (20,000-30,000) and APPEND TO FILE immediately
+// ===== CRITICAL: VERIFY STUDY LINKS IN CHUNK 2 =====
+mcp__puppeteer__puppeteer_evaluate(`(() => {
+  const chunkText = document.body.innerText.slice(10000, 20000);
+  const studyPattern = /\\b[A-Z]{2,}[\\s-][A-Z]{2,}\\b|\\b[A-Z]+\\s(?:study|trial|Study|Trial)\\b/g;
+  const studies = chunkText.match(studyPattern) || [];
+  return studies.length > 0 ? 'STUDIES FOUND: ' + studies.join(', ') : 'No studies detected';
+})()`)
+// → **ADD PUBMED LINKS** for any detected studies before proceeding
+
+// ===== CHUNK 3 EXTRACTION (20,000-30,000) =====
 mcp__puppeteer__puppeteer_evaluate("document.body.innerText.slice(20000, 30000)")
-// → Append this chunk to markdown file before proceeding
+// → **IMMEDIATELY APPEND** this chunk to markdown file before proceeding
 
-// Continue this pattern: EXTRACT → APPEND → EXTRACT → APPEND
+// ===== CRITICAL: VERIFY STUDY LINKS IN CHUNK 3 =====
+mcp__puppeteer__puppeteer_evaluate(`(() => {
+  const chunkText = document.body.innerText.slice(20000, 30000);
+  const studyPattern = /\\b[A-Z]{2,}[\\s-][A-Z]{2,}\\b|\\b[A-Z]+\\s(?:study|trial|Study|Trial)\\b/g;
+  const studies = chunkText.match(studyPattern) || [];
+  return studies.length > 0 ? 'STUDIES FOUND: ' + studies.join(', ') : 'No studies detected';
+})()`)
+// → **ADD PUBMED LINKS** for any detected studies before proceeding
+
+// Continue this MANDATORY pattern: 
+// EXTRACT CHUNK → WRITE TO FILE → VERIFY STUDY LINKS → ADD PUBMED LINKS → EXTRACT NEXT CHUNK
 // Until total content length is reached
 ```
+
+**🚨 NEVER SKIP THE FILE WRITING STEP BETWEEN CHUNKS**
 
 **Why This Approach:**
 - Prevents API token limit errors (>32,000 output tokens)
 - Ensures no content is lost between extractions
+- **CRITICAL**: Captures study links during extraction, not retroactively
 - Provides immediate file building for verification
 - Avoids memory issues with large content
+- **PREVENTS MISSING STUDY REFERENCES** - our biggest risk
 
 ## Step 3: Extract All Reference Links and Sources
 
@@ -131,7 +161,7 @@ mcp__puppeteer__puppeteer_evaluate("document.querySelectorAll('a[href*=\"pubmed\
 - **Background** (Definition, Pathophysiology, Epidemiology)
 - **Guidelines** (with evidence levels A, B, C, D, E, I)
 - **Clinical Findings** (Symptoms, Medical History) 
-- **Studies** (Recent research and trials)
+- **Studies** (Recent research and trials) - **🚨 CRITICAL: CAPTURE PUBMED LINKS IMMEDIATELY**
 - **References** (Citations and links)
 
 ### Reference Link Formatting Requirements:
@@ -154,20 +184,27 @@ mcp__puppeteer__puppeteer_click("text=Expand")
 // 3. Check total content size
 mcp__puppeteer__puppeteer_evaluate("document.body.innerText.length")
 
-// 4. CHUNK-BY-CHUNK EXTRACTION (for content >10,000 chars)
-// Extract Chunk 1 and write to file
+// 4. 🚨 MANDATORY CHUNK-BY-CHUNK EXTRACTION (for content >10,000 chars)
+// ===== CHUNK 1: EXTRACT → WRITE → VERIFY STUDIES → PROCEED =====
 mcp__puppeteer__puppeteer_evaluate("document.body.innerText.slice(0, 10000)")
-// → IMMEDIATELY write this to markdown file
+// → **IMMEDIATELY** write this to markdown file
+// → **IMMEDIATELY** check for study names and add PubMed links
+// → **ONLY THEN** proceed to chunk 2
 
-// Extract Chunk 2 and append to file
+// ===== CHUNK 2: EXTRACT → WRITE → VERIFY STUDIES → PROCEED =====
 mcp__puppeteer__puppeteer_evaluate("document.body.innerText.slice(10000, 20000)")
-// → IMMEDIATELY append this to markdown file
+// → **IMMEDIATELY** append this to markdown file
+// → **IMMEDIATELY** check for study names and add PubMed links
+// → **ONLY THEN** proceed to chunk 3
 
-// Extract Chunk 3 and append to file
+// ===== CHUNK 3: EXTRACT → WRITE → VERIFY STUDIES → PROCEED =====
 mcp__puppeteer__puppeteer_evaluate("document.body.innerText.slice(20000, 30000)")
-// → IMMEDIATELY append this to markdown file
+// → **IMMEDIATELY** append this to markdown file
+// → **IMMEDIATELY** check for study names and add PubMed links
+// → **ONLY THEN** proceed to chunk 4
 
-// Continue pattern: EXTRACT → APPEND → EXTRACT → APPEND
+// Continue pattern: EXTRACT → WRITE → VERIFY STUDIES → EXTRACT → WRITE → VERIFY STUDIES
+// **NEVER SKIP THE WRITE AND VERIFY STEPS**
 // Until reaching total content length
 
 // 5. Extract all reference links (after content extraction is complete)
@@ -185,6 +222,34 @@ mcp__puppeteer__puppeteer_evaluate(`(() => {
 })()`)
 
 // 6. Append reference links to markdown file
+```
+
+## Study Link Detection Script (Use After Each Chunk)
+
+```javascript
+// 🚨 CRITICAL: Run this after each chunk to detect studies needing PubMed links
+mcp__puppeteer__puppeteer_evaluate(`(() => {
+  const chunkText = document.body.innerText.slice([START], [END]); // Replace with actual chunk range
+  
+  // Common study name patterns
+  const studyPatterns = [
+    /\\b[A-Z]{2,}[\\s-][A-Z]{2,}\\b/g,           // REDUCE-IT, CLEAR Outcomes
+    /\\b[A-Z]+\\s(?:study|trial|Study|Trial)\\b/g, // FOURIER study
+    /\\b[A-Z]{3,}\\b/g,                           // BROADWAY, RACING
+    /\\b4S\\b|\\bWOSCOPS\\b|\\bIMPROVE-IT\\b/g   // Specific named studies
+  ];
+  
+  const detectedStudies = [];
+  studyPatterns.forEach(pattern => {
+    const matches = chunkText.match(pattern) || [];
+    detectedStudies.push(...matches);
+  });
+  
+  const uniqueStudies = [...new Set(detectedStudies)];
+  return uniqueStudies.length > 0 ? 
+    'STUDIES REQUIRING PUBMED LINKS: ' + uniqueStudies.join(', ') : 
+    'No studies detected in this chunk';
+})()`)
 ```
 
 ## Small Content Workflow (<10,000 characters)
@@ -208,8 +273,10 @@ mcp__puppeteer__puppeteer_evaluate("document.body.innerText")
 ✅ **Evidence levels preserved** - A, B, C, D, E, I classifications visible  
 ✅ **Multiple guidelines sources** - ACC, ESC, AHA, CCS, etc.
 ✅ **All PubMed links extracted** - References with clickable links preserved
+✅ **🚨 CRITICAL: Study links captured during extraction** - Not retroactively added
 ✅ **Calculator links included** - Related Pathway.md tools referenced
 ✅ **Source attribution complete** - Original article link included
+✅ **🚨 Each chunk written to file before next extraction** - Mandatory step completion
 
 ## Troubleshooting
 
@@ -218,13 +285,16 @@ mcp__puppeteer__puppeteer_evaluate("document.body.innerText")
 **If expansion fails:** Click individual section headers manually and look for additional "Expand" buttons
 **If links missing:** Re-run reference extraction script and verify JSON output
 **If reference count low:** Check for additional link selectors or DOM changes
+**🚨 If study links missing:** You skipped the study verification step - go back and add them systematically
 **If API token limit errors:** ALWAYS use chunk-by-chunk approach for content >10,000 characters
 **If content appears incomplete:** Verify all "Expand" buttons were clicked, not just "Expand All Topics"
 
 # Must Rules
 - Make sure to extract all the resource links with the resources
 - Create md folder with extracted disease text in this folder: /Users/Lasha/Desktop/MediMindexpert copy/docs/cardiology-diseases.md
-- **CRITICAL**: Always extract and preserve all PubMed reference links
+- **🚨 CRITICAL**: Always extract and preserve all PubMed reference links **DURING EACH CHUNK EXTRACTION**
+- **🚨 CRITICAL**: **WRITE EACH CHUNK TO FILE BEFORE EXTRACTING NEXT CHUNK** - Never skip this step
+- **🚨 CRITICAL**: **VERIFY STUDY LINKS AFTER EACH CHUNK** - Use the study detection script
 - **CRITICAL**: Include all related calculator links from Pathway.md
 - **CRITICAL**: Format all references with proper markdown links
 - **CRITICAL**: Verify reference link count matches article reference count
@@ -241,3 +311,21 @@ After extraction, verify:
 3. **Internal navigation links** preserved where relevant
 4. **External research links** all functional
 5. **Source attribution** to original Pathway.md article included
+6. **🚨 Study names have corresponding PubMed links** - Most critical verification
+
+## Common Study Names That Need PubMed Links
+
+Watch for these common patterns during extraction:
+- **REDUCE-IT, CLEAR Outcomes, IMPROVE-IT, FOURIER**
+- **BROADWAY, RACING, LODESTAR, ZOE METHOD**
+- **4S, WOSCOPS, AURORA, ADH-Wizard**
+- **Any ALL-CAPS abbreviations followed by "study" or "trial"**
+- **Hyphenated study names (ABC-DEF pattern)**
+
+**🚨 If you see these study names without [PubMed](link), immediately add the links using search_replace operations.**
+
+# Never change from the step by step method to the diffferen "More Efficient" bulk method, always proceed with chunk by chunk methond
+
+# DO NOT EXTRACT LARGER CHUNKS YOU MUST CONTINUE STEP BY STEP WITH 10 000 CHUNK AT A TIME
+# Never speed up the process
+ 

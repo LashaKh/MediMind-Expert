@@ -425,4 +425,236 @@
 .enhanced-calculator-button:hover {
   transform: translateY(-2px) rotateX(5deg);
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* Medical Calculator Table Enhancements */
+
+/* 4Ts Score Calculator Specific Styling */
+.medical-calculator-container {
+  @apply bg-gradient-to-br from-blue-50 to-indigo-100 p-6 rounded-2xl shadow-xl border-2 border-blue-300 my-8;
+}
+
+.medical-calculator-container h3 {
+  @apply text-blue-900 font-bold text-xl mb-6 flex items-center space-x-3;
+}
+
+.medical-calculator-container h3::before {
+  content: "🩺";
+  @apply text-2xl;
+}
+
+/* Score Calculator Tables */
+.calculator-table-wrapper {
+  @apply overflow-x-auto rounded-xl shadow-2xl border-2 border-emerald-300;
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 50%, #dcfce7 100%);
+}
+
+.calculator-table {
+  @apply w-full border-collapse bg-white/90 backdrop-blur-sm;
+  min-width: 700px;
+}
+
+.calculator-table thead {
+  background: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+}
+
+.calculator-table th {
+  @apply text-white font-bold py-4 px-6 text-sm uppercase tracking-wider border-r border-white/20 last:border-r-0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.calculator-table td {
+  @apply py-4 px-6 text-sm text-gray-800 border-b border-gray-200 align-top;
+  background-color: rgba(255, 255, 255, 0.95);
+  transition: all 0.2s ease;
+}
+
+.calculator-table tbody tr:nth-child(even) td {
+  @apply bg-emerald-50/50;
+}
+
+.calculator-table tbody tr:hover td {
+  @apply bg-emerald-100 transform scale-[1.01];
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.1);
+}
+
+/* Parameter Column Styling */
+.calculator-table td:first-child {
+  @apply font-bold text-emerald-900 bg-emerald-50 border-r-2 border-emerald-200;
+}
+
+/* Points Column Styling */
+.calculator-table td:nth-child(2),
+.calculator-table td:nth-child(3),
+.calculator-table td:nth-child(4) {
+  @apply text-center font-medium;
+}
+
+/* Score Interpretation Styling */
+.score-interpretation {
+  @apply bg-gradient-to-r from-blue-100 to-indigo-100 border-l-4 border-blue-500 p-6 rounded-r-xl my-6 shadow-lg;
+}
+
+.score-interpretation .score-value {
+  @apply text-3xl font-bold text-blue-900 mb-2;
+}
+
+.score-interpretation .interpretation-text {
+  @apply text-lg text-blue-800 font-semibold;
+}
+
+/* Risk Stratification Tables */
+.risk-table-wrapper {
+  @apply overflow-x-auto rounded-xl shadow-2xl border-2 border-amber-300 my-8;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fde68a 100%);
+}
+
+.risk-table {
+  @apply w-full border-collapse bg-white/90 backdrop-blur-sm;
+  min-width: 600px;
+}
+
+.risk-table thead {
+  background: linear-gradient(135deg, #d97706 0%, #ea580c 100%);
+}
+
+.risk-table th {
+  @apply text-white font-bold py-4 px-6 text-sm uppercase tracking-wider border-r border-white/20 last:border-r-0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.risk-table td {
+  @apply py-4 px-6 text-sm text-gray-800 border-b border-gray-200 align-top;
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+.risk-table tbody tr:nth-child(even) td {
+  @apply bg-amber-50/50;
+}
+
+.risk-table tbody tr:hover td {
+  @apply bg-amber-100;
+}
+
+/* Risk Level Cell Styling */
+.risk-low {
+  @apply bg-green-100 text-green-900 font-bold border-l-4 border-green-500;
+}
+
+.risk-intermediate {
+  @apply bg-yellow-100 text-yellow-900 font-bold border-l-4 border-yellow-500;
+}
+
+.risk-high {
+  @apply bg-red-100 text-red-900 font-bold border-l-4 border-red-500;
+}
+
+/* Classification Tables */
+.classification-table-wrapper {
+  @apply overflow-x-auto rounded-xl shadow-2xl border-2 border-purple-300 my-8;
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #e9d5ff 100%);
+}
+
+.classification-table {
+  @apply w-full border-collapse bg-white/90 backdrop-blur-sm;
+}
+
+.classification-table thead {
+  background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+}
+
+.classification-table th {
+  @apply text-white font-bold py-4 px-6 text-sm uppercase tracking-wider border-r border-white/20 last:border-r-0;
+}
+
+.classification-table td {
+  @apply py-4 px-6 text-sm text-gray-800 border-b border-gray-200 align-top;
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+.classification-table tbody tr:nth-child(even) td {
+  @apply bg-purple-50/50;
+}
+
+.classification-table tbody tr:hover td {
+  @apply bg-purple-100;
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+  .calculator-table,
+  .risk-table,
+  .classification-table {
+    font-size: 0.875rem;
+    min-width: 550px;
+  }
+  
+  .calculator-table th,
+  .calculator-table td,
+  .risk-table th,
+  .risk-table td,
+  .classification-table th,
+  .classification-table td {
+    @apply px-3 py-3;
+  }
+  
+  .medical-calculator-container {
+    @apply p-4;
+  }
+  
+  .score-interpretation {
+    @apply p-4;
+  }
+  
+  .score-interpretation .score-value {
+    @apply text-2xl;
+  }
+  
+  .score-interpretation .interpretation-text {
+    @apply text-base;
+  }
+}
+
+/* Hover Effects for Interactive Elements */
+.calculator-table tbody tr,
+.risk-table tbody tr,
+.classification-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+/* Enhanced Table Headers with Icons */
+.calculator-table th:first-child::before {
+  content: "📊 ";
+}
+
+.risk-table th:first-child::before {
+  content: "⚠️ ";
+}
+
+.classification-table th:first-child::before {
+  content: "📋 ";
+}
+
+/* Print Friendly Styles */
+@media print {
+  .medical-calculator-container,
+  .calculator-table-wrapper,
+  .risk-table-wrapper,
+  .classification-table-wrapper {
+    @apply shadow-none border border-gray-400;
+    background: white !important;
+  }
+  
+  .calculator-table,
+  .risk-table,
+  .classification-table {
+    background: white !important;
+  }
+  
+  .calculator-table thead,
+  .risk-table thead,
+  .classification-table thead {
+    background: #6b7280 !important;
+    color: white !important;
+  }
 } 

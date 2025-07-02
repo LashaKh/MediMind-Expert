@@ -184,14 +184,14 @@ export default {
   // High risk recommendations
   recommendation_alternative_approaches: 'განიხილეთ ალტერნატიული მიდგომები (TAVI, მედიკამენტური თერაპია)',
   recommendation_extensive_optimization: 'ვრცელი პრეოპერაციული ოპტიმიზაცია',
-  recommendation_extended_icu: 'გაფართოებული ICU მონიტორინგი დაგეგმილია',
+  recommendation_extended_icu: 'გახანგრძლივებული ICU მონიტორინგი დაგეგმილია',
   recommendation_informed_consent: 'დეტალური ინფორმირებული თანხმობის განხილვა',
   recommendation_less_invasive: 'განიხილეთ ნაკლებად ინვაზიური ალტერნატივები',
   
   // Very high risk recommendations
   recommendation_non_surgical: 'მტკიცედ განიხილეთ არაქირურგიული ალტერნატივები',
-  recommendation_palliative_care: 'პალიატიური მზრუნველობის კონსულტაცია',
-  recommendation_goals_care: 'მზრუნველობის მიზნების განხილვა',
+  recommendation_palliative_care: 'პალიატიური მკურნალობის კონსულტაცია',
+  recommendation_goals_care: 'მკურნალობის მიზნების განხილვა',
   recommendation_high_risk_protocols: 'თუ ქირურგია იხმარება, მაღალი რისკის პროტოკოლები',
   recommendation_transcatheter: 'განიხილეთ ტრანსკათეტერული მიდგომები',
   recommendation_family_meeting: 'ოჯახური შეხვედრა აუცილებელია',

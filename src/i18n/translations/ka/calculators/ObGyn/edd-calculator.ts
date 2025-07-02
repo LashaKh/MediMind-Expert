@@ -33,7 +33,7 @@ export const eddCalculator = {
   art_days_to_transfer_label: "ტრანსფერამდე დღეები",
   day_3_cleavage: "3 დღე (კლივაჟის სტადია)",
   day_5_blastocyst: "5 დღე (ბლასტოცისტი)",
-  day_6_expanded_blastocyst: "6 დღე (გაფართოებული ბლასტოცისტი)",
+  day_6_expanded_blastocyst: "6 დღე (გახანგრძლივებული ბლასტოცისტი)",
   selected_dating_method: "არჩეული დათარიღების მეთოდი",
   expected_accuracy: "მოსალოდნელი სიზუსტე",
   ultrasound_crl_accuracy: "±3-5 დღე სიზუსტე პირველ ტრიმესტრში",

@@ -23,11 +23,13 @@ export const navigation = {
   
   // Main navigation items
   aiCoPilot: 'AI Assistant',
+  podcastStudio: 'Podcast Studio',
   forms: 'Medical Forms',
   personalKB: 'Personal Knowledge Base',
   
   // Navigation descriptions
   aiCoPilotDesc: 'AI medical assistant and intelligent consultation',
+  podcastStudioDesc: 'Create AI-generated medical podcasts from your documents',
   calculatorsDesc: 'Professional medical calculators and risk assessment',
   formsDesc: 'Medical forms and documentation',
   personalKBDesc: 'Personal knowledge base and medical literature',

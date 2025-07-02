@@ -215,7 +215,7 @@ export const medical = {
       postprandial: 'საკვების შემდგომი გლუკოზა'
     },
     cardiac: {
-      troponin: 'ტროპონინი',
+      troponin: 'ტროპონინინი',
       bnp: 'BNP',
       ck: 'კრეატინკინაზა',
       ldh: 'ლდგ',

@@ -9,6 +9,8 @@ export default {
   about: 'About',
   calculator: 'Calculator',
   validated: 'Validated',
+  new_calculation: 'New Calculation',
+  modify_inputs: 'Modify Inputs',
 
   specialty: {
     cardiology: {

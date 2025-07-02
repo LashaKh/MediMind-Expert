@@ -144,7 +144,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
       </div>
 
       {/* Main Content */}
-      <div className="relative flex-1 flex flex-col items-center justify-center p-8 space-y-12">
+      <div className="relative flex-1 flex flex-col items-center justify-start pt-8 px-8 pb-96 space-y-6 overflow-y-auto">
         {/* Header Section */}
         <div className="text-center space-y-6 max-w-2xl">
           {/* Main Icon */}
@@ -186,10 +186,6 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
 
         {/* Quick Actions Grid */}
         <div className="w-full max-w-4xl">
-          <h2 className="text-2xl font-bold text-slate-800 text-center mb-8">
-            How can I assist you today?
-          </h2>
-          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {quickActions.map((action) => {
               const ActionIcon = action.icon;

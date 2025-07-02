@@ -149,7 +149,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
       />
       
       {/* Sophisticated Conversation Panel */}
-      <div className="fixed left-6 top-6 bottom-6 w-[420px] bg-white/98 backdrop-blur-3xl rounded-3xl shadow-2xl shadow-slate-900/10 z-50 flex flex-col border border-slate-200/60 overflow-hidden">
+      <div className="fixed left-6 top-20 bottom-6 w-[420px] bg-white/98 backdrop-blur-3xl rounded-3xl shadow-2xl shadow-slate-900/10 z-50 flex flex-col border border-slate-200/60 overflow-hidden">
         {/* Luxurious Header Section */}
         <div className="relative bg-gradient-to-br from-slate-50/80 via-white/90 to-slate-50/80 border-b border-slate-200/60">
           {/* Subtle background effects */}
@@ -414,22 +414,39 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                             </div>
                           </div>
                           
-                          {/* Action Button */}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="
-                              opacity-0 group-hover:opacity-100 transition-all duration-300
-                              h-8 w-8 p-0 rounded-lg bg-white/80 hover:bg-white shadow-md
-                              hover:scale-110 hover:shadow-lg
-                            "
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleStartEdit(conv);
-                            }}
-                          >
-                            <Edit className="w-4 h-4 text-slate-600" />
-                          </Button>
+                          {/* Action Buttons */}
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="
+                                opacity-0 group-hover:opacity-100 transition-all duration-300
+                                h-8 w-8 p-0 rounded-lg bg-white/80 hover:bg-white shadow-md
+                                hover:scale-110 hover:shadow-lg
+                              "
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleStartEdit(conv);
+                              }}
+                            >
+                              <Edit className="w-4 h-4 text-slate-600" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="
+                                opacity-0 group-hover:opacity-100 transition-all duration-300
+                                h-8 w-8 p-0 rounded-lg bg-white/80 hover:bg-red-50 shadow-md
+                                hover:scale-110 hover:shadow-lg
+                              "
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteClick(conv.id);
+                              }}
+                            >
+                              <Trash2 className="w-4 h-4 text-slate-600 hover:text-red-600" />
+                            </Button>
+                          </div>
                         </div>
                         
                         {/* Last Message Preview */}
@@ -499,8 +516,8 @@ export const ConversationList: React.FC<ConversationListProps> = ({
 
       {/* Delete Confirmation Dialog */}
       {deleteConfirmId && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-60 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-6 max-w-md mx-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 max-w-md mx-4 z-50 shadow-2xl">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('conversations.deleteConversation')}</h3>
             <p className="text-gray-600 mb-4">
               {t('conversations.deleteConfirmation')}

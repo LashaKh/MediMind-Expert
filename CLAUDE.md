@@ -136,7 +136,73 @@ Critical tables include:
 - `profiles` - User profile and specialty information
 - `knowledge_base_documents` - Document metadata for Vector Store
 - `user_vector_stores` - OpenAI Vector Store management
+- `user_documents` - Document metadata and content storage
+- `ai_podcasts` - Podcast generation records
+- `podcast_queue` - Queue management for podcast processing
 - Row Level Security (RLS) enabled on all user data tables
+
+### Supabase Project Configuration
+**Current Project Details:**
+- Project ID: `kvsqtolsjggpyvdtdpss`
+- Project URL: `https://kvsqtolsjggpyvdtdpss.supabase.co`
+- Service Role Key: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2c3F0b2xzamdncHl2ZHRkcHNzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0ODM2OTc3MCwiZXhwIjoyMDYzOTQ1NzcwfQ.AVWB4s6CGI2IHK4pDSU9rZym4juJ3jwCJB7YyCPKfGE`
+
+### MCP Supabase Usage Guidelines
+
+#### Using Supabase MCP Correctly
+When working with database operations through MCP, use this project ID: `kvsqtolsjggpyvdtdpss`
+
+**❌ Common Mistakes to Avoid:**
+- Using wrong project IDs from other MCP configurations
+- Assuming schema fields without checking actual structure
+- Using `original_content` field (doesn't exist in this schema)
+- Using `file_path` field (not in current schema)
+
+**✅ Correct Usage Patterns:**
+
+```typescript
+// Check actual table schema first
+mcp__supabase__execute_sql(
+  project_id: "kvsqtolsjggpyvdtdpss",
+  query: "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'user_documents';"
+)
+
+// Use correct field names for user_documents table
+const document = {
+  user_id: userId,
+  title: "Document Title",
+  description: textContent, // Store content here, NOT original_content
+  file_name: fileName,
+  file_type: fileType,
+  file_size: fileSize,
+  category: "other",
+  tags: ["uploaded", "podcast"],
+  processing_status: "completed",
+  upload_status: "completed",
+  is_private: true
+}
+```
+
+#### Key Schema Field Mappings
+**user_documents table:**
+- Content storage: `description` (NOT `original_content`)
+- File metadata: `file_name`, `file_type`, `file_size`
+- Status tracking: `upload_status`, `processing_status`
+- Organization: `category`, `tags`, `is_private`
+- Timestamps: `created_at`, `updated_at`
+
+**ai_podcasts table:**
+- Core fields: `user_id`, `title`, `description`, `status`
+- Audio data: `audio_url`, `duration`, `playnote_id`
+- Generation settings: `synthesis_style`, `voice_settings`
+- Content source: `source_documents` (JSONB array)
+
+#### Debugging Database Issues
+1. **Always verify project ID**: `kvsqtolsjggpyvdtdpss`
+2. **Check schema before operations**: Use information_schema queries
+3. **Test with simple queries first**: SELECT before INSERT/UPDATE
+4. **Validate field names**: Check existing records for structure
+5. **Use service_role for admin operations**: Bypasses RLS when needed
 
 ### File Storage Patterns
 All file uploads use Supabase Storage with consistent patterns:
@@ -145,6 +211,12 @@ All file uploads use Supabase Storage with consistent patterns:
 const { data, error } = await supabase.storage
   .from('user-uploads')
   .upload(`profile-pictures/${userId}/${fileName}`, file);
+
+// Podcast document uploads
+const filePath = `uploads/${userId}/${timestamp}-${fileName}`;
+const { error: uploadError } = await supabase.storage
+  .from('user-uploads')
+  .upload(filePath, file);
 ```
 
 ## AI Integration
@@ -155,11 +227,69 @@ AI chat is specialty-aware and routes to appropriate medical chatbots:
 - Backend proxy handles authentication and request routing
 - Real-time communication with typing indicators and error handling
 
+### Podcast Generation System
+Complete AI-powered podcast generation using PlayAI:
+
+#### PlayAI Configuration
+```bash
+# Required environment variables
+PLAYAI_API_KEY=ak-db1e311950bd41c0b8da58499cac832b
+PLAYAI_USER_ID=oq9xWA5ju0cCAGijjjB34WAI08X2
+```
+
+#### Medical Voice Settings
+```typescript
+const MEDICAL_VOICES = {
+  voice1: 's3://voice-cloning-zero-shot/baf1ef41-36b6-428c-9bdf-50ba54682bd8/original/manifest.json',
+  voice1Name: 'Dr. Sarah Chen',
+  voice2: 's3://voice-cloning-zero-shot/e040bd1b-f190-4bdb-83f0-75ef85b18f84/original/manifest.json',
+  voice2Name: 'Dr. Michael Rodriguez'
+};
+```
+
+#### Key Integration Points
+1. **File Upload Processing**: Documents uploaded via UI are processed and stored in `user_documents.description`
+2. **Queue Management**: `podcast_queue` table manages generation order and status
+3. **PlayAI API**: Receives actual file content (not URLs) via form-data
+4. **Status Tracking**: Real-time updates through `ai_podcasts.status` field
+
+#### Common Issues and Solutions
+**❌ PlayAI API Errors:**
+- Problem: Sending OpenAI file URLs to PlayAI
+- Solution: Extract content from `user_documents.description` and send as Buffer
+
+**❌ FormData Issues in Node.js:**
+- Problem: Using browser FormData in Netlify Functions
+- Solution: Import and use `form-data` package with proper headers
+
+```typescript
+// Correct PlayAI API call pattern
+import FormData from 'form-data';
+
+const formData = new FormData();
+const textContent = Buffer.from(document.description, 'utf-8');
+formData.append('file', textContent, {
+  filename: document.file_name || 'document.txt',
+  contentType: 'text/plain'
+});
+
+const response = await fetch('https://api.play.ai/api/v1/playnotes', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${PLAYAI_API_KEY}`,
+    'X-USER-ID': PLAYAI_USER_ID,
+    ...formData.getHeaders()
+  },
+  body: formData
+});
+```
+
 ### Document Processing Pipeline
 Complete document upload and processing system:
 1. **Frontend**: DocumentUpload component with real-time progress tracking
-2. **Backend**: Netlify Functions for text extraction and OpenAI embedding
-3. **Vector Store**: Document indexing for AI-powered search capabilities
+2. **Backend**: Netlify Functions for text extraction and content structuring
+3. **Storage**: Supabase Storage for file persistence and database for metadata
+4. **AI Processing**: PlayAI integration for podcast generation from document content
 
 ## Form and Validation Patterns
 

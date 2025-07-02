@@ -1,0 +1,20 @@
+<\!DOCTYPE html>
+<html>
+<head>
+    <title>Check LocalStorage</title>
+</head>
+<body>
+    <h1>LocalStorage Content</h1>
+    <pre id="output"></pre>
+    <script>
+        const conversations = localStorage.getItem('medimind-conversations');
+        if (conversations) {
+            const parsed = JSON.parse(conversations);
+            document.getElementById('output').textContent = JSON.stringify(parsed, null, 2);
+        } else {
+            document.getElementById('output').textContent = 'No conversations found in localStorage';
+        }
+    </script>
+</body>
+</html>
+EOF < /dev/null
