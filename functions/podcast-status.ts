@@ -112,7 +112,7 @@ export const handler: Handler = async (event) => {
               `https://api.play.ai/api/v1/playnotes/${encodeURIComponent(podcast.playnote_id)}`,
               {
                 headers: {
-                  'AUTHORIZATION': PLAYAI_API_KEY!,
+                  'Authorization': `Bearer ${PLAYAI_API_KEY}`, // Fixed: Added Bearer prefix
                   'X-USER-ID': PLAYAI_USER_ID!,
                   'accept': 'application/json'
                 }
@@ -383,7 +383,7 @@ async function processNextInQueue() {
       const playaiResponse = await fetch('https://api.play.ai/api/v1/playnotes', {
         method: 'POST',
         headers: {
-          'AUTHORIZATION': PLAYAI_API_KEY!,
+          'Authorization': `Bearer ${PLAYAI_API_KEY}`, // Fixed: Added Bearer prefix
           'X-USER-ID': PLAYAI_USER_ID!,
           'accept': 'application/json'
         },

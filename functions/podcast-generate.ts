@@ -344,13 +344,16 @@ export const handler: Handler = async (event) => {
         url: 'https://api.play.ai/api/v1/playnotes',
         method: 'POST',
         format: 'application/json',
-        payload: playaiPayload
+        payload: playaiPayload,
+        authHeaderFormat: 'Bearer [API_KEY]', // Added for debugging
+        hasApiKey: !!PLAYAI_API_KEY,
+        hasUserId: !!PLAYAI_USER_ID
       });
 
       const playaiResponse = await fetch('https://api.play.ai/api/v1/playnotes', {
         method: 'POST',
         headers: {
-          'AUTHORIZATION': PLAYAI_API_KEY!, // No Bearer prefix
+          'Authorization': `Bearer ${PLAYAI_API_KEY}`, // Fixed: Added Bearer prefix
           'X-USER-ID': PLAYAI_USER_ID!,
           'Content-Type': 'application/json',
           'accept': 'application/json'
@@ -367,8 +370,13 @@ export const handler: Handler = async (event) => {
       }
 
       if (!playaiResponse.ok) {
-        console.error('PlayAI API error:', playaiResult);
-        console.error('Request payload:', playaiPayload);
+        console.error('PlayAI API error:', {
+          status: playaiResponse.status,
+          statusText: playaiResponse.statusText,
+          response: playaiResult,
+          requestPayload: playaiPayload,
+          authFormat: 'Bearer [API_KEY]' // Added for debugging
+        });
         throw new Error(playaiResult.errorMessage || playaiResult.message || `PlayAI API error: ${playaiResponse.status}`);
       }
 
