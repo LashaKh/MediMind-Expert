@@ -257,52 +257,60 @@ export const handler: Handler = async (event) => {
         .select()
         .single();
 
-      // Use Supabase public URL for PlayAI to access the original PDF
-      let sourceFileUrl: string;
+      // Download the file from Supabase storage for PlayAI
+      let fileBuffer: Buffer;
+      let fileName: string = fullDocument.file_name;
+      let fileType: string = fullDocument.file_type;
       
-      // Try to get the Supabase public URL from metadata
-      const supabasePublicUrl = fullDocument.openai_metadata?.supabase_public_url;
+      // Get the Supabase file path from metadata
+      const supabaseFilePath = fullDocument.openai_metadata?.supabase_file_path;
       
-      if (supabasePublicUrl) {
-        // Use the public Supabase URL - PlayAI can access this directly
-        sourceFileUrl = supabasePublicUrl;
-        
-        console.log('📄 Using Supabase public URL for PlayAI:', {
-          filename: fullDocument.file_name,
-          fileType: fullDocument.file_type,
-          sourceFileUrl,
-          accessMethod: 'Supabase public storage'
+      if (supabaseFilePath) {
+        console.log('📥 Downloading file from Supabase storage:', {
+          filePath: supabaseFilePath,
+          filename: fileName,
+          fileType: fileType
         });
-      } else if (fullDocument.openai_file_id) {
-        // Fallback: try OpenAI URL (though this may not work due to auth)
-        sourceFileUrl = `https://api.openai.com/v1/files/${fullDocument.openai_file_id}/content`;
         
-        console.log('⚠️ Using OpenAI file URL as fallback (may require auth):', {
-          openaiFileId: fullDocument.openai_file_id,
-          filename: fullDocument.file_name,
-          fileType: fullDocument.file_type,
-          sourceFileUrl
+        // Download the file from Supabase storage
+        const { data: fileData, error: downloadError } = await supabase.storage
+          .from('user-uploads')
+          .download(supabaseFilePath);
+        
+        if (downloadError || !fileData) {
+          console.error('❌ Failed to download file from Supabase storage:', {
+            filePath: supabaseFilePath,
+            error: downloadError?.message || 'No file data returned'
+          });
+          throw new Error(`Failed to download file: ${downloadError?.message || 'File not found'}`);
+        }
+        
+        // Convert file data to Buffer
+        fileBuffer = Buffer.from(await fileData.arrayBuffer());
+        
+        console.log('✅ File downloaded successfully:', {
+          filename: fileName,
+          fileType: fileType,
+          fileSize: fileBuffer.length,
+          sizeKB: Math.round(fileBuffer.length / 1024)
         });
       } else {
-        console.error('❌ No accessible file URL available for document:', {
+        console.error('❌ No Supabase file path available for document:', {
           documentId: documents[0].id,
-          filename: fullDocument.file_name,
-          fileType: fullDocument.file_type,
+          filename: fileName,
+          fileType: fileType,
           hasMetadata: !!fullDocument.openai_metadata,
           metadata: fullDocument.openai_metadata
         });
-        throw new Error('Document not accessible - missing both Supabase and OpenAI file URLs');
+        throw new Error('Document file not accessible - missing Supabase file path');
       }
-      
-      console.log('📄 Using source file:', {
-        fileName: fullDocument.file_name,
-        fileType: fullDocument.file_type,
-        sourceFileUrl
-      });
 
       // Call PlayAI API with multipart/form-data (as required by API)
       const formData = new FormData();
-      formData.append('sourceFileUrl', sourceFileUrl);
+      formData.append('file', fileBuffer, {
+        filename: fileName,
+        contentType: fileType
+      });
       formData.append('synthesisStyle', synthesisStyle);
       formData.append('voice1', MEDICAL_VOICES.voice1);
       formData.append('voice1Name', MEDICAL_VOICES.voice1Name);
@@ -313,7 +321,9 @@ export const handler: Handler = async (event) => {
         url: 'https://api.play.ai/api/v1/playnotes',
         method: 'POST',
         format: 'multipart/form-data',
-        sourceFileUrl,
+        fileName: fileName,
+        fileType: fileType,
+        fileSize: fileBuffer.length,
         synthesisStyle,
         voice1Name: MEDICAL_VOICES.voice1Name,
         voice2Name: MEDICAL_VOICES.voice2Name
@@ -341,7 +351,9 @@ export const handler: Handler = async (event) => {
       if (!playaiResponse.ok) {
         console.error('PlayAI API error:', playaiResult);
         console.error('Request data:', {
-          sourceFileUrl,
+          fileName: fileName,
+          fileType: fileType,
+          fileSize: fileBuffer.length,
           synthesisStyle,
           voice1: MEDICAL_VOICES.voice1,
           voice1Name: MEDICAL_VOICES.voice1Name
