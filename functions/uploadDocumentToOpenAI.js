@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const OpenAI = require('openai');
 const { createClient } = require('@supabase/supabase-js');
+const pdf = require('pdf-parse');
 
 // CORS headers for cross-origin requests
 const corsHeaders = {
@@ -305,6 +306,33 @@ exports.handler = async (event, context) => {
       const vectorStoreFileAssociation = await vectorStoreFileResponse.json();
       console.log('File successfully associated with Vector Store:', vectorStoreFileAssociation.id);
 
+      // Also upload the original file to Supabase storage for PlayAI access
+      console.log('📤 Uploading original file to Supabase storage for PlayAI access...');
+      const supabaseFileName = `documents/${user.id}/${documentId}.${SUPPORTED_FILE_TYPES[file.type].ext}`;
+      
+      const { error: supabaseUploadError } = await supabase.storage
+        .from('user-uploads')
+        .upload(supabaseFileName, file.data, {
+          contentType: file.type,
+          upsert: true
+        });
+      
+      if (supabaseUploadError) {
+        console.error('❌ Failed to upload to Supabase storage:', supabaseUploadError);
+        throw new Error(`Failed to upload file to storage: ${supabaseUploadError.message}`);
+      }
+      
+      // Get public URL for PlayAI access
+      const { data: { publicUrl } } = supabase.storage
+        .from('user-uploads')
+        .getPublicUrl(supabaseFileName);
+      
+      console.log('✅ File uploaded to Supabase storage:', {
+        fileName: supabaseFileName,
+        publicUrl,
+        fileSize: file.size
+      });
+
       // Create comprehensive document description for podcast generation
       let documentDescription = description?.trim() || '';
       
@@ -345,7 +373,7 @@ END OF DOCUMENT METADATA
 This document is ready for AI-powered podcast generation with medical accuracy and professional context.`;
       }
 
-      // NOW create document record in database with OpenAI IDs and comprehensive description
+      // NOW create document record in database with OpenAI IDs, Supabase storage path, and comprehensive description
       const { data: documentRecord, error: documentError } = await supabase
         .from('user_documents')
         .insert({
@@ -366,7 +394,9 @@ This document is ready for AI-powered podcast generation with medical accuracy a
           uploaded_at: new Date().toISOString(),
           openai_metadata: {
             openai_file: uploadedFile,
-            vector_store_file: vectorStoreFileAssociation
+            vector_store_file: vectorStoreFileAssociation,
+            supabase_file_path: supabaseFileName,
+            supabase_public_url: publicUrl
           }
         })
         .select()

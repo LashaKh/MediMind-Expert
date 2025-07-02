@@ -217,10 +217,10 @@ export const handler: Handler = async (event) => {
 
     // Process immediately if no active generation
     try {
-      // Get document with content
+      // Get document with content and metadata
       const { data: fullDocument, error: fullDocError } = await supabase
         .from('user_documents')
-        .select('openai_file_id, file_name, file_type, description')
+        .select('openai_file_id, file_name, file_type, description, openai_metadata')
         .eq('id', documents[0].id)
         .single();
 
@@ -257,53 +257,41 @@ export const handler: Handler = async (event) => {
         .select()
         .single();
 
-      // Create temporary file from document content for PlayAI
+      // Use Supabase public URL for PlayAI to access the original PDF
       let sourceFileUrl: string;
       
-      if (fullDocument.description && fullDocument.description.length > 100) {
-        // Create a temporary text file in Supabase storage from document content
-        const tempFileName = `temp-podcast/${podcast.id}/${fullDocument.file_name}.txt`;
-        const textContent = fullDocument.description;
+      // Try to get the Supabase public URL from metadata
+      const supabasePublicUrl = fullDocument.openai_metadata?.supabase_public_url;
+      
+      if (supabasePublicUrl) {
+        // Use the public Supabase URL - PlayAI can access this directly
+        sourceFileUrl = supabasePublicUrl;
         
-        const { error: uploadError } = await supabase.storage
-          .from('user-uploads')
-          .upload(tempFileName, textContent, {
-            contentType: 'text/plain',
-            upsert: true
-          });
-          
-        if (uploadError) {
-          console.error('❌ Failed to create temporary file:', {
-            error: uploadError.message,
-            tempFileName,
-            contentLength: textContent.length
-          });
-          throw new Error(`Failed to create temporary file: ${uploadError.message}`);
-        }
-        
-        const { data: { publicUrl } } = supabase.storage
-          .from('user-uploads')
-          .getPublicUrl(tempFileName);
-          
-        sourceFileUrl = publicUrl;
-        console.log('📄 Created temporary text file for PlayAI:', {
-          tempFileName,
-          publicUrl: sourceFileUrl,
-          contentLength: textContent.length
-        });
-        
-        // Store temp file path for cleanup
-        await supabase
-          .from('ai_podcasts')
-          .update({ temp_file_path: tempFileName })
-          .eq('id', podcast.id);
-      } else {
-        console.error('❌ Insufficient document content for podcast generation:', {
-          documentId: fullDocument.openai_file_id,
+        console.log('📄 Using Supabase public URL for PlayAI:', {
           filename: fullDocument.file_name,
-          contentLength: fullDocument.description?.length || 0
+          fileType: fullDocument.file_type,
+          sourceFileUrl,
+          accessMethod: 'Supabase public storage'
         });
-        throw new Error('Document content too short for podcast generation');
+      } else if (fullDocument.openai_file_id) {
+        // Fallback: try OpenAI URL (though this may not work due to auth)
+        sourceFileUrl = `https://api.openai.com/v1/files/${fullDocument.openai_file_id}/content`;
+        
+        console.log('⚠️ Using OpenAI file URL as fallback (may require auth):', {
+          openaiFileId: fullDocument.openai_file_id,
+          filename: fullDocument.file_name,
+          fileType: fullDocument.file_type,
+          sourceFileUrl
+        });
+      } else {
+        console.error('❌ No accessible file URL available for document:', {
+          documentId: documents[0].id,
+          filename: fullDocument.file_name,
+          fileType: fullDocument.file_type,
+          hasMetadata: !!fullDocument.openai_metadata,
+          metadata: fullDocument.openai_metadata
+        });
+        throw new Error('Document not accessible - missing both Supabase and OpenAI file URLs');
       }
       
       console.log('📄 Using source file:', {
