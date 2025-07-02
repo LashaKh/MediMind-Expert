@@ -134,31 +134,23 @@ PODCAST GENERATION NOTES:
 This document is ready for AI-powered podcast generation with medical accuracy and professional context.`;
     }
 
-    // Create document record in database
-    console.log('💾 Creating document record in database...');
+    // Create document record in podcast_documents table
+    console.log('💾 Creating podcast document record...');
     const { data: documentRecord, error: documentError } = await supabase
-      .from('user_documents')
+      .from('podcast_documents')
       .insert({
         id: documentId,
         user_id: userId,
-        // vector_store_id: null, // Not needed for podcasts
-        // openai_file_id: null, // Not needed for podcasts  
         title: title.trim(),
         description: documentDescription,
         file_name: file.name,
         file_type: file.type,
         file_size: file.size,
-        category: category,
+        supabase_file_path: fileName,
+        supabase_public_url: publicUrl,
         tags: tags,
         upload_status: 'completed',
-        processing_status: 'completed',
-        uploaded_at: new Date().toISOString(),
-        openai_metadata: {
-          supabase_file_path: fileName,
-          supabase_public_url: publicUrl,
-          podcast_ready: true,
-          upload_method: 'direct_supabase'
-        }
+        is_processed: false
       })
       .select()
       .single();
@@ -229,7 +221,7 @@ export async function generatePodcast(request: {
   }
 }
 
-// Clean up temporary podcast documents after generation
+// Clean up podcast documents after generation (optional)
 export async function cleanupPodcastDocument(documentId: string) {
   try {
     const { data: { session } } = await supabase.auth.getSession();
@@ -239,29 +231,27 @@ export async function cleanupPodcastDocument(documentId: string) {
 
     // Get document info first
     const { data: document } = await supabase
-      .from('user_documents')
-      .select('openai_metadata')
+      .from('podcast_documents')
+      .select('supabase_file_path')
       .eq('id', documentId)
       .eq('user_id', session.user.id)
-      .eq('category', 'podcast_temp')
       .single();
 
-    if (document?.openai_metadata?.supabase_file_path) {
+    if (document?.supabase_file_path) {
       // Delete file from storage
       await supabase.storage
         .from('user-uploads')
-        .remove([document.openai_metadata.supabase_file_path]);
+        .remove([document.supabase_file_path]);
     }
 
     // Delete document record
     await supabase
-      .from('user_documents')
+      .from('podcast_documents')
       .delete()
       .eq('id', documentId)
-      .eq('user_id', session.user.id)
-      .eq('category', 'podcast_temp');
+      .eq('user_id', session.user.id);
 
-    console.log('✅ Cleaned up temporary podcast document:', documentId);
+    console.log('✅ Cleaned up podcast document:', documentId);
   } catch (error) {
     console.error('❌ Error cleaning up podcast document:', error);
     // Don't throw - cleanup failures shouldn't break the flow

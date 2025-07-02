@@ -17,16 +17,17 @@ import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import SimplePodcastUpload from './SimplePodcastUpload';
 
-interface Document {
+interface PodcastDocument {
   id: string;
   title: string;
   file_name: string;
   file_type: string;
   file_size: number;
-  category: string;
   tags: string[];
   created_at: string;
   description?: string;
+  supabase_public_url: string;
+  is_processed: boolean;
 }
 
 interface DocumentSelectorProps {
@@ -42,21 +43,11 @@ const DocumentSelector: React.FC<DocumentSelectorProps> = ({
 }) => {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const [documents, setDocuments] = useState<Document[]>([]);
+  const [documents, setDocuments] = useState<PodcastDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [error, setError] = useState<string>('');
   const [showUpload, setShowUpload] = useState(false);
-
-  const categories = [
-    { value: 'all', label: t('podcast.documents.categories.all') },
-    { value: 'research-papers', label: t('podcast.documents.categories.research') },
-    { value: 'clinical-guidelines', label: t('podcast.documents.categories.guidelines') },
-    { value: 'case-studies', label: t('podcast.documents.categories.cases') },
-    { value: 'reference-materials', label: t('podcast.documents.categories.reference') },
-    { value: 'personal-notes', label: t('podcast.documents.categories.notes') }
-  ];
 
   useEffect(() => {
     fetchDocuments();
@@ -69,19 +60,20 @@ const DocumentSelector: React.FC<DocumentSelectorProps> = ({
       setLoading(true);
       setError('');
 
+      console.log('📄 Fetching podcast documents...');
       const { data, error: fetchError } = await supabase
-        .from('user_documents')
+        .from('podcast_documents')
         .select('*')
         .eq('user_id', user.id)
-        .eq('processing_status', 'completed')
         .order('created_at', { ascending: false });
 
       if (fetchError) throw fetchError;
 
+      console.log('✅ Fetched podcast documents:', data?.length || 0);
       setDocuments(data || []);
     } catch (err) {
-      console.error('Error fetching documents:', err);
-      setError(t('podcast.documents.errors.fetchFailed'));
+      console.error('❌ Error fetching podcast documents:', err);
+      setError('Failed to fetch documents');
     } finally {
       setLoading(false);
     }
@@ -93,9 +85,7 @@ const DocumentSelector: React.FC<DocumentSelectorProps> = ({
       doc.file_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       doc.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
 
-    const matchesCategory = selectedCategory === 'all' || doc.category === selectedCategory;
-
-    return matchesSearch && matchesCategory;
+    return matchesSearch;
   });
 
   const handleDocumentToggle = (documentId: string) => {
