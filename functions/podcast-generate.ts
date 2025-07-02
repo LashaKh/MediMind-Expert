@@ -50,9 +50,20 @@ export const handler: Handler = async (event) => {
   }
 
   try {
+    console.log('🚀 Podcast generation request received');
+    console.log('📋 Environment check:', {
+      hasPlayAIKey: !!PLAYAI_API_KEY,
+      hasPlayAIUserId: !!PLAYAI_USER_ID,
+      hasSupabaseURL: !!(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL),
+      hasSupabaseKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY
+    });
+
     // Validate PlayAI credentials first
     if (!PLAYAI_API_KEY || !PLAYAI_USER_ID) {
-      console.error('Missing PlayAI credentials');
+      console.error('❌ Missing PlayAI credentials:', {
+        hasKey: !!PLAYAI_API_KEY,
+        hasUserId: !!PLAYAI_USER_ID
+      });
       return {
         statusCode: 500,
         headers,
@@ -61,10 +72,23 @@ export const handler: Handler = async (event) => {
     }
 
     const request: GenerationRequest = JSON.parse(event.body || '{}');
+    console.log('📝 Request body:', {
+      hasUserId: !!request.userId,
+      documentCount: request.documentIds?.length || 0,
+      hasTitle: !!request.title,
+      synthesisStyle: request.synthesisStyle,
+      specialty: request.specialty
+    });
+    
     const { userId, documentIds, title, description, synthesisStyle, specialty } = request;
 
     // Validate required fields
     if (!userId || !documentIds?.length || !title) {
+      console.error('❌ Missing required fields:', {
+        userId,
+        documentIds,
+        title
+      });
       return {
         statusCode: 400,
         headers,
@@ -73,16 +97,23 @@ export const handler: Handler = async (event) => {
     }
 
     // Verify user authentication
-    const { data: user } = await supabase.auth.admin.getUserById(userId);
-    if (!user) {
+    console.log('🔐 Verifying user authentication for:', userId);
+    const { data: user, error: userError } = await supabase.auth.admin.getUserById(userId);
+    if (userError || !user) {
+      console.error('❌ User authentication failed:', {
+        userId,
+        error: userError?.message || 'User not found'
+      });
       return {
         statusCode: 401,
         headers,
         body: JSON.stringify({ error: 'Unauthorized' })
       };
     }
+    console.log('✅ User authenticated successfully');
 
     // Get documents from user's vector store
+    console.log('📄 Fetching documents:', documentIds);
     const { data: documents, error: docError } = await supabase
       .from('user_documents')
       .select('id, title, file_name, openai_file_id')
@@ -91,14 +122,22 @@ export const handler: Handler = async (event) => {
       .eq('processing_status', 'completed');
 
     if (docError || !documents?.length) {
+      console.error('❌ Document fetch failed:', {
+        error: docError?.message || 'No documents found',
+        documentIds,
+        userId,
+        documentsFound: documents?.length || 0
+      });
       return {
         statusCode: 400,
         headers,
         body: JSON.stringify({ error: 'Documents not found or not accessible' })
       };
     }
+    console.log('✅ Documents fetched:', documents.length);
 
     // Create podcast record
+    console.log('💾 Creating podcast record...');
     const { data: podcast, error: podcastError } = await supabase
       .from('ai_podcasts')
       .insert({
@@ -115,12 +154,18 @@ export const handler: Handler = async (event) => {
       .single();
 
     if (podcastError || !podcast) {
+      console.error('❌ Failed to create podcast record:', {
+        error: podcastError?.message || 'No podcast returned',
+        code: podcastError?.code,
+        details: podcastError?.details
+      });
       return {
         statusCode: 500,
         headers,
         body: JSON.stringify({ error: 'Failed to create podcast record' })
       };
     }
+    console.log('✅ Podcast record created:', podcast.id);
 
     // Check if there's an active generation
     const { data: activeQueue } = await supabase
@@ -172,15 +217,15 @@ export const handler: Handler = async (event) => {
 
     // Process immediately if no active generation
     try {
-      // Get document with OpenAI file ID
+      // Get document with content
       const { data: fullDocument, error: fullDocError } = await supabase
         .from('user_documents')
-        .select('openai_file_id, file_name, file_type')
+        .select('openai_file_id, file_name, file_type, description, file_path')
         .eq('id', documents[0].id)
         .single();
 
-      if (fullDocError || !fullDocument?.openai_file_id) {
-        throw new Error('Document or OpenAI file ID not found');
+      if (fullDocError || !fullDocument) {
+        throw new Error('Document not found');
       }
       
       // Create queue item as processing
@@ -200,17 +245,56 @@ export const handler: Handler = async (event) => {
         .select()
         .single();
 
-      // Use OpenAI file URL directly - this is the original PDF file
-      const sourceFileUrl = `https://api.openai.com/v1/files/${fullDocument.openai_file_id}/content`;
+      // Check if we have a file path in Supabase storage
+      let sourceFileUrl: string;
       
-      console.log('📄 Using original file from OpenAI:', {
-        fileId: fullDocument.openai_file_id,
+      if (fullDocument.file_path) {
+        // Use Supabase storage URL if available
+        const { data: { publicUrl } } = supabase.storage
+          .from('user-uploads')
+          .getPublicUrl(fullDocument.file_path);
+        sourceFileUrl = publicUrl;
+        console.log('📄 Using Supabase storage URL:', sourceFileUrl);
+      } else if (fullDocument.description && fullDocument.description.length > 100) {
+        // If we have text content, we need to upload it to a temporary location
+        // For now, let's create a temporary text file in Supabase storage
+        const tempFileName = `temp-podcast/${podcast.id}/${fullDocument.file_name}.txt`;
+        const textContent = fullDocument.description;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('user-uploads')
+          .upload(tempFileName, textContent, {
+            contentType: 'text/plain',
+            upsert: true
+          });
+          
+        if (uploadError) {
+          throw new Error(`Failed to create temporary file: ${uploadError.message}`);
+        }
+        
+        const { data: { publicUrl } } = supabase.storage
+          .from('user-uploads')
+          .getPublicUrl(tempFileName);
+          
+        sourceFileUrl = publicUrl;
+        console.log('📄 Created temporary text file:', sourceFileUrl);
+        
+        // Store temp file path for cleanup
+        await supabase
+          .from('ai_podcasts')
+          .update({ temp_file_path: tempFileName })
+          .eq('id', podcast.id);
+      } else {
+        throw new Error('No content available for podcast generation');
+      }
+      
+      console.log('📄 Using source file:', {
         fileName: fullDocument.file_name,
         fileType: fullDocument.file_type,
         sourceFileUrl
       });
 
-      // Call PlayAI API exactly like the working test
+      // Call PlayAI API with multipart/form-data (as required by API)
       const formData = new FormData();
       formData.append('sourceFileUrl', sourceFileUrl);
       formData.append('synthesisStyle', synthesisStyle);
@@ -220,21 +304,22 @@ export const handler: Handler = async (event) => {
       formData.append('voice2Name', MEDICAL_VOICES.voice2Name);
 
       console.log('📝 PlayAI Request Details:', {
+        url: 'https://api.play.ai/api/v1/playnotes',
+        method: 'POST',
+        format: 'multipart/form-data',
         sourceFileUrl,
         synthesisStyle,
-        voice1: MEDICAL_VOICES.voice1,
         voice1Name: MEDICAL_VOICES.voice1Name,
-        voice2: MEDICAL_VOICES.voice2,
         voice2Name: MEDICAL_VOICES.voice2Name
       });
 
       const playaiResponse = await fetch('https://api.play.ai/api/v1/playnotes', {
         method: 'POST',
         headers: {
-          'AUTHORIZATION': PLAYAI_API_KEY!, // Note: AUTHORIZATION not Authorization: Bearer
+          'AUTHORIZATION': PLAYAI_API_KEY!, // No Bearer prefix
           'X-USER-ID': PLAYAI_USER_ID!,
           'accept': 'application/json',
-          ...formData.getHeaders()
+          ...formData.getHeaders() // Important: includes Content-Type with boundary
         },
         body: formData
       });
@@ -260,17 +345,17 @@ export const handler: Handler = async (event) => {
 
       console.log(`✅ PlayAI generation started with ID: ${playaiResult.id}`);
 
-      // Update podcast with PlayNote ID (no temp file needed when using OpenAI URLs)
+      // Update podcast with PlayNote ID
       await supabase
         .from('ai_podcasts')
         .update({
           playnote_id: playaiResult.id,
-          status: 'generating',
-          temp_file_path: null // No temp file when using OpenAI direct URLs
+          status: 'generating'
+          // Keep temp_file_path if it was set earlier
         })
         .eq('id', podcast.id);
 
-      console.log('📁 Using OpenAI direct URL - no temp file cleanup needed');
+      console.log('✅ Podcast generation started successfully');
 
       return {
         statusCode: 200,
@@ -284,6 +369,11 @@ export const handler: Handler = async (event) => {
       };
 
     } catch (error) {
+      console.error('❌ PlayAI API error during generation:', {
+        error: error instanceof Error ? error.message : error,
+        stack: error instanceof Error ? error.stack : undefined
+      });
+      
       // Update podcast status to failed
       await supabase
         .from('ai_podcasts')
@@ -296,16 +386,27 @@ export const handler: Handler = async (event) => {
       return {
         statusCode: 500,
         headers,
-        body: JSON.stringify({ error: 'Failed to start generation' })
+        body: JSON.stringify({ 
+          error: 'Failed to start generation',
+          details: error instanceof Error ? error.message : 'Unknown error'
+        })
       };
     }
 
   } catch (error) {
-    console.error('Podcast generation error:', error);
+    console.error('❌ Podcast generation error:', {
+      error: error instanceof Error ? error.message : error,
+      stack: error instanceof Error ? error.stack : undefined,
+      type: error instanceof Error ? error.constructor.name : typeof error
+    });
+    
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: 'Internal server error' })
+      body: JSON.stringify({ 
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      })
     };
   }
 };
