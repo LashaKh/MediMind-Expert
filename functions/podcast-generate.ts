@@ -258,7 +258,7 @@ export const handler: Handler = async (event) => {
         .single();
 
       // Download the file from Supabase storage for PlayAI
-      let fileBuffer: Buffer;
+      let fileBuffer: Buffer | undefined;
       let fileName: string = fullDocument.file_name;
       let fileType: string = fullDocument.file_type;
       
@@ -340,12 +340,23 @@ export const handler: Handler = async (event) => {
         throw new Error('PlayAI requires a publicly accessible file URL. Please re-upload the document to generate a public URL.');
       }
 
+      // Create FormData for multipart/form-data request (PlayHT recommended format)
+      const formData = new FormData();
+      formData.append('sourceFileUrl', playaiPayload.sourceFileUrl);
+      formData.append('synthesisStyle', playaiPayload.synthesisStyle);
+      formData.append('voice1', playaiPayload.voice1);
+      formData.append('voice1Name', playaiPayload.voice1Name);
+      formData.append('voice2', playaiPayload.voice2);
+      formData.append('voice2Name', playaiPayload.voice2Name);
+
       console.log('📝 PlayAI Request Details:', {
         url: 'https://api.play.ai/api/v1/playnotes',
         method: 'POST',
-        format: 'application/json',
-        payload: playaiPayload,
-        authHeaderFormat: 'Bearer [API_KEY]', // Added for debugging
+        format: 'multipart/form-data', // Fixed: Using correct format
+        sourceFileUrl: playaiPayload.sourceFileUrl,
+        synthesisStyle: playaiPayload.synthesisStyle,
+        voices: { voice1Name: playaiPayload.voice1Name, voice2Name: playaiPayload.voice2Name },
+        authHeaderFormat: 'Bearer [API_KEY]',
         hasApiKey: !!PLAYAI_API_KEY,
         hasUserId: !!PLAYAI_USER_ID
       });
@@ -353,12 +364,12 @@ export const handler: Handler = async (event) => {
       const playaiResponse = await fetch('https://api.play.ai/api/v1/playnotes', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${PLAYAI_API_KEY}`, // Fixed: Added Bearer prefix
+          'Authorization': `Bearer ${PLAYAI_API_KEY}`,
           'X-USER-ID': PLAYAI_USER_ID!,
-          'Content-Type': 'application/json',
           'accept': 'application/json'
+          // Note: No Content-Type header - let browser set it for multipart/form-data
         },
-        body: JSON.stringify(playaiPayload)
+        body: formData // Fixed: Using FormData instead of JSON
       });
 
       let playaiResult;
