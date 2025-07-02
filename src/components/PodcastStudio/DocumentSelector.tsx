@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
+import SimplePodcastUpload from './SimplePodcastUpload';
 
 interface Document {
   id: string;
@@ -47,8 +48,6 @@ const DocumentSelector: React.FC<DocumentSelectorProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [error, setError] = useState<string>('');
   const [showUpload, setShowUpload] = useState(false);
-  const [uploadLoading, setUploadLoading] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   const categories = [
     { value: 'all', label: t('podcast.documents.categories.all') },
@@ -107,157 +106,19 @@ const DocumentSelector: React.FC<DocumentSelectorProps> = ({
     onSelectionChange(newSelection);
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files) return;
-
-    const validFiles = Array.from(files).filter(file => {
-      const validTypes = [
-        'text/plain',
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-      ];
-      return validTypes.includes(file.type) && file.size <= 10 * 1024 * 1024; // 10MB limit
-    });
-
-    if (validFiles.length !== files.length) {
-      setError('Some files were skipped. Only PDF, Word, and text files under 10MB are supported.');
-    }
-
-    setUploadedFiles(prev => [...prev, ...validFiles]);
-    event.target.value = ''; // Reset input
+  const handleUploadComplete = async (documentId: string, publicUrl: string) => {
+    console.log('✅ Upload completed:', { documentId, publicUrl });
+    
+    // Add to selection
+    onSelectionChange([...selectedDocuments, documentId]);
+    
+    // Refresh document list
+    await fetchDocuments();
+    
+    // Close upload modal
+    setShowUpload(false);
   };
 
-  const removeUploadedFile = (index: number) => {
-    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const uploadFilesAndSelect = async () => {
-    if (uploadedFiles.length === 0) return;
-
-    setUploadLoading(true);
-    try {
-      const uploadedDocIds: string[] = [];
-
-      for (const file of uploadedFiles) {
-        // Upload to Supabase Storage first
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}-${file.name}`;
-        const filePath = `uploads/${user?.id}/${fileName}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from('user-uploads')
-          .upload(filePath, file);
-
-        if (uploadError) {
-          console.error('Upload error:', uploadError);
-          continue;
-        }
-
-        // Extract text content using backend function
-        let textContent = '';
-        try {
-          const extractResponse = await fetch('/.netlify/functions/extract-document-text', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              filePath,
-              fileType: file.type,
-              fileName: file.name
-            })
-          });
-
-          if (extractResponse.ok) {
-            const extractResult = await extractResponse.json();
-            textContent = extractResult.extractedText;
-          } else {
-            // Fallback to basic content if extraction fails
-            textContent = file.type === 'text/plain' 
-              ? await file.text()
-              : `Document: ${file.name}\nSize: ${formatFileSize(file.size)}\nThis document will be processed for podcast generation.`;
-          }
-        } catch (extractError) {
-          console.error('Text extraction failed:', extractError);
-          // Fallback content
-          textContent = `Document: ${file.name}\nSize: ${formatFileSize(file.size)}\nThis document will be processed for podcast generation.`;
-        }
-
-        // Get user's vector store ID first, create one if it doesn't exist
-        let { data: vectorStore } = await supabase
-          .from('user_vector_stores')
-          .select('id')
-          .eq('user_id', user?.id)
-          .single();
-
-        if (!vectorStore) {
-          // Create a vector store for the user
-          const { data: newVectorStore, error: vsError } = await supabase
-            .from('user_vector_stores')
-            .insert({
-              user_id: user?.id,
-              openai_vector_store_id: `vs_temp_${Date.now()}`, // Temporary ID
-              name: `${user?.email || 'User'} Vector Store`,
-              description: 'Auto-created for podcast uploads'
-            })
-            .select('id')
-            .single();
-          
-          if (vsError || !newVectorStore) {
-            console.error('Failed to create vector store:', vsError);
-            setError(`Failed to create vector store for user. Please try again.`);
-            continue;
-          }
-          
-          vectorStore = newVectorStore;
-        }
-
-        // Create document record with correct schema
-        const { data: document, error: docError } = await supabase
-          .from('user_documents')
-          .insert({
-            user_id: user?.id,
-            vector_store_id: vectorStore.id,
-            openai_file_id: `upload-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // Temporary ID for uploads
-            title: file.name.replace(/\.[^/.]+$/, ''), // Remove extension
-            description: textContent, // Store content in description field
-            file_name: file.name,
-            file_type: file.type,
-            file_size: file.size,
-            category: 'other',
-            tags: ['uploaded', 'podcast'],
-            processing_status: 'completed',
-            upload_status: 'completed',
-            is_private: true
-          })
-          .select()
-          .single();
-
-        if (!docError && document) {
-          uploadedDocIds.push(document.id);
-        }
-      }
-
-      // Add uploaded documents to selection
-      onSelectionChange([...selectedDocuments, ...uploadedDocIds]);
-      
-      // Refresh document list
-      await fetchDocuments();
-      
-      // Clear uploaded files and close upload panel
-      setUploadedFiles([]);
-      setShowUpload(false);
-      setError('');
-      
-    } catch (err) {
-      console.error('Upload process error:', err);
-      setError('Failed to upload files. Please try again.');
-    } finally {
-      setUploadLoading(false);
-    }
-  };
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
@@ -318,98 +179,13 @@ const DocumentSelector: React.FC<DocumentSelectorProps> = ({
         </button>
       </div>
 
-      {/* Upload Section */}
-      <AnimatePresence>
-        {showUpload && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mb-6 border border-gray-200 rounded-lg p-4 bg-gray-50"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="font-medium text-gray-900">Upload New Documents</h4>
-              <button
-                onClick={() => {
-                  setShowUpload(false);
-                  setUploadedFiles([]);
-                  setError('');
-                }}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* File Input */}
-            <div className="mb-4">
-              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-white hover:bg-gray-50 transition-colors duration-200">
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <Upload className="w-8 h-8 mb-2 text-gray-400" />
-                  <p className="mb-2 text-sm text-gray-500">
-                    <span className="font-semibold">Click to upload</span> or drag and drop
-                  </p>
-                  <p className="text-xs text-gray-500">PDF, Word, or Text files (Max 10MB each)</p>
-                </div>
-                <input
-                  type="file"
-                  multiple
-                  accept=".pdf,.doc,.docx,.txt"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                  disabled={uploadLoading}
-                />
-              </label>
-            </div>
-
-            {/* Uploaded Files List */}
-            {uploadedFiles.length > 0 && (
-              <div className="space-y-2 mb-4">
-                <h5 className="text-sm font-medium text-gray-700">Files ready to upload:</h5>
-                {uploadedFiles.map((file, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-white rounded border">
-                    <div className="flex items-center space-x-2">
-                      <FileText className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm text-gray-700 truncate">{file.name}</span>
-                      <span className="text-xs text-gray-500">({formatFileSize(file.size)})</span>
-                    </div>
-                    <button
-                      onClick={() => removeUploadedFile(index)}
-                      className="text-red-400 hover:text-red-600"
-                      disabled={uploadLoading}
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Upload Button */}
-            {uploadedFiles.length > 0 && (
-              <div className="flex justify-end">
-                <button
-                  onClick={uploadFilesAndSelect}
-                  disabled={uploadLoading}
-                  className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-                >
-                  {uploadLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Uploading...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="w-4 h-4" />
-                      <span>Upload & Select ({uploadedFiles.length})</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Simple Upload Modal */}
+      {showUpload && (
+        <SimplePodcastUpload
+          onUploadComplete={handleUploadComplete}
+          onClose={() => setShowUpload(false)}
+        />
+      )}
 
       {/* Search and Filter */}
       <div className="space-y-4 mb-6">

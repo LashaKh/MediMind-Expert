@@ -11,6 +11,7 @@ import {
   FileText
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { generatePodcast } from '../../lib/api/podcastUpload';
 
 interface PodcastGeneratorProps {
   selectedDocuments: string[];
@@ -99,26 +100,18 @@ const PodcastGenerator: React.FC<PodcastGeneratorProps> = ({
     setError('');
 
     try {
-      const response = await fetch('/.netlify/functions/podcast-generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          documentIds: selectedDocuments,
-          title: settings.title,
-          description: settings.description,
-          synthesisStyle: settings.synthesisStyle,
-          specialty: user.medical_specialty
-        })
+      console.log('🎵 Starting podcast generation with Supabase Edge Function...');
+      
+      const result = await generatePodcast({
+        userId: user.id,
+        documentIds: selectedDocuments,
+        title: settings.title,
+        description: settings.description,
+        synthesisStyle: settings.synthesisStyle,
+        specialty: user.medical_specialty || 'general'
       });
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to start generation');
-      }
+      console.log('✅ Podcast generation result:', result);
 
       if (result.status === 'queued') {
         onQueueUpdate(result);
@@ -135,7 +128,7 @@ const PodcastGenerator: React.FC<PodcastGeneratorProps> = ({
       });
 
     } catch (err) {
-      console.error('Generation error:', err);
+      console.error('❌ Generation error:', err);
       setError(err instanceof Error ? err.message : 'Failed to start generation');
     } finally {
       setIsGenerating(false);
