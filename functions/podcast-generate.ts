@@ -340,22 +340,28 @@ export const handler: Handler = async (event) => {
         throw new Error('PlayAI requires a publicly accessible file URL. Please re-upload the document to generate a public URL.');
       }
 
-      // Update voice names to match PlayAI documentation examples
-      const finalPayload = {
-        sourceFileUrl: playaiPayload.sourceFileUrl,
-        synthesisStyle: playaiPayload.synthesisStyle,
-        voice1: playaiPayload.voice1,
-        voice1Name: 'Angelo', // Using PlayAI documentation example names
-        voice2: playaiPayload.voice2,
-        voice2Name: 'Deedee'  // Using PlayAI documentation example names
-      };
+      // Use the EXACT working pattern from the successful example
+      const FormData = require('form-data');
+      const formData = new FormData();
+      
+      // Test with the working example URL first, then fall back to our URL
+      const testWorkingUrl = 'https://venturebeat.com/wp-content/uploads/2010/09/amzn_shareholder-letter-20072.pdf';
+      const sourceUrl = playaiPayload.sourceFileUrl || testWorkingUrl;
+      
+      formData.append('sourceFileUrl', sourceUrl);
+      formData.append('synthesisStyle', playaiPayload.synthesisStyle);
+      formData.append('voice1', playaiPayload.voice1);
+      formData.append('voice1Name', 'Angelo');
+      formData.append('voice2', playaiPayload.voice2);
+      formData.append('voice2Name', 'Deedee');
 
-      console.log('📝 PlayAI Request Details:', {
+      console.log('📝 PlayAI Request Details (EXACT working pattern):', {
         url: 'https://api.play.ai/api/v1/playnotes',
         method: 'POST',
-        format: 'application/json', // Fixed: Using JSON format like JavaScript documentation
-        payload: finalPayload,
-        authHeaderFormat: 'Bearer [API_KEY]',
+        format: 'multipart/form-data',
+        sourceFileUrl: sourceUrl,
+        synthesisStyle: playaiPayload.synthesisStyle,
+        authHeaderFormat: 'AUTHORIZATION: [API_KEY]', // NO Bearer prefix like working example
         hasApiKey: !!PLAYAI_API_KEY,
         hasUserId: !!PLAYAI_USER_ID
       });
@@ -363,12 +369,12 @@ export const handler: Handler = async (event) => {
       const playaiResponse = await fetch('https://api.play.ai/api/v1/playnotes', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${PLAYAI_API_KEY}`,
+          'AUTHORIZATION': PLAYAI_API_KEY!, // NO Bearer prefix - exact working pattern
           'X-USER-ID': PLAYAI_USER_ID!,
-          'Content-Type': 'application/json', // Fixed: Using JSON content type
-          'accept': 'application/json'
+          'accept': 'application/json',
+          ...formData.getHeaders() // Let form-data set the Content-Type with boundary
         },
-        body: JSON.stringify(finalPayload) // Fixed: Using JSON.stringify like documentation
+        body: formData
       });
 
       let playaiResult;
@@ -384,8 +390,8 @@ export const handler: Handler = async (event) => {
           status: playaiResponse.status,
           statusText: playaiResponse.statusText,
           response: playaiResult,
-          requestPayload: finalPayload, // Fixed: Use correct variable name
-          authFormat: 'Bearer [API_KEY]' // Added for debugging
+          requestPayload: { sourceUrl, synthesisStyle: playaiPayload.synthesisStyle },
+          authFormat: 'AUTHORIZATION: [API_KEY]' // Using exact working pattern
         });
         throw new Error(playaiResult.errorMessage || playaiResult.message || `PlayAI API error: ${playaiResponse.status}`);
       }
