@@ -141,6 +141,8 @@ This document is ready for AI-powered podcast generation with medical accuracy a
       .insert({
         id: documentId,
         user_id: userId,
+        // vector_store_id: null, // Not needed for podcasts
+        // openai_file_id: null, // Not needed for podcasts  
         title: title.trim(),
         description: documentDescription,
         file_name: file.name,
