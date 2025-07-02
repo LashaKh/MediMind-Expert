@@ -294,15 +294,33 @@ export const handler: Handler = async (event) => {
           fileSize: fileBuffer.length,
           sizeKB: Math.round(fileBuffer.length / 1024)
         });
-      } else {
-        console.error('❌ No Supabase file path available for document:', {
+      }
+      
+      // If no file buffer yet (no Supabase file path), use document description as text content
+      if (!fileBuffer) {
+        console.log('📝 No Supabase file available, using document description as text content:', {
           documentId: documents[0].id,
           filename: fileName,
-          fileType: fileType,
-          hasMetadata: !!fullDocument.openai_metadata,
-          metadata: fullDocument.openai_metadata
+          hasDescription: !!fullDocument.description,
+          contentLength: fullDocument.description?.length || 0,
+          hasMetadata: !!fullDocument.openai_metadata
         });
-        throw new Error('Document file not accessible - missing Supabase file path');
+        
+        if (!fullDocument.description || fullDocument.description.trim().length < 50) {
+          throw new Error('Document has no accessible content for podcast generation. Please re-upload the document.');
+        }
+        
+        // Create a text file from the document description
+        fileBuffer = Buffer.from(fullDocument.description, 'utf-8');
+        fileName = `${fileName.replace(/\.[^/.]+$/, '')}.txt`; // Change extension to .txt
+        fileType = 'text/plain';
+        
+        console.log('✅ Text content prepared from description:', {
+          filename: fileName,
+          fileType: fileType,
+          contentLength: fileBuffer.length,
+          preview: fullDocument.description.substring(0, 200) + '...'
+        });
       }
 
       // Call PlayAI API with multipart/form-data (as required by API)
