@@ -220,13 +220,25 @@ export const handler: Handler = async (event) => {
       // Get document with content
       const { data: fullDocument, error: fullDocError } = await supabase
         .from('user_documents')
-        .select('openai_file_id, file_name, file_type, description, file_path')
+        .select('openai_file_id, file_name, file_type, description')
         .eq('id', documents[0].id)
         .single();
 
       if (fullDocError || !fullDocument) {
+        console.error('❌ Failed to get document content:', {
+          documentId: documents[0].id,
+          error: fullDocError?.message || 'Document not found',
+          fullDocError
+        });
         throw new Error('Document not found');
       }
+      
+      console.log('✅ Document content retrieved:', {
+        documentId: documents[0].id,
+        filename: fullDocument.file_name,
+        contentLength: fullDocument.description?.length || 0,
+        hasOpenAIFile: !!fullDocument.openai_file_id
+      });
       
       // Create queue item as processing
       const { data: queueItem } = await supabase
@@ -245,19 +257,11 @@ export const handler: Handler = async (event) => {
         .select()
         .single();
 
-      // Check if we have a file path in Supabase storage
+      // Create temporary file from document content for PlayAI
       let sourceFileUrl: string;
       
-      if (fullDocument.file_path) {
-        // Use Supabase storage URL if available
-        const { data: { publicUrl } } = supabase.storage
-          .from('user-uploads')
-          .getPublicUrl(fullDocument.file_path);
-        sourceFileUrl = publicUrl;
-        console.log('📄 Using Supabase storage URL:', sourceFileUrl);
-      } else if (fullDocument.description && fullDocument.description.length > 100) {
-        // If we have text content, we need to upload it to a temporary location
-        // For now, let's create a temporary text file in Supabase storage
+      if (fullDocument.description && fullDocument.description.length > 100) {
+        // Create a temporary text file in Supabase storage from document content
         const tempFileName = `temp-podcast/${podcast.id}/${fullDocument.file_name}.txt`;
         const textContent = fullDocument.description;
         
@@ -269,6 +273,11 @@ export const handler: Handler = async (event) => {
           });
           
         if (uploadError) {
+          console.error('❌ Failed to create temporary file:', {
+            error: uploadError.message,
+            tempFileName,
+            contentLength: textContent.length
+          });
           throw new Error(`Failed to create temporary file: ${uploadError.message}`);
         }
         
@@ -277,7 +286,11 @@ export const handler: Handler = async (event) => {
           .getPublicUrl(tempFileName);
           
         sourceFileUrl = publicUrl;
-        console.log('📄 Created temporary text file:', sourceFileUrl);
+        console.log('📄 Created temporary text file for PlayAI:', {
+          tempFileName,
+          publicUrl: sourceFileUrl,
+          contentLength: textContent.length
+        });
         
         // Store temp file path for cleanup
         await supabase
@@ -285,7 +298,12 @@ export const handler: Handler = async (event) => {
           .update({ temp_file_path: tempFileName })
           .eq('id', podcast.id);
       } else {
-        throw new Error('No content available for podcast generation');
+        console.error('❌ Insufficient document content for podcast generation:', {
+          documentId: fullDocument.openai_file_id,
+          filename: fullDocument.file_name,
+          contentLength: fullDocument.description?.length || 0
+        });
+        throw new Error('Document content too short for podcast generation');
       }
       
       console.log('📄 Using source file:', {
