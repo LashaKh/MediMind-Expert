@@ -90,7 +90,7 @@ export async function getDocumentStatus(documentId: string): Promise<{
 }> {
   try {
     const { data, error } = await supabase
-      .from('knowledge_base_documents')
+      .from('user_documents')
       .select('upload_status, processing_status, error_message')
       .eq('id', documentId)
       .single();
@@ -135,7 +135,7 @@ export async function listDocuments(options?: {
 }> {
   try {
     let query = supabase
-      .from('knowledge_base_documents')
+      .from('user_documents')
       .select('*', { count: 'exact' })
       .order('created_at', { ascending: false });
 
@@ -186,8 +186,8 @@ export async function deleteDocument(documentId: string): Promise<void> {
   try {
     // First get the document to find the storage path
     const { data: document, error: fetchError } = await supabase
-      .from('knowledge_base_documents')
-      .select('storage_path')
+      .from('user_documents')
+      .select('file_path')
       .eq('id', documentId)
       .single();
 
@@ -196,10 +196,10 @@ export async function deleteDocument(documentId: string): Promise<void> {
     }
 
     // Delete from storage
-    if (document.storage_path) {
+    if (document.file_path) {
       const { error: storageError } = await supabase.storage
         .from('user-uploads')
-        .remove([document.storage_path]);
+        .remove([document.file_path]);
 
       if (storageError) {
         console.warn('Failed to delete file from storage:', storageError.message);
@@ -209,7 +209,7 @@ export async function deleteDocument(documentId: string): Promise<void> {
 
     // Delete from database
     const { error: deleteError } = await supabase
-      .from('knowledge_base_documents')
+      .from('user_documents')
       .delete()
       .eq('id', documentId);
 

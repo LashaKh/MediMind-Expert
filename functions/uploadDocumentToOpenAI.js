@@ -246,6 +246,7 @@ exports.handler = async (event, context) => {
 
     console.log(`Processing file: ${file.filename}, Size: ${file.size} bytes, Type: ${file.type}, User: ${user.id}`);
     console.log(`Target Vector Store ID: ${vectorStoreId}`);
+    console.log(`Document Title: ${title}, Category: ${category || 'other'}, Description provided: ${!!description}`);
 
     // Verify user owns the vector store
     const { data: vectorStore, error: vectorStoreError } = await supabase
@@ -304,7 +305,47 @@ exports.handler = async (event, context) => {
       const vectorStoreFileAssociation = await vectorStoreFileResponse.json();
       console.log('File successfully associated with Vector Store:', vectorStoreFileAssociation.id);
 
-      // NOW create document record in database with OpenAI IDs
+      // Create comprehensive document description for podcast generation
+      let documentDescription = description?.trim() || '';
+      
+      // If no description provided or it's too short, create a structured description
+      if (!documentDescription || documentDescription.length < 100) {
+        documentDescription = `MEDICAL DOCUMENT FOR PODCAST GENERATION
+=======================================
+
+Document Title: ${title.trim()}
+Original Filename: ${file.filename}
+File Type: ${file.type}
+File Size: ${Math.round(file.size / 1024)} KB
+Category: ${category || 'other'}
+Upload Date: ${new Date().toISOString()}
+Tags: ${parsedTags.join(', ') || 'None'}
+
+CONTENT SUMMARY:
+This is a ${file.type === 'application/pdf' ? 'PDF document' : 'medical document'} uploaded by a healthcare professional. The document contains medical information that can be discussed in a professional podcast format.
+
+${description?.trim() ? `User Description: ${description.trim()}` : ''}
+
+OPENAI INTEGRATION:
+- File ID: ${uploadedFile.id}
+- Vector Store File ID: ${vectorStoreFileAssociation.id}
+- Processed by OpenAI for AI-powered analysis
+
+PODCAST GENERATION NOTES:
+- This document contains medical information suitable for professional discussion
+- Please ensure accuracy and cite any specific medical facts or statistics
+- Consider the target audience of healthcare professionals
+- Maintain medical terminology while making content accessible
+- Include relevant clinical context and practical applications
+- The document has been processed by OpenAI's vector store for enhanced AI analysis
+
+END OF DOCUMENT METADATA
+========================
+
+This document is ready for AI-powered podcast generation with medical accuracy and professional context.`;
+      }
+
+      // NOW create document record in database with OpenAI IDs and comprehensive description
       const { data: documentRecord, error: documentError } = await supabase
         .from('user_documents')
         .insert({
@@ -314,7 +355,7 @@ exports.handler = async (event, context) => {
           openai_file_id: uploadedFile.id, // Now we have this from OpenAI
           openai_vector_store_file_id: vectorStoreFileAssociation.id,
           title: title.trim(),
-          description: description?.trim() || '',
+          description: documentDescription, // Store comprehensive description for podcast access
           file_name: file.filename,
           file_type: file.type,
           file_size: file.size,
@@ -347,6 +388,16 @@ exports.handler = async (event, context) => {
           })
         };
       }
+
+      console.log(`✅ Document record created successfully:`, {
+        documentId: documentRecord.id,
+        title: documentRecord.title,
+        filename: documentRecord.file_name,
+        contentLength: documentRecord.description.length,
+        openaiFileId: documentRecord.openai_file_id,
+        category: documentRecord.category,
+        tags: documentRecord.tags
+      });
 
       // Update vector store document count
       await supabase
