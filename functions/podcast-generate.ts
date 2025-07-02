@@ -323,28 +323,28 @@ export const handler: Handler = async (event) => {
         });
       }
 
-      // Call PlayAI API with multipart/form-data (as required by API)
-      const formData = new FormData();
-      formData.append('file', fileBuffer, {
-        filename: fileName,
-        contentType: fileType
-      });
-      formData.append('synthesisStyle', synthesisStyle);
-      formData.append('voice1', MEDICAL_VOICES.voice1);
-      formData.append('voice1Name', MEDICAL_VOICES.voice1Name);
-      formData.append('voice2', MEDICAL_VOICES.voice2);
-      formData.append('voice2Name', MEDICAL_VOICES.voice2Name);
+      // Prepare JSON payload for PlayAI API (not multipart form data)
+      const playaiPayload = {
+        sourceFileUrl: fullDocument.openai_metadata?.supabase_public_url || '', // Use public URL if available
+        synthesisStyle: synthesisStyle,
+        voice1: MEDICAL_VOICES.voice1,
+        voice1Name: MEDICAL_VOICES.voice1Name,
+        voice2: MEDICAL_VOICES.voice2,
+        voice2Name: MEDICAL_VOICES.voice2Name
+      };
+      
+      // If we don't have a public URL, we need to create a temporary one or upload text content
+      if (!playaiPayload.sourceFileUrl && fileBuffer) {
+        // For text content, we'll need to create a temp file URL or handle differently
+        // For now, let's throw an error and require public URLs
+        throw new Error('PlayAI requires a publicly accessible file URL. Please re-upload the document to generate a public URL.');
+      }
 
       console.log('📝 PlayAI Request Details:', {
         url: 'https://api.play.ai/api/v1/playnotes',
         method: 'POST',
-        format: 'multipart/form-data',
-        fileName: fileName,
-        fileType: fileType,
-        fileSize: fileBuffer.length,
-        synthesisStyle,
-        voice1Name: MEDICAL_VOICES.voice1Name,
-        voice2Name: MEDICAL_VOICES.voice2Name
+        format: 'application/json',
+        payload: playaiPayload
       });
 
       const playaiResponse = await fetch('https://api.play.ai/api/v1/playnotes', {
@@ -352,10 +352,10 @@ export const handler: Handler = async (event) => {
         headers: {
           'AUTHORIZATION': PLAYAI_API_KEY!, // No Bearer prefix
           'X-USER-ID': PLAYAI_USER_ID!,
-          'accept': 'application/json',
-          ...formData.getHeaders() // Important: includes Content-Type with boundary
+          'Content-Type': 'application/json',
+          'accept': 'application/json'
         },
-        body: formData
+        body: JSON.stringify(playaiPayload)
       });
 
       let playaiResult;
@@ -368,14 +368,7 @@ export const handler: Handler = async (event) => {
 
       if (!playaiResponse.ok) {
         console.error('PlayAI API error:', playaiResult);
-        console.error('Request data:', {
-          fileName: fileName,
-          fileType: fileType,
-          fileSize: fileBuffer.length,
-          synthesisStyle,
-          voice1: MEDICAL_VOICES.voice1,
-          voice1Name: MEDICAL_VOICES.voice1Name
-        });
+        console.error('Request payload:', playaiPayload);
         throw new Error(playaiResult.errorMessage || playaiResult.message || `PlayAI API error: ${playaiResponse.status}`);
       }
 
