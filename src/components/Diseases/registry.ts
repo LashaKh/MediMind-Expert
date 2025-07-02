@@ -31,6 +31,10 @@ import { focalAtrialTachycardiaData } from './cardiology/focal-atrial-tachycardi
 import { heparinInducedThrombocytopeniaData } from './cardiology/heparin-induced-thrombocytopenia';
 import { hyperkalemiaData } from './cardiology/hyperkalemia';
 import { hypernatremiaDiseaseData } from './cardiology/hypernatremia';
+import { hypokalemiaData } from './cardiology/hypokalemia';
+import { hyponatremiaDiseaseData } from './cardiology/hyponatremia';
+import { heartFailureDiseaseData } from './cardiology/heartFailure/index';
+import { hypertrophicCardiomyopathy } from './cardiology/hypertrophicCardiomyopathy';
 
 // Disease registry - maps disease ID to actual data
 export const diseaseRegistry: Record<string, DiseaseData> = {
@@ -64,6 +68,10 @@ export const diseaseRegistry: Record<string, DiseaseData> = {
   'heparin-induced-thrombocytopenia': heparinInducedThrombocytopeniaData,
   'hyperkalemia': hyperkalemiaData,
   'hypernatremia': hypernatremiaDiseaseData,
+  'hypokalemia': hypokalemiaData,
+  'hyponatremia': hyponatremiaDiseaseData,
+  'heart-failure': heartFailureDiseaseData,
+  'hypertrophic-cardiomyopathy': hypertrophicCardiomyopathy,
 };
 
 // Disease index for listing pages - includes summary information
@@ -394,13 +402,13 @@ export const diseaseIndex: DiseaseIndexItem[] = [
   },
   {
     id: 'heparin-induced-thrombocytopenia',
-    title: 'Heparin-Induced Thrombocytopenia',
+    title: 'Heparin-Induced Thrombocytopenia (HIT)',
     category: 'Hematology/Coagulation',
-    lastUpdated: 'May 22, 2025',
-    readTime: '25 min',
+    lastUpdated: 'January 18, 2025 - COMPREHENSIVE',
+    readTime: '45 min',
     severity: 'high',
-    description: 'A prothrombotic disorder caused by antibodies that recognize complexes of platelet factor 4 (PF4) and heparin, leading to platelet activation, consumption, and thrombosis. Without appropriate treatment, HIT carries up to 50% risk of thrombotic complications.',
-    tags: ['HIT', 'Heparin', 'Thrombocytopenia', 'Thrombosis', '4Ts Score', 'Argatroban', 'Bivalirudin', 'Anticoagulation', 'Emergency'],
+    description: 'A comprehensive clinical resource covering HIT pathophysiology, 4Ts scoring, diagnostic investigations, medical management, therapeutic procedures, and specific circumstances. Includes 22 evidence-based references and complete clinical guidelines.',
+    tags: ['HIT', 'Heparin', 'Thrombocytopenia', 'Thrombosis', '4Ts Score', 'Argatroban', 'Bivalirudin', 'Anticoagulation', 'Emergency', 'Comprehensive'],
     prevalence: '0.2-5% of patients receiving heparin',
     specialty: 'cardiology'
   },
@@ -426,6 +434,54 @@ export const diseaseIndex: DiseaseIndexItem[] = [
     description: 'Hyperkalemia is defined as an increase in serum potassium levels > 5.0 mmol/L. Severe untreated hyperkalemia can lead to life-threatening cardiac arrhythmias and cardiac arrest.',
     tags: ['Electrolyte', 'Potassium', 'ECG Changes', 'Cardiac Arrhythmias', 'Emergency', 'Dialysis', 'RAAS Inhibitors'],
     prevalence: '1,550 per 100,000 population',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'hypokalemia',
+    title: 'Hypokalemia',
+    category: 'Electrolyte Disorders',
+    lastUpdated: 'May 21, 2025',
+    readTime: '20 min',
+    severity: 'high',
+    description: 'Hypokalemia refers to the presence of serum potassium levels < 3.6 mmol/L. The most common electrolyte disorder encountered in clinical practice. Severe untreated hypokalemia can lead to rhabdomyolysis and malignant cardiac arrhythmias.',
+    tags: ['Electrolyte', 'Potassium', 'Muscle Weakness', 'Cardiac Arrhythmias', 'Diuretics', 'ECG Changes', 'Replacement Therapy'],
+    prevalence: 'Most common electrolyte disorder',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'hyponatremia',
+    title: 'Hyponatremia',
+    category: 'Electrolyte Disorders',
+    lastUpdated: 'May 21, 2025',
+    readTime: '25 min',
+    severity: 'high',
+    description: 'An electrolyte disorder characterized by low serum sodium concentration < 135 mEq/L. Requires careful correction to avoid osmotic demyelination syndrome. Prevalence of 1.72% in general US population.',
+    tags: ['Electrolyte', 'Sodium', 'Emergency', 'SIADH', 'Osmotic Demyelination', 'Hypertonic Saline'],
+    prevalence: '1.72% in general population',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'heart-failure',
+    title: 'Heart Failure',
+    category: 'Cardiology',
+    lastUpdated: 'May 31, 2025 - COMPREHENSIVE',
+    readTime: '90 min',
+    severity: 'high',
+    description: 'A comprehensive clinical syndrome resource covering HFrEF, HFpEF, and HFmrEF management. Includes 25+ research studies from 1986-2025, extensive diagnostic and therapeutic guidelines, inpatient care, device therapy, and specialized management strategies.',
+    tags: ['Heart Failure', 'HFrEF', 'HFpEF', 'SGLT2', 'ACE Inhibitors', 'Beta-blockers', 'Guidelines', 'Diagnosis', 'CRT', 'ICD', 'SUMMIT', 'DAPA-HF', 'EMPEROR', 'Comprehensive'],
+    prevalence: '1915 per 100,000 population',
+    specialty: 'cardiology'
+  },
+  {
+    id: 'hypertrophic-cardiomyopathy',
+    title: 'Hypertrophic Cardiomyopathy',
+    category: 'Cardiomyopathy',
+    lastUpdated: 'May 31, 2025 - STEP 1 IMPLEMENTATION',
+    readTime: '25 min',
+    severity: 'high',
+    description: 'A genetic disorder characterized by LVH and a non-dilated left ventricle with preserved or increased ejection fraction. Associated with 0.5% annual mortality rate and risk of sudden cardiac death.',
+    tags: ['Cardiomyopathy', 'Genetic', 'LVH', 'Sudden Death', 'Family Screening', 'HCM Risk-SCD', 'Myectomy', 'ICD'],
+    prevalence: '200 per 100,000 population',
     specialty: 'cardiology'
   }
 ];

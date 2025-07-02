@@ -5,7 +5,7 @@ Quick guide for extracting complete content from Pathway.md medical articles usi
 
 **Prerequisites**: Chrome installed, account registered at team@updevoteai.com, password is Dba545c5fde36242 Puppeteer MCP available.
 
-# first log in with this email team@updevoteai.com using google log in 
+# first if you are not already logged in, log in with this email team@updevoteai.com using google log in , 
 
 ## Step 1: Navigate to Target Article
 
@@ -38,20 +38,41 @@ mcp__puppeteer__puppeteer_evaluate("document.body.innerText.length")
 
 ### 2.3 Extract Content in Chunks
 
-Due to MCP token limits (25,000 max), extract in sections:
+**CRITICAL FOR LARGE CONTENT (>10,000 characters)**: Use step-by-step extraction and file building approach:
+
+#### For Content >10,000 Characters: 
+**DO NOT extract all content at once**. Instead, use this step-by-step approach:
+
+1. **Extract first chunk and write to file immediately**
+2. **Extract subsequent chunks and append to file one by one**
+3. **Continue until all content is extracted**
 
 ```javascript
-// Chunk 1: Characters 0-10,000
+// STEP 1: Check total content size first
+mcp__puppeteer__puppeteer_evaluate("document.body.innerText.length")
+
+// STEP 2: If >10,000 characters, use chunk-by-chunk approach
+// Extract Chunk 1 (0-10,000) and WRITE TO FILE immediately
 mcp__puppeteer__puppeteer_evaluate("document.body.innerText.slice(0, 10000)")
+// → Write/append this chunk to markdown file before proceeding
 
-// Chunk 2: Characters 10,000-20,000  
+// Extract Chunk 2 (10,000-20,000) and APPEND TO FILE immediately  
 mcp__puppeteer__puppeteer_evaluate("document.body.innerText.slice(10000, 20000)")
+// → Append this chunk to markdown file before proceeding
 
-// Chunk 3: Characters 20,000-30,000
+// Extract Chunk 3 (20,000-30,000) and APPEND TO FILE immediately
 mcp__puppeteer__puppeteer_evaluate("document.body.innerText.slice(20000, 30000)")
+// → Append this chunk to markdown file before proceeding
 
-// Continue until all content extracted
+// Continue this pattern: EXTRACT → APPEND → EXTRACT → APPEND
+// Until total content length is reached
 ```
+
+**Why This Approach:**
+- Prevents API token limit errors (>32,000 output tokens)
+- Ensures no content is lost between extractions
+- Provides immediate file building for verification
+- Avoids memory issues with large content
 
 ## Step 3: Extract All Reference Links and Sources
 
@@ -119,21 +140,37 @@ mcp__puppeteer__puppeteer_evaluate("document.querySelectorAll('a[href*=\"pubmed\
 - **Internal Links**: Preserve navigation and section links
 - **Source Attribution**: Always include original Pathway.md article link
 
-## Quick Workflow
+## Quick Workflow for Large Content (>10,000 characters)
 
 ```javascript
 // 1. Navigate to article
 mcp__puppeteer__puppeteer_navigate("https://www.pathway.md/diseases/[article-id]")
 
-// 2. Expand all content
+// 2. Expand all content sections
 mcp__puppeteer__puppeteer_click("text=Expand All Topics")
+// Look for additional "Expand" buttons and click them too
+mcp__puppeteer__puppeteer_click("text=Expand")
 
-// 3. Extract content in chunks
+// 3. Check total content size
+mcp__puppeteer__puppeteer_evaluate("document.body.innerText.length")
+
+// 4. CHUNK-BY-CHUNK EXTRACTION (for content >10,000 chars)
+// Extract Chunk 1 and write to file
 mcp__puppeteer__puppeteer_evaluate("document.body.innerText.slice(0, 10000)")
-mcp__puppeteer__puppeteer_evaluate("document.body.innerText.slice(10000, 20000)")
-// Continue as needed
+// → IMMEDIATELY write this to markdown file
 
-// 4. Extract all reference links
+// Extract Chunk 2 and append to file
+mcp__puppeteer__puppeteer_evaluate("document.body.innerText.slice(10000, 20000)")
+// → IMMEDIATELY append this to markdown file
+
+// Extract Chunk 3 and append to file
+mcp__puppeteer__puppeteer_evaluate("document.body.innerText.slice(20000, 30000)")
+// → IMMEDIATELY append this to markdown file
+
+// Continue pattern: EXTRACT → APPEND → EXTRACT → APPEND
+// Until reaching total content length
+
+// 5. Extract all reference links (after content extraction is complete)
 mcp__puppeteer__puppeteer_evaluate(`(() => {
   const references = [];
   const referenceElements = document.querySelectorAll('a[href*="doi.org"], a[href*="pubmed"], a[href*="ncbi.nlm.nih.gov"], a[href*="Open"]');
@@ -147,7 +184,20 @@ mcp__puppeteer__puppeteer_evaluate(`(() => {
   return JSON.stringify(references, null, 2);
 })()`)
 
-// 5. Create comprehensive markdown file with all links preserved
+// 6. Append reference links to markdown file
+```
+
+## Small Content Workflow (<10,000 characters)
+
+For smaller articles, you can extract all content at once:
+
+```javascript
+// 1-2. Navigate and expand (same as above)
+
+// 3. Extract all content at once (only for small articles)
+mcp__puppeteer__puppeteer_evaluate("document.body.innerText")
+
+// 4. Extract references and create markdown file
 ```
 
 ## Success Indicators
@@ -165,9 +215,11 @@ mcp__puppeteer__puppeteer_evaluate(`(() => {
 
 **If content truncated:** Extract in smaller 5,000 character chunks  
 **If login required:** Navigate to main pathway.md first, then to article  
-**If expansion fails:** Click individual section headers manually
+**If expansion fails:** Click individual section headers manually and look for additional "Expand" buttons
 **If links missing:** Re-run reference extraction script and verify JSON output
 **If reference count low:** Check for additional link selectors or DOM changes
+**If API token limit errors:** ALWAYS use chunk-by-chunk approach for content >10,000 characters
+**If content appears incomplete:** Verify all "Expand" buttons were clicked, not just "Expand All Topics"
 
 # Must Rules
 - Make sure to extract all the resource links with the resources
@@ -177,6 +229,9 @@ mcp__puppeteer__puppeteer_evaluate(`(() => {
 - **CRITICAL**: Format all references with proper markdown links
 - **CRITICAL**: Verify reference link count matches article reference count
 - **CRITICAL**: Include original Pathway.md source attribution
+- **CRITICAL FOR LARGE CONTENT**: Use chunk-by-chunk extraction with immediate file writing
+- **CRITICAL**: Check for and click ALL "Expand" buttons, not just "Expand All Topics"
+- **CRITICAL**: Set CLAUDE_CODE_MAX_OUTPUT_TOKENS environment variable to avoid API limits
 
 ## Reference Link Extraction Verification
 

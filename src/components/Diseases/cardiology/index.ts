@@ -27,4 +27,4 @@ export { disseminatedIntravascularCoagulationData } from './disseminated-intrava
 export { focalAtrialTachycardiaData } from './focal-atrial-tachycardia';
 export { heparinInducedThrombocytopeniaData } from './heparin-induced-thrombocytopenia';
 export { hyperkalemiaData } from './hyperkalemia';
-export { hypernatremiaData } from './hypernatremia';
+export { hypertrophicCardiomyopathy } from './hypertrophicCardiomyopathy';

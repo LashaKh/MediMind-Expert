@@ -35,12 +35,17 @@ import {
 
   ChevronUp as ChevronUpIcon,
   ChevronDown as ChevronDownIcon,
-  List
+  List,
+  Calculator,
+  Clock,
+  User
 } from 'lucide-react';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Button } from '../../components/ui/button';
 import { getDiseaseData } from './registry';
 import { GuidelineSection, Reference } from './types';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Badge } from '../ui/badge';
 
 export const DiseasePage: React.FC = () => {
   const { diseaseId } = useParams<{ diseaseId: string }>();
@@ -63,6 +68,7 @@ export const DiseasePage: React.FC = () => {
     'inpatient-care',
     'nutritional-considerations',
     'nonpharmacologic',
+    'nonpharmacologic-interventions',
     'therapeutic-procedures',
     'perioperative-care',
     'surgical-interventions',
@@ -654,6 +660,174 @@ export const DiseasePage: React.FC = () => {
                   </section>
                 )}
 
+              {/* Studies Section */}
+              {diseaseData.content.studies && (
+                <section id="studies" className="p-8 border-b border-gray-100">
+                  <div className="flex items-center space-x-3 mb-6">
+                    <div className="p-3 bg-purple-100 rounded-xl">
+                      <BarChart3 className="w-6 h-6 text-purple-600" />
+                    </div>
+                    <h2 className="text-3xl font-bold text-gray-900">Studies & Evidence</h2>
+                  </div>
+                  
+                  <div className="space-y-6">
+                    {diseaseData.content.studies.map((study, index) => {
+                      // Check if this is an "Updated evidence" or "Landmark trials" statement
+                      const isUpdatedEvidence = study.title.toLowerCase().includes('updated evidence:');
+                      const isLandmarkTrial = study.title.toLowerCase().includes('landmark trials:');
+                      
+                      if (isUpdatedEvidence) {
+                        // Extract the study name from "Updated evidence: STUDY_NAME"
+                        const studyMatch = study.title.match(/Updated evidence:\s*(.+)/i);
+                        const studyName = studyMatch ? studyMatch[1] : 'Study';
+                        
+                        return (
+                          <div key={index} className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-6 border-l-4 border-emerald-400 shadow-sm">
+                            <div className="flex items-start space-x-4">
+                              <div className="flex-shrink-0">
+                                <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
+                                  <BookOpen className="w-5 h-5 text-emerald-600" />
+                                </div>
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center space-x-2 mb-3">
+                                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                    🔬 Updated Evidence
+                                  </span>
+                                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-600 text-white">
+                                    {studyName}
+                                  </span>
+                                </div>
+                                <p className="text-gray-800 leading-relaxed mb-4 font-medium">
+                                  {study.description}
+                                </p>
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center space-x-4 text-sm text-gray-600">
+                                    <span className="flex items-center">
+                                      <User className="w-4 h-4 mr-1" />
+                                      {study.authors}
+                                    </span>
+                                    <span className="flex items-center">
+                                      <Calendar className="w-4 h-4 mr-1" />
+                                      {study.year}
+                                    </span>
+                                  </div>
+                                  {study.link && (
+                                    <a
+                                      href={study.link}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+                                    >
+                                      <ExternalLink className="w-4 h-4 mr-2" />
+                                      View Study
+                                    </a>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      } else if (isLandmarkTrial) {
+                        // Extract the study name from "Landmark trials: STUDY_NAME"
+                        const studyMatch = study.title.match(/Landmark trials:\s*(.+)/i);
+                        const studyName = studyMatch ? studyMatch[1] : 'Trial';
+                        
+                        return (
+                          <div key={index} className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 border-l-4 border-amber-400 shadow-sm">
+                            <div className="flex items-start space-x-4">
+                              <div className="flex-shrink-0">
+                                <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                                  <Award className="w-5 h-5 text-amber-600" />
+                                </div>
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center space-x-2 mb-3">
+                                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                    🏆 Landmark Trial
+                                  </span>
+                                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-600 text-white">
+                                    {studyName}
+                                  </span>
+                                </div>
+                                <p className="text-gray-800 leading-relaxed mb-4 font-medium">
+                                  {study.description}
+                                </p>
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center space-x-4 text-sm text-gray-600">
+                                    <span className="flex items-center">
+                                      <User className="w-4 h-4 mr-1" />
+                                      {study.authors}
+                                    </span>
+                                    <span className="flex items-center">
+                                      <Calendar className="w-4 h-4 mr-1" />
+                                      {study.year}
+                                    </span>
+                                  </div>
+                                  {study.link && (
+                                    <a
+                                      href={study.link}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+                                    >
+                                      <ExternalLink className="w-4 h-4 mr-2" />
+                                      View Study
+                                    </a>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      } else {
+                        // Regular study rendering
+                        return (
+                          <div key={index} className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200 shadow-sm">
+                            <div className="flex items-start space-x-4">
+                              <div className="flex-shrink-0">
+                                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                  <BarChart3 className="w-5 h-5 text-blue-600" />
+                                </div>
+                              </div>
+                              <div className="flex-1">
+                                <h3 className="text-lg font-semibold text-gray-900 mb-2">{study.title}</h3>
+                                <p className="text-gray-700 leading-relaxed mb-4">
+                                  {study.description}
+                                </p>
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center space-x-4 text-sm text-gray-600">
+                                    <span className="flex items-center">
+                                      <User className="w-4 h-4 mr-1" />
+                                      {study.authors}
+                                    </span>
+                                    <span className="flex items-center">
+                                      <Calendar className="w-4 h-4 mr-1" />
+                                      {study.year}
+                                    </span>
+                                  </div>
+                                  {study.link && (
+                                    <a
+                                      href={study.link}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+                                    >
+                                      <ExternalLink className="w-4 h-4 mr-2" />
+                                      View Study
+                                    </a>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+                    })}
+                  </div>
+                </section>
+              )}
+
               {/* Guidelines Section */}
               <section id="guidelines" className="p-8">
                 <div className="flex items-center space-x-3 mb-6">
@@ -701,22 +875,194 @@ export const DiseasePage: React.FC = () => {
                         {expandedSections.includes(section.id) && (
                         <div className="px-6 pb-6 space-y-4">
                           {/* Show direct content if it exists */}
-                          {section.content && section.content.length > 0 && section.content.map((content, index) => (
-                            <div key={index} className="bg-gray-50 rounded-xl p-4">
-                              <p className="text-gray-700 leading-relaxed mb-2">{content.statement}</p>
-                              <div className="flex items-center space-x-4 text-sm text-gray-500">
-                                {content.level && (
-                                  <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
-                                    Level {content.level}
-                                      </span>
-                                )}
-                                <span className="flex items-center">
-                                  <ExternalLink className="w-3 h-3 mr-1" />
-                                  {content.source}
-                                            </span>
-                                        </div>
+                          {section.content && section.content.length > 0 && section.content.map((content, index) => {
+                            // Check if this is an "Updated evidence" or "Landmark trials" statement
+                            const isUpdatedEvidence = content.statement.toLowerCase().includes('updated evidence:');
+                            const isLandmarkTrial = content.statement.toLowerCase().includes('landmark trials:');
+                            
+                            // Look for various types of medical resource links
+                            const pubmedMatch = content.statement.match(/\[PubMed\]\((https:\/\/pubmed\.ncbi\.nlm\.nih\.gov\/\d+\/)\)/);
+                            const doiMatch = content.statement.match(/\[DOI\]\((https:\/\/doi\.org\/[^\)]+)\)/);
+                            const urlMatch = content.statement.match(/\[(.*?)\]\((https?:\/\/[^\)]+)\)/);
+                            
+                            if (isUpdatedEvidence) {
+                              // Extract the study name from "Updated evidence: STUDY_NAME"
+                              const studyMatch = content.statement.match(/Updated evidence:\s*([A-Z][A-Za-z0-9\-]*)/i);
+                              const studyName = studyMatch ? studyMatch[1] : 'Study';
+                              
+                              // Extract the main evidence text (remove all link patterns)
+                              let evidenceText = content.statement
+                                .replace(/\[PubMed\]\(https:\/\/pubmed\.ncbi\.nlm\.nih\.gov\/\d+\/\)/, '')
+                                .replace(/\[DOI\]\(https:\/\/doi\.org\/[^\)]+\)/, '')
+                                .replace(/\[.*?\]\(https?:\/\/[^\)]+\)/, '')
+                                .trim();
+                              
+                              // Determine the link type and URL
+                              let linkUrl = '';
+                              let linkText = '';
+                              let linkIcon = <ExternalLink className="w-4 h-4 mr-2" />;
+                              
+                              if (pubmedMatch) {
+                                linkUrl = pubmedMatch[1];
+                                linkText = 'View on PubMed';
+                                linkIcon = <ExternalLink className="w-4 h-4 mr-2" />;
+                              } else if (doiMatch) {
+                                linkUrl = doiMatch[1];
+                                linkText = 'View DOI';
+                                linkIcon = <ExternalLink className="w-4 h-4 mr-2" />;
+                              } else if (urlMatch) {
+                                linkUrl = urlMatch[2];
+                                linkText = `View ${urlMatch[1]}`;
+                                linkIcon = <ExternalLink className="w-4 h-4 mr-2" />;
+                              }
+                              
+                              return (
+                                <div key={index} className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-6 border-l-4 border-emerald-400 shadow-sm">
+                                  <div className="flex items-start space-x-4">
+                                    <div className="flex-shrink-0">
+                                      <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
+                                        <BookOpen className="w-5 h-5 text-emerald-600" />
                                       </div>
-                                    ))}
+                                    </div>
+                                    <div className="flex-1">
+                                      <div className="flex items-center space-x-2 mb-3">
+                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                          🔬 Updated Evidence
+                                        </span>
+                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-600 text-white">
+                                          {studyName}
+                                        </span>
+                                      </div>
+                                      <p className="text-gray-800 leading-relaxed mb-4 font-medium">
+                                        {evidenceText}
+                                      </p>
+                                      <div className="flex items-center justify-between">
+                                        <div className="flex items-center space-x-4 text-sm text-gray-600">
+                                          {content.level && (
+                                            <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
+                                              Level {content.level}
+                                            </span>
+                                          )}
+                                          <span className="flex items-center">
+                                            <ExternalLink className="w-4 h-4 mr-1" />
+                                            {content.source}
+                                          </span>
+                                        </div>
+                                        {linkUrl && (
+                                          <a
+                                            href={linkUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+                                          >
+                                            {linkIcon}
+                                            {linkText}
+                                          </a>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            } else if (isLandmarkTrial) {
+                              // Extract the study name from "Landmark trials: STUDY_NAME"
+                              const studyMatch = content.statement.match(/Landmark trials:\s*([A-Z][A-Za-z0-9\-]*)/i);
+                              const studyName = studyMatch ? studyMatch[1] : 'Trial';
+                              
+                              // Extract the main evidence text (remove all link patterns)
+                              let evidenceText = content.statement
+                                .replace(/\[PubMed\]\(https:\/\/pubmed\.ncbi\.nlm\.nih\.gov\/\d+\/\)/, '')
+                                .replace(/\[DOI\]\(https:\/\/doi\.org\/[^\)]+\)/, '')
+                                .replace(/\[.*?\]\(https?:\/\/[^\)]+\)/, '')
+                                .trim();
+                              
+                              // Determine the link type and URL
+                              let linkUrl = '';
+                              let linkText = '';
+                              let linkIcon = <ExternalLink className="w-4 h-4 mr-2" />;
+                              
+                              if (pubmedMatch) {
+                                linkUrl = pubmedMatch[1];
+                                linkText = 'View on PubMed';
+                                linkIcon = <ExternalLink className="w-4 h-4 mr-2" />;
+                              } else if (doiMatch) {
+                                linkUrl = doiMatch[1];
+                                linkText = 'View DOI';
+                                linkIcon = <ExternalLink className="w-4 h-4 mr-2" />;
+                              } else if (urlMatch) {
+                                linkUrl = urlMatch[2];
+                                linkText = `View ${urlMatch[1]}`;
+                                linkIcon = <ExternalLink className="w-4 h-4 mr-2" />;
+                              }
+                              
+                              return (
+                                <div key={index} className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 border-l-4 border-amber-400 shadow-sm">
+                                  <div className="flex items-start space-x-4">
+                                    <div className="flex-shrink-0">
+                                      <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                                        <Award className="w-5 h-5 text-amber-600" />
+                                      </div>
+                                    </div>
+                                    <div className="flex-1">
+                                      <div className="flex items-center space-x-2 mb-3">
+                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                          🏆 Landmark Trial
+                                        </span>
+                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-600 text-white">
+                                          {studyName}
+                                        </span>
+                                      </div>
+                                      <p className="text-gray-800 leading-relaxed mb-4 font-medium">
+                                        {evidenceText}
+                                      </p>
+                                      <div className="flex items-center justify-between">
+                                        <div className="flex items-center space-x-4 text-sm text-gray-600">
+                                          {content.level && (
+                                            <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
+                                              Level {content.level}
+                                            </span>
+                                          )}
+                                          <span className="flex items-center">
+                                            <ExternalLink className="w-4 h-4 mr-1" />
+                                            {content.source}
+                                          </span>
+                                        </div>
+                                        {linkUrl && (
+                                          <a
+                                            href={linkUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+                                          >
+                                            {linkIcon}
+                                            {linkText}
+                                          </a>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            }
+                            
+                            // Regular statement rendering
+                            return (
+                              <div key={index} className="bg-gray-50 rounded-xl p-4">
+                                <p className="text-gray-700 leading-relaxed mb-2">{content.statement}</p>
+                                <div className="flex items-center space-x-4 text-sm text-gray-500">
+                                  {content.level && (
+                                    <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
+                                      Level {content.level}
+                                    </span>
+                                  )}
+                                  <span className="flex items-center">
+                                    <ExternalLink className="w-3 h-3 mr-1" />
+                                    {content.source}
+                                  </span>
+                                </div>
+                              </div>
+                            );
+                          })}
                           
                           {/* Show message if no direct content but has subsections */}
                           {(!section.content || section.content.length === 0) && section.subsections && section.subsections.length > 0 && (
@@ -747,24 +1093,210 @@ export const DiseasePage: React.FC = () => {
                                 )}
                               </button>
                               
-                              {expandedSubsections.includes(subsection.id) && subsection.content && (
-                                <div className="space-y-2 ml-6">
-                                  {subsection.content.map((content, index) => (
-                                    <div key={index} className="bg-white rounded-lg p-3 border border-gray-100">
-                                      <p className="text-gray-700 text-sm leading-relaxed mb-2">{content.statement}</p>
-                                      <div className="flex items-center space-x-4 text-xs text-gray-500">
-                                        {content.level && (
-                                          <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
-                                            Level {content.level}
-                                          </span>
-                                        )}
-                                        <span className="flex items-center">
-                                          <ExternalLink className="w-3 h-3 mr-1" />
-                                          {content.source}
-                                        </span>
-                                      </div>
+                              {expandedSubsections.includes(subsection.id) && (
+                                <div className="space-y-4 ml-6">
+                                  {subsection.content && (
+                                    <div className="space-y-2">
+                                      {subsection.content.map((content, index) => {
+                                        // Check if this is an "Updated evidence" or "Landmark trials" statement
+                                        const isUpdatedEvidence = content.statement.toLowerCase().includes('updated evidence:');
+                                        const isLandmarkTrial = content.statement.toLowerCase().includes('landmark trials:');
+                                        
+                                        // Look for various types of medical resource links
+                                        const pubmedMatch = content.statement.match(/\[PubMed\]\((https:\/\/pubmed\.ncbi\.nlm\.nih\.gov\/\d+\/)\)/);
+                                        const doiMatch = content.statement.match(/\[DOI\]\((https:\/\/doi\.org\/[^\)]+)\)/);
+                                        const urlMatch = content.statement.match(/\[(.*?)\]\((https?:\/\/[^\)]+)\)/);
+                                        
+                                        if (isUpdatedEvidence) {
+                                          // Extract the study name from "Updated evidence: STUDY_NAME"
+                                          const studyMatch = content.statement.match(/Updated evidence:\s*([A-Z][A-Za-z0-9\-]*)/i);
+                                          const studyName = studyMatch ? studyMatch[1] : 'Study';
+                                          
+                                          // Extract the main evidence text (remove all link patterns)
+                                          let evidenceText = content.statement
+                                            .replace(/\[PubMed\]\(https:\/\/pubmed\.ncbi\.nlm\.nih\.gov\/\d+\/\)/, '')
+                                            .replace(/\[DOI\]\(https:\/\/doi\.org\/[^\)]+\)/, '')
+                                            .replace(/\[.*?\]\(https?:\/\/[^\)]+\)/, '')
+                                            .trim();
+                                          
+                                          // Determine the link type and URL
+                                          let linkUrl = '';
+                                          let linkText = '';
+                                          let linkIcon = <ExternalLink className="w-4 h-4 mr-2" />;
+                                          
+                                          if (pubmedMatch) {
+                                            linkUrl = pubmedMatch[1];
+                                            linkText = 'View on PubMed';
+                                            linkIcon = <ExternalLink className="w-4 h-4 mr-2" />;
+                                          } else if (doiMatch) {
+                                            linkUrl = doiMatch[1];
+                                            linkText = 'View DOI';
+                                            linkIcon = <ExternalLink className="w-4 h-4 mr-2" />;
+                                          } else if (urlMatch) {
+                                            linkUrl = urlMatch[2];
+                                            linkText = `View ${urlMatch[1]}`;
+                                            linkIcon = <ExternalLink className="w-4 h-4 mr-2" />;
+                                          }
+                                          
+                                          return (
+                                            <div key={index} className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-6 border-l-4 border-emerald-400 shadow-sm">
+                                              <div className="flex items-start space-x-4">
+                                                <div className="flex-shrink-0">
+                                                  <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
+                                                    <BookOpen className="w-5 h-5 text-emerald-600" />
+                                                  </div>
+                                                </div>
+                                                <div className="flex-1">
+                                                  <div className="flex items-center space-x-2 mb-3">
+                                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                                      🔬 Updated Evidence
+                                                    </span>
+                                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-600 text-white">
+                                                      {studyName}
+                                                    </span>
+                                                  </div>
+                                                  <p className="text-gray-800 leading-relaxed mb-4 font-medium">
+                                                    {evidenceText}
+                                                  </p>
+                                                  <div className="flex items-center justify-between">
+                                                    <div className="flex items-center space-x-4 text-sm text-gray-600">
+                                                      <span className="flex items-center">
+                                                        <ExternalLink className="w-4 h-4 mr-1" />
+                                                        {content.source}
+                                                      </span>
+                                                    </div>
+                                                    {linkUrl && (
+                                                      <a
+                                                        href={linkUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+                                                      >
+                                                        {linkIcon}
+                                                        {linkText}
+                                                      </a>
+                                                    )}
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          );
+                                        } else if (isLandmarkTrial) {
+                                          // Extract the study name from "Landmark trials: STUDY_NAME"
+                                          const studyMatch = content.statement.match(/Landmark trials:\s*([A-Z][A-Za-z0-9\-]*)/i);
+                                          const studyName = studyMatch ? studyMatch[1] : 'Trial';
+                                          
+                                          // Extract the main evidence text (remove all link patterns)
+                                          let evidenceText = content.statement
+                                            .replace(/\[PubMed\]\(https:\/\/pubmed\.ncbi\.nlm\.nih\.gov\/\d+\/\)/, '')
+                                            .replace(/\[DOI\]\(https:\/\/doi\.org\/[^\)]+\)/, '')
+                                            .replace(/\[.*?\]\(https?:\/\/[^\)]+\)/, '')
+                                            .trim();
+                                          
+                                          // Determine the link type and URL
+                                          let linkUrl = '';
+                                          let linkText = '';
+                                          let linkIcon = <ExternalLink className="w-4 h-4 mr-2" />;
+                                          
+                                          if (pubmedMatch) {
+                                            linkUrl = pubmedMatch[1];
+                                            linkText = 'View on PubMed';
+                                            linkIcon = <ExternalLink className="w-4 h-4 mr-2" />;
+                                          } else if (doiMatch) {
+                                            linkUrl = doiMatch[1];
+                                            linkText = 'View DOI';
+                                            linkIcon = <ExternalLink className="w-4 h-4 mr-2" />;
+                                          } else if (urlMatch) {
+                                            linkUrl = urlMatch[2];
+                                            linkText = `View ${urlMatch[1]}`;
+                                            linkIcon = <ExternalLink className="w-4 h-4 mr-2" />;
+                                          }
+                                          
+                                          return (
+                                            <div key={index} className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 border-l-4 border-amber-400 shadow-sm">
+                                              <div className="flex items-start space-x-4">
+                                                <div className="flex-shrink-0">
+                                                  <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                                                    <Award className="w-5 h-5 text-amber-600" />
+                                                  </div>
+                                                </div>
+                                                <div className="flex-1">
+                                                  <div className="flex items-center space-x-2 mb-3">
+                                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                                      🏆 Landmark Trial
+                                                    </span>
+                                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-600 text-white">
+                                                      {studyName}
+                                                    </span>
+                                                  </div>
+                                                  <p className="text-gray-800 leading-relaxed mb-4 font-medium">
+                                                    {evidenceText}
+                                                  </p>
+                                                  <div className="flex items-center justify-between">
+                                                    <div className="flex items-center space-x-4 text-sm text-gray-600">
+                                                      <span className="flex items-center">
+                                                        <ExternalLink className="w-4 h-4 mr-1" />
+                                                        {content.source}
+                                                      </span>
+                                                    </div>
+                                                    {linkUrl && (
+                                                      <a
+                                                        href={linkUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+                                                      >
+                                                        {linkIcon}
+                                                        {linkText}
+                                                      </a>
+                                                    )}
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          );
+                                        }
+                                        
+                                        // Regular statement rendering
+                                        return (
+                                          <div key={index} className="bg-white rounded-lg p-3 border border-gray-100">
+                                            <p className="text-gray-700 text-sm leading-relaxed mb-2">{content.statement}</p>
+                                            <div className="flex items-center space-x-4 text-xs text-gray-500">
+                                              {content.level && (
+                                                <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
+                                                  Level {content.level}
+                                                </span>
+                                              )}
+                                              <span className="flex items-center">
+                                                <ExternalLink className="w-3 h-3 mr-1" />
+                                                {content.source}
+                                              </span>
+                                            </div>
+                                          </div>
+                                        );
+                                      })}
                                     </div>
-                                  ))}
+                                  )}
+                                  
+                                  {/* Render Calculator if present */}
+                                  {subsection.calculator && (
+                                    <div className="mt-4">
+                                      {subsection.calculator.type === '4ts-score' ? (
+                                        <FourTsCalculator calculator={subsection.calculator} />
+                                      ) : subsection.calculator.type === 'siadh-criteria' ? (
+                                        <SIADHCriteriaCalculator calculator={subsection.calculator} />
+                                      ) : (
+                                        <GenericCalculator calculator={subsection.calculator} />
+                                      )}
+                                    </div>
+                                  )}
+                                  
+                                  {/* Render Risk Table if present */}
+                                  {subsection.riskTable && (
+                                    <div className="mt-4">
+                                      <RiskTable riskTable={subsection.riskTable} />
+                                    </div>
+                                  )}
                                 </div>
                               )}
                               </div>
@@ -857,6 +1389,535 @@ export const DiseasePage: React.FC = () => {
         </div>
       </div>
       )}
+    </div>
+  );
+};
+
+// SIADH Criteria Calculator Component
+interface SIADHCriteriaCalculatorProps {
+  calculator: {
+    type: string;
+    parameters: {
+      [key: string]: {
+        label: string;
+        options: {
+          value: number;
+          label: string;
+          points: number;
+        }[];
+      };
+    };
+    riskCategories: {
+      score: string;
+      risk: string;
+      probability: string;
+      interpretation: string;
+    }[];
+  };
+}
+
+const SIADHCriteriaCalculator: React.FC<SIADHCriteriaCalculatorProps> = ({ calculator }) => {
+  const [selectedValues, setSelectedValues] = useState<{[key: string]: number[]}>({});
+  const [activeTab, setActiveTab] = useState<'calculator' | 'when-to-use'>('calculator');
+
+  const handleSelection = (parameter: string, value: number, checked: boolean) => {
+    setSelectedValues(prev => {
+      const currentValues = prev[parameter] || [];
+      if (checked) {
+        return {
+          ...prev,
+          [parameter]: [...currentValues, value]
+        };
+      } else {
+        return {
+          ...prev,
+          [parameter]: currentValues.filter(v => v !== value)
+        };
+      }
+    });
+  };
+
+  const getEssentialCriteriaCount = () => {
+    const essentialCriteria = selectedValues['essential_criteria'] || [];
+    return essentialCriteria.length;
+  };
+
+  const getSupplementalCriteriaCount = () => {
+    const supplementalCriteria = selectedValues['supplemental_criteria'] || [];
+    return supplementalCriteria.length;
+  };
+
+  const getTotalScore = () => {
+    const essentialCount = getEssentialCriteriaCount();
+    const supplementalCount = getSupplementalCriteriaCount();
+    
+    // Essential criteria: 8 points each
+    const essentialPoints = essentialCount * 8;
+    // Supplemental criteria: 1 point each
+    const supplementalPoints = supplementalCount;
+    
+    return essentialPoints + supplementalPoints;
+  };
+
+  const getDiagnosisResult = () => {
+    const totalScore = getTotalScore();
+    
+    if (totalScore >= 8) {
+      return {
+        diagnosis: "Meets criteria for possible SIADH",
+        color: "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200",
+        interpretation: "Meets criteria for possible SIADH according to diagnostic guidelines. Consider appropriate evaluation and treatment."
+      };
+    } else {
+      return {
+        diagnosis: "Criteria not met",
+        color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200",
+        interpretation: "Does not meet criteria for possible SIADH. Consider alternative causes of hyponatremia."
+      };
+    }
+  };
+
+  const result = getDiagnosisResult();
+
+  return (
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl border border-blue-200 dark:border-blue-800 p-6">
+      <div className="flex items-center space-x-3 mb-6">
+        <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
+          <Calculator className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+        </div>
+        <h3 className="text-xl font-bold text-blue-900 dark:text-blue-100">Diagnostic criteria for syndrome of inappropriate antidiuretic hormone secretion</h3>
+      </div>
+
+      {/* Tab Navigation */}
+      <div className="flex space-x-1 mb-6 bg-white/50 dark:bg-gray-800/50 rounded-lg p-1">
+        <button
+          onClick={() => setActiveTab('calculator')}
+          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
+            activeTab === 'calculator'
+              ? 'bg-blue-600 text-white shadow-sm'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+          }`}
+        >
+          Criteria
+        </button>
+        <button
+          onClick={() => setActiveTab('when-to-use')}
+          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
+            activeTab === 'when-to-use'
+              ? 'bg-blue-600 text-white shadow-sm'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+          }`}
+        >
+          When to use
+        </button>
+      </div>
+
+      {activeTab === 'calculator' ? (
+        <div className="space-y-6">
+          {/* Essential Criteria */}
+          {Object.entries(calculator.parameters).map(([key, parameter]) => (
+            <div key={key} className="space-y-3">
+              <h4 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center space-x-2">
+                <span>{parameter.label}</span>
+                {key === 'essential_criteria' && (
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    ({getEssentialCriteriaCount()}/6 criteria met)
+                  </span>
+                )}
+                {key === 'supplemental_criteria' && (
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    ({getSupplementalCriteriaCount()} criteria met)
+                  </span>
+                )}
+              </h4>
+              <div className="space-y-2">
+                {parameter.options.map((option, index) => {
+                  const isSelected = (selectedValues[key] || []).includes(option.value);
+                  return (
+                    <label
+                      key={index}
+                      className={`flex items-start space-x-3 p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        isSelected
+                          ? 'bg-blue-100 dark:bg-blue-900/50 border-blue-300 dark:border-blue-600 text-blue-900 dark:text-blue-100'
+                          : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={(e) => handleSelection(key, option.value, e.target.checked)}
+                        className="mt-1 text-blue-600 focus:ring-blue-500"
+                      />
+                      <div className="flex-1">
+                        <div className="text-sm text-gray-900 dark:text-gray-100">{option.label}</div>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+
+          {/* Results */}
+          <div className="mt-8 p-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                Total Score: {getTotalScore()}/55
+              </div>
+              <div className="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">
+                Essential Criteria: {getEssentialCriteriaCount()}/6 ({getEssentialCriteriaCount() * 8} points)
+              </div>
+              <div className="text-lg font-medium text-gray-600 dark:text-gray-400 mb-4">
+                Supplemental Criteria: {getSupplementalCriteriaCount()}/7 ({getSupplementalCriteriaCount()} points)
+              </div>
+              <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-semibold ${result.color}`}>
+                <span>{result.diagnosis}</span>
+              </div>
+              <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                <div className="text-xs">{result.interpretation}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <div className="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+            <div className="flex items-start space-x-3">
+              <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5" />
+              <div>
+                <h4 className="font-semibold text-amber-800 dark:text-amber-200 mb-2">When to use</h4>
+                <p className="text-sm text-amber-700 dark:text-amber-300 mb-3">
+                  The Diagnostic Criteria for Syndrome of Inappropriate Antidiuretic Hormone Secretion (SIADH) is a clinical tool designed to aid in the diagnosis of SIADH, a condition characterized by excessive release of antidiuretic hormone from the posterior pituitary gland or other sources. The criteria are primarily used to identify patients with hyponatremia who may have SIADH as the underlying cause.
+                </p>
+                <p className="text-sm text-amber-700 dark:text-amber-300 mb-3">
+                  <strong>Essential criteria</strong> include effective serum osmolality less than 275 mOsm/kg, urine osmolality greater than 100 mOsm/kg, absence of clinical evidence of hypovolemia or hypervolemia, urine sodium concentration greater than 30 mmol/L with normal dietary salt and water intake, absence of adrenal, thyroid, pituitary or renal insufficiency, and no recent use of diuretic agents.
+                </p>
+                <p className="text-sm text-amber-700 dark:text-amber-300">
+                  <strong>Supplemental criteria</strong> provide additional diagnostic support, including serum uric acid less than 0.24 mmol/L, serum urea less than 3.6 mmol/L, failure to correct hyponatremia after 0.9% saline infusion, fractional sodium excretion greater than 0.5%, fractional urea excretion greater than 55%, fractional uric acid excretion greater than 12%, and correction of hyponatremia through fluid restriction.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <div className="flex items-start space-x-3">
+              <ExternalLink className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+              <div>
+                <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">Reference</h4>
+                <p className="text-sm text-blue-700 dark:text-blue-300 mb-2">
+                  Goce Spasovski, Raymond Vanholder, Bruno Allolio et al. Clinical practice guideline on diagnosis and treatment of hyponatraemia. Eur J Endocrinol. 2014 Feb 25;170(3):G1-47.
+                </p>
+                <a 
+                  href="https://pubmed.ncbi.nlm.nih.gov/24569125/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors"
+                >
+                  <ExternalLink className="w-3 h-3 mr-1" />
+                  View PubMed Article
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 rounded-lg border-2 bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800">
+              <h5 className="font-semibold mb-2 text-green-800 dark:text-green-200">
+                Meets criteria for possible SIADH (Score: 8+)
+              </h5>
+              <div className="text-sm space-y-1">
+                <div><strong>Scoring:</strong> At least 8 points needed</div>
+                <div><strong>Essential:</strong> 8 points each criterion</div>
+                <div><strong>Supplemental:</strong> 1 point each criterion</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Consider appropriate evaluation and treatment</div>
+              </div>
+            </div>
+            <div className="p-4 rounded-lg border-2 bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800">
+              <h5 className="font-semibold mb-2 text-yellow-800 dark:text-yellow-200">
+                Criteria not met (Score: 0-7)
+              </h5>
+              <div className="text-sm space-y-1">
+                <div><strong>Scoring:</strong> Less than 8 points</div>
+                <div><strong>Result:</strong> Insufficient criteria</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Consider alternative causes of hyponatremia</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Generic Calculator Component (fallback)
+const GenericCalculator: React.FC<{ calculator: any }> = ({ calculator }) => {
+  return (
+    <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/20 dark:to-gray-800/20 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+      <div className="flex items-center space-x-3 mb-6">
+        <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+          <Calculator className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+        </div>
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Calculator</h3>
+      </div>
+      <div className="text-center p-4 bg-white dark:bg-gray-800 rounded-lg">
+        <p className="text-gray-600 dark:text-gray-400">Calculator component not yet implemented for type: {calculator.type}</p>
+      </div>
+    </div>
+  );
+};
+
+// 4Ts Score Calculator Component
+interface FourTsCalculatorProps {
+  calculator: {
+    type: string;
+    parameters: {
+      [key: string]: {
+        label: string;
+        options: {
+          value: number;
+          label: string;
+          points: number;
+        }[];
+      };
+    };
+    riskCategories: {
+      score: string;
+      risk: string;
+      probability: string;
+      interpretation: string;
+    }[];
+  };
+}
+
+const FourTsCalculator: React.FC<FourTsCalculatorProps> = ({ calculator }) => {
+  const [selectedValues, setSelectedValues] = useState<{[key: string]: number}>({});
+  const [totalScore, setTotalScore] = useState(0);
+  const [activeTab, setActiveTab] = useState<'calculator' | 'when-to-use'>('calculator');
+
+  useEffect(() => {
+    const score = Object.values(selectedValues).reduce((sum, value) => sum + value, 0);
+    setTotalScore(score);
+  }, [selectedValues]);
+
+  const handleSelection = (parameter: string, value: number) => {
+    setSelectedValues(prev => ({
+      ...prev,
+      [parameter]: value
+    }));
+  };
+
+  const getRiskCategory = (score: number) => {
+    if (score <= 3) return calculator.riskCategories[0];
+    if (score <= 5) return calculator.riskCategories[1];
+    return calculator.riskCategories[2];
+  };
+
+  const currentRisk = getRiskCategory(totalScore);
+
+  return (
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl border border-blue-200 dark:border-blue-800 p-6">
+      <div className="flex items-center space-x-3 mb-6">
+        <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
+          <Calculator className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+        </div>
+        <h3 className="text-xl font-bold text-blue-900 dark:text-blue-100">4Ts score for heparin-induced thrombocytopenia</h3>
+      </div>
+
+      {/* Tab Navigation */}
+      <div className="flex space-x-1 mb-6 bg-white/50 dark:bg-gray-800/50 rounded-lg p-1">
+        <button
+          onClick={() => setActiveTab('calculator')}
+          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
+            activeTab === 'calculator'
+              ? 'bg-blue-600 text-white shadow-sm'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+          }`}
+        >
+          Calculator
+        </button>
+        <button
+          onClick={() => setActiveTab('when-to-use')}
+          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
+            activeTab === 'when-to-use'
+              ? 'bg-blue-600 text-white shadow-sm'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+          }`}
+        >
+          When to use
+        </button>
+      </div>
+
+      {activeTab === 'calculator' ? (
+        <div className="space-y-6">
+          {/* Calculator Parameters */}
+          {Object.entries(calculator.parameters).map(([key, parameter]) => (
+            <div key={key} className="space-y-3">
+              <h4 className="font-semibold text-gray-900 dark:text-gray-100">{parameter.label}</h4>
+              <div className="space-y-2">
+                {parameter.options.map((option) => (
+                  <label
+                    key={option.value}
+                    className={`flex items-start space-x-3 p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                      selectedValues[key] === option.value
+                        ? 'bg-blue-100 dark:bg-blue-900/50 border-blue-300 dark:border-blue-600 text-blue-900 dark:text-blue-100'
+                        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name={key}
+                      value={option.value}
+                      checked={selectedValues[key] === option.value}
+                      onChange={() => handleSelection(key, option.value)}
+                      className="mt-1 text-blue-600 focus:ring-blue-500"
+                    />
+                    <div className="flex-1">
+                      <div className="text-sm text-gray-900 dark:text-gray-100">{option.label}</div>
+                    </div>
+                    <div className={`px-2 py-1 rounded text-xs font-semibold ${
+                      selectedValues[key] === option.value
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                    }`}>
+                      {option.points} {option.points === 1 ? 'point' : 'points'}
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {/* Results */}
+          <div className="mt-8 p-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                {totalScore} / 8 points
+              </div>
+              <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-semibold ${
+                currentRisk.risk === 'Low' ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' :
+                currentRisk.risk === 'Intermediate' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200' :
+                'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200'
+              }`}>
+                <span>{currentRisk.risk} Risk ({currentRisk.score} points)</span>
+              </div>
+              <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                <div>Probability of HIT: <strong>{currentRisk.probability}</strong></div>
+                <div className="mt-1">{currentRisk.interpretation}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <div className="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+            <div className="flex items-start space-x-3">
+              <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5" />
+              <div>
+                <h4 className="font-semibold text-amber-800 dark:text-amber-200 mb-2">When to use</h4>
+                <p className="text-sm text-amber-700 dark:text-amber-300">
+                  Use the 4T score (outside a cardiac surgery context) to determine the clinical probability of HIT in patients with suspected HIT.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {calculator.riskCategories.map((category, index) => (
+              <div key={index} className={`p-4 rounded-lg border-2 ${
+                category.risk === 'Low' ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800' :
+                category.risk === 'Intermediate' ? 'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800' :
+                'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800'
+              }`}>
+                <h5 className={`font-semibold mb-2 ${
+                  category.risk === 'Low' ? 'text-green-800 dark:text-green-200' :
+                  category.risk === 'Intermediate' ? 'text-yellow-800 dark:text-yellow-200' :
+                  'text-red-800 dark:text-red-200'
+                }`}>
+                  {category.risk} Risk ({category.score})
+                </h5>
+                <div className="text-sm space-y-1">
+                  <div><strong>Probability:</strong> {category.probability}</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400">{category.interpretation}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Risk Table Component
+interface RiskTableProps {
+  riskTable: {
+    title: string;
+    headers: string[];
+    rows: {
+      situation: string;
+      guidance: string[];
+    }[];
+  };
+}
+
+const RiskTable: React.FC<RiskTableProps> = ({ riskTable }) => {
+  return (
+    <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-2xl border border-amber-200 dark:border-amber-800 p-6">
+      <div className="flex items-center space-x-3 mb-6">
+        <div className="p-2 bg-amber-100 dark:bg-amber-900/50 rounded-lg">
+          <AlertTriangle className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+        </div>
+        <h3 className="text-xl font-bold text-amber-900 dark:text-amber-100">{riskTable.title}</h3>
+      </div>
+
+      <div className="overflow-hidden rounded-xl border border-amber-200 dark:border-amber-700">
+        <table className="w-full">
+          <thead>
+            <tr className="bg-amber-100 dark:bg-amber-900/50">
+              {riskTable.headers.map((header, index) => (
+                <th
+                  key={index}
+                  className="px-6 py-4 text-left text-sm font-semibold text-amber-900 dark:text-amber-100"
+                >
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {riskTable.rows.map((row, index) => (
+              <tr
+                key={index}
+                className={`${
+                  index % 2 === 0
+                    ? 'bg-white dark:bg-gray-800'
+                    : 'bg-amber-50/50 dark:bg-amber-900/10'
+                } border-b border-amber-200 dark:border-amber-700 last:border-b-0`}
+              >
+                <td className="px-6 py-4 align-top">
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${
+                    row.situation.includes('Low') ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' :
+                    row.situation.includes('Intermediate') ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200' :
+                    'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200'
+                  }`}>
+                    {row.situation}
+                  </span>
+                </td>
+                <td className="px-6 py-4">
+                  <ul className="space-y-2">
+                    {row.guidance.map((guidance, guidanceIndex) => (
+                      <li key={guidanceIndex} className="flex items-start space-x-2 text-sm text-gray-700 dark:text-gray-300">
+                        <div className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
+                        <span>{guidance}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }; 
