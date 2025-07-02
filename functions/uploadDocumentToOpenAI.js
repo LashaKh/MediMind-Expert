@@ -1,7 +1,6 @@
 const crypto = require('crypto');
 const OpenAI = require('openai');
 const { createClient } = require('@supabase/supabase-js');
-const pdf = require('pdf-parse');
 
 // CORS headers for cross-origin requests
 const corsHeaders = {
