@@ -172,15 +172,15 @@ export const handler: Handler = async (event) => {
 
     // Process immediately if no active generation
     try {
-      // Get document content from user_documents table
+      // Get document with OpenAI file ID
       const { data: fullDocument, error: fullDocError } = await supabase
         .from('user_documents')
-        .select('description, file_name')
+        .select('openai_file_id, file_name, file_type')
         .eq('id', documents[0].id)
         .single();
 
-      if (fullDocError || !fullDocument?.description) {
-        throw new Error('Document content not found');
+      if (fullDocError || !fullDocument?.openai_file_id) {
+        throw new Error('Document or OpenAI file ID not found');
       }
       
       // Create queue item as processing
@@ -200,28 +200,15 @@ export const handler: Handler = async (event) => {
         .select()
         .single();
 
-      // Create a temporary URL for the document content
-      // Upload the document content to Supabase storage to get a public URL
-      const tempFileName = `temp-documents/${Date.now()}-${fullDocument.file_name}`;
-      const textContent = Buffer.from(fullDocument.description, 'utf-8');
+      // Use OpenAI file URL directly - this is the original PDF file
+      const sourceFileUrl = `https://api.openai.com/v1/files/${fullDocument.openai_file_id}/content`;
       
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('user-uploads')
-        .upload(tempFileName, textContent, {
-          contentType: 'text/plain',
-          upsert: true
-        });
-
-      if (uploadError) {
-        throw new Error(`Failed to create document URL: ${uploadError.message}`);
-      }
-
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('user-uploads')
-        .getPublicUrl(tempFileName);
-
-      const sourceFileUrl = urlData.publicUrl;
+      console.log('📄 Using original file from OpenAI:', {
+        fileId: fullDocument.openai_file_id,
+        fileName: fullDocument.file_name,
+        fileType: fullDocument.file_type,
+        sourceFileUrl
+      });
 
       // Call PlayAI API exactly like the working test
       const formData = new FormData();
@@ -273,18 +260,17 @@ export const handler: Handler = async (event) => {
 
       console.log(`✅ PlayAI generation started with ID: ${playaiResult.id}`);
 
-      // Update podcast with PlayNote ID and temp file path for later cleanup
+      // Update podcast with PlayNote ID (no temp file needed when using OpenAI URLs)
       await supabase
         .from('ai_podcasts')
         .update({
           playnote_id: playaiResult.id,
           status: 'generating',
-          temp_file_path: tempFileName // Store for cleanup after completion
+          temp_file_path: null // No temp file when using OpenAI direct URLs
         })
         .eq('id', podcast.id);
 
-      // DON'T clean up temporary file yet! PlayAI will download it later during processing
-      console.log(`📁 Temp file preserved for PlayAI download: ${tempFileName}`);
+      console.log('📁 Using OpenAI direct URL - no temp file cleanup needed');
 
       return {
         statusCode: 200,
