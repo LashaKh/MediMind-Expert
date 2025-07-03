@@ -112,14 +112,14 @@ export const handler: Handler = async (event) => {
     }
     console.log('✅ User authenticated successfully');
 
-    // Get documents from user's vector store
-    console.log('📄 Fetching documents:', documentIds);
+    // Get documents from podcast_documents table (not user_documents)
+    console.log('📄 Fetching podcast documents:', documentIds);
     const { data: documents, error: docError } = await supabase
-      .from('user_documents')
-      .select('id, title, file_name, openai_file_id')
+      .from('podcast_documents')
+      .select('id, title, file_name, supabase_file_path, supabase_public_url, description, file_type')
       .in('id', documentIds)
       .eq('user_id', userId)
-      .eq('processing_status', 'completed');
+      .eq('upload_status', 'completed');
 
     if (docError || !documents?.length) {
       console.error('❌ Document fetch failed:', {
@@ -185,7 +185,7 @@ export const handler: Handler = async (event) => {
           podcast_id: podcast.id,
           position: nextPosition,
           status: 'waiting',
-          document_urls: documents.map(doc => `https://api.openai.com/v1/files/${doc.openai_file_id}/content`),
+          document_urls: documents.map(doc => doc.supabase_public_url),
           generation_settings: {
             synthesisStyle,
             voices: MEDICAL_VOICES
@@ -217,27 +217,15 @@ export const handler: Handler = async (event) => {
 
     // Process immediately if no active generation
     try {
-      // Get document with content and metadata
-      const { data: fullDocument, error: fullDocError } = await supabase
-        .from('user_documents')
-        .select('openai_file_id, file_name, file_type, description, openai_metadata')
-        .eq('id', documents[0].id)
-        .single();
-
-      if (fullDocError || !fullDocument) {
-        console.error('❌ Failed to get document content:', {
-          documentId: documents[0].id,
-          error: fullDocError?.message || 'Document not found',
-          fullDocError
-        });
-        throw new Error('Document not found');
-      }
+      // Use the already fetched document data (no need for additional query)
+      const fullDocument = documents[0];
       
       console.log('✅ Document content retrieved:', {
-        documentId: documents[0].id,
+        documentId: fullDocument.id,
         filename: fullDocument.file_name,
         contentLength: fullDocument.description?.length || 0,
-        hasOpenAIFile: !!fullDocument.openai_file_id
+        hasSupabaseFile: !!fullDocument.supabase_file_path,
+        hasPublicUrl: !!fullDocument.supabase_public_url
       });
       
       // Create queue item as processing
@@ -262,8 +250,8 @@ export const handler: Handler = async (event) => {
       let fileName: string = fullDocument.file_name;
       let fileType: string = fullDocument.file_type;
       
-      // Get the Supabase file path from metadata
-      const supabaseFilePath = fullDocument.openai_metadata?.supabase_file_path;
+      // Get the Supabase file path from podcast document
+      const supabaseFilePath = fullDocument.supabase_file_path;
       
       if (supabaseFilePath) {
         console.log('📥 Downloading file from Supabase storage:', {
@@ -303,7 +291,7 @@ export const handler: Handler = async (event) => {
           filename: fileName,
           hasDescription: !!fullDocument.description,
           contentLength: fullDocument.description?.length || 0,
-          hasMetadata: !!fullDocument.openai_metadata
+          hasPublicUrl: !!fullDocument.supabase_public_url
         });
         
         if (!fullDocument.description || fullDocument.description.trim().length < 50) {
@@ -325,7 +313,7 @@ export const handler: Handler = async (event) => {
 
       // Prepare JSON payload for PlayAI API (not multipart form data)
       const playaiPayload = {
-        sourceFileUrl: fullDocument.openai_metadata?.supabase_public_url || '', // Use public URL if available
+        sourceFileUrl: fullDocument.supabase_public_url || '', // Use public URL from podcast document
         synthesisStyle: synthesisStyle,
         voice1: MEDICAL_VOICES.voice1,
         voice1Name: MEDICAL_VOICES.voice1Name,
@@ -344,24 +332,29 @@ export const handler: Handler = async (event) => {
       const FormData = require('form-data');
       const formData = new FormData();
       
-      // Test with the working example URL first, then fall back to our URL
-      const testWorkingUrl = 'https://venturebeat.com/wp-content/uploads/2010/09/amzn_shareholder-letter-20072.pdf';
-      const sourceUrl = playaiPayload.sourceFileUrl || testWorkingUrl;
+      // CRITICAL FIX: Remove dangerous test URL fallback
+      if (!playaiPayload.sourceFileUrl) {
+        throw new Error('Document must have a publicly accessible URL for podcast generation. Please re-upload the document.');
+      }
       
-      formData.append('sourceFileUrl', sourceUrl);
+      formData.append('sourceFileUrl', playaiPayload.sourceFileUrl);
       formData.append('synthesisStyle', playaiPayload.synthesisStyle);
       formData.append('voice1', playaiPayload.voice1);
-      formData.append('voice1Name', 'Angelo');
+      formData.append('voice1Name', MEDICAL_VOICES.voice1Name); // FIX: Use medical names
+      formData.append('voice1Gender', 'Female'); // FIX: Add gender for Dr. Sarah Chen
       formData.append('voice2', playaiPayload.voice2);
-      formData.append('voice2Name', 'Deedee');
+      formData.append('voice2Name', MEDICAL_VOICES.voice2Name); // FIX: Use medical names  
+      formData.append('voice2Gender', 'Male'); // FIX: Add gender for Dr. Michael Rodriguez
 
-      console.log('📝 PlayAI Request Details (EXACT working pattern):', {
+      console.log('📝 PlayAI Request Details (CORRECTED with official documentation):', {
         url: 'https://api.play.ai/api/v1/playnotes',
         method: 'POST',
         format: 'multipart/form-data',
-        sourceFileUrl: sourceUrl,
+        sourceFileUrl: playaiPayload.sourceFileUrl,
         synthesisStyle: playaiPayload.synthesisStyle,
-        authHeaderFormat: 'AUTHORIZATION: [API_KEY]', // NO Bearer prefix like working example
+        voice1Name: MEDICAL_VOICES.voice1Name,
+        voice2Name: MEDICAL_VOICES.voice2Name,
+        authHeaderFormat: 'Authorization: Bearer [API_KEY]', // CORRECTED format
         hasApiKey: !!PLAYAI_API_KEY,
         hasUserId: !!PLAYAI_USER_ID
       });
@@ -369,7 +362,7 @@ export const handler: Handler = async (event) => {
       const playaiResponse = await fetch('https://api.play.ai/api/v1/playnotes', {
         method: 'POST',
         headers: {
-          'AUTHORIZATION': PLAYAI_API_KEY!, // NO Bearer prefix - exact working pattern
+          'Authorization': `Bearer ${PLAYAI_API_KEY}`, // FIX: Correct Bearer format
           'X-USER-ID': PLAYAI_USER_ID!,
           'accept': 'application/json',
           ...formData.getHeaders() // Let form-data set the Content-Type with boundary
@@ -390,8 +383,8 @@ export const handler: Handler = async (event) => {
           status: playaiResponse.status,
           statusText: playaiResponse.statusText,
           response: playaiResult,
-          requestPayload: { sourceUrl, synthesisStyle: playaiPayload.synthesisStyle },
-          authFormat: 'AUTHORIZATION: [API_KEY]' // Using exact working pattern
+          requestPayload: { sourceUrl: playaiPayload.sourceFileUrl, synthesisStyle: playaiPayload.synthesisStyle },
+          authFormat: 'Authorization: Bearer [API_KEY]' // CORRECTED format
         });
         throw new Error(playaiResult.errorMessage || playaiResult.message || `PlayAI API error: ${playaiResponse.status}`);
       }
