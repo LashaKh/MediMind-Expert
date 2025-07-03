@@ -12,11 +12,11 @@ const supabase = createClient(
 const PLAYAI_API_KEY = process.env.PLAYAI_API_KEY;
 const PLAYAI_USER_ID = process.env.PLAYAI_USER_ID;
 
-// Medical professional voices
+// Medical professional voices - Using standard PlayAI voices for testing
 const MEDICAL_VOICES = {
-  voice1: 's3://voice-cloning-zero-shot/baf1ef41-36b6-428c-9bdf-50ba54682bd8/original/manifest.json',
+  voice1: 'marcus', // Standard PlayAI voice
   voice1Name: 'Dr. Sarah Chen',
-  voice2: 's3://voice-cloning-zero-shot/e040bd1b-f190-4bdb-83f0-75ef85b18f84/original/manifest.json',
+  voice2: 'maya', // Standard PlayAI voice
   voice2Name: 'Dr. Michael Rodriguez'
 };
 
@@ -337,14 +337,22 @@ export const handler: Handler = async (event) => {
         throw new Error('Document must have a publicly accessible URL for podcast generation. Please re-upload the document.');
       }
       
+      // TEST MODE: Try with a simple known working document for debugging
+      const isTestMode = title.toLowerCase().includes('test') || title.toLowerCase().includes('debug');
+      const testDocumentUrl = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+      
+      if (isTestMode) {
+        console.log('🧪 TEST MODE: Using simple test document');
+        playaiPayload.sourceFileUrl = testDocumentUrl;
+        playaiPayload.synthesisStyle = 'executive-briefing'; // Try different synthesis style
+      }
+      
       formData.append('sourceFileUrl', playaiPayload.sourceFileUrl);
       formData.append('synthesisStyle', playaiPayload.synthesisStyle);
       formData.append('voice1', playaiPayload.voice1);
-      formData.append('voice1Name', MEDICAL_VOICES.voice1Name); // FIX: Use medical names
-      formData.append('voice1Gender', 'Female'); // FIX: Add gender for Dr. Sarah Chen
+      formData.append('voice1Name', MEDICAL_VOICES.voice1Name); // Use medical names
       formData.append('voice2', playaiPayload.voice2);
-      formData.append('voice2Name', MEDICAL_VOICES.voice2Name); // FIX: Use medical names  
-      formData.append('voice2Gender', 'Male'); // FIX: Add gender for Dr. Michael Rodriguez
+      formData.append('voice2Name', MEDICAL_VOICES.voice2Name); // Use medical names
 
       console.log('📝 PlayAI Request Details (CORRECTED with official documentation):', {
         url: 'https://api.play.ai/api/v1/playnotes',
