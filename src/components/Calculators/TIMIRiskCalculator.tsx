@@ -34,7 +34,7 @@ interface TIMIResult {
 }
 
 export const TIMIRiskCalculator: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, currentLanguage } = useTranslation();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<TIMIFormData>({
     age: '',
@@ -245,6 +245,13 @@ export const TIMIRiskCalculator: React.FC = () => {
                 <h2 className="text-5xl font-black bg-gradient-to-r from-gray-900 via-blue-800 to-gray-900 dark:from-white dark:via-blue-200 dark:to-white bg-clip-text text-transparent mb-6">
                   {t('calculators.cardiology.timi.score_analysis')}
                 </h2>
+                
+                {/* DEBUG: Language indicator - REMOVE AFTER TESTING */}
+                <div className="mb-4 p-2 bg-yellow-100 dark:bg-yellow-900 rounded-lg text-center">
+                  <span className="text-sm text-yellow-800 dark:text-yellow-200">
+                    DEBUG: Current Language = {currentLanguage} | Title = {t('calculators.cardiology.timi.title')}
+                  </span>
+                </div>
                 
                 <div className={`inline-flex items-center px-10 py-5 rounded-2xl text-2xl font-bold shadow-xl transform hover:scale-105 transition-all duration-300 ${
                   result.riskCategory === 'high' 
