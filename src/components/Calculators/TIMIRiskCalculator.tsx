@@ -93,49 +93,48 @@ export const TIMIRiskCalculator: React.FC = () => {
     // Elevated cardiac biomarkers = 1 point
     if (formData.elevatedBiomarkers) score += 1;
 
-    // Risk stratification based on TIMI risk score
+    // Official TIMI Risk Score percentages from JAMA 2000 study (Antman et al.)
+    // 14-day composite endpoint: all-cause mortality, MI, or urgent revascularization
+    const timiRiskData = {
+      0: { composite: 4.7, mortality: 0, mi: 3.5, urgentRevasc: 1.2 },
+      1: { composite: 4.7, mortality: 0, mi: 3.5, urgentRevasc: 1.2 },
+      2: { composite: 8.3, mortality: 0.9, mi: 1.8, urgentRevasc: 6.2 },
+      3: { composite: 13.2, mortality: 1.8, mi: 4.0, urgentRevasc: 9.1 },
+      4: { composite: 19.9, mortality: 2.6, mi: 5.9, urgentRevasc: 14.0 },
+      5: { composite: 26.2, mortality: 7.1, mi: 9.7, urgentRevasc: 15.0 },
+      6: { composite: 40.9, mortality: 10.6, mi: 16.7, urgentRevasc: 27.3 },
+      7: { composite: 40.9, mortality: 10.6, mi: 16.7, urgentRevasc: 27.3 }
+    };
+
+    const riskData = timiRiskData[score as keyof typeof timiRiskData];
+    
+    // Risk stratification based on official TIMI risk score categories
     let riskCategory: 'low' | 'intermediate' | 'high';
-    let adverseOutcomeRisk: number;
-    let mortality: number;
-    let miRisk: number;
-    let urgentRevasc: number;
     let urgency: 'routine' | 'moderate' | 'high';
 
     if (score <= 2) {
       riskCategory = 'low';
-      adverseOutcomeRisk = 8.3;
-      mortality = 2.2;
-      miRisk = 3.3;
-      urgentRevasc = 5.0;
       urgency = 'routine';
     } else if (score <= 4) {
       riskCategory = 'intermediate';
-      adverseOutcomeRisk = 16.7;
-      mortality = 4.7;
-      miRisk = 6.6;
-      urgentRevasc = 9.4;
       urgency = 'moderate';
     } else {
       riskCategory = 'high';
-      adverseOutcomeRisk = 26.2;
-      mortality = 8.8;
-      miRisk = 10.9;
-      urgentRevasc = 15.0;
       urgency = 'high';
     }
 
     const recommendations = [
-      t(`calculators.cardiology.timi.recommendation_${riskCategory}_${score}`)
+      t(`calculators.cardiology.timi.recommendation_${riskCategory}`)
     ];
 
     return {
       score,
       riskCategory,
-      adverseOutcomeRisk,
+      adverseOutcomeRisk: riskData.composite,
       riskDetails: {
-        mortality,
-        miRisk,
-        urgentRevasc
+        mortality: riskData.mortality,
+        miRisk: riskData.mi,
+        urgentRevasc: riskData.urgentRevasc
       },
       urgency,
       recommendations

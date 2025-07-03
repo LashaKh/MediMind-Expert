@@ -434,6 +434,11 @@ export default {
     recommendation_high_6: "Urgent invasive strategy within 12-24 hours",
     recommendation_high_7: "Immediate invasive strategy - highest risk",
     
+    // Simplified category recommendations
+    recommendation_low: "Conservative management with medical therapy and close monitoring. Consider early discharge with outpatient follow-up.",
+    recommendation_intermediate: "Early invasive strategy within 24-48 hours recommended. Hospitalization with cardiology consultation advised.",
+    recommendation_high: "Urgent invasive strategy within 24 hours required. Immediate cardiology consultation and aggressive medical therapy indicated.",
+    
     // Risk factor descriptions
     known_cad_desc: "Prior catheterization showing ≥50% stenosis in any major coronary vessel",
     aspirin_use_desc: "Aspirin use within 7 days before hospital presentation",
