@@ -172,6 +172,12 @@ export const common = {
       veryHigh: 'Very High Cardiovascular Risk'
     }
   },
+  // Medical Calculator Common Terms
+  points: 'points',
+  point: 'point',
+  outOf: 'out of',
+  total: 'total',
+  
   // Clinical Recommendations
   recommendations: {
     // General recommendations

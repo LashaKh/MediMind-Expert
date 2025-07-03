@@ -172,6 +172,12 @@ export const common = {
       veryHigh: 'ძალიან მაღალი გულ-სისხლძარღვთა რისკი'
     }
   },
+  // Medical Calculator Common Terms
+  points: 'ქულა',
+  point: 'ქულა',
+  outOf: 'იდან',
+  total: 'სულ',
+  
   // Clinical Recommendations
   recommendations: {
     // General recommendations

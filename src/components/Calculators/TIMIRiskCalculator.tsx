@@ -238,7 +238,7 @@ export const TIMIRiskCalculator: React.FC = () => {
                     <div className="text-5xl font-black text-white mb-1">
                       {result.score}
                     </div>
-                    <div className="text-lg font-normal text-white/80">/ 7 points</div>
+                    <div className="text-lg font-normal text-white/80">/ 7 {t('common.points')}</div>
                   </div>
                 </div>
                 

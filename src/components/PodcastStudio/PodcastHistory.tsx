@@ -155,15 +155,15 @@ const PodcastHistory: React.FC<PodcastHistoryProps> = ({
       <div className="space-y-6">
         {/* Header Skeleton */}
         <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-10 bg-white/10 rounded-xl w-1/4 mb-4 mx-auto"></div>
+          <div className="h-6 bg-white/10 rounded-lg w-1/2 mx-auto"></div>
         </div>
 
         {/* Grid Skeleton */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          {[...Array(8)].map((_, i) => (
             <div key={i} className="animate-pulse">
-              <div className="bg-gray-200 rounded-xl h-48"></div>
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl h-64"></div>
             </div>
           ))}
         </div>
@@ -178,15 +178,17 @@ const PodcastHistory: React.FC<PodcastHistoryProps> = ({
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-3xl font-bold text-gray-900 mb-4"
+          className="text-4xl font-bold mb-4"
         >
-          {t('podcast.history.title')}
+          <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            {t('podcast.history.title')}
+          </span>
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-gray-600"
+          className="text-white/80 text-lg"
         >
           {t('podcast.history.subtitle')}
         </motion.p>
@@ -200,34 +202,46 @@ const PodcastHistory: React.FC<PodcastHistoryProps> = ({
         className="flex flex-col sm:flex-row gap-4"
       >
         {/* Search */}
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder={t('podcast.history.search.placeholder')}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-          />
+        <div className="flex-1 relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-pink-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-60 transition-all duration-500" />
+          <div className="relative bg-black/20 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/60" />
+            <input
+              type="text"
+              placeholder={t('podcast.history.search.placeholder')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-6 py-4 bg-transparent text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all duration-300 text-base font-medium"
+            />
+            <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          </div>
         </div>
 
         {/* Status Filter */}
-        <div className="relative">
-          <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <select
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="pl-10 pr-8 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 appearance-none bg-white"
-          >
-            {statusOptions.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-60 transition-all duration-500" />
+          <div className="relative bg-black/20 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+            <Filter className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/60" />
+            <select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="pl-12 pr-10 py-4 bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all duration-300 appearance-none text-base font-medium cursor-pointer"
+            >
+              {statusOptions.map(option => (
+                <option key={option.value} value={option.value} className="bg-gray-900 text-white">
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+              <svg className="w-5 h-5 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
         </div>
       </motion.div>
 
@@ -238,13 +252,13 @@ const PodcastHistory: React.FC<PodcastHistoryProps> = ({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="flex items-center space-x-2 text-red-600 text-sm p-4 bg-red-50 border border-red-200 rounded-lg"
+            className="flex items-center space-x-2 text-red-400 text-sm p-4 bg-red-500/10 backdrop-blur-sm border border-red-500/30 rounded-xl"
           >
             <AlertTriangle className="w-5 h-5" />
             <span>{error}</span>
             <button
               onClick={fetchPodcasts}
-              className="ml-auto text-red-700 hover:text-red-800 font-medium"
+              className="ml-auto text-red-300 hover:text-red-200 font-medium"
             >
               {t('common.retry')}
             </button>
@@ -262,16 +276,16 @@ const PodcastHistory: React.FC<PodcastHistoryProps> = ({
             exit={{ opacity: 0 }}
             className="text-center py-12"
           >
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Clock className="w-12 h-12 text-gray-400" />
+            <div className="w-24 h-24 bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4 border border-white/20">
+              <Clock className="w-12 h-12 text-white/60" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 className="text-lg font-medium text-white/90 mb-2">
               {searchTerm || statusFilter !== 'all' 
                 ? t('podcast.history.empty.noResults')
                 : t('podcast.history.empty.noPodcasts')
               }
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-white/60 mb-6">
               {searchTerm || statusFilter !== 'all'
                 ? t('podcast.history.empty.tryDifferentFilter')
                 : t('podcast.history.empty.createFirst')
@@ -280,7 +294,7 @@ const PodcastHistory: React.FC<PodcastHistoryProps> = ({
             {(!searchTerm && statusFilter === 'all') && (
               <button
                 onClick={() => window.history.back()}
-                className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 text-white rounded-xl hover:from-cyan-600 hover:to-purple-700 transition-all duration-200 shadow-lg shadow-purple-500/30 font-semibold"
               >
                 {t('podcast.history.empty.createButton')}
               </button>
@@ -292,7 +306,7 @@ const PodcastHistory: React.FC<PodcastHistoryProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
           >
             {filteredPodcasts.map((podcast, index) => (
               <motion.div
@@ -319,39 +333,41 @@ const PodcastHistory: React.FC<PodcastHistoryProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="flex justify-center items-center space-x-2 mt-8"
+          className="flex justify-center items-center space-x-3 mt-12"
         >
           <button
             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
-            className="px-3 py-2 text-sm border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors duration-200"
+            className="px-4 py-2 text-sm font-medium bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white/80 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/20 hover:text-white transition-all duration-200"
           >
             {t('common.previous')}
           </button>
 
-          {[...Array(totalPages)].map((_, i) => {
-            const page = i + 1;
-            const isActive = page === currentPage;
-            
-            return (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`px-3 py-2 text-sm rounded-md transition-colors duration-200 ${
-                  isActive
-                    ? 'bg-purple-600 text-white'
-                    : 'border border-gray-300 hover:bg-gray-50'
-                }`}
-              >
-                {page}
-              </button>
-            );
-          })}
+          <div className="flex items-center space-x-2">
+            {[...Array(totalPages)].map((_, i) => {
+              const page = i + 1;
+              const isActive = page === currentPage;
+              
+              return (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-10 h-10 text-sm font-semibold rounded-xl transition-all duration-200 ${
+                    isActive
+                      ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-lg shadow-purple-500/30'
+                      : 'bg-white/10 backdrop-blur-sm border border-white/20 text-white/60 hover:bg-white/20 hover:text-white'
+                  }`}
+                >
+                  {page}
+                </button>
+              );
+            })}
+          </div>
 
           <button
             onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
             disabled={currentPage === totalPages}
-            className="px-3 py-2 text-sm border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors duration-200"
+            className="px-4 py-2 text-sm font-medium bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white/80 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/20 hover:text-white transition-all duration-200"
           >
             {t('common.next')}
           </button>

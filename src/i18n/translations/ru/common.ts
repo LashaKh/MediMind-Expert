@@ -172,6 +172,12 @@ export const common = {
       veryHigh: 'Очень высокий сердечно-сосудистый риск'
     }
   },
+  // Medical Calculator Common Terms
+  points: 'баллов',
+  point: 'балл',
+  outOf: 'из',
+  total: 'всего',
+  
   // Clinical Recommendations
   recommendations: {
     // General recommendations
