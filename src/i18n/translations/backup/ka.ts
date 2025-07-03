@@ -869,7 +869,7 @@ export default {
     high_risk: 'მაღალი რისკი',
     
     // რისკის დაშლა
-    fourteen_day_breakdown: '14-დღიანი რისკის დაშლა',
+    fourteen_day_breakdown: '14-დღიანი რისკის გაანალიზებაშ',
     mortality: 'მორტალობა',
     myocardial_infarction: 'მიოკარდიუმის ინფარქტი',
     urgent_revascularization: 'გადაუდებელი რევასკულარიზაცია',

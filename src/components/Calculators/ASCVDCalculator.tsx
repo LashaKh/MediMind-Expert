@@ -401,6 +401,52 @@ export const ASCVDCalculator: React.FC = () => {
     return category as 'low' | 'borderline' | 'intermediate' | 'high';
   };
 
+  // Helper functions for stunning design
+  const getRiskColor = (category: string) => {
+    switch (category) {
+      case 'low':
+        return 'text-emerald-600 dark:text-emerald-400';
+      case 'borderline':
+        return 'text-yellow-600 dark:text-yellow-400';
+      case 'intermediate':
+        return 'text-orange-600 dark:text-orange-400';
+      case 'high':
+        return 'text-red-600 dark:text-red-400';
+      default:
+        return 'text-gray-600 dark:text-gray-400';
+    }
+  };
+
+  const getRiskBgColor = (category: string) => {
+    switch (category) {
+      case 'low':
+        return 'from-emerald-500/10 via-emerald-400/5 to-green-500/10 border-emerald-200/50 dark:border-emerald-400/30';
+      case 'borderline':
+        return 'from-yellow-500/10 via-yellow-400/5 to-amber-500/10 border-yellow-200/50 dark:border-yellow-400/30';
+      case 'intermediate':
+        return 'from-orange-500/10 via-orange-400/5 to-red-500/10 border-orange-200/50 dark:border-orange-400/30';
+      case 'high':
+        return 'from-red-500/10 via-red-400/5 to-rose-500/10 border-red-200/50 dark:border-red-400/30';
+      default:
+        return 'from-gray-500/10 via-gray-400/5 to-gray-500/10 border-gray-200/50 dark:border-gray-400/30';
+    }
+  };
+
+  const getProgressColor = (category: string) => {
+    switch (category) {
+      case 'low':
+        return '#10b981';
+      case 'borderline':
+        return '#f59e0b';
+      case 'intermediate':
+        return '#f97316';
+      case 'high':
+        return '#ef4444';
+      default:
+        return '#6b7280';
+    }
+  };
+
   return (
     <CalculatorContainer
       title={t('calculators.cardiology.ascvd.title')}
@@ -663,83 +709,203 @@ export const ASCVDCalculator: React.FC = () => {
           /* Results Display */
           result && (
             <div className="space-y-8 animate-scaleIn">
-              <ResultsDisplay
-                title="10-Year ASCVD Risk"
-                value={result.tenYearRisk.toFixed(1)}
-                unit="%"
-                category={getRiskLevel(result.riskCategory)}
-                interpretation={getInterpretation(result.riskCategory, result.tenYearRisk)}
-                icon={Heart}
-              >
+              {/* Hero Result Card with Circular Progress */}
+              <div className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${getRiskBgColor(result.riskCategory)} border backdrop-blur-xl`}>
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/5 to-transparent"></div>
+                <div className="relative p-8">
+                  <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+                    {/* Circular Progress and Score */}
+                    <div className="flex items-center space-x-8">
+                      <div className="relative">
+                        <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
+                          <circle
+                            cx="50"
+                            cy="50"
+                            r="45"
+                            stroke="currentColor"
+                            strokeWidth="8"
+                            fill="transparent"
+                            className="text-white/20"
+                          />
+                          <circle
+                            cx="50"
+                            cy="50"
+                            r="45"
+                            stroke={getProgressColor(result.riskCategory)}
+                            strokeWidth="8"
+                            fill="transparent"
+                            strokeDasharray={`${(Math.min(result.tenYearRisk, 50) / 50) * 283} 283`}
+                            strokeLinecap="round"
+                            className="transition-all duration-1000 ease-out"
+                            style={{
+                              filter: 'drop-shadow(0 0 6px rgba(59, 130, 246, 0.5))'
+                            }}
+                          />
+                        </svg>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="text-center">
+                            <div className={`text-3xl font-bold ${getRiskColor(result.riskCategory)}`}>
+                              {result.tenYearRisk.toFixed(1)}%
+                            </div>
+                            <div className="text-sm text-gray-600 dark:text-gray-300 font-medium">
+                              10-Year Risk
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-3">
+                          <Heart className={`w-8 h-8 ${getRiskColor(result.riskCategory)}`} />
+                          <div>
+                            <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                              ASCVD Risk Assessment
+                            </h3>
+                            <div className={`text-lg font-semibold ${getRiskColor(result.riskCategory)}`}>
+                              {result.riskCategory.charAt(0).toUpperCase() + result.riskCategory.slice(1)} Risk Category
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="max-w-md">
+                          <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                            {getInterpretation(result.riskCategory, result.tenYearRisk)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Risk Level Indicator */}
+                    <div className="flex flex-col items-center space-y-4">
+                      <div className={`px-6 py-3 rounded-2xl ${getRiskColor(result.riskCategory)} bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-white/20`}>
+                        <span className="font-bold text-lg">
+                          {result.riskCategory === 'low' && '💚 Low Risk'}
+                          {result.riskCategory === 'borderline' && '🟡 Borderline Risk'}
+                          {result.riskCategory === 'intermediate' && '🟠 Intermediate Risk'}
+                          {result.riskCategory === 'high' && '🔴 High Risk'}
+                        </span>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                          {result.tenYearRisk.toFixed(1)}%
+                        </div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                          10-Year ASCVD Risk
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
                 {/* Detailed Analysis Content */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Lifetime Risk */}
                   {result.lifetimeRisk && (
-                    <div className="p-6 bg-white/50 dark:bg-gray-800/50 rounded-xl border border-white/20 dark:border-gray-700/20">
-                      <div className="flex items-center space-x-3 mb-4">
-                        <BarChart3 className="w-5 h-5 text-blue-500" />
-                        <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.ascvd.lifetime_risk_title')}</h4>
+                    <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/10 via-blue-400/5 to-indigo-500/10 border border-blue-200/50 dark:border-blue-400/30 backdrop-blur-xl hover:scale-105 transition-all duration-300">
+                      <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-blue-500/10"></div>
+                      <div className="relative p-6">
+                        <div className="flex items-center space-x-3 mb-4">
+                          <div className="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center backdrop-blur-sm">
+                            <BarChart3 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-gray-900 dark:text-gray-100 text-lg">{t('calculators.cardiology.ascvd.lifetime_risk_title')}</h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">Extended Risk Projection</p>
+                          </div>
+                        </div>
+                        <div className="space-y-3">
+                          <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                            {result.lifetimeRisk.toFixed(1)}%
+                          </div>
+                          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                            {t('calculators.cardiology.ascvd.lifetime_risk_description')}
+                          </p>
+                        </div>
                       </div>
-                      <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-                        {result.lifetimeRisk.toFixed(1)}%
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {t('calculators.cardiology.ascvd.lifetime_risk_description')}
-                      </p>
                     </div>
                   )}
 
                   {/* Risk Category Details */}
-                  <div className="p-6 bg-white/50 dark:bg-gray-800/50 rounded-xl border border-white/20 dark:border-gray-700/20">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <Target className="w-5 h-5 text-purple-500" />
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.ascvd.risk_classification_title')}</h4>
+                  <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500/10 via-purple-400/5 to-pink-500/10 border border-purple-200/50 dark:border-purple-400/30 backdrop-blur-xl hover:scale-105 transition-all duration-300">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-purple-500/10"></div>
+                    <div className="relative p-6">
+                      <div className="flex items-center space-x-3 mb-4">
+                        <div className="w-12 h-12 rounded-2xl bg-purple-500/20 flex items-center justify-center backdrop-blur-sm">
+                          <Target className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-gray-900 dark:text-gray-100 text-lg">{t('calculators.cardiology.ascvd.risk_classification_title')}</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">Clinical Category</p>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                          {result.riskCategory.charAt(0).toUpperCase() + result.riskCategory.slice(1)} Risk
+                        </div>
+                        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                          {result.riskCategory === 'low' && t('calculators.cardiology.ascvd.risk_classification_low')}
+                          {result.riskCategory === 'borderline' && t('calculators.cardiology.ascvd.risk_classification_borderline')}
+                          {result.riskCategory === 'intermediate' && t('calculators.cardiology.ascvd.risk_classification_intermediate')}
+                          {result.riskCategory === 'high' && t('calculators.cardiology.ascvd.risk_classification_high')}
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-lg font-bold text-purple-600 dark:text-purple-400 mb-2">
-                      {result.riskCategory.charAt(0).toUpperCase() + result.riskCategory.slice(1)} Risk
-                    </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {result.riskCategory === 'low' && t('calculators.cardiology.ascvd.risk_classification_low')}
-                      {result.riskCategory === 'borderline' && t('calculators.cardiology.ascvd.risk_classification_borderline')}
-                      {result.riskCategory === 'intermediate' && t('calculators.cardiology.ascvd.risk_classification_intermediate')}
-                      {result.riskCategory === 'high' && t('calculators.cardiology.ascvd.risk_classification_high')}
-                    </p>
                   </div>
                 </div>
 
                 {/* Therapy Benefits */}
                 {result.therapyBenefit && (
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-3">
-                      <Zap className="w-5 h-5 text-emerald-500" />
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.ascvd.therapy_reduction_title')}</h4>
-                    </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
-                        <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                          {result.therapyBenefit.statin.toFixed(1)}%
+                  <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500/10 via-emerald-400/5 to-green-500/10 border border-emerald-200/50 dark:border-emerald-400/30 backdrop-blur-xl">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-emerald-500/10"></div>
+                    <div className="relative p-6 space-y-6">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center backdrop-blur-sm">
+                          <Zap className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">{t('calculators.cardiology.ascvd.statin_therapy')}</div>
-                      </div>
-                      <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-200 dark:border-green-800">
-                        <div className="text-lg font-bold text-green-600 dark:text-green-400">
-                          {result.therapyBenefit.bpControl.toFixed(1)}%
+                        <div>
+                          <h4 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.ascvd.therapy_reduction_title')}</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">Evidence-Based Interventions</p>
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">{t('calculators.cardiology.ascvd.bp_control')}</div>
                       </div>
-                      {result.therapyBenefit.smoking > 0 && (
-                        <div className="p-4 bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 rounded-xl border border-red-200 dark:border-red-800">
-                          <div className="text-lg font-bold text-red-600 dark:text-red-400">
-                            {result.therapyBenefit.smoking.toFixed(1)}%
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-500/20 via-blue-400/10 to-indigo-500/20 border border-blue-200/50 dark:border-blue-400/30 backdrop-blur-sm hover:scale-105 transition-all duration-300">
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-blue-500/10"></div>
+                          <div className="relative p-4">
+                            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+                              {result.therapyBenefit.statin.toFixed(1)}%
+                            </div>
+                            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('calculators.cardiology.ascvd.statin_therapy')}</div>
                           </div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400">{t('calculators.cardiology.ascvd.smoking_cessation')}</div>
                         </div>
-                      )}
-                      <div className="p-4 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl border border-orange-200 dark:border-orange-800">
-                        <div className="text-lg font-bold text-orange-600 dark:text-orange-400">
-                          {result.therapyBenefit.aspirin.toFixed(1)}%
+                        <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-green-500/20 via-green-400/10 to-emerald-500/20 border border-green-200/50 dark:border-green-400/30 backdrop-blur-sm hover:scale-105 transition-all duration-300">
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-green-500/10"></div>
+                          <div className="relative p-4">
+                            <div className="text-2xl font-bold text-green-600 dark:text-green-400 mb-2">
+                              {result.therapyBenefit.bpControl.toFixed(1)}%
+                            </div>
+                            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('calculators.cardiology.ascvd.bp_control')}</div>
+                          </div>
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">{t('calculators.cardiology.ascvd.aspirin_therapy')}</div>
+                        {result.therapyBenefit.smoking > 0 && (
+                          <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-red-500/20 via-red-400/10 to-pink-500/20 border border-red-200/50 dark:border-red-400/30 backdrop-blur-sm hover:scale-105 transition-all duration-300">
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-red-500/10"></div>
+                            <div className="relative p-4">
+                              <div className="text-2xl font-bold text-red-600 dark:text-red-400 mb-2">
+                                {result.therapyBenefit.smoking.toFixed(1)}%
+                              </div>
+                              <div className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('calculators.cardiology.ascvd.smoking_cessation')}</div>
+                            </div>
+                          </div>
+                        )}
+                        <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-orange-500/20 via-orange-400/10 to-amber-500/20 border border-orange-200/50 dark:border-orange-400/30 backdrop-blur-sm hover:scale-105 transition-all duration-300">
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-orange-500/10"></div>
+                          <div className="relative p-4">
+                            <div className="text-2xl font-bold text-orange-600 dark:text-orange-400 mb-2">
+                              {result.therapyBenefit.aspirin.toFixed(1)}%
+                            </div>
+                            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('calculators.cardiology.ascvd.aspirin_therapy')}</div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -747,49 +913,75 @@ export const ASCVDCalculator: React.FC = () => {
 
                 {/* Validation Notice */}
                 {result.hasValidationConcerns && result.validationMessage && (
-                  <div className="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
-                    <div className="flex items-start space-x-3">
-                      <Info className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5" />
-                      <div>
-                        <h5 className="font-semibold text-amber-800 dark:text-amber-200 mb-1">{t('calculators.cardiology.ascvd.calibration_applied')}</h5>
-                        <p className="text-sm text-amber-700 dark:text-amber-300">{result.validationMessage}</p>
+                  <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500/10 via-amber-400/5 to-yellow-500/10 border border-amber-200/50 dark:border-amber-400/30 backdrop-blur-xl">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-amber-500/10"></div>
+                    <div className="relative p-6">
+                      <div className="flex items-start space-x-4">
+                        <div className="w-12 h-12 rounded-2xl bg-amber-500/20 flex items-center justify-center backdrop-blur-sm">
+                          <Info className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                        </div>
+                        <div className="space-y-2">
+                          <h5 className="text-lg font-bold text-amber-800 dark:text-amber-200">{t('calculators.cardiology.ascvd.calibration_applied')}</h5>
+                          <p className="text-sm text-amber-700 dark:text-amber-300 leading-relaxed">{result.validationMessage}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 )}
-              </ResultsDisplay>
 
               {/* Evidence Section */}
-              <div className="mt-8 p-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
-                  {t('calculators.cardiology.ascvd.evidence_title')}
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                  {t('calculators.cardiology.ascvd.evidence_description')}
-                </p>
-                <a 
-                  href="https://www.ahajournals.org/doi/pdf/10.1161/01.cir.0000437741.48606.98"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors"
-                >
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  {t('calculators.cardiology.ascvd.evidence_link_text')}
-                </a>
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-500/10 via-slate-400/5 to-gray-500/10 border border-slate-200/50 dark:border-slate-400/30 backdrop-blur-xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-slate-500/10"></div>
+                <div className="relative p-6 space-y-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-500/20 flex items-center justify-center backdrop-blur-sm">
+                      <Award className="w-6 h-6 text-slate-600 dark:text-slate-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                        {t('calculators.cardiology.ascvd.evidence_title')}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Scientific Foundation</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {t('calculators.cardiology.ascvd.evidence_description')}
+                  </p>
+                  <a 
+                    href="https://www.ahajournals.org/doi/pdf/10.1161/01.cir.0000437741.48606.98"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-center px-4 py-2 rounded-xl bg-blue-500/20 border border-blue-200/50 dark:border-blue-400/30 text-blue-700 dark:text-blue-300 hover:bg-blue-500/30 transition-all duration-300"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                    <span className="font-medium">{t('calculators.cardiology.ascvd.evidence_link_text')}</span>
+                  </a>
+                </div>
               </div>
 
               {/* Creator Section */}
-              <div className="mt-6 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
-                  {t('calculators.cardiology.ascvd.about_creator_title')}
-                </h3>
-                <div className="space-y-3">
-                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {t('calculators.cardiology.ascvd.creator_name')}
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                    {t('calculators.cardiology.ascvd.creator_bio')}
-                  </p>
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500/10 via-indigo-400/5 to-blue-500/10 border border-indigo-200/50 dark:border-indigo-400/30 backdrop-blur-xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-indigo-500/10"></div>
+                <div className="relative p-6 space-y-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center backdrop-blur-sm">
+                      <User className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                        {t('calculators.cardiology.ascvd.about_creator_title')}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Development Team</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <p className="text-lg font-bold text-indigo-700 dark:text-indigo-300">
+                      {t('calculators.cardiology.ascvd.creator_name')}
+                    </p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                      {t('calculators.cardiology.ascvd.creator_bio')}
+                    </p>
+                  </div>
                 </div>
               </div>
 

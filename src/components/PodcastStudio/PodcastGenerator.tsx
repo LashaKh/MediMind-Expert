@@ -8,7 +8,9 @@ import {
   AlertTriangle,
   Mic,
   Clock,
-  FileText
+  FileText,
+  Zap,
+  ChevronRight
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { generatePodcast } from '../../lib/api/podcastUpload';
@@ -210,144 +212,358 @@ const PodcastGenerator: React.FC<PodcastGeneratorProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-      {/* Header */}
-      <div className="flex items-center space-x-3 mb-6">
-        <div className="flex items-center justify-center w-10 h-10 bg-purple-100 rounded-lg">
-          <Settings className="w-6 h-6 text-purple-600" />
-        </div>
+    <div className="p-8">
+      {/* Revolutionary Header */}
+      <div className="flex items-center space-x-5 mb-8">
+        <motion.div 
+          whileHover={{ scale: 1.05, rotate: [0, -10, 10, 0] }}
+          className="relative group"
+        >
+          {/* Multiple glowing layers */}
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-pink-600 rounded-2xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-gradient-to-br from-pink-400 to-orange-600 rounded-2xl blur-lg opacity-40 group-hover:opacity-60 transition-opacity duration-300" />
+          <div className="relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-purple-400 via-pink-500 to-orange-600 rounded-2xl shadow-2xl border border-white/20">
+            <Sparkles className="w-7 h-7 text-white" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl" />
+          </div>
+        </motion.div>
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">
-            {t('podcast.generator.title')}
+          <h3 className="text-2xl font-black text-white mb-1">
+            Configure Your Podcast
           </h3>
-          <p className="text-sm text-gray-600">
-            {t('podcast.generator.subtitle')}
+          <p className="text-sm text-white/70 font-medium">
+            Customize the style and content of your revolutionary AI podcast
           </p>
         </div>
       </div>
 
-      {/* Settings Form */}
-      <div className="space-y-6">
-        {/* Title */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t('podcast.generator.fields.title.label')}
-          </label>
-          <input
-            type="text"
-            value={settings.title}
-            onChange={(e) => setSettings(prev => ({ ...prev, title: e.target.value }))}
-            placeholder={t('podcast.generator.fields.title.placeholder')}
-            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-            maxLength={100}
-          />
-          <div className="flex justify-between mt-1">
-            <p className="text-xs text-gray-500">
-              {t('podcast.generator.fields.title.help')}
+      {/* Revolutionary Wide Settings Layout */}
+      <div className="space-y-8">
+        {/* Wide Title and Description Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Revolutionary Title Field */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <label className="block text-lg font-bold text-white mb-4">
+              Podcast Title
+            </label>
+            <div className="relative group">
+              {/* Input glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-400/40 to-pink-600/50 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-all duration-500" />
+              
+              {/* Input container */}
+              <div className="relative">
+                <input
+                  type="text"
+                  value={settings.title}
+                  onChange={(e) => setSettings(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="Enter a compelling title..."
+                  className="w-full px-6 py-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl focus:ring-2 focus:ring-purple-400/50 focus:border-purple-400/50 transition-all duration-300 placeholder-white/40 text-white font-medium"
+                  maxLength={100}
+                />
+                
+                {/* Input highlight effect */}
+                <div className="absolute top-1 left-4 right-4 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity duration-300" />
+              </div>
+            </div>
+            <div className="flex justify-between mt-2">
+              <p className="text-xs text-white/60 font-medium">
+                Captivating title for your content
+              </p>
+              <p className={`text-xs font-bold transition-colors ${
+                settings.title.length > 80 ? 'text-orange-400' : 'text-white/60'
+              }`}>
+                {settings.title.length}/100
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Revolutionary Description Field */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <label className="block text-lg font-bold text-white mb-4">
+              Description
+              <span className="text-white/50 font-medium ml-2 text-sm">
+                (Optional)
+              </span>
+            </label>
+            <div className="relative group">
+              {/* Textarea glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-pink-400/40 to-orange-600/50 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-all duration-500" />
+              
+              {/* Textarea container */}
+              <div className="relative">
+                <textarea
+                  value={settings.description}
+                  onChange={(e) => setSettings(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Add context or topics to focus on..."
+                  rows={3}
+                  className="w-full px-6 py-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl focus:ring-2 focus:ring-pink-400/50 focus:border-pink-400/50 transition-all duration-300 resize-none placeholder-white/40 text-white font-medium"
+                  maxLength={500}
+                />
+                
+                {/* Textarea highlight effect */}
+                <div className="absolute top-1 left-4 right-4 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity duration-300" />
+              </div>
+            </div>
+            <p className={`text-xs font-bold mt-2 text-right transition-colors ${
+              settings.description.length > 400 ? 'text-orange-400' : 'text-white/60'
+            }`}>
+              {settings.description.length}/500
             </p>
-            <p className="text-xs text-gray-400">
-              {settings.title.length}/100
-            </p>
-          </div>
+          </motion.div>
         </div>
 
-        {/* Description */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t('podcast.generator.fields.description.label')}
-            <span className="text-gray-400 font-normal ml-1">
-              ({t('common.optional')})
-            </span>
+        {/* Revolutionary Synthesis Style Selection */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <label className="block text-lg font-bold text-white mb-6">
+            Podcast Style
           </label>
-          <textarea
-            value={settings.description}
-            onChange={(e) => setSettings(prev => ({ ...prev, description: e.target.value }))}
-            placeholder={t('podcast.generator.fields.description.placeholder')}
-            rows={3}
-            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 resize-none"
-            maxLength={500}
-          />
-          <p className="text-xs text-gray-400 mt-1 text-right">
-            {settings.description.length}/500
-          </p>
-        </div>
-
-        {/* Synthesis Style */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            {t('podcast.generator.fields.style.label')}
-          </label>
-          <div className="grid gap-3">
-            {synthesisStyles.map((style) => {
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            {synthesisStyles.map((style, index) => {
               const Icon = style.icon;
               const isSelected = settings.synthesisStyle === style.value;
               
               return (
                 <motion.div
                   key={style.value}
-                  layout
-                  className={`
-                    relative p-4 border-2 rounded-xl cursor-pointer transition-all duration-200
-                    ${isSelected
-                      ? 'border-purple-200 bg-purple-50'
-                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                    }
-                  `}
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 + index * 0.1 }}
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="relative group"
                   onClick={() => setSettings(prev => ({ ...prev, synthesisStyle: style.value }))}
                 >
-                  <div className="flex items-start space-x-3">
-                    <div className={`
-                      w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-br ${getStyleColor(style.color)}
-                    `}>
-                      <Icon className="w-5 h-5 text-white" />
-                    </div>
+                  {/* Revolutionary Selection Glow */}
+                  {isSelected && (
+                    <div className={`absolute inset-0 bg-gradient-to-r ${getStyleColor(style.color)} rounded-2xl blur-xl opacity-60`} />
+                  )}
+                  
+                  {/* Hover glow effect */}
+                  <motion.div
+                    initial={false}
+                    animate={{ opacity: isSelected ? 0 : 0 }}
+                    whileHover={{ opacity: isSelected ? 0 : 0.4 }}
+                    className={`absolute inset-0 bg-gradient-to-r ${getStyleColor(style.color)} rounded-2xl blur-lg`}
+                  />
+                  
+                  {/* Compact Card */}
+                  <div className={`
+                    relative p-6 rounded-2xl cursor-pointer transition-all duration-500 border
+                    ${isSelected
+                      ? 'bg-white/15 backdrop-blur-xl border-white/30 shadow-2xl'
+                      : 'bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 hover:border-white/20'
+                    }
+                  `}>
+                    {/* Prismatic edge highlights */}
+                    <div className={`absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent transition-opacity duration-300 ${
+                      isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-60'
+                    }`} />
+                    <div className={`absolute bottom-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent transition-opacity duration-300 ${
+                      isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-40'
+                    }`} />
                     
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <h4 className="font-medium text-gray-900">
+                    <div className="text-center">
+                      {/* Revolutionary Icon with prismatic effect */}
+                      <motion.div
+                        whileHover={{ rotate: [0, -10, 10, 0] }}
+                        transition={{ duration: 0.6 }}
+                        className="relative mx-auto mb-4"
+                      >
+                        {/* Icon glow layers */}
+                        <div className={`absolute inset-0 bg-gradient-to-br ${getStyleColor(style.color)} rounded-xl blur-lg opacity-60 scale-110`} />
+                        
+                        <div className={`
+                          relative w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br ${getStyleColor(style.color)} shadow-xl border border-white/20
+                          ${isSelected ? 'shadow-2xl scale-105' : 'shadow-lg'}
+                          transition-all duration-300
+                        `}>
+                          <Icon className="w-6 h-6 text-white drop-shadow-sm" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl" />
+                        </div>
+                      </motion.div>
+                      
+                      <div className="space-y-2">
+                        <h4 className={`font-black text-lg transition-colors duration-300 ${
+                          isSelected ? 'text-gray-900' : 'text-gray-800'
+                        }`}>
                           {style.label}
                         </h4>
-                        <div className="flex items-center space-x-2 text-xs text-gray-500">
-                          <Clock className="w-3 h-3" />
-                          <span>{style.duration}</span>
+                        
+                        <div className="relative mx-auto w-fit">
+                          <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/20 rounded-lg blur-sm" />
+                          <div className="relative flex items-center space-x-2 px-3 py-1 bg-gray-100/80 backdrop-blur-sm border border-gray-200/50 rounded-lg">
+                            <Clock className="w-3 h-3 text-gray-600" />
+                            <span className="text-xs font-bold text-gray-700">{style.duration}</span>
+                          </div>
+                        </div>
+                        
+                        <p className={`text-xs leading-relaxed transition-colors duration-300 font-medium ${
+                          isSelected ? 'text-gray-600' : 'text-gray-500'
+                        }`}>
+                          {style.description}
+                        </p>
+                      </div>
+
+                      {/* Revolutionary Radio Button */}
+                      <div className="relative mt-4 mx-auto w-fit">
+                        {/* Radio glow */}
+                        {isSelected && (
+                          <div className={`absolute inset-0 bg-gradient-to-br ${getStyleColor(style.color)} rounded-full blur-md opacity-60 scale-150`} />
+                        )}
+                        
+                        <div className={`
+                          relative w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-500
+                          ${isSelected
+                            ? `border-white/40 bg-gradient-to-br ${getStyleColor(style.color)} shadow-lg`
+                            : 'border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20'
+                          }
+                        `}>
+                          <AnimatePresence>
+                            {isSelected && (
+                              <motion.div
+                                initial={{ scale: 0, rotate: -180 }}
+                                animate={{ scale: 1, rotate: 0 }}
+                                exit={{ scale: 0, rotate: 180 }}
+                                transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                                className="w-2.5 h-2.5 bg-white rounded-full drop-shadow-sm"
+                              />
+                            )}
+                          </AnimatePresence>
                         </div>
                       </div>
-                      <p className="text-sm text-gray-600">
-                        {style.description}
-                      </p>
-                    </div>
-
-                    {/* Selection indicator */}
-                    <div className={`
-                      w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200
-                      ${isSelected
-                        ? 'border-purple-600 bg-purple-600'
-                        : 'border-gray-300'
-                      }
-                    `}>
-                      {isSelected && (
-                        <motion.div
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          className="w-2 h-2 bg-white rounded-full"
-                        />
-                      )}
                     </div>
                   </div>
                 </motion.div>
               );
             })}
           </div>
-        </div>
+        </motion.div>
 
-        {/* Estimated Duration */}
-        <div className="bg-gray-50 rounded-lg p-4">
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <Clock className="w-4 h-4" />
-            <span>
-              {t('podcast.generator.estimatedDuration', { duration: estimatedDuration })}
-            </span>
-          </div>
+        {/* Horizontal Duration and Generate Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+          {/* Premium Estimated Duration */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="relative lg:col-span-1"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-2xl blur-lg" />
+            <div className="relative bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                  <Clock className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-700">Estimated Duration</p>
+                  <p className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    ~{estimatedDuration} min
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Premium Generate Button - Horizontal */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="relative lg:col-span-2"
+          >
+            {canGenerate && (
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.05, 1],
+                  opacity: [0.5, 0.8, 0.5]
+                }}
+                transition={{ 
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="absolute inset-0 bg-gradient-to-r from-purple-600/30 to-pink-600/30 rounded-2xl blur-xl"
+              />
+            )}
+            
+            <motion.button
+              whileHover={{ scale: canGenerate ? 1.02 : 1 }}
+              whileTap={{ scale: canGenerate ? 0.98 : 1 }}
+              disabled={!canGenerate}
+              onClick={handleGenerate}
+              className={`
+                relative w-full flex items-center justify-center space-x-3 py-4 px-8 rounded-2xl font-bold text-lg transition-all duration-300 overflow-hidden
+                ${canGenerate
+                  ? 'text-white shadow-2xl'
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                }
+              `}
+            >
+              {/* Animated Background */}
+              {canGenerate && (
+                <>
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-size-200 animate-gradient" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                </>
+              )}
+              
+              <AnimatePresence mode="wait">
+                {isGenerating ? (
+                  <motion.div
+                    key="loading"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    className="relative flex items-center space-x-3"
+                  >
+                    <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Creating Your Podcast...</span>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="generate"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    className="relative flex items-center space-x-3"
+                  >
+                    <Sparkles className="w-6 h-6" />
+                    <span>Generate AI Podcast</span>
+                    {canGenerate && <ChevronRight className="w-5 h-5" />}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
+
+            {/* Premium Requirements Message */}
+            {!canGenerate && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7 }}
+                className="text-center mt-3"
+              >
+                <p className="text-xs text-white/60 font-medium">
+                  {selectedDocuments.length === 0 
+                    ? '📄 Please select at least one document to continue'
+                    : '✏️ Please enter a title for your podcast'
+                  }
+                </p>
+              </motion.div>
+            )}
+          </motion.div>
         </div>
 
         {/* Generation Progress */}
@@ -421,59 +637,22 @@ const PodcastGenerator: React.FC<PodcastGeneratorProps> = ({
           )}
         </AnimatePresence>
 
-        {/* Generate Button */}
-        <motion.button
-          whileHover={{ scale: canGenerate ? 1.02 : 1 }}
-          whileTap={{ scale: canGenerate ? 0.98 : 1 }}
-          disabled={!canGenerate}
-          onClick={handleGenerate}
-          className={`
-            w-full flex items-center justify-center space-x-3 py-4 px-6 rounded-xl font-semibold transition-all duration-200
-            ${canGenerate
-              ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg hover:shadow-xl hover:from-purple-700 hover:to-purple-800'
-              : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-            }
-          `}
-        >
-          <AnimatePresence mode="wait">
-            {isGenerating ? (
-              <motion.div
-                key="loading"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex items-center space-x-3"
-              >
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>{t('podcast.generator.generating')}</span>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="generate"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex items-center space-x-3"
-              >
-                <Play className="w-5 h-5" />
-                <span>{t('podcast.generator.generate')}</span>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.button>
-
-        {/* Requirements */}
-        {!canGenerate && (
-          <div className="text-center">
-            <p className="text-sm text-gray-500">
-              {selectedDocuments.length === 0 
-                ? t('podcast.generator.requirements.documents')
-                : t('podcast.generator.requirements.title')
-              }
-            </p>
-          </div>
-        )}
       </div>
+
+      <style jsx>{`
+        @keyframes gradient {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .animate-gradient {
+          background-size: 200% 200%;
+          animation: gradient 3s ease infinite;
+        }
+        .bg-size-200 {
+          background-size: 200% 200%;
+        }
+      `}</style>
     </div>
   );
 };

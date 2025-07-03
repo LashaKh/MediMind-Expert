@@ -439,7 +439,45 @@ export default {
     aspirin_use_desc: "Aspirin use within 7 days before hospital presentation",
     severe_angina_desc: "Two or more anginal episodes within 24 hours before presentation",
     st_deviation_desc: "ST segment changes ≥0.5mm on admission ECG",
-    elevated_biomarkers_desc: "Elevated troponin, CK-MB, or other cardiac markers"
+    elevated_biomarkers_desc: "Elevated troponin, CK-MB, or other cardiac markers",
+    
+    // About the Creator
+    about_creator_title: "About the Creator",
+    creator_name: "Dr. Elliott M. Antman",
+    creator_description: "Elliott M. Antman, MD, is a professor and associate dean for Clinical/Translational Research at Harvard Medical School. He is also a senior physician in the Cardiovascular Division of the Brigham and Women's Hospital in Massachusetts and President of the American Heart Association (2014-2015). As a senior investigator in the TIMI Study Group, Dr. Antman has published on the use of serum cardiac markers for diagnosis and prognosis of patients with unstable angina and acute myocardial infarction, cyclooxygenase and cardiovascular risk, and antithrombotic therapy for acute coronary syndromes.",
+    creator_publications: "To view Dr. Elliott M. Antman's publications, visit",
+    
+    // Evidence Section
+    evidence_title: "Evidence",
+    formula_title: "FORMULA",
+    formula_description: "Addition of the selected points:",
+    variable_age: "Age ≥65",
+    variable_risk_factors: "≥3 CAD risk factors*",
+    variable_known_cad: "Known CAD (stenosis ≥50%)",
+    variable_aspirin: "ASA use in past 7 days",
+    variable_angina: "Severe angina (≥2 episodes in 24 hrs)",
+    variable_st_changes: "EKG ST changes ≥0.5mm",
+    variable_st_deviation: "ST deviation ≥0.5mm",
+    variable_biomarkers: "Positive cardiac marker",
+    risk_factors_note: "*Risk factors for CAD: Family history of CAD, hypertension, hypercholesterolemia, diabetes, or current smoker",
+    
+    // Evidence Appraisal
+    evidence_appraisal_title: "Evidence Appraisal",
+    evidence_appraisal_description: "Antman et al (2000) used a merged database of 7,081 UA/NSTEMI patients in the TIMI 11B and ESSENCE trails for the original derivation and validation of this TIMI risk score for UA/NSTEMI. The risk score was originally derived from 1,957 UA/NSTEMI patients receiving unfractionated heparin in the TIMI 11B trial and internally validated in 3 cohorts of patients from the rest of the merged data: 1,953 patients receiving enoxaparin in the TIMI 11B trial, 1,564 patient receiving unfractionated heparin in the ESSENCE trial, and 1,607 receiving enoxaparin in the ESSENCE trial.",
+    validation_studies: "By the end of the 14 days, 16.7% of the derivation group died, had a myocardial infarction, or needed urgent revascularization. An increase of the TIMI Score correlated with an increase in all-cause mortality, MI, or urgent revascularization. The same pattern was seen in the internally validated groups. There have been many external validation studies since its derivation.",
+    validation_studies_title: "Validation Studies",
+    external_validation: "External validation studies by Scirica et al (2002), Pollack et al (2006), and Chase et al (2006) have consistently demonstrated the prognostic value of the TIMI Risk Score across diverse patient populations, including undifferentiated chest pain patients in emergency department settings.",
+    
+    // Literature
+    literature_title: "Literature",
+    original_reference_title: "Original/Primary Reference",
+    original_reference: "Antman EM, Cohen M, Bernink PJLM, McCabe CH, Hoacek T, Papuchis G, Mautner B, Corbalan R, Radley D, Braunwald E. The TIMI risk score for unstable angina/non-ST elevation MI: a method for prognostication and therapeutic decision making JAMA. 2000;284(7):835-42.",
+    validation_title: "Validation",
+    validation_pollack: "Pollack CV, Sites FD, Shofer FS, Sease KL, Hollander JE. Application of the TIMI risk score for unstable angina and non-ST elevation acute coronary syndrome to an unselected emergency department chest pain population. Acad Emerg Med. 2006;13(1):13-18.",
+    validation_scirica: "Scirica BM, Cannon CP, Antman EM, Murphy SA, Morrow DA, Sabatine MS, McCabe CH, Gibson CM, Braunwald E. Validation of the thrombolysis in myocardial infarction (TIMI) risk score for unstable angina pectoris and non-ST-elevation myocardial infarction in the TIMI III registry. Am J Cardiol. 2002;90(3):303-5.",
+    validation_chase: "Chase M, Robey JL, Zogby KE, Sease KL, Shofer FS, Hollander JE. Prospective validation of the thrombolysis in myocardial infarction risk score in the emergency department chest pain population. Ann Emerg Med. 2006;48(3):252-9.",
+    other_references_title: "Other References",
+    other_reference: "Than M, Cullen L, Aldous S, et al. 2-Hour accelerated diagnostic protocol to assess patients with chest pain symptoms using contemporary troponins as the only biomarker: the ADAPT trial. J Am Coll Cardiol. 2012;59(23):2091-8."
   },
 
   // ADDING/ENSURING ENTRIES FOR MAIN CALCULATOR PAGE CARD DISPLAY
@@ -543,7 +581,54 @@ export default {
       score_label: 'HAS-BLED Score',
       annual_bleeding_risk: 'Annual bleeding risk',
       risk_category: 'Risk category',
-      recommendation: 'Recommendation'
+      recommendation: 'Recommendation',
+
+      // Author Information
+      author_title: 'From the Creator',
+      author_name: 'Dr. Ron Pisters, MD, PhD',
+      author_bio: 'Dr. Ron Pisters is a cardiologist at Rijnstate Hospital, Netherlands, specializing in atrial fibrillation and antithrombotic management.',
+      author_key_message_title: 'Key Clinical Message',
+      author_key_message: 'HAS-BLED should be used as a clinical tool to identify and address modifiable bleeding risk factors, not as an absolute contraindication to anticoagulation. Remember: in most AF patients, stroke risk outweighs bleeding risk.',
+      author_pubmed_link: 'View Dr. Ron Pisters\' publications on PubMed',
+      
+      // Formula Section
+      formula_title: 'FORMULA',
+      formula_description: 'Addition of the selected points:',
+      formula_note: 'HAS-BLED is an acronym for Hypertension, Abnormal liver/renal function, Stroke history, Bleeding predisposition, Labile INR, Elderly, Drug/alcohol usage.',
+      
+      // Risk Table
+      facts_figures_title: 'Facts & Figures',
+      risk_table_title: 'HAS-BLED Score Risk Assessment',
+      risk_table_score: 'Score',
+      risk_table_group: 'Risk Group',
+      risk_table_major_bleeding: 'Risk of Major Bleeding**',
+      risk_table_bleeds_per_100: 'Bleeds per 100 Patient-Years***',
+      risk_table_recommendation: 'Recommendation',
+      
+      // Risk Groups
+      risk_low: 'Low',
+      risk_moderate: 'Moderate', 
+      risk_high: 'High',
+      risk_very_high: 'Very High',
+      
+      // Risk Recommendations
+      risk_rec_0_1: 'Anticoagulation should be considered',
+      risk_rec_2: 'Anticoagulation can be considered',
+      risk_rec_3_4: 'Alternatives to anticoagulation should be considered',
+      risk_rec_5_plus: 'Scores greater than 5 were too rare to determine risk, but are likely over 10%',
+      
+      // Evidence Section
+      evidence_title: 'Evidence Appraisal',
+      evidence_development: 'The HAS-BLED Score was developed in 2010 as a practical risk score to estimate the 1-year risk of major bleeding in patients with atrial fibrillation (AF). The original study used data from the prospective Euro Heart Survey on AF, and included 3456 ambulatory and hospitalized patients with AF and one-year follow-up status regarding major bleeding, and without mitral valve stenosis or valvular surgery.',
+      evidence_validation: 'Many external validations of the HAS-BLED score have been published. A 2020 network meta-analysis of 18 studies found HAS-BLED to be the most balanced predictive score for major bleeding in terms of sensitivity and specificity, compared to other contemporary scores including the ABC‐bleeding score, ATRIA, European score, GARFIELD‐AF, HEMORR₂HAGES, ORBIT, Shireman, and mOBRI.',
+      evidence_guidelines: 'The simplicity of the HAS-BLED score and the extensive external validations have led to widespread clinical adoption, with the 2020 ESC guidelines specifically recommending HAS-BLED for the assessment of bleeding risk in patients with AF. However, the more recent 2024 ESC guidelines and the 2023 ACC/AHA/ACCP/HRS guidelines both did not recommend a specific predictive score for major bleeding, citing uncertainties over accuracy and potential harms of not anticoagulating appropriately.',
+      evidence_limitations: 'Such reservation at least partly stemmed from the fact that HAS-BLED was derived when DOAC were only starting to become available, which casts doubt on the predictive accuracy of HAS-BLED in truly contemporary cohorts with DOAC use. Additionally, even though clinicians are advised to balance the risks of bleeding and thromboembolism in patients with AF when considering anticoagulation, the real-life implications of these events may not be equivalent.',
+      
+      // Reference Links
+      reference_original: 'Original Research: Pisters et al. (2010)',
+      reference_validation: 'Validation Study: Lip et al. (2011)',
+      reference_guidelines_2020: '2020 ESC Guidelines',
+      reference_guidelines_2023: '2023 ACC/AHA/ACCP/HRS Guidelines'
     },
     
     // Common labels
