@@ -16,6 +16,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
 
 interface PodcastTracker {
   podcastId: string;
@@ -119,19 +120,26 @@ const PodcastTracker: React.FC<PodcastTrackerProps> = ({ podcastId, onComplete }
     try {
       addLog('info', '🔍 Checking podcast status...');
 
-      const response = await fetch(`/.netlify/functions/podcast-status?podcastId=${id}&userId=${user?.id}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-
-      if (!response.ok) {
-        addLog('warning', `⚠️ Status check failed: ${response.status} ${response.statusText}`);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        addLog('error', '❌ Authentication required');
         return;
       }
 
-      const statusData = await response.json();
+      // Call Supabase Edge Function
+      const { data: statusData, error } = await supabase.functions.invoke('podcast-status', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        },
+        body: { podcastId: id, userId: user?.id }
+      });
+
+      if (error) {
+        addLog('warning', `⚠️ Status check failed: ${error.message}`);
+        return;
+      }
+
       addLog('success', '✅ Status retrieved successfully');
 
       // Validate response data before processing
@@ -231,18 +239,25 @@ const PodcastTracker: React.FC<PodcastTrackerProps> = ({ podcastId, onComplete }
     addLog('info', '🔄 Retrying generation...');
 
     try {
-      const response = await fetch('/.netlify/functions/podcast-queue-processor', {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        addLog('error', '❌ Authentication required');
+        return;
+      }
+
+      // Call Supabase Edge Function
+      const { data, error } = await supabase.functions.invoke('podcast-queue-processor', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
         }
       });
 
-      if (response.ok) {
+      if (error) {
+        addLog('error', `❌ Retry failed: ${error.message}`);
+      } else {
         addLog('success', '✅ Queue processor triggered');
         startTracking(tracker.podcastId);
-      } else {
-        addLog('error', `❌ Retry failed: ${response.status}`);
       }
     } catch (error) {
       addLog('error', `❌ Retry error: ${error instanceof Error ? error.message : 'Unknown'}`);

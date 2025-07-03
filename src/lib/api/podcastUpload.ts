@@ -204,11 +204,14 @@ export async function generatePodcast(request: {
 
     // Call Supabase Edge Function
     const { data, error } = await supabase.functions.invoke('generate-podcast', {
-      body: request
+      body: request,
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`
+      }
     });
 
     if (error) {
-      console.error('❌ Edge Function error:', error);
+      console.error('❌ Supabase Edge Function error:', error);
       throw new Error(error.message || 'Failed to generate podcast');
     }
 

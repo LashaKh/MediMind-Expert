@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import PodcastTracker from './PodcastTracker';
+import { supabase } from '../../lib/supabase';
 
 interface GenerationProgressProps {
   podcast: any;
@@ -45,20 +46,26 @@ const GenerationProgress: React.FC<GenerationProgressProps> = ({
     const checkStatus = async () => {
       try {
         setError('');
-        const response = await fetch('/.netlify/functions/podcast-status', {
+
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          setError('Authentication required');
+          return;
+        }
+
+        // Call Supabase Edge Function
+        const { data: result, error } = await supabase.functions.invoke('podcast-status', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`
           },
-          body: JSON.stringify({
+          body: {
             podcastId: podcast.id,
             userId: user?.id
-          })
+          }
         });
 
-        const result = await response.json();
-
-        if (response.ok) {
+        if (!error) {
           setCurrentStatus(result.status);
 
           if (result.status === 'completed') {
@@ -77,7 +84,7 @@ const GenerationProgress: React.FC<GenerationProgressProps> = ({
             setRetryCount(prev => prev + 1);
             setTimeout(checkStatus, 2000); // Retry after 2 seconds
           } else {
-            setError(`Failed to check status: ${result.error || 'Unknown error'}`);
+            setError(`Failed to check status: ${error.message || 'Unknown error'}`);
           }
         }
       } catch (error) {
@@ -250,8 +257,17 @@ const GenerationProgress: React.FC<GenerationProgressProps> = ({
               <button
                 onClick={async () => {
                   try {
-                    await fetch('/.netlify/functions/podcast-queue-processor', {
-                      method: 'POST'
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (!session) {
+                      setError('Authentication required');
+                      return;
+                    }
+
+                    await supabase.functions.invoke('podcast-queue-processor', {
+                      method: 'POST',
+                      headers: {
+                        'Authorization': `Bearer ${session.access_token}`
+                      }
                     });
                     setError('');
                     setRetryCount(0);

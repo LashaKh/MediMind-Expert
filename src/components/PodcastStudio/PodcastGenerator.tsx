@@ -12,11 +12,13 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { generatePodcast } from '../../lib/api/podcastUpload';
+import { startPolling, PlayAIStatusResponse } from '../../lib/api/playaiStatus';
 
 interface PodcastGeneratorProps {
   selectedDocuments: string[];
   onGenerationStart: (podcastData: any) => void;
   onQueueUpdate: (queueStatus: any) => void;
+  onGenerationComplete?: (podcastData: any) => void;
 }
 
 type SynthesisStyle = 'podcast' | 'executive-briefing' | 'debate';
@@ -30,7 +32,8 @@ interface GenerationSettings {
 const PodcastGenerator: React.FC<PodcastGeneratorProps> = ({
   selectedDocuments,
   onGenerationStart,
-  onQueueUpdate
+  onQueueUpdate,
+  onGenerationComplete
 }) => {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -42,6 +45,9 @@ const PodcastGenerator: React.FC<PodcastGeneratorProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string>('');
   const [estimatedDuration, setEstimatedDuration] = useState<number>(10);
+  const [generationStatus, setGenerationStatus] = useState<PlayAIStatusResponse | null>(null);
+  const [currentPodcastId, setCurrentPodcastId] = useState<string | null>(null);
+  const [stopPolling, setStopPolling] = useState<(() => void) | null>(null);
 
   const synthesisStyles = [
     {
@@ -93,11 +99,21 @@ const PodcastGenerator: React.FC<PodcastGeneratorProps> = ({
     }
   }, [settings.synthesisStyle]);
 
+  // Cleanup polling on unmount
+  useEffect(() => {
+    return () => {
+      if (stopPolling) {
+        stopPolling();
+      }
+    };
+  }, [stopPolling]);
+
   const handleGenerate = async () => {
     if (!user?.id || selectedDocuments.length === 0) return;
 
     setIsGenerating(true);
     setError('');
+    setGenerationStatus(null);
 
     try {
       console.log('🎵 Starting podcast generation with Supabase Edge Function...');
@@ -117,6 +133,9 @@ const PodcastGenerator: React.FC<PodcastGeneratorProps> = ({
         onQueueUpdate(result);
       }
 
+      // Store podcast ID for polling
+      setCurrentPodcastId(result.podcastId);
+
       onGenerationStart({
         id: result.podcastId,
         status: result.status,
@@ -127,10 +146,52 @@ const PodcastGenerator: React.FC<PodcastGeneratorProps> = ({
         estimatedWaitTime: result.estimatedWaitTime
       });
 
+      // Start polling if we have a playnoteId
+      if (result.playnoteId) {
+        console.log('🔄 Starting polling for playnote:', result.playnoteId);
+        
+        const cleanup = startPolling(
+          result.podcastId,
+          result.playnoteId,
+          // onStatusUpdate
+          (status: PlayAIStatusResponse) => {
+            console.log('📊 Status update:', status);
+            setGenerationStatus(status);
+          },
+          // onComplete
+          (audioUrl: string, duration?: number) => {
+            console.log('✅ Generation completed:', { audioUrl, duration });
+            setIsGenerating(false);
+            setGenerationStatus({ status: 'completed', audioUrl, duration });
+            
+            if (onGenerationComplete) {
+              onGenerationComplete({
+                id: result.podcastId,
+                status: 'completed',
+                title: settings.title,
+                audioUrl,
+                duration
+              });
+            }
+          },
+          // onError
+          (error: string) => {
+            console.error('❌ Generation failed:', error);
+            setIsGenerating(false);
+            setError(error);
+            setGenerationStatus({ status: 'failed', error });
+          }
+        );
+
+        setStopPolling(() => cleanup);
+      } else {
+        // No playnoteId, just mark as not generating
+        setIsGenerating(false);
+      }
+
     } catch (err) {
       console.error('❌ Generation error:', err);
       setError(err instanceof Error ? err.message : 'Failed to start generation');
-    } finally {
       setIsGenerating(false);
     }
   };
@@ -288,6 +349,62 @@ const PodcastGenerator: React.FC<PodcastGeneratorProps> = ({
             </span>
           </div>
         </div>
+
+        {/* Generation Progress */}
+        <AnimatePresence>
+          {isGenerating && generationStatus && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="bg-blue-50 border border-blue-200 rounded-lg p-4"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                <div>
+                  <h4 className="font-medium text-blue-900">
+                    {generationStatus.status === 'generating' ? 'Generating Podcast...' : 
+                     generationStatus.status === 'completed' ? 'Generation Complete!' : 
+                     'Generation Failed'}
+                  </h4>
+                  <p className="text-sm text-blue-700">
+                    {generationStatus.status === 'generating' && generationStatus.progress 
+                      ? `Progress: ${Math.round(generationStatus.progress)}%`
+                      : generationStatus.status === 'generating' 
+                      ? 'Processing your documents with AI...'
+                      : generationStatus.status === 'completed'
+                      ? `Audio ready! Duration: ${generationStatus.duration ? Math.round(generationStatus.duration / 60) : '~'}min`
+                      : generationStatus.error || 'Unknown error occurred'
+                    }
+                  </p>
+                </div>
+              </div>
+              
+              {generationStatus.progress && (
+                <div className="mt-3">
+                  <div className="bg-blue-200 rounded-full h-2">
+                    <div 
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${generationStatus.progress}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {generationStatus.status === 'completed' && generationStatus.audioUrl && (
+                <div className="mt-3">
+                  <audio 
+                    controls 
+                    className="w-full"
+                    src={generationStatus.audioUrl}
+                  >
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Error Message */}
         <AnimatePresence>

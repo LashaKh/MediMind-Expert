@@ -176,6 +176,10 @@ const PodcastStudio: React.FC<PodcastStudioProps> = () => {
                         setCurrentPodcast(podcastData);
                       }}
                       onQueueUpdate={setQueueStatus}
+                      onGenerationComplete={(completedPodcast) => {
+                        setIsGenerating(false);
+                        setCurrentPodcast(completedPodcast);
+                      }}
                     />
                   </motion.div>
                 </div>

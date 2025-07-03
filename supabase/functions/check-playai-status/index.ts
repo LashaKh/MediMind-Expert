@@ -72,114 +72,104 @@ serve(async (req) => {
       });
     }
 
-    console.log('🔍 Checking PlayAI status for:', playnoteId);
-    console.log('📋 Request details:', {
-      url: `https://api.play.ai/api/v1/playnotes/${playnoteId}`,
-      headers: {
-        'Authorization': `Bearer ${playaiApiKey}`,
-        'X-USER-ID': playaiUserId
-      }
-    });
+    console.log(`Checking PlayAI status for playnote: ${playnoteId}`);
 
-    const playaiResponse = await fetch(`https://api.play.ai/api/v1/playnotes/${playnoteId}`, {
-      headers: {
-        'Authorization': `Bearer ${playaiApiKey}`,
-        'X-USER-ID': playaiUserId
-      }
-    });
-
-    if (!playaiResponse.ok) {
-      console.error('❌ PlayAI API request failed:', {
-        status: playaiResponse.status,
-        statusText: playaiResponse.statusText,
-        url: playaiResponse.url
+    try {
+      // Call PlayAI API to check status
+      const playaiResponse = await fetch(`https://api.play.ai/api/v1/playnotes/${playnoteId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${playaiApiKey}`, // Already correct
+          'X-USER-ID': playaiUserId,
+          'accept': 'application/json'
+        }
       });
-      throw new Error(`PlayAI API error: ${playaiResponse.status} ${playaiResponse.statusText}`);
-    }
 
-    const playaiResult = await playaiResponse.json();
-    
-    // ENHANCED LOGGING: Log complete raw response
-    console.log('📋 Complete PlayAI response:', JSON.stringify(playaiResult, null, 2));
-    
-    // Check for additional error fields
-    const possibleErrorFields = [
-      'error', 'error_message', 'error_code', 'failure_reason', 
-      'processing_error', 'generation_error', 'details', 'message'
-    ];
-    
-    console.log('🔍 Checking for error fields:');
-    possibleErrorFields.forEach(field => {
-      if (playaiResult[field]) {
-        console.log(`  ${field}:`, playaiResult[field]);
+      if (!playaiResponse.ok) {
+        console.error(`PlayAI API error: ${playaiResponse.status} - ${playaiResponse.statusText}`);
+        const errorText = await playaiResponse.text();
+        console.error('PlayAI error response:', errorText);
+        
+        return new Response(JSON.stringify({
+          status: 'failed',
+          error: `PlayAI API error: ${playaiResponse.status} - ${errorText}`
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200, // Return 200 with error status to continue polling
+        });
       }
-    });
 
-    // Map PlayAI status to our status format
-    let mappedStatus: 'generating' | 'completed' | 'failed';
-    let audioUrl: string | undefined;
-    let duration: number | undefined;
-    let progress: number | undefined;
-    let detailedError: string | undefined;
+      const playaiResult = await playaiResponse.json();
+      console.log('PlayAI response:', playaiResult);
 
-    if (playaiResult.status === 'completed' && playaiResult.audioUrl) {
-      mappedStatus = 'completed';
-      audioUrl = playaiResult.audioUrl;
-      duration = playaiResult.duration;
-      console.log('✅ PlayAI generation completed successfully');
-    } else if (playaiResult.status === 'failed' || playaiResult.status === 'error') {
-      mappedStatus = 'failed';
-      
-      // ENHANCED ERROR EXTRACTION: Check multiple possible error sources
-      const errorSources = [
-        playaiResult.error,
-        playaiResult.error_message,
-        playaiResult.failure_reason,
-        playaiResult.processing_error,
-        playaiResult.generation_error,
-        playaiResult.details,
-        playaiResult.message
-      ].filter(Boolean);
-      
-      if (errorSources.length > 0) {
-        detailedError = `PlayAI generation failed: ${errorSources.join(', ')}`;
+      // Map PlayAI status to our status format
+      let mappedStatus: 'generating' | 'completed' | 'failed';
+      let audioUrl: string | undefined;
+      let duration: number | undefined;
+      let progress: number | undefined;
+      let detailedError: string | undefined;
+
+      if (playaiResult.status === 'completed' && playaiResult.audioUrl) {
+        mappedStatus = 'completed';
+        audioUrl = playaiResult.audioUrl;
+        duration = playaiResult.duration;
+      } else if (playaiResult.status === 'failed' || playaiResult.status === 'error') {
+        mappedStatus = 'failed';
+        
+        // Enhanced error detection and logging
+        console.error('PlayAI generation failed:', {
+          status: playaiResult.status,
+          error: playaiResult.error,
+          errorMessage: playaiResult.errorMessage,
+          message: playaiResult.message,
+          details: playaiResult.details,
+          fullResponse: playaiResult
+        });
+        
+        // Collect all available error information
+        const errorParts = [];
+        if (playaiResult.error) errorParts.push(`Error: ${playaiResult.error}`);
+        if (playaiResult.errorMessage) errorParts.push(`Message: ${playaiResult.errorMessage}`);
+        if (playaiResult.message) errorParts.push(`Info: ${playaiResult.message}`);
+        if (playaiResult.details) errorParts.push(`Details: ${JSON.stringify(playaiResult.details)}`);
+        
+        detailedError = errorParts.length > 0 
+          ? errorParts.join(' | ') 
+          : `PlayAI generation failed with status: ${playaiResult.status}`;
+          
+        console.log('PlayAI generation failed:', {
+          status: mappedStatus,
+          error: detailedError,
+          fullResponse: playaiResult
+        });
       } else {
-        detailedError = `PlayAI generation failed with status: ${playaiResult.status}`;
+        mappedStatus = 'generating';
+        progress = playaiResult.progress;
       }
-      
-      console.error('❌ PlayAI generation failed:', {
-        status: playaiResult.status,
-        originalError: playaiResult.error,
-        errorMessage: playaiResult.error_message,
-        failureReason: playaiResult.failure_reason,
-        processingError: playaiResult.processing_error,
-        generationError: playaiResult.generation_error,
-        details: playaiResult.details,
-        message: playaiResult.message,
-        extractedError: detailedError,
-        fullResponse: playaiResult
+
+      return new Response(JSON.stringify({
+        status: mappedStatus,
+        audioUrl,
+        duration,
+        progress,
+        error: mappedStatus === 'failed' ? detailedError : undefined,
+        playaiStatus: playaiResult.status,
+        playaiResult: playaiResult
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
       });
-    } else {
-      mappedStatus = 'generating';
-      progress = playaiResult.progress;
-      console.log('⏳ PlayAI generation in progress:', {
-        status: playaiResult.status,
-        progress: progress
+
+    } catch (playaiError) {
+      console.error('Error calling PlayAI API:', playaiError);
+      return new Response(JSON.stringify({
+        status: 'failed',
+        error: `Failed to check PlayAI status: ${playaiError instanceof Error ? playaiError.message : 'Unknown error'}`
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200, // Return 200 with error status to continue polling
       });
     }
-
-    return new Response(JSON.stringify({
-      status: mappedStatus,
-      audioUrl,
-      duration,
-      progress,
-      error: mappedStatus === 'failed' ? detailedError : undefined,
-      playaiStatus: playaiResult.status,
-      playaiResult: playaiResult
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 200,
-    });
 
   } catch (error) {
     console.error('Error in check-playai-status function:', error);

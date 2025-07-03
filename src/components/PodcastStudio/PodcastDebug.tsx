@@ -11,6 +11,7 @@ import {
   Zap
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
 
 interface PodcastDebugProps {
   onRefresh?: () => void;
@@ -33,12 +34,20 @@ const PodcastDebug: React.FC<PodcastDebugProps> = ({ onRefresh }) => {
         
         // Test podcast-list
         try {
-          const response = await fetch(`/.netlify/functions/podcast-list?userId=${user?.id}&limit=5`);
-          const result = await response.json();
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) throw new Error('Authentication required');
+
+          const { data: result, error } = await supabase.functions.invoke('podcast-list', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`
+            }
+          });
+
           tests.push({
             test: 'Podcast List API',
-            status: response.ok ? 'pass' : 'fail',
-            details: response.ok ? `Found ${result.podcasts?.length || 0} podcasts` : result.error
+            status: !error ? 'pass' : 'fail',
+            details: !error ? `Found ${result.podcasts?.length || 0} podcasts` : error.message
           });
         } catch (err) {
           tests.push({
@@ -50,16 +59,21 @@ const PodcastDebug: React.FC<PodcastDebugProps> = ({ onRefresh }) => {
 
         // Test podcast-status
         try {
-          const response = await fetch('/.netlify/functions/podcast-status', {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) throw new Error('Authentication required');
+
+          const { data: result, error } = await supabase.functions.invoke('podcast-status', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ podcastId: 'test', userId: 'test' })
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`
+            },
+            body: { podcastId: 'test', userId: 'test' }
           });
-          const result = await response.json();
+
           tests.push({
             test: 'Podcast Status API',
-            status: response.status === 404 ? 'pass' : 'fail',
-            details: response.status === 404 ? 'Correctly returns 404 for test data' : 'Unexpected response'
+            status: error?.message?.includes('not found') ? 'pass' : 'fail',
+            details: error?.message?.includes('not found') ? 'Correctly returns not found for test data' : 'Unexpected response'
           });
         } catch (err) {
           tests.push({
@@ -71,14 +85,20 @@ const PodcastDebug: React.FC<PodcastDebugProps> = ({ onRefresh }) => {
 
         // Test queue processor
         try {
-          const response = await fetch('/.netlify/functions/podcast-queue-processor', {
-            method: 'POST'
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) throw new Error('Authentication required');
+
+          const { data: result, error } = await supabase.functions.invoke('podcast-queue-processor', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`
+            }
           });
-          const result = await response.json();
+
           tests.push({
             test: 'Queue Processor',
-            status: response.ok ? 'pass' : 'fail',
-            details: response.ok ? result.message : result.error
+            status: !error ? 'pass' : 'fail',
+            details: !error ? result.message : error.message
           });
         } catch (err) {
           tests.push({
@@ -98,14 +118,20 @@ const PodcastDebug: React.FC<PodcastDebugProps> = ({ onRefresh }) => {
       icon: RefreshCw,
       color: 'green',
       action: async () => {
-        const response = await fetch('/.netlify/functions/podcast-queue-processor', {
-          method: 'POST'
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) throw new Error('Authentication required');
+
+        const { data: result, error } = await supabase.functions.invoke('podcast-queue-processor', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          }
         });
-        const result = await response.json();
+
         return [{
           test: 'Queue Restart',
-          status: response.ok ? 'pass' : 'fail',
-          details: response.ok ? result.message : result.error
+          status: !error ? 'pass' : 'fail',
+          details: !error ? result.message : error.message
         }];
       }
     },

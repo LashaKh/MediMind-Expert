@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import PodcastCard from './PodcastCard';
+import { supabase } from '../../lib/supabase';
 
 interface PodcastHistoryProps {
   specialty: string;
@@ -61,8 +62,12 @@ const PodcastHistory: React.FC<PodcastHistoryProps> = ({
       setLoading(true);
       setError('');
 
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('Authentication required');
+      }
+
       const params = new URLSearchParams({
-        userId: user.id,
         page: currentPage.toString(),
         limit: '12'
       });
@@ -75,11 +80,16 @@ const PodcastHistory: React.FC<PodcastHistoryProps> = ({
         params.append('specialty', specialty);
       }
 
-      const response = await fetch(`/.netlify/functions/podcast-list?${params.toString()}`);
-      const result = await response.json();
+      // Call Supabase Edge Function
+      const { data: result, error } = await supabase.functions.invoke('podcast-list', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      });
 
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to fetch podcasts');
+      if (error) {
+        throw new Error(error.message || 'Failed to fetch podcasts');
       }
 
       setPodcasts(result.podcasts || []);
@@ -115,20 +125,25 @@ const PodcastHistory: React.FC<PodcastHistoryProps> = ({
     try {
       setError('');
       
-      // First, try to restart the queue processor
-      const response = await fetch('/.netlify/functions/podcast-queue-processor', {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('Authentication required');
+      }
+
+      // Call Supabase Edge Function to restart the queue processor
+      const { data, error } = await supabase.functions.invoke('podcast-queue-processor', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
         }
       });
 
-      if (response.ok) {
-        // Refresh the podcasts list to see updated status
-        await fetchPodcasts();
-      } else {
-        setError('Failed to restart generation. Please try again.');
+      if (error) {
+        throw new Error(error.message || 'Failed to restart generation');
       }
+
+      // Refresh the podcasts list to see updated status
+      await fetchPodcasts();
     } catch (error) {
       console.error('Retry error:', error);
       setError('Failed to restart generation. Please check your connection.');

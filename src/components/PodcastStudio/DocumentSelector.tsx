@@ -191,24 +191,6 @@ const DocumentSelector: React.FC<DocumentSelectorProps> = ({
           />
         </div>
 
-        {/* Category Filter */}
-        <div className="flex flex-wrap gap-2">
-          {categories.map((category) => (
-            <button
-              key={category.value}
-              onClick={() => setSelectedCategory(category.value)}
-              className={`
-                px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200
-                ${selectedCategory === category.value
-                  ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                  : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100'
-                }
-              `}
-            >
-              {category.label}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Selection Summary */}
