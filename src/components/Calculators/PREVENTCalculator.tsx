@@ -795,7 +795,8 @@ const RiskVisualizationChart: React.FC<{
                   x={margin.left + xScale(patientAge)}
                   y={margin.top + yScale(line.value) - 15}
                   textAnchor="middle"
-                  className="text-xs font-bold fill-white"
+                  className="text-xs font-bold"
+                  fill={line.color}
                   style={{
                     opacity: animationComplete ? 1 : 0,
                     transitionDelay: `${800 + index * 100}ms`
@@ -1025,8 +1026,8 @@ const PREVENTCalculator: React.FC = () => {
     },
     {
       id: 5,
-      title: 'Risk Assessment',
-      description: 'Comprehensive cardiovascular risk analysis',
+      title: t('calculators.cardiology.prevent.step_5_title'),
+      description: t('calculators.cardiology.prevent.step_5_description'),
       icon: Target,
       color: 'from-red-500 to-pink-500',
       gradient: 'bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20'
@@ -1121,16 +1122,18 @@ const PREVENTCalculator: React.FC = () => {
       case 3:
         return !!(formData.systolicBP && formData.serumCreatinine);
       case 4:
-        return true; // Optional step
+        return true; // Optional step, always true for progression
+      case 5:
+        return results !== null; // Step 5 is complete when results are available
       default:
         return false;
     }
-  }, [formData]);
+  }, [formData, results]);
 
   // Update completed steps
   useEffect(() => {
     const newCompletedSteps = new Set<number>();
-    for (let i = 1; i <= 4; i++) {
+    for (let i = 1; i <= 5; i++) {
       if (isStepComplete(i)) {
         newCompletedSteps.add(i);
       }
@@ -1500,19 +1503,19 @@ const PREVENTCalculator: React.FC = () => {
         {!showResults ? (
           <>
             {/* Sophisticated Step Navigation System */}
-            <div className="relative mb-12">
-              <div className="flex items-center justify-between">
+            <div className="relative mb-24">
+              <div className="flex items-center justify-between flex-wrap">
                 {/* The connecting line */}
                 <div className="absolute top-8 left-0 w-full h-1 bg-gray-200 dark:bg-gray-700" style={{ zIndex: 1 }}></div>
                 <div 
                   className="absolute top-8 left-0 h-1 bg-gradient-to-r from-cyan-400 to-purple-500 transition-all duration-1000 ease-out" 
                   style={{ 
-                    width: `${((completedSteps.size > 0 ? completedSteps.size -1 : 0) / 3) * 100}%`,
+                    width: `${((completedSteps.size > 0 ? completedSteps.size -1 : 0) / 4) * 100}%`,
                     zIndex: 2 
                   }}
                 ></div>
 
-                {STEP_CONFIG.slice(0, 4).map((step, index) => {
+                {STEP_CONFIG.map((step, index) => {
                   const isActive = currentStep === step.id;
                   const isCompleted = completedSteps.has(step.id);
                   const isFuture = currentStep < step.id;
@@ -1543,7 +1546,7 @@ const PREVENTCalculator: React.FC = () => {
                       </div>
                       
                       {/* Step Label */}
-                      <div className={`mt-5 w-40 transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-70 group-hover:opacity-100'}`}>
+                      <div className={`mt-5 w-32 transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-70 group-hover:opacity-100'}`}>
                         <div className={`font-bold transition-colors duration-300 ${isActive ? `text-transparent bg-clip-text bg-gradient-to-r ${step.color}` : 'text-gray-800 dark:text-gray-200'}`}>
                           {step.title}
                         </div>
@@ -1707,110 +1710,12 @@ const PREVENTCalculator: React.FC = () => {
               </div>
             )}
 
-            {/* Step 2: Clinical Factors & Blood Pressure */}
+            {/* Step 2: Laboratory Values */}
             {currentStep === 2 && (
               <div className="space-y-6 animate-fadeIn">
                 <div className="text-center mb-8">
-                  <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-indigo-50 to-pink-50 dark:from-indigo-900/20 dark:to-pink-900/20 rounded-2xl border border-indigo-200 dark:border-indigo-800">
-                    <Activity className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.prevent.clinical_title')}</h3>
-                  </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.cardiology.prevent.clinical_description')}</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <CalculatorInput
-                    label={t('calculators.cardiology.prevent.systolic_bp_label')}
-                    value={formData.systolicBP}
-                    onChange={(value) => setFormData({ ...formData, systolicBP: value })}
-                    type="number"
-                    placeholder={t('calculators.cardiology.prevent.systolic_bp_placeholder')}
-                    min={90}
-                    max={200}
-                    unit={t('calculators.cardiology.prevent.unit_mmhg')}
-                    error={errors.systolicBP}
-                    icon={TrendingUp}
-                  />
-
-                  <CalculatorInput
-                    label={t('calculators.cardiology.prevent.serum_creatinine_label')}
-                    value={formData.serumCreatinine}
-                    onChange={(value) => setFormData({ ...formData, serumCreatinine: value })}
-                    type="number"
-                    step={0.1}
-                    placeholder={t('calculators.cardiology.prevent.serum_creatinine_placeholder')}
-                    min={0.5}
-                    max={5.0}
-                    unit={t('calculators.cardiology.prevent.unit_mg_dl')}
-                    error={errors.serumCreatinine}
-                    icon={BarChart3}
-                  />
-                </div>
-
-                {/* Clinical Risk Factors */}
-                <div className="space-y-4">
-                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center space-x-2">
-                    <Stethoscope className="w-5 h-5 text-indigo-600" />
-                    <span>{t('calculators.cardiology.prevent.clinical_risk_factors_title')}</span>
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <CalculatorCheckbox
-                      label={t('calculators.cardiology.prevent.on_hypertension_meds_label')}
-                      checked={formData.onHypertensionMeds}
-                      onChange={(checked) => setFormData({ ...formData, onHypertensionMeds: checked })}
-                      description={t('calculators.cardiology.prevent.on_hypertension_meds_description')}
-                      icon={Activity}
-                    />
-
-                    <CalculatorCheckbox
-                      label={t('calculators.cardiology.prevent.on_statin_label')}
-                      checked={formData.onStatin}
-                      onChange={(checked) => setFormData({ ...formData, onStatin: checked })}
-                      description={t('calculators.cardiology.prevent.on_statin_description')}
-                      icon={BarChart3}
-                    />
-
-                    <CalculatorCheckbox
-                      label={t('calculators.cardiology.prevent.diabetes_label')}
-                      checked={formData.diabetes}
-                      onChange={(checked) => setFormData({ ...formData, diabetes: checked })}
-                      description={t('calculators.cardiology.prevent.diabetes_description')}
-                      icon={BarChart3}
-                    />
-
-                    <CalculatorCheckbox
-                      label={t('calculators.cardiology.prevent.current_smoker_label')}
-                      checked={formData.currentSmoker}
-                      onChange={(checked) => setFormData({ ...formData, currentSmoker: checked })}
-                      description={t('calculators.cardiology.prevent.current_smoker_description')}
-                      icon={AlertCircle}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-between">
-                  <CalculatorButton
-                    onClick={() => setCurrentStep(1)}
-                    variant="outline"
-                  >
-                    {t('calculators.cardiology.prevent.back_button')}
-                  </CalculatorButton>
-                  <CalculatorButton
-                    onClick={() => setCurrentStep(3)}
-                    className="enhanced-calculator-button"
-                  >
-                    {t('calculators.cardiology.prevent.next_laboratory_values')}
-                  </CalculatorButton>
-                </div>
-              </div>
-            )}
-
-            {/* Step 3: Laboratory Values */}
-            {currentStep === 3 && (
-              <div className="space-y-6 animate-fadeIn">
-                <div className="text-center mb-8">
-                  <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-pink-50 to-blue-50 dark:from-pink-900/20 dark:to-blue-900/20 rounded-2xl border border-pink-200 dark:border-pink-800">
-                    <BarChart3 className="w-6 h-6 text-pink-600 dark:text-pink-400" />
+                  <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-2xl border border-emerald-200 dark:border-teal-800">
+                    <BarChart3 className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
                     <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.prevent.lab_title')}</h3>
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.cardiology.prevent.lab_description')}</p>
@@ -1854,6 +1759,104 @@ const PREVENTCalculator: React.FC = () => {
                     unit={t('calculators.cardiology.prevent.unit_percent')}
                     icon={BarChart3}
                   />
+                </div>
+
+                <div className="flex justify-between">
+                  <CalculatorButton
+                    onClick={() => setCurrentStep(1)}
+                    variant="outline"
+                  >
+                    {t('calculators.cardiology.prevent.back_button')}
+                  </CalculatorButton>
+                  <CalculatorButton
+                    onClick={() => setCurrentStep(3)}
+                    className="enhanced-calculator-button"
+                  >
+                    {t('calculators.cardiology.prevent.next_clinical_factors')}
+                  </CalculatorButton>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3: Clinical Factors */}
+            {currentStep === 3 && (
+              <div className="space-y-6 animate-fadeIn">
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-500 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-2xl border border-purple-200 dark:border-purple-800">
+                    <Stethoscope className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.prevent.clinical_title')}</h3>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.cardiology.prevent.clinical_description')}</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <CalculatorInput
+                    label={t('calculators.cardiology.prevent.systolic_bp_label')}
+                    value={formData.systolicBP}
+                    onChange={(value) => setFormData({ ...formData, systolicBP: value })}
+                    type="number"
+                    placeholder={t('calculators.cardiology.prevent.systolic_bp_placeholder')}
+                    min={90}
+                    max={200}
+                    unit={t('calculators.cardiology.prevent.unit_mmhg')}
+                    error={errors.systolicBP}
+                    icon={TrendingUp}
+                  />
+
+                  <CalculatorInput
+                    label={t('calculators.cardiology.prevent.serum_creatinine_label')}
+                    value={formData.serumCreatinine}
+                    onChange={(value) => setFormData({ ...formData, serumCreatinine: value })}
+                    type="number"
+                    step={0.1}
+                    placeholder={t('calculators.cardiology.prevent.serum_creatinine_placeholder')}
+                    min={0.5}
+                    max={5.0}
+                    unit={t('calculators.cardiology.prevent.unit_mg_dl')}
+                    error={errors.serumCreatinine}
+                    icon={BarChart3}
+                  />
+                </div>
+
+                {/* Clinical Risk Factors */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center space-x-2">
+                    <Stethoscope className="w-5 h-5 text-purple-600" />
+                    <span>{t('calculators.cardiology.prevent.clinical_risk_factors_title')}</span>
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <CalculatorCheckbox
+                      label={t('calculators.cardiology.prevent.on_hypertension_meds_label')}
+                      checked={formData.onHypertensionMeds}
+                      onChange={(checked) => setFormData({ ...formData, onHypertensionMeds: checked })}
+                      description={t('calculators.cardiology.prevent.on_hypertension_meds_description')}
+                      icon={Activity}
+                    />
+
+                    <CalculatorCheckbox
+                      label={t('calculators.cardiology.prevent.on_statin_label')}
+                      checked={formData.onStatin}
+                      onChange={(checked) => setFormData({ ...formData, onStatin: checked })}
+                      description={t('calculators.cardiology.prevent.on_statin_description')}
+                      icon={BarChart3}
+                    />
+
+                    <CalculatorCheckbox
+                      label={t('calculators.cardiology.prevent.diabetes_label')}
+                      checked={formData.diabetes}
+                      onChange={(checked) => setFormData({ ...formData, diabetes: checked })}
+                      description={t('calculators.cardiology.prevent.diabetes_description')}
+                      icon={BarChart3}
+                    />
+
+                    <CalculatorCheckbox
+                      label={t('calculators.cardiology.prevent.current_smoker_label')}
+                      checked={formData.currentSmoker}
+                      onChange={(checked) => setFormData({ ...formData, currentSmoker: checked })}
+                      description={t('calculators.cardiology.prevent.current_smoker_description')}
+                      icon={AlertCircle}
+                    />
+                  </div>
                 </div>
 
                 <div className="flex justify-between">
@@ -2075,17 +2078,32 @@ const PREVENTCalculator: React.FC = () => {
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <Award className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                    <h4 className="font-semibold text-blue-800 dark:text-blue-200">AHA PREVENT™ 2023 Algorithm</h4>
+                    <h4 className="font-semibold text-blue-800 dark:text-blue-200">{t('calculators.cardiology.prevent.algorithm_2023_title')}</h4>
                   </div>
                   <div className="text-sm text-blue-700 dark:text-blue-300 space-y-2">
                     <p>This calculator implements the official American Heart Association PREVENT™ equations (2023):</p>
-                    <ul className="list-disc list-inside space-y-1 ml-2">
-                      <li>Derived from over 6 million diverse individuals</li>
-                      <li>Calculates 10-year risks for ASCVD, Heart Failure, and Total CVD</li>
-                      <li>For ages 30-59: Also provides 30-year risk estimates</li>
-                      <li>Includes novel risk factors (HbA1C, UACR, SDI) for enhanced assessment</li>
-                      <li>BMI and eGFR calculated using validated equations</li>
-                    </ul>
+                    <ul className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                  <li className="flex items-start space-x-3">
+                    <CheckCircle className="w-5 h-5 text-green-500 mt-1 flex-shrink-0" />
+                    <span>{t('calculators.cardiology.prevent.algorithm_2023_feature_1')}</span>
+                  </li>
+                  <li className="flex items-start space-x-3">
+                    <CheckCircle className="w-5 h-5 text-green-500 mt-1 flex-shrink-0" />
+                    <span>{t('calculators.cardiology.prevent.algorithm_2023_feature_2')}</span>
+                  </li>
+                  <li className="flex items-start space-x-3">
+                    <CheckCircle className="w-5 h-5 text-green-500 mt-1 flex-shrink-0" />
+                    <span>{t('calculators.cardiology.prevent.algorithm_2023_feature_3')}</span>
+                  </li>
+                  <li className="flex items-start space-x-3">
+                    <CheckCircle className="w-5 h-5 text-green-500 mt-1 flex-shrink-0" />
+                    <span>{t('calculators.cardiology.prevent.algorithm_2023_feature_4')}</span>
+                  </li>
+                  <li className="flex items-start space-x-3">
+                    <CheckCircle className="w-5 h-5 text-green-500 mt-1 flex-shrink-0" />
+                    <span>{t('calculators.cardiology.prevent.algorithm_2023_feature_5')}</span>
+                  </li>
+                </ul>
                   </div>
                 </div>
               </div>

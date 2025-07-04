@@ -24,8 +24,8 @@ function calculateDAPTScore(patientData) {
   if (priorPciMi) score += 1;
   if (paclitaxelStent) score += 1;
   if (stentDiameter < 3.0) score += 1; // Small stent
-  if (chfLvef) score += 1;
-  if (veinGraftPci) score += 1;
+  if (chfLvef) score += 2;
+  if (veinGraftPci) score += 2;
 
   // Clinical interpretation (matching actual implementation logic)
   let ischemicBenefit, bleedingRisk, netBenefit, recommendation, duration;
@@ -214,12 +214,34 @@ const daptTestCases = [
       veinGraftPci: false
     },
     expected: {
-      score: 3, // age 65-74: -1, smoking: +1, DM: +1, Prior PCI: +1, CHF: +1 = 3
+      score: 4, // age 65-74: -1, smoking: +1, DM: +1, Prior PCI: +1, CHF: +2 = 4
       ischemicBenefit: 'high',
       bleedingRisk: 'intermediate',
       netBenefit: 'uncertain',
       recommendation: 'Extended DAPT may be beneficial - individualize decision',
       duration: 'Consider 18 months of DAPT with careful monitoring'
+    }
+  },
+  {
+    name: 'Test 5: Patient with Vein Graft Stent',
+    input: {
+      age: 60,
+      cigaretteSmoking: false,
+      diabetes: false,
+      miAtPresentation: false,
+      priorPciMi: false,
+      paclitaxelStent: false,
+      stentDiameter: 3.1,
+      chfLvef: false,
+      veinGraftPci: true
+    },
+    expected: {
+      score: 2, // vein graft: +2
+      ischemicBenefit: 'high',
+      bleedingRisk: 'low',
+      netBenefit: 'favorable',
+      recommendation: 'Extended DAPT (beyond 12 months) likely beneficial',
+      duration: 'Consider 18-30 months of DAPT'
     }
   }
 ];

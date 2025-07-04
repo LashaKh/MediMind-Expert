@@ -1075,6 +1075,53 @@ export default {
     // Clinical management
     clinical_management: 'Clinical Management Recommendations',
     
+    // Risk interpretations
+    interpretation_template: 'GWTG-HF Risk Score: {{score}} points. {{interpretation}} Estimated in-hospital mortality: {{mortality}}%.',
+    interpretation_low: 'Low risk for in-hospital mortality',
+    interpretation_intermediate: 'Intermediate risk for in-hospital mortality',
+    interpretation_high: 'High risk for in-hospital mortality',
+    interpretation_very_high: 'Very high risk for in-hospital mortality',
+    
+    // Clinical recommendations - Base
+    recommendation_guideline_therapy: 'Guideline-directed medical therapy optimization',
+    recommendation_fluid_monitoring: 'Close monitoring of fluid balance and daily weights',
+    recommendation_vital_assessment: 'Regular assessment of vital signs and oxygen saturation',
+    recommendation_precipitating_factors: 'Evaluation for precipitating factors and triggers',
+    
+    // Clinical recommendations - Low risk
+    recommendation_standard_protocols: 'Standard heart failure management protocols',
+    recommendation_early_discharge: 'Consider early discharge planning with HF education',
+    recommendation_outpatient_followup: 'Outpatient cardiology follow-up within 7-14 days',
+    recommendation_medication_reconciliation: 'Medication reconciliation and optimization',
+    
+    // Clinical recommendations - Intermediate risk
+    recommendation_enhanced_monitoring: 'Enhanced inpatient monitoring with frequent assessments',
+    recommendation_telemetry_consideration: 'Consider telemetry monitoring for arrhythmias',
+    recommendation_nurse_navigator: 'HF nurse navigator involvement for care coordination',
+    recommendation_close_followup: 'Discharge planning with close follow-up within 3-7 days',
+    recommendation_biomarker_monitoring: 'Consider BNP/NT-proBNP trend monitoring',
+    
+    // Clinical recommendations - High risk
+    recommendation_intensive_monitoring: 'Intensive monitoring with continuous telemetry',
+    recommendation_early_consultation: 'Early cardiology consultation and co-management',
+    recommendation_icu_consideration: 'Consider ICU monitoring if clinically indicated',
+    recommendation_palliative_consult: 'Palliative care consultation for symptom management',
+    recommendation_advance_directive: 'Advanced directive discussions with patient/family',
+    recommendation_inotropic_support: 'Consider inotropic support if appropriate',
+    
+    // Clinical recommendations - Very high risk
+    recommendation_icu_level_care: 'ICU-level monitoring and care recommended',
+    recommendation_immediate_hf_consult: 'Immediate advanced heart failure consultation',
+    recommendation_mechanical_support: 'Consider mechanical circulatory support evaluation',
+    recommendation_goals_of_care: 'Palliative care consultation for goals of care',
+    recommendation_family_meetings: 'Family meetings for end-of-life planning',
+    recommendation_hospice_consideration: 'Consider hospice consultation if appropriate',
+    recommendation_multidisciplinary_team: 'Multidisciplinary team involvement',
+    
+    // Algorithm validation
+    algorithm_title: 'Enhanced GWTG-HF Algorithm',
+    algorithm_description: '✓ AHA Get With The Guidelines Validated • Enhanced risk stratification with comprehensive clinical recommendations',
+    
     // Risk reference ranges
     risk_reference_title: 'GWTG-HF Risk Score Reference',
     low_risk_range: 'Low Risk (≤25 points)',
@@ -1096,6 +1143,10 @@ export default {
     progress_vital_signs: 'Vital Signs',
     progress_laboratory: 'Laboratory',
     
+    // Action buttons
+    new_assessment: 'New Assessment',
+    modify_inputs: 'Modify Inputs',
+    
     // Footer validation text
     footer_validation_text: '✓ AHA Get With The Guidelines Validated • Enhanced risk stratification with comprehensive clinical recommendations',
     footer_based_on: 'Based on AHA Get With The Guidelines-Heart Failure (GWTG-HF) Registry • Enhanced risk assessment',
@@ -1114,7 +1165,41 @@ export default {
       sodium_range: 'Sodium must be between 115-160 mEq/L',
       heart_rate_required: 'Heart rate is required',
       heart_rate_range: 'Heart rate must be between 30-200 bpm'
-    }
+    },
+    
+    // From the Creator section
+    from_creator_title: 'From the Creator',
+    creator_name: 'Dr. Gregg C. Fonarow, MD',
+    creator_title_role: 'Professor of Medicine & Director, Ahmanson-UCLA Cardiomyopathy Center',
+    why_developed: 'Why GWTG-HF Was Developed',
+    why_developed_text: 'Risk models help inform patient triage and treatment decisions. The GWTG-HF Score was developed using data from almost 200 US hospitals to provide objective prognostic information that guides appropriate monitoring and treatment for heart failure patients.',
+    clinical_application: 'Clinical Application',
+    clinical_application_text: 'The GWTG-HF risk score quantifies patient risk at the point of care, facilitating patient triage and encouraging evidence-based therapy in highest-risk patients. It helps increase use of recommended medical therapy in high-risk patients while reducing resource utilization in low-risk patients.',
+    view_publications: 'View Dr. Fonarow\'s Publications',
+    pubmed_link_text: 'PubMed',
+    
+    // Evidence section
+    evidence_title: 'Evidence & Validation',
+    formula_title: 'Formula',
+    formula_description: 'Addition of lab and demographic values assigned point values.',
+    score_interpretation_title: 'Score Interpretation',
+    score_interpretation_ranges: [
+      { range: '0-33', mortality: '<1%' },
+      { range: '34-50', mortality: '1-5%' },
+      { range: '51-57', mortality: '5-10%' },
+      { range: '58-61', mortality: '10-15%' },
+      { range: '62-65', mortality: '15-20%' },
+      { range: '66-70', mortality: '20-30%' },
+      { range: '71-74', mortality: '30-40%' },
+      { range: '75-78', mortality: '40-50%' },
+      { range: '≥79', mortality: '>50%' }
+    ],
+    validation_cohort: 'Validated in 39,783 patients from 198 hospitals in the GWTG-HF registry (2005-2007)',
+    key_predictors: 'Key predictors: age, systolic blood pressure, BUN at admission, with additional contributions from heart rate, serum sodium, COPD presence, and race',
+    ehealthrecords_validation: 'Further validated in 13,163 patients using electronic health record data',
+    funding_note: 'GWTG-HF was supported in part by GlaxoSmithKline',
+    original_reference: 'Original Reference',
+    validation_reference: 'Validation Study'
   },
 
   // Heart Failure Staging Calculator - COMPLETE TRANSLATION IMPLEMENTATION
@@ -1232,7 +1317,215 @@ export default {
     results_algorithm_validation_title: 'ACC/AHA Heart Failure Staging',
     results_algorithm_validation_description: '✓ ACC/AHA Guidelines Validated • Evidence-based staging system',
     footer_info: 'Based on ACC/AHA Heart Failure Guidelines • Evidence-based staging system',
-    footer_validated: 'ACC/AHA Validated'
+    footer_validated: 'ACC/AHA Validated',
+
+    // Creator Section
+    creator_insights_title: 'About the Creator',
+    creator_name: 'Dr. Sharon Hunt',
+    creator_bio: 'Sharon Hunt, MD, is a professor of medicine at Stanford University as well as the Med Center Line. She is a member of the Cardiovascular Institute. Dr. Hunt\'s research focuses on cardiovascular diseases including heart failure and myocardial infarction and is a co-author on many ACC/AHA guidelines.',
+    creator_publications_link: 'To view Dr. Sharon Hunt\'s publications, visit',
+
+    // Evidence Section
+    evidence_title: 'Evidence & Formula',
+    evidence_formula_title: 'FORMULA',
+    evidence_stage_a_title: 'Stage A (at risk for heart failure)',
+    evidence_stage_a_definition: 'is defined as a patient without symptoms, structural heart disease, or cardiac biomarkers of stretch or injury but who has chronic condition(s) that put them at increased risk. These conditions include HTN, DM, atherosclerotic CVD, metabolic syndrome and obesity, exposure to cardiotoxic drugs, genetic variant carrier for cardiomyopathy, or a positive family history of cardiomyopathy.',
+    
+    evidence_stage_b_title: 'Stage B (pre-heart failure)',
+    evidence_stage_b_definition: 'is defined as evidence of one of the following AND no symptoms or signs of heart failure.',
+    evidence_stage_b_structural: '1. Structural heart disease includes:',
+    evidence_stage_b_structural_items: 'Reduced left or right ventricular systolic function (ie reduced ejection fraction or reduced strain)\nVentricular hypertrophy\nChamber enlargement\nWall motion abnormalities\nValvular heart disease',
+    evidence_stage_b_filling: '2. Evidence of increased filling pressures can be confirmed with:',
+    evidence_stage_b_filling_items: 'Invasive hemodynamic measurements or\nNoninvasive imaging such as echocardiography',
+    evidence_stage_b_biomarkers: '3. Patients with risk factors AND either',
+    evidence_stage_b_biomarkers_items: 'Increased BNP or\nPersistently elevated cardiac troponin',
+
+    evidence_stage_c_title: 'Stage C (symptomatic heart failure)',
+    evidence_stage_c_definition: 'is defined as structural heart disease with current or previous symptoms of heart failure.',
+
+    evidence_stage_d_title: 'Stage D (advanced heart failure)',
+    evidence_stage_d_definition: 'is defined as marked symptoms of heart failure that interfere with daily life and lead to recurrent hospitalizations, despite goal directed medical therapy (GDMT).',
+
+    evidence_appraisal_title: 'Evidence Appraisal',
+    evidence_appraisal_text: 'The ACC/AHA Heart Failure Stages were developed jointly by the American College of Cardiology (ACC) and American Heart Association (AHA) by expert consensus. They were intended to complement, but not replace, the more widely-used New York Heart Association (NYHA) functional classification, since contemporary treatment recommendations did not vary by class.',
+
+    evidence_literature_title: 'Literature',
+    evidence_guidelines_title: 'Clinical Practice Guidelines',
+    evidence_research_title: 'Research Paper',
+    evidence_research_citation: 'Heidenreich PA, Bozkurt B, Aguilar D, et al. 2022 AHA/ACC/HFSA Guideline for the Management of Heart Failure: A Report of the American College of Cardiology/American Heart Association Joint Committee on Clinical Practice Guidelines. Circulation. 2022;145(18):e895-e1032.',
+
+    // New fields for component
+    main_title: 'Heart Failure Staging Calculator',
+    main_subtitle: 'Advanced ACC/AHA classification system for precise heart failure staging with comprehensive clinical guidance',
+    calculate_stage: 'Calculate Heart Failure Stage',
+    analyzing_stage: 'Analyzing Heart Failure Stage...',
+    
+    // Stage A checkbox fields
+    stage_a_risk_factors_label: 'Patient with history of hypertension, cardiovascular disease, diabetes, or obesity',
+    stage_a_risk_factors_desc: 'Common cardiovascular risk factors that predispose to heart failure development',
+    stage_a_cardiotoxins_label: 'Patient using cardiotoxins',
+    stage_a_cardiotoxins_desc: 'Chemotherapy agents or radiation therapy with known cardiotoxic effects',
+    stage_a_genetic_label: 'Patient with genetic variant for cardiomyopathy or family history of cardiomyopathy',
+    stage_a_genetic_desc: 'Hereditary predisposition to heart failure and cardiomyopathy',
+    
+    // Stage B checkbox fields
+    stage_b_structural_label: 'Patient with structural heart disease',
+    stage_b_structural_desc: 'Reduced LVEF, wall motion abnormalities, LV hypertrophy, or significant valvular disease',
+    stage_b_filling_label: 'Patient with evidence of increased filling pressures',
+    stage_b_filling_desc: 'Invasive hemodynamic measurements or noninvasive imaging evidence of elevated pressures',
+    stage_b_biomarkers_label: 'Patient with increased natriuretic peptide levels or persistently elevated cardiac troponin',
+    stage_b_biomarkers_desc: 'Elevated BNP/NT-proBNP or persistent troponin elevation in absence of competing diagnoses',
+    
+    // Stage C checkbox field
+    stage_c_symptoms_label: 'Patient with current or previous signs/symptoms of heart failure',
+    stage_c_symptoms_desc: 'Shortness of breath, dyspnea on exertion, fatigue, reduced exercise tolerance, or fluid retention',
+    
+    // Stage D checkbox field
+    stage_d_advanced_label: 'Patient with marked heart failure symptoms that interfere with daily life and with recurrent hospitalizations despite attempts to optimize guideline-directed medical therapy',
+    stage_d_advanced_desc: 'Advanced heart failure requiring specialized care, mechanical support, or transplant evaluation',
+    
+    // Result descriptions
+    stage_a_result_desc: 'At high risk for heart failure development but without structural heart disease or symptoms',
+    stage_a_result_desc_low: 'Low risk for heart failure development with focus on primary prevention',
+    stage_b_result_desc: 'Structural heart disease without signs or symptoms of heart failure requiring preventive therapy',
+    stage_c_result_desc: 'Symptomatic heart failure with structural heart disease requiring guideline-directed medical therapy',
+    stage_d_result_desc: 'Advanced heart failure with refractory symptoms despite guideline-directed medical therapy requiring specialized interventions',
+    
+    // Stage A recommendations
+    stage_a_rec_1: 'Optimal hypertension management per current guidelines',
+    stage_a_rec_2: 'Comprehensive diabetes management with target HbA1c <7%',
+    stage_a_rec_3: 'Evidence-based lipid management and statin therapy',
+    stage_a_rec_4: 'Smoking cessation counseling and support programs',
+    stage_a_rec_5: 'Regular aerobic exercise and weight management',
+    stage_a_rec_6: 'Alcohol moderation and dietary sodium restriction',
+    stage_a_rec_low_1: 'Maintain healthy lifestyle with regular physical activity',
+    stage_a_rec_low_2: 'Regular cardiovascular health screening and monitoring',
+    stage_a_rec_low_3: 'Blood pressure monitoring and management',
+    stage_a_rec_low_4: 'Healthy diet with emphasis on fruits, vegetables, and whole grains',
+    
+    // Stage B recommendations
+    stage_b_rec_1: 'ACE inhibitor or ARB therapy for cardiac protection',
+    stage_b_rec_2: 'Beta-blocker therapy if prior MI or reduced ejection fraction',
+    stage_b_rec_3: 'Treatment of underlying cardiovascular conditions',
+    stage_b_rec_4: 'Comprehensive risk factor modification program',
+    stage_b_rec_5: 'Regular echocardiographic monitoring for progression',
+    stage_b_rec_6: 'Symptom surveillance and patient education',
+    
+    // Stage C recommendations
+    stage_c_rec_1: 'Comprehensive guideline-directed medical therapy optimization',
+    stage_c_rec_2: 'ACE inhibitor/ARB/ARNI therapy at maximum tolerated dose',
+    stage_c_rec_3: 'Evidence-based beta-blocker therapy initiation and titration',
+    stage_c_rec_4: 'Diuretics for optimal volume management and symptom control',
+    stage_c_rec_5: 'Device therapy evaluation (ICD/CRT) per current guidelines',
+    stage_c_rec_6: 'Regular monitoring and medication optimization',
+    
+    // Stage D recommendations
+    stage_d_rec_1: 'Advanced heart failure therapies and specialized care coordination',
+    stage_d_rec_2: 'Mechanical circulatory support evaluation with heart team consultation',
+    stage_d_rec_3: 'Heart transplantation evaluation at qualified center',
+    stage_d_rec_4: 'Palliative care consultation for symptom management',
+    stage_d_rec_5: 'Specialized heart failure center referral for comprehensive care',
+    stage_d_rec_6: 'Clinical trial consideration for experimental therapies',
+    
+    // Stage A next steps
+    stage_a_next_1: 'Primary care optimization with cardiovascular risk focus',
+    stage_a_next_2: 'Comprehensive risk factor modification program',
+    stage_a_next_3: 'Patient education on cardiovascular health',
+    stage_a_next_4: 'Regular monitoring with annual assessments',
+    stage_a_next_5: 'Baseline echocardiogram if multiple high-risk factors present',
+    stage_a_next_low_1: 'Continue routine preventive care',
+    stage_a_next_low_2: 'Annual health maintenance and screening',
+    stage_a_next_low_3: 'Lifestyle counseling and education',
+    stage_a_next_low_4: 'Regular follow-up with primary care provider',
+    
+    // Stage B next steps
+    stage_b_next_1: 'Cardiology evaluation for structural heart disease management',
+    stage_b_next_2: 'Annual or biannual echocardiogram monitoring',
+    stage_b_next_3: 'Optimal medical therapy initiation and titration',
+    stage_b_next_4: 'Patient education on heart failure symptoms recognition',
+    stage_b_next_5: 'Aggressive risk factor management and lifestyle modification',
+    
+    // Stage C next steps
+    stage_c_next_1: 'Cardiology referral for specialized heart failure management',
+    stage_c_next_2: 'Comprehensive echocardiographic evaluation and monitoring',
+    stage_c_next_3: 'Laboratory monitoring and medication adjustment',
+    stage_c_next_4: 'Patient education and self-care management training',
+    stage_c_next_5: 'Device therapy consideration and electrophysiology consultation',
+    
+    // Stage D next steps
+    stage_d_next_1: 'Immediate advanced heart failure specialist consultation',
+    stage_d_next_2: 'Comprehensive hemodynamic and functional assessment',
+    stage_d_next_3: 'Multidisciplinary heart team evaluation',
+    stage_d_next_4: 'End-of-life planning and advanced directive discussions',
+    
+    // Result card section
+    heart_failure_stage: 'Heart Failure Stage',
+    clinical_recommendations: 'Clinical Recommendations',
+    next_steps: 'Next Steps',
+    
+    // Creator section updates
+    creator_insights: 'Creator Insights',
+    creator_guidance: 'Expert guidance from leading heart failure specialists',
+    creator_full_title: 'Stanford University School of Medicine | Heart Failure Specialist',
+    creator_description: 'Dr. Hunt is a renowned cardiologist and Professor of Cardiovascular Medicine at Stanford University. She has dedicated her career to advancing heart failure care and has been instrumental in developing evidence-based staging systems that improve patient outcomes through early detection and intervention.',
+    view_publications: 'View Publications on PubMed',
+    
+    // Evidence section updates
+    evidence_staging_criteria: 'Evidence & Staging Criteria',
+    evidence_subtitle: 'ACC/AHA 2022 Heart Failure Guidelines - Complete Staging Framework',
+    evidence_reference: 'Reference:',
+    evidence_reference_text: '2022 AHA/ACC/HFSA Guideline for the Management of Heart Failure. Circulation. 2022;145(18):e895-e1032. This classification system enables early intervention and risk stratification to prevent progression and improve outcomes.',
+    
+    // Management recommendations section
+    management_recommendations: 'Management Recommendations',
+    management_subtitle: 'Stage-specific therapeutic strategies and clinical interventions',
+    
+    // Stage titles for management
+    stage_a_management_title: 'Risk Factor Management',
+    stage_b_management_title: 'Structural Heart Disease Prevention',
+    stage_c_management_title: 'Guideline-Directed Medical Therapy',
+    stage_d_management_title: 'Advanced Heart Failure Management',
+    
+    // Clinical note
+    clinical_note: 'Clinical Note:',
+    clinical_note_text: 'All recommendations should be individualized based on patient characteristics, comorbidities, and clinical judgment. Regular monitoring and medication optimization are essential for optimal outcomes at every stage.',
+
+    // Management Section
+    management_title: 'MANAGEMENT',
+    management_summary: 'Below is a summary of Class I recommendation statements. This list focuses on goal directed medical therapy (GDMT) and does not contain all guideline statements. Refer to the full guideline text for further details and management options.',
+
+    management_stage_a_title: 'Stage A: Patients at high risk of developing HF because of the presence of conditions that are strongly associated with the development of HF.',
+    management_stage_a_htn: 'In patients with HTN, blood pressure should be controlled with GDMT for HTN to prevent symptomatic heart failure. (LOE: A)',
+    management_stage_a_dm: 'In patients with type 2 diabetes mellitus and either established CVD or who are at high cardiovascular risk, an SGLT2i should be used to prevent hospitalizations for heart failure. (LOE: A)',
+    management_stage_a_lifestyle: 'Healthy lifestyle habits such as regular physical activity, maintaining normal weight, following a healthy diet, and avoiding smoking are helpful to reduce future risk of heart failure. (LOE: B-NR)',
+    management_stage_a_cvd: 'In patients with CVD, optimal management is recommended.',
+    management_stage_a_cardiotoxic: 'In patients with exposure to cardiotoxic agents, multidisciplinary management is recommended.',
+    management_stage_a_genetic: 'For patients who have first-degree relatives with genetic or inherited cardiomyopathies, genetic screening and counseling is recommended.',
+
+    management_stage_b_title: 'Stage B: Patients who have developed structural heart disease that is strongly associated with the development of HF but who have never shown signs or symptoms of HF.',
+    management_stage_b_ace: 'In patients with LVEF <40%, treatment with an ACEi is recommended to prevent symptomatic heart failure and reduce mortality. (LOE: A)',
+    management_stage_b_statin: 'In patients with a recent or remote history of MI or ACS, statins should be used to prevent symptomatic heart failure and adverse cardiovascular events. (LOE: B-R)',
+    management_stage_b_arb: 'In patients with a recent MI and LVEF <40%, treatment with an ARB is recommended if an ACEI is not tolerated. (LOE: A)',
+    management_stage_b_beta: 'In patients with LVEF <40% and a recent or remote history of MI or ACS, evidence-based beta blocker therapy is recommended. (LOE: B-R)',
+    management_stage_b_icd: 'In patients with an LVEF <30%, >1 year survival, > 40 days post MI, treatment with an ICD is recommended to reduce mortality and for primary prevention of sudden cardiac death. (LOE: B-R)',
+    management_stage_b_beta_prevent: 'In patients with LVEF <40%, beta blockers should be used to prevent symptomatic heart failure. (LOE: C-LD)',
+
+    management_stage_c_title: 'Stage C: Patients who have current or prior symptoms of HF associated with underlying structural heart disease.',
+    management_stage_c_diuretics: 'In patients who have fluid retention, diuretics are recommended to relieve congestion, improve symptoms, and prevent worsening heart failure. (Level of Evidence: B-NR)',
+    management_stage_c_arni: 'In patients with HFrEF and NYHA class II or III symptoms, the use of an ARNi is recommended to reduce morbidity and mortality. (LOE: A)',
+    management_stage_c_ace: 'The use of ACEi is beneficial to reduce morbidity and mortality when use of an ARNi is not feasible. (LOE: A)',
+    management_stage_c_arb: 'The use of an ARB is recommended only if intolerant to an ACEi or ARNi. (LOE: A)',
+    management_stage_c_arni_switch: 'In patients with chronic symptomatic HFrEF NYHA class II or III who are able to tolerate ACEi or ARB, replacement with an ARNi is recommended to further reduce morbidity and mortality. (LOE: B-R)',
+    management_stage_c_beta_blocker: 'If a beta blocker is indicated, use of bisoprolol, carvedilol or metoprolol succinate is recommended to reduce mortality and hospitalizations. (LOE: A)',
+    management_stage_c_mra: 'In patients with HFrEF and NYHA class II-IV symptoms, spironolactone or eplerenone is recommended to reduce morbidity and mortality. (LOE: A) eGFR should be >30 ml/min/1.73m2 and serum potassium should be <5.0 mEq/L.',
+    management_stage_c_sglt2i: 'In patients with symptomatic chronic HFrEF, SGLT2i are recommended to reduce hospitalizations for heart failure and cardiovascular mortality, regardless of the presence or absence of type 2 diabetes. (LOE: A)',
+    management_stage_c_hydralazine: 'For patients who self-identify as African American, who have NYHA class III-IV HFrEF, and who are receiving optimal medical therapy, the combination of hydralazine and isosorbide dinitrate is recommended to improve symptoms and reduce morbidity and mortality. (LOE: A)',
+
+    management_stage_d_title: 'Stage D: Patients with advanced structural heart disease and marked symptoms of HF at rest despite maximal medical therapy and who require specialized interventions.',
+    management_stage_d_referral: 'In patients with advanced heart failure, timely referral for HF specialty care is recommended (if consistent with patient\'s goals) to review management and advanced HF therapies. (LOE: C-LD)',
+    management_stage_d_lvad: 'In select patients with advanced HFrEF with NYHA class IV symptoms who are deemed to be dependent on continuous IV inotropes or temporary MCS, durable LVAD implantation is effective to improve functional status, QOL, and survival. (LOE: A)',
+    management_stage_d_transplant: 'For selected patients with advanced HF despite GDMT, cardiac transplantation is indicated to improve survival and QOL. (LOE: C-LD)',
+    management_stage_d_assessment: 'In patients hospitalized with HF, severity of congestion and adequacy of perfusion should be assessed to guide triage and initial therapy. (LOE: C-LD).'
   },
 
   // SHFM Risk Calculator
@@ -1721,6 +2014,8 @@ export default {
     step_3_description: 'Blood pressure and medical history',
     step_4_title: 'Enhanced Factors',
     step_4_description: 'Optional CKM-E parameters (Optional)',
+    step_5_title: 'Risk Assessment',
+    step_5_description: 'Comprehensive cardiovascular risk analysis',
     
     // Progress indicators
     progress_complete: 'Complete',

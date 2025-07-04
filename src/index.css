@@ -581,3 +581,359 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
 }
+
+/* GWTG-HF Calculator Premium Design System */
+@keyframes premiumFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes liquidMorph {
+  0%, 100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    transform: rotate(0deg);
+  }
+  25% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+    transform: rotate(90deg);
+  }
+  50% {
+    border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%;
+    transform: rotate(180deg);
+  }
+  75% {
+    border-radius: 40% 60% 60% 40% / 70% 30% 40% 60%;
+    transform: rotate(270deg);
+  }
+}
+
+@keyframes neuronPulse {
+  0%, 100% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes heartbeatAdvanced {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  14% {
+    transform: scale(1.3) rotate(-5deg);
+  }
+  28% {
+    transform: scale(1) rotate(0deg);
+  }
+  42% {
+    transform: scale(1.3) rotate(5deg);
+  }
+  70% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes dataFlow {
+  0% {
+    transform: translateX(-100%) translateY(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%) translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes sophisticatedReveal {
+  0% {
+    clip-path: circle(0% at 50% 50%);
+    opacity: 0;
+  }
+  100% {
+    clip-path: circle(100% at 50% 50%);
+    opacity: 1;
+  }
+}
+
+@keyframes numberTicker {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes glassRefraction {
+  0%, 100% {
+    backdrop-filter: blur(20px) brightness(1.1);
+  }
+  50% {
+    backdrop-filter: blur(25px) brightness(1.2);
+  }
+}
+
+/* Premium Glassmorphism Components */
+.premium-glass {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  backdrop-filter: blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
+.dark .premium-glass {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Advanced Neumorphism */
+.premium-neumorphic {
+  background: linear-gradient(145deg, #ffffff, #f3f4f6);
+  box-shadow: 20px 20px 60px #d1d5db, -20px -20px 60px #ffffff;
+}
+
+.dark .premium-neumorphic {
+  background: linear-gradient(145deg, #1f2937, #111827);
+  box-shadow: 20px 20px 60px #0f1117, -20px -20px 60px #2d3748;
+}
+
+/* Premium Gradients */
+.gradient-premium-cardio {
+  background: linear-gradient(135deg, #dc2626 0%, #ea580c 25%, #f59e0b 50%, #eab308 100%);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+.gradient-premium-health {
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradient 12s ease infinite;
+}
+
+.gradient-premium-risk {
+  background: conic-gradient(from 180deg at 50% 50%, #16a34a 0deg, #eab308 90deg, #ea580c 180deg, #dc2626 270deg, #16a34a 360deg);
+  background-size: 200% 200%;
+  animation: gradient 8s linear infinite;
+}
+
+/* Micro-interactions */
+.premium-hover {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.premium-hover:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Advanced Input Styling */
+.premium-input {
+  position: relative;
+  overflow: hidden;
+}
+
+.premium-input::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.4), transparent);
+  transition: left 0.5s;
+}
+
+.premium-input:focus-within::before {
+  left: 100%;
+}
+
+/* Sophisticated Loading States */
+.premium-skeleton {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Advanced Card Animations */
+.card-3d-hover {
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+}
+
+.card-3d-hover:hover {
+  transform: rotateY(10deg) rotateX(10deg) scale(1.05);
+}
+
+/* Premium Button Effects */
+.btn-premium {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.btn-premium::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+  z-index: -1;
+}
+
+.btn-premium:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Ensure button text contrast */
+.btn-premium {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Floating Elements */
+.float-element {
+  animation: floatAdvanced 6s ease-in-out infinite;
+}
+
+@keyframes floatAdvanced {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-20px) rotate(2deg);
+  }
+  75% {
+    transform: translateY(-20px) rotate(-2deg);
+  }
+}
+
+/* Premium Tooltips */
+.tooltip-premium {
+  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Advanced Progress Indicators */
+.progress-premium {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background-size: 200% 100%;
+  animation: progressFlow 2s linear infinite;
+}
+
+@keyframes progressFlow {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 200% 0%;
+  }
+}
+
+/* Result Display Animations */
+.result-reveal {
+  animation: sophisticatedReveal 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Premium Shadows */
+.shadow-premium {
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+.dark .shadow-premium {
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 2px 4px -1px rgba(0, 0, 0, 0.2),
+    0 20px 25px -5px rgba(0, 0, 0, 0.3),
+    0 10px 10px -5px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* Animated Backgrounds */
+.animated-bg-premium {
+  position: relative;
+  overflow: hidden;
+}
+
+.animated-bg-premium::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+  animation: liquidMorph 20s ease-in-out infinite;
+}
+
+/* Premium Focus States */
+.focus-premium:focus {
+  outline: none;
+  box-shadow: 
+    0 0 0 3px rgba(99, 102, 241, 0.1),
+    0 0 0 6px rgba(99, 102, 241, 0.05),
+    0 0 20px rgba(99, 102, 241, 0.2);
+}
+
+/* Animation Utilities */
+.animate-premiumFadeIn {
+  animation: premiumFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-heartbeatAdvanced {
+  animation: heartbeatAdvanced 2s ease-in-out infinite;
+}
+
+.animate-dataFlow {
+  animation: dataFlow 3s linear infinite;
+}
+
+.animate-neuronPulse {
+  animation: neuronPulse 2s ease-in-out infinite;
+}
+
+.animate-numberTicker {
+  animation: numberTicker 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-glassRefraction {
+  animation: glassRefraction 3s ease-in-out infinite;
+}

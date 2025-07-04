@@ -95,8 +95,8 @@ export default function DAPTCalculator() {
     if (formData.priorPCIOrMI) score += 1;
     if (formData.paclitaxelElutingStent) score += 1;
     if (stentDiameter < 3) score += 1;
-    if (formData.chfOrLVEF) score += 1;
-    if (formData.veinGraftPCI) score += 1;
+    if (formData.chfOrLVEF) score += 2;
+    if (formData.veinGraftPCI) score += 2;
 
     // Enhanced clinical interpretation with risk-benefit analysis
     let ischemicBenefit: 'high' | 'intermediate' | 'low';

@@ -18,6 +18,7 @@ interface MAGGICData {
   systolic_bp: string;
   diabetes: boolean;
   copd: boolean;
+  smoker: boolean;
   first_diagnosis: boolean; // Within 18 months
   bmi: string;
   creatinine: string;
@@ -45,6 +46,7 @@ export const MAGGICCalculator: React.FC = () => {
     systolic_bp: '',
     diabetes: false,
     copd: false,
+    smoker: false,
     first_diagnosis: false,
     bmi: '',
     creatinine: '',
@@ -72,9 +74,7 @@ export const MAGGICCalculator: React.FC = () => {
       newErrors.gender = t('calculators.cardiology.maggic.validation_gender');
     }
 
-    if (formData.nyha_class === 0) {
-      newErrors.nyha_class = t('calculators.cardiology.maggic.validation_nyha_class');
-    }
+    // NYHA class validation removed - not part of MAGGIC formula
 
     const lvef = parseInt(formData.lv_ejection_fraction);
     if (!formData.lv_ejection_fraction || isNaN(lvef)) {
@@ -100,8 +100,8 @@ export const MAGGICCalculator: React.FC = () => {
     const creatinine = parseFloat(formData.creatinine);
     if (!formData.creatinine || isNaN(creatinine)) {
       newErrors.creatinine = t('calculators.cardiology.maggic.validation_creatinine');
-    } else if (creatinine < 0.5 || creatinine > 10) {
-      newErrors.creatinine = t('calculators.cardiology.maggic.validation_creatinine');
+    } else if (creatinine < 50 || creatinine > 500) {
+      newErrors.creatinine = 'Creatinine should be between 50-500 μmol/L';
     }
 
     setErrors(newErrors);
@@ -118,58 +118,110 @@ export const MAGGICCalculator: React.FC = () => {
 
     let score = 0;
 
-    // Age
-    if (age >= 80) score += 5;
-    else if (age >= 70) score += 3;
-    else if (age >= 60) score += 1;
-
-    // Gender (Male)
+    // Basic Risk Factors
+    // Male
     if (formData.gender === 'male') score += 1;
 
-    // LVEF
-    if (lvef < 20) score += 7;
-    else if (lvef < 25) score += 6;
-    else if (lvef < 30) score += 5;
-    else if (lvef < 35) score += 3;
-    else if (lvef < 40) score += 2;
-    else if (lvef < 45) score += 1;
+    // Smoker
+    if (formData.smoker) score += 1;
 
-    // NYHA Class
-    if (formData.nyha_class === 4) score += 6;
-    else if (formData.nyha_class === 3) score += 2;
-    // NYHA Class 1-2 = 0 points
-
-    // Systolic BP
-    if (systolic_bp < 110) score += 2;
-    else if (systolic_bp < 120) score += 1;
-
-    // Diabetes
+    // Diabetic
     if (formData.diabetes) score += 3;
 
     // COPD
     if (formData.copd) score += 2;
 
-    // First diagnosis within 18 months
+    // Heart failure first diagnosed >18 months ago
+    // If first_diagnosis is true (>18 months ago), score = +2
+    // If first_diagnosis is false (within 18 months), score = 0
     if (formData.first_diagnosis) score += 2;
+
+    // Not on beta blocker
+    if (!formData.beta_blocker) score += 3;
+
+    // Not on ACE-I/ARB
+    if (!formData.ace_inhibitor) score += 1;
+
+    // Ejection Fraction
+    if (lvef < 20) score += 7;
+    else if (lvef >= 20 && lvef <= 24) score += 6;
+    else if (lvef >= 25 && lvef <= 29) score += 5;
+    else if (lvef >= 30 && lvef <= 34) score += 3;
+    else if (lvef >= 35 && lvef <= 39) score += 2;
+    // EF >= 40 = 0 points
+
+    // NYHA Class is NOT part of the MAGGIC formula - removed to match official formula
+
+    // Creatinine (μmol/L)
+    if (creatinine >= 250) score += 8;
+    else if (creatinine >= 210 && creatinine < 250) score += 6;
+    else if (creatinine >= 170 && creatinine < 210) score += 5;
+    else if (creatinine >= 150 && creatinine < 170) score += 4;
+    else if (creatinine >= 130 && creatinine < 150) score += 3;
+    else if (creatinine >= 110 && creatinine < 130) score += 2;
+    else if (creatinine >= 90 && creatinine < 110) score += 1;
+    // Creatinine < 90 = 0 points
 
     // BMI
     if (bmi < 15) score += 6;
-    else if (bmi < 20) score += 5;
-    else if (bmi < 25) score += 3;
-    else if (bmi < 30) score += 2;
+    else if (bmi >= 15 && bmi < 20) score += 5;
+    else if (bmi >= 20 && bmi < 25) score += 3;
+    else if (bmi >= 25 && bmi < 30) score += 2;
     // BMI >= 30 = 0 points
 
-    // Creatinine
-    if (creatinine >= 2.75) score += 4;
-    else if (creatinine >= 2.25) score += 3;
-    else if (creatinine >= 1.75) score += 2;
-    else if (creatinine >= 1.25) score += 1;
+    // Extra points for Systolic BP based on EF
+    if (lvef < 30) {
+      // EF < 30
+      if (systolic_bp < 110) score += 5;
+      else if (systolic_bp >= 110 && systolic_bp < 120) score += 4;
+      else if (systolic_bp >= 120 && systolic_bp < 130) score += 3;
+      else if (systolic_bp >= 130 && systolic_bp < 140) score += 2;
+      else if (systolic_bp >= 140 && systolic_bp < 150) score += 1;
+      // >= 150 = 0 points
+    } else if (lvef >= 30 && lvef <= 39) {
+      // EF 30-39
+      if (systolic_bp < 110) score += 3;
+      else if (systolic_bp >= 110 && systolic_bp < 120) score += 2;
+      else if (systolic_bp >= 120 && systolic_bp < 130) score += 1;
+      else if (systolic_bp >= 130 && systolic_bp < 140) score += 1;
+      // >= 140 = 0 points
+    } else if (lvef >= 40) {
+      // EF >= 40
+      if (systolic_bp < 110) score += 2;
+      else if (systolic_bp >= 110 && systolic_bp < 120) score += 1;
+      else if (systolic_bp >= 120 && systolic_bp < 130) score += 1;
+      // >= 130 = 0 points
+    }
 
-    // Not on beta-blocker
-    if (!formData.beta_blocker) score += 3;
-
-    // Not on ACE inhibitor/ARB
-    if (!formData.ace_inhibitor) score += 1;
+    // Extra points for Age based on EF
+    if (lvef < 30) {
+      // EF < 30
+      if (age >= 80) score += 10;
+      else if (age >= 75 && age < 80) score += 8;
+      else if (age >= 70 && age < 75) score += 6;
+      else if (age >= 65 && age < 70) score += 4;
+      else if (age >= 60 && age < 65) score += 2;
+      else if (age >= 55 && age < 60) score += 1;
+      // < 55 = 0 points
+    } else if (lvef >= 30 && lvef <= 39) {
+      // EF 30-39
+      if (age >= 80) score += 13;
+      else if (age >= 75 && age < 80) score += 10;
+      else if (age >= 70 && age < 75) score += 8;
+      else if (age >= 65 && age < 70) score += 6;
+      else if (age >= 60 && age < 65) score += 4;
+      else if (age >= 55 && age < 60) score += 2;
+      // < 55 = 0 points
+    } else if (lvef >= 40) {
+      // EF >= 40
+      if (age >= 80) score += 15;
+      else if (age >= 75 && age < 80) score += 12;
+      else if (age >= 70 && age < 75) score += 9;
+      else if (age >= 65 && age < 70) score += 7;
+      else if (age >= 60 && age < 65) score += 5;
+      else if (age >= 55 && age < 60) score += 3;
+      // < 55 = 0 points
+    }
 
     // Calculate mortality risks
     let oneYearMortality: number;
@@ -293,11 +345,12 @@ export const MAGGICCalculator: React.FC = () => {
       systolic_bp: '',
       diabetes: false,
       copd: false,
+      smoker: false,
       first_diagnosis: false,
       bmi: '',
       creatinine: '',
-      beta_blocker: true,
-      ace_inhibitor: true,
+      beta_blocker: false,
+      ace_inhibitor: false,
     });
     setResult(null);
     setErrors({});
@@ -395,7 +448,7 @@ export const MAGGICCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.maggic.age_label')}
                     value={formData.age}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, age: e.target.value })}
+                    onChange={(value: string) => setFormData({ ...formData, age: value })}
                     type="number"
                     min={18}
                     max={120}
@@ -407,7 +460,7 @@ export const MAGGICCalculator: React.FC = () => {
                   <CalculatorSelect
                     label={t('calculators.cardiology.maggic.gender_label')}
                     value={formData.gender}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, gender: e.target.value as 'male' | 'female' | '' })}
+                    onChange={(value: string) => setFormData({ ...formData, gender: value as 'male' | 'female' | '' })}
                     options={[
                       { value: '', label: t('calculators.cardiology.maggic.gender_placeholder') },
                       { value: 'male', label: t('calculators.cardiology.maggic.gender_male') },
@@ -420,7 +473,7 @@ export const MAGGICCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.maggic.lvef_label')}
                     value={formData.lv_ejection_fraction}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, lv_ejection_fraction: e.target.value })}
+                    onChange={(value: string) => setFormData({ ...formData, lv_ejection_fraction: value })}
                     type="number"
                     min={10}
                     max={80}
@@ -432,8 +485,7 @@ export const MAGGICCalculator: React.FC = () => {
                   <CalculatorSelect
                     label={t('calculators.cardiology.maggic.nyha_class_label')}
                     value={formData.nyha_class === 0 ? '' : formData.nyha_class.toString()}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                      const value = e.target.value;
+                    onChange={(value: string) => {
                       setFormData({ ...formData, nyha_class: value === '' ? 0 : parseInt(value) as 1 | 2 | 3 | 4 });
                     }}
                     options={[
@@ -474,7 +526,7 @@ export const MAGGICCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.maggic.systolic_bp_label')}
                     value={formData.systolic_bp}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, systolic_bp: e.target.value })}
+                    onChange={(value: string) => setFormData({ ...formData, systolic_bp: value })}
                     type="number"
                     placeholder={t('calculators.cardiology.maggic.systolic_bp_placeholder')}
                     min={60}
@@ -487,7 +539,7 @@ export const MAGGICCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.maggic.bmi_label')}
                     value={formData.bmi}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, bmi: e.target.value })}
+                    onChange={(value: string) => setFormData({ ...formData, bmi: value })}
                     type="number"
                     step={0.1}
                     placeholder={t('calculators.cardiology.maggic.bmi_placeholder')}
@@ -498,14 +550,16 @@ export const MAGGICCalculator: React.FC = () => {
                   />
 
                   <CalculatorInput
-                    label={t('calculators.cardiology.maggic.creatinine_label')}
+                    label="Creatinine (μmol/L)"
                     value={formData.creatinine}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, creatinine: e.target.value })}
+                    onChange={(value: string) => setFormData({ ...formData, creatinine: value })}
                     type="number"
-                    step={0.1}
-                    placeholder={t('calculators.cardiology.maggic.creatinine_placeholder')}
-                    min={0.5}
-                    max={10}
+                    step={1}
+                    placeholder="e.g., 90"
+                    min={50}
+                    max={500}
+                    unit="μmol/L"
+                    error={errors.creatinine}
                     icon={Activity}
                     className="transition-all duration-300"
                   />
@@ -521,7 +575,7 @@ export const MAGGICCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.cardiology.maggic.diabetes_label')}
                       checked={formData.diabetes}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, diabetes: e.target.checked })}
+                      onChange={(checked: boolean) => setFormData({ ...formData, diabetes: checked })}
                       description="History of diabetes mellitus"
                       icon={BarChart3}
                     />
@@ -529,16 +583,24 @@ export const MAGGICCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.cardiology.maggic.copd_label')}
                       checked={formData.copd}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, copd: e.target.checked })}
+                      onChange={(checked: boolean) => setFormData({ ...formData, copd: checked })}
                       description="COPD or severe lung disease"
                       icon={Activity}
                     />
 
                     <CalculatorCheckbox
-                      label={t('calculators.cardiology.maggic.first_diagnosis_label')}
+                      label="Smoker"
+                      checked={formData.smoker}
+                      onChange={(checked: boolean) => setFormData({ ...formData, smoker: checked })}
+                      description="Current or former smoker"
+                      icon={AlertCircle}
+                    />
+
+                    <CalculatorCheckbox
+                      label="Heart failure first diagnosed >18 months ago"
                       checked={formData.first_diagnosis}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, first_diagnosis: e.target.checked })}
-                      description="First HF diagnosis within 18 months"
+                      onChange={(checked: boolean) => setFormData({ ...formData, first_diagnosis: checked })}
+                      description="Chronic heart failure (>18 months ago)"
                       icon={Clock}
                     />
                   </div>
@@ -582,7 +644,7 @@ export const MAGGICCalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.cardiology.maggic.beta_blocker_label')}
                         checked={formData.beta_blocker}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, beta_blocker: e.target.checked })}
+                        onChange={(checked: boolean) => setFormData({ ...formData, beta_blocker: checked })}
                         description="Evidence-based beta-blocker (carvedilol, metoprolol, bisoprolol)"
                         icon={Pill}
                       />
@@ -590,7 +652,7 @@ export const MAGGICCalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.cardiology.maggic.ace_inhibitor_label')}
                         checked={formData.ace_inhibitor}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, ace_inhibitor: e.target.checked })}
+                        onChange={(checked: boolean) => setFormData({ ...formData, ace_inhibitor: checked })}
                         description="Neurohormonal blockade therapy"
                         icon={Pill}
                       />

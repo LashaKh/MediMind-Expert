@@ -652,6 +652,53 @@ export default {
     heart_rate_factor: 'ЧСС',
     // Clinical management
     clinical_management: 'Рекомендации по клиническому ведению',
+    
+    // Risk interpretations
+    interpretation_template: 'Шкала риска GWTG-HF: {{score}} баллов. {{interpretation}} Предполагаемая внутрибольничная смертность: {{mortality}}%.',
+    interpretation_low: 'Низкий риск внутрибольничной смертности',
+    interpretation_intermediate: 'Промежуточный риск внутрибольничной смертности',
+    interpretation_high: 'Высокий риск внутрибольничной смертности',
+    interpretation_very_high: 'Очень высокий риск внутрибольничной смертности',
+    
+    // Clinical recommendations - Base
+    recommendation_guideline_therapy: 'Оптимизация терапии в соответствии с рекомендациями',
+    recommendation_fluid_monitoring: 'Тщательный мониторинг баланса жидкости и ежедневного веса',
+    recommendation_vital_assessment: 'Регулярная оценка жизненных показателей и насыщения кислородом',
+    recommendation_precipitating_factors: 'Оценка провоцирующих факторов и триггеров',
+    
+    // Clinical recommendations - Low risk
+    recommendation_standard_protocols: 'Стандартные протоколы лечения сердечной недостаточности',
+    recommendation_early_discharge: 'Рассмотреть раннюю выписку с обучением по СН',
+    recommendation_outpatient_followup: 'Амбулаторное кардиологическое наблюдение через 7-14 дней',
+    recommendation_medication_reconciliation: 'Согласование и оптимизация медикаментов',
+    
+    // Clinical recommendations - Intermediate risk
+    recommendation_enhanced_monitoring: 'Расширенный стационарный мониторинг с частыми оценками',
+    recommendation_telemetry_consideration: 'Рассмотреть телеметрический мониторинг на аритмии',
+    recommendation_nurse_navigator: 'Участие медсестры-навигатора по СН для координации ухода',
+    recommendation_close_followup: 'Планирование выписки с тесным наблюдением через 3-7 дней',
+    recommendation_biomarker_monitoring: 'Рассмотреть мониторинг динамики BNP/NT-proBNP',
+    
+    // Clinical recommendations - High risk
+    recommendation_intensive_monitoring: 'Интенсивный мониторинг с непрерывной телеметрией',
+    recommendation_early_consultation: 'Ранняя кардиологическая консультация и совместное ведение',
+    recommendation_icu_consideration: 'Рассмотреть мониторинг в ОРИТ при клинических показаниях',
+    recommendation_palliative_consult: 'Консультация паллиативной помощи для управления симптомами',
+    recommendation_advance_directive: 'Обсуждение предварительных распоряжений с пациентом/семьей',
+    recommendation_inotropic_support: 'Рассмотреть инотропную поддержку при необходимости',
+    
+    // Clinical recommendations - Very high risk
+    recommendation_icu_level_care: 'Рекомендуется мониторинг и уход уровня ОРИТ',
+    recommendation_immediate_hf_consult: 'Немедленная консультация по продвинутой сердечной недостаточности',
+    recommendation_mechanical_support: 'Рассмотреть оценку механической поддержки кровообращения',
+    recommendation_goals_of_care: 'Консультация паллиативной помощи по целям ухода',
+    recommendation_family_meetings: 'Семейные встречи для планирования конца жизни',
+    recommendation_hospice_consideration: 'Рассмотреть консультацию хосписа при необходимости',
+    recommendation_multidisciplinary_team: 'Участие мультидисциплинарной команды',
+    
+    // Algorithm validation
+    algorithm_title: 'Расширенный алгоритм GWTG-HF',
+    algorithm_description: '✓ Валидирован AHA Get With The Guidelines • Расширенная стратификация риска с комплексными клиническими рекомендациями',
     // Risk reference ranges
     risk_reference_title: 'Справочник по оценке риска GWTG-HF',
     low_risk_range: 'Низкий риск (≤25 баллов)',
@@ -661,7 +708,60 @@ export default {
     high_risk_range: 'Высокий риск (36-45 баллов)',
     high_mortality: '4-8% риск смертности',
     very_high_risk_range: 'Очень высокий риск (>45 баллов)',
-    very_high_mortality: '>8% риск смертности'
+    very_high_mortality: '>8% риск смертности',
+    
+    // From the Creator section
+    from_creator_title: 'От создателя',
+    creator_name: 'Д-р Грегг К. Фонаров, MD',
+    creator_title_role: 'Профессор медицины и директор Центра кардиомиопатии Ахмансона-UCLA',
+    why_developed: 'Почему был разработан GWTG-HF',
+    why_developed_text: 'Модели риска помогают информировать о сортировке пациентов и решениях о лечении. Оценка GWTG-HF была разработана с использованием данных почти 200 больниц США для предоставления объективной прогностической информации, которая направляет соответствующий мониторинг и лечение пациентов с сердечной недостаточностью.',
+    clinical_application: 'Клиническое применение',
+    clinical_application_text: 'Шкала риска GWTG-HF количественно определяет риск пациента в точке оказания помощи, облегчая сортировку пациентов и поощряя доказательную терапию у пациентов с самым высоким риском. Это помогает увеличить использование рекомендованной медицинской терапии у пациентов высокого риска при одновременном снижении использования ресурсов у пациентов низкого риска.',
+    view_publications: 'Просмотреть публикации д-ра Фонарова',
+    pubmed_link_text: 'PubMed',
+    
+    // Evidence section
+    evidence_title: 'Доказательства и валидация',
+    formula_title: 'Формула',
+    formula_description: 'Сложение лабораторных и демографических значений с присвоенными баллами.',
+    score_interpretation_title: 'Интерпретация баллов',
+    score_interpretation_ranges: [
+      { range: '0-33', mortality: '<1%' },
+      { range: '34-50', mortality: '1-5%' },
+      { range: '51-57', mortality: '5-10%' },
+      { range: '58-61', mortality: '10-15%' },
+      { range: '62-65', mortality: '15-20%' },
+      { range: '66-70', mortality: '20-30%' },
+      { range: '71-74', mortality: '30-40%' },
+      { range: '75-78', mortality: '40-50%' },
+      { range: '≥79', mortality: '>50%' }
+    ],
+    validation_cohort: 'Валидировано на 39 783 пациентах из 198 больниц в реестре GWTG-HF (2005-2007)',
+    key_predictors: 'Ключевые предикторы: возраст, систолическое артериальное давление, BUN при поступлении, с дополнительным вкладом частоты сердечных сокращений, натрия сыворотки, наличия ХОБЛ и расы',
+    ehealthrecords_validation: 'Дополнительно валидировано на 13 163 пациентах с использованием данных электронных медицинских записей',
+    funding_note: 'GWTG-HF был частично поддержан GlaxoSmithKline',
+    original_reference: 'Оригинальная ссылка',
+    validation_reference: 'Исследование валидации',
+    
+    // Enhanced alert section
+    enhanced_alert_title: 'Расширенная оценка риска GWTG-HF',
+    enhanced_alert_description: 'Доказательное прогнозирование внутрибольничной смертности для пациентов с сердечной недостаточностью. Валидирует стратификацию риска и направляет решения по интенсивной терапии для оптимальных результатов пациентов.',
+    enhanced_alert_badge: 'AHA Get With The Guidelines Валидировано - Расширенный анализ риска',
+    
+    // Progress step labels  
+    progress_demographics: 'Демография',
+    progress_vital_signs: 'Витальные показатели',
+    progress_laboratory: 'Лаборатория',
+    
+    // Action buttons
+    new_assessment: 'Новая оценка',
+    modify_inputs: 'Изменить данные',
+    
+    // Footer validation text
+    footer_validation_text: '✓ AHA Get With The Guidelines Валидировано • Расширенная стратификация риска с комплексными клиническими рекомендациями',
+    footer_based_on: 'Основано на реестре AHA Get With The Guidelines-Heart Failure (GWTG-HF) • Расширенная оценка риска',
+    footer_guidelines_validated: 'Валидировано рекомендациями'
   },
   sts: {
     title: 'Калькулятор риска взрослой кардиохирургии STS',

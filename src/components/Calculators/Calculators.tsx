@@ -341,7 +341,7 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
       {
         id: 'ovarian-reserve',
           name: t('calculators.ovarian_reserve.title'),
-          description: t('calculators.ovarian_reserve.subtitle')
+          description: t('calculators.ovarian_reserve.description')
       },
       {
         id: 'menopause-assessment',
