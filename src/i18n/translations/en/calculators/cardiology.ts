@@ -1732,6 +1732,10 @@ export default {
     race_hispanic: 'Hispanic/Latino',
     race_asian: 'Asian',
     race_other: 'Other',
+    height_label: 'Height',
+    weight_label: 'Weight',
+    weight_placeholder: '80',
+    zip_code_label: 'US Zip Code',
     
     // Step 2: Clinical Assessment
     clinical_title: 'Clinical Assessment',
@@ -1741,12 +1745,18 @@ export default {
     diastolic_bp_label: 'Diastolic Blood Pressure',
     diastolic_bp_placeholder: '80',
     clinical_risk_factors_title: 'Clinical Risk Factors',
+    on_hypertension_meds_label: 'On Hypertension Medications',
+    on_hypertension_meds_description: 'Currently taking blood pressure medications',
     antihypertensive_meds_label: 'Antihypertensive Medications',
     antihypertensive_meds_description: 'Currently taking blood pressure medications',
+    on_statin_label: 'On Statin Therapy',
+    on_statin_description: 'Currently taking statin medications',
     diabetes_label: 'Diabetes Mellitus',
     diabetes_description: 'Type 1 or Type 2 diabetes',
     current_smoker_label: 'Current Smoker',
     current_smoker_description: 'Currently smoking tobacco',
+    serum_creatinine_label: 'Serum Creatinine',
+    serum_creatinine_placeholder: '1.0',
     
     // Step 3: Laboratory Assessment
     lab_title: 'Laboratory Assessment',
@@ -1761,6 +1771,7 @@ export default {
     // Step 4: CKM-E Enhanced Factors
     ckm_e_title: 'CKM-E Enhanced Factors',
     ckm_e_description: 'Cardiovascular-Kidney-Metabolic health enhancement factors',
+    hba1c_label: 'HbA1c',
     egfr_label: 'eGFR',
     egfr_placeholder: '90',
     uacr_label: 'UACR',
@@ -1810,6 +1821,13 @@ export default {
     // Algorithm validation
     algorithm_title: 'AHA PREVENT™ Model',
     algorithm_description: '✓ AHA 2023 Guidelines • CKM-Enhanced • Machine Learning Validated • 30-Year Predictions',
+    algorithm_2023_title: 'AHA PREVENT™ 2023 Algorithm',
+    algorithm_implementation_description: 'This calculator implements the official American Heart Association PREVENT™ equations (2023):',
+    algorithm_feature_1: 'Derived from over 6 million diverse individuals',
+    algorithm_feature_2: 'Calculates 10-year risks for ASCVD, Heart Failure, and Total CVD',
+    algorithm_feature_3: 'For ages 30-59: Also provides 30-year risk estimates',
+    algorithm_feature_4: 'Includes novel risk factors (HbA1C, UACR, SDI) for enhanced assessment',
+    algorithm_feature_5: 'BMI and eGFR calculated using validated equations',
     
     // Action buttons
     new_assessment: 'New Assessment',
@@ -1838,6 +1856,9 @@ export default {
     unit_ml_min: 'mL/min/1.73m²',
     unit_mg_g: 'mg/g',
     unit_score: 'score',
+    unit_cm: 'cm',
+    unit_kg: 'kg',
+    unit_percent: '%',
     
     // Risk categories and prevention strategies
     risk_category: 'Risk category',
@@ -1856,7 +1877,20 @@ export default {
     rec_high_intensity_statin: 'High-intensity statin therapy recommended',
     rec_additional_therapies: 'Consider additional therapies (ezetimibe, PCSK9i)',
     rec_aggressive_lifestyle: 'Aggressive lifestyle modification',
-    rec_ckm_e_monitoring: 'CKM-E factors present - enhanced monitoring needed'
+    rec_ckm_e_monitoring: 'CKM-E factors present - enhanced monitoring needed',
+    
+    // Chart visualization
+    ten_year_risk_estimates: '10-Year Risk Estimates',
+    thirty_year_risk_estimates: '30-Year Risk Estimates',
+    risk_by_age_description: 'Risk estimates by age for individuals with the same risk factors',
+    age_years: 'Age (years)',
+    risk_percentage: 'Risk (%)',
+    age: 'Age',
+    years: 'years',
+    risk_insights: 'Risk Insights',
+    current_age: 'Current Age',
+    year_total_risk: 'Year Total Risk',
+    risk_increase_decade: 'Risk Increase/Decade'
   },
 
   // Ensure other calculator IDs referenced in Calculators.tsx for cardiology also have title/subtitle

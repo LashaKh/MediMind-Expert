@@ -364,7 +364,7 @@ export default function DAPTCalculator() {
                   <CalculatorInput
                     label={t('calculators.cardiology.dapt.age_label')}
                     value={formData.age}
-                    onChange={(e) => setFormData({ ...formData, age: (e.target as HTMLInputElement).value })}
+                    onChange={(value) => setFormData({ ...formData, age: value })}
                     error={errors.age}
                     helpText={t('calculators.cardiology.dapt.age_help')}
                     icon={User}
@@ -379,7 +379,7 @@ export default function DAPTCalculator() {
                   <CalculatorInput
                     label={t('calculators.cardiology.dapt.stent_diameter_label')}
                     value={formData.stentDiameter}
-                    onChange={(e) => setFormData({ ...formData, stentDiameter: (e.target as HTMLInputElement).value })}
+                    onChange={(value) => setFormData({ ...formData, stentDiameter: value })}
                     error={errors.stentDiameter}
                     helpText={t('calculators.cardiology.dapt.stent_diameter_help')}
                     icon={Target}
@@ -420,7 +420,7 @@ export default function DAPTCalculator() {
                   <CalculatorCheckbox
                     label={t('calculators.cardiology.dapt.cigarette_smoking')}
                     checked={formData.cigaretteSmoking}
-                    onChange={(e) => setFormData({ ...formData, cigaretteSmoking: (e.target as HTMLInputElement).checked })}
+                    onChange={(checked) => setFormData({ ...formData, cigaretteSmoking: checked })}
                     description={t('calculators.cardiology.dapt.cigarette_smoking_desc')}
                     icon={Zap}
                   />
@@ -428,7 +428,7 @@ export default function DAPTCalculator() {
                   <CalculatorCheckbox
                     label={t('calculators.cardiology.dapt.diabetes_mellitus')}
                     checked={formData.diabetesMellitus}
-                    onChange={(e) => setFormData({ ...formData, diabetesMellitus: (e.target as HTMLInputElement).checked })}
+                    onChange={(checked) => setFormData({ ...formData, diabetesMellitus: checked })}
                     description={t('calculators.cardiology.dapt.diabetes_mellitus_desc')}
                     icon={Droplets}
                   />
@@ -436,7 +436,7 @@ export default function DAPTCalculator() {
                   <CalculatorCheckbox
                     label={t('calculators.cardiology.dapt.mi_at_presentation')}
                     checked={formData.miAtPresentation}
-                    onChange={(e) => setFormData({ ...formData, miAtPresentation: (e.target as HTMLInputElement).checked })}
+                    onChange={(checked) => setFormData({ ...formData, miAtPresentation: checked })}
                     description={t('calculators.cardiology.dapt.mi_at_presentation_desc')}
                     icon={Heart}
                   />
@@ -444,7 +444,7 @@ export default function DAPTCalculator() {
                   <CalculatorCheckbox
                     label={t('calculators.cardiology.dapt.prior_pci_mi')}
                     checked={formData.priorPCIOrMI}
-                    onChange={(e) => setFormData({ ...formData, priorPCIOrMI: (e.target as HTMLInputElement).checked })}
+                    onChange={(checked) => setFormData({ ...formData, priorPCIOrMI: checked })}
                     description={t('calculators.cardiology.dapt.prior_pci_mi_desc')}
                     icon={FileText}
                   />
@@ -452,7 +452,7 @@ export default function DAPTCalculator() {
                   <CalculatorCheckbox
                     label={t('calculators.cardiology.dapt.paclitaxel_stent')}
                     checked={formData.paclitaxelElutingStent}
-                    onChange={(e) => setFormData({ ...formData, paclitaxelElutingStent: (e.target as HTMLInputElement).checked })}
+                    onChange={(checked) => setFormData({ ...formData, paclitaxelElutingStent: checked })}
                     description={t('calculators.cardiology.dapt.paclitaxel_stent_desc')}
                     icon={Target}
                   />
@@ -460,7 +460,7 @@ export default function DAPTCalculator() {
                   <CalculatorCheckbox
                     label={t('calculators.cardiology.dapt.chf_lvef')}
                     checked={formData.chfOrLVEF}
-                    onChange={(e) => setFormData({ ...formData, chfOrLVEF: (e.target as HTMLInputElement).checked })}
+                    onChange={(checked) => setFormData({ ...formData, chfOrLVEF: checked })}
                     description={t('calculators.cardiology.dapt.chf_lvef_desc')}
                     icon={Heart}
                   />
@@ -498,7 +498,7 @@ export default function DAPTCalculator() {
                   <CalculatorCheckbox
                     label={t('calculators.cardiology.dapt.vein_graft_pci')}
                     checked={formData.veinGraftPCI}
-                    onChange={(e) => setFormData({ ...formData, veinGraftPCI: (e.target as HTMLInputElement).checked })}
+                    onChange={(checked) => setFormData({ ...formData, veinGraftPCI: checked })}
                     description={t('calculators.cardiology.dapt.vein_graft_pci_desc')}
                     icon={Shield}
                   />
@@ -529,7 +529,8 @@ export default function DAPTCalculator() {
                 title={t('calculators.cardiology.dapt.score_analysis')}
                 interpretation={getInterpretation(result.ischemicBenefit, result.score)}
                 category={getRiskLevel(result.ischemicBenefit)}
-                value={t('calculators.cardiology.dapt.score_points', { score: result.score.toString() })}
+                value={result.score}
+                unit={t('calculators.common.points')}
               >
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-6">
                   <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/30">
@@ -544,8 +545,8 @@ export default function DAPTCalculator() {
                   </div>
                   <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30">
                     <h4 className="font-semibold text-blue-700 dark:text-blue-300">{t('calculators.cardiology.dapt.net_benefit')}</h4>
-                    <p className="text-lg font-bold">{t(`calculators.cardiology.dapt.${getBenefitInfo(result.netBenefit).label}`)}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{t(`calculators.cardiology.dapt.${getBenefitInfo(result.netBenefit).description}`)}</p>
+                    <p className="text-lg font-bold">{getBenefitInfo(result.netBenefit).label}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{getBenefitInfo(result.netBenefit).description}</p>
                   </div>
                 </div>
 

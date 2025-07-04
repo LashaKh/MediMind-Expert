@@ -1657,6 +1657,10 @@ export default {
     race_hispanic: 'ესპანური/ლათინო',
     race_asian: 'აზიელი',
     race_other: 'სხვა',
+    height_label: 'სიმაღლე',
+    weight_label: 'წონა',
+    weight_placeholder: '80',
+    zip_code_label: 'აშშ-ის საფოსტო კოდი',
     
     // Step 2: Clinical Assessment
     clinical_title: 'კლინიკური შეფასება',
@@ -1666,12 +1670,18 @@ export default {
     diastolic_bp_label: 'დიასტოლური არტერიული წნევა',
     diastolic_bp_placeholder: '80',
     clinical_risk_factors_title: 'კლინიკური რისკ ფაქტორები',
+    on_hypertension_meds_label: 'ჰიპერტენზიის მედიკამენტებზე',
+    on_hypertension_meds_description: 'ამჟამად იღებს არტერიული წნევის პრეპარატებს',
     antihypertensive_meds_label: 'ანტიჰიპერტენზიული მედიკამენტები',
     antihypertensive_meds_description: 'ამჟამად იღებს არტერიული წნევის პრეპარატებს',
+    on_statin_label: 'სტატინების თერაპიაზე',
+    on_statin_description: 'ამჟამად იღებს სტატინების პრეპარატებს',
     diabetes_label: 'შაქრიანი დიაბეტი',
     diabetes_description: '1-ლი ან 2-ე ტიპის შაქრიანი დიაბეტი',
     current_smoker_label: 'ამჟამინდელი მწეველი',
     current_smoker_description: 'ამჟამად ეწევა',
+    serum_creatinine_label: 'შრატის კრეატინინი',
+    serum_creatinine_placeholder: '1.0',
     
     // Step 3: Laboratory Assessment
     lab_title: 'ლაბორატორიული შეფასება',
@@ -1686,6 +1696,7 @@ export default {
     // Step 4: CKM-E Enhanced Factors
     ckm_e_title: 'CKM-E გაძლიერებული ფაქტორები',
     ckm_e_description: 'კარდიოვასკულარულ-თირკმლოვან-მეტაბოლური ჯანმრთელობის გაძლიერების ფაქტორები',
+    hba1c_label: 'HbA1c',
     egfr_label: 'eGFR',
     egfr_placeholder: '90',
     uacr_label: 'UACR',
@@ -1735,6 +1746,13 @@ export default {
     // Algorithm validation
     algorithm_title: 'AHA PREVENT™ მოდელი',
     algorithm_description: '✓ AHA 2023 გაიდლაინები • CKM-გაძლიერებული • მაშინური სწავლებით ვალიდირებული • 30-წლიანი პროგნოზები',
+    algorithm_2023_title: 'AHA PREVENT™ 2023 ალგორითმი',
+    algorithm_implementation_description: 'ეს კალკულატორი ახორციელებს ამერიკული გულის ასოციაციის ოფიციალურ PREVENT™ განტოლებებს (2023):',
+    algorithm_feature_1: 'წარმოიშობა 6 მილიონზე მეტი მრავალფეროვანი ინდივიდისგან',
+    algorithm_feature_2: 'ითვლის 10-წლიან რისკებს ASCVD, გულის უკმარისობა და საერთო CVD-სთვის',
+    algorithm_feature_3: '30-59 წლის ასაკისთვის: ასევე იძლევა 30-წლიან რისკის შეფასებებს',
+    algorithm_feature_4: 'შეიცავს ახალ რისკ ფაქტორებს (HbA1C, UACR, SDI) გაძლიერებული შეფასებისთვის',
+    algorithm_feature_5: 'BMI და eGFR ითვლება ვალიდირებული განტოლებების გამოყენებით',
     
     // Action buttons
     new_assessment: 'ახალი შეფასება',
@@ -1763,6 +1781,9 @@ export default {
     unit_ml_min: 'მლ/წუთ/1.73მ²',
     unit_mg_g: 'მგ/გ',
     unit_score: 'ქულა',
+    unit_cm: 'სმ',
+    unit_kg: 'კგ',
+    unit_percent: '%',
     
     // Risk categories and prevention strategies
     risk_category: 'რისკის კატეგორია',
@@ -1774,6 +1795,27 @@ export default {
     rec_continue_lifestyle: 'გააგრძელეთ ცხოვრების სტილის ოპტიმიზაცია',
     rec_reassess: 'ხელახალი შეფასება 4-6 წელიწადში',
     rec_risk_enhancers: 'რეკომენდირებულია რისკის გამაძლიერებელი ფაქტორების შეფასება',
+    rec_cac_scoring: 'განიხილეთ CAC-ის ღონისძიება გაურკვევლობის შემთხვევაში',
+    rec_lifestyle_therapy: 'ცხოვრების სტილის თერაპია აუცილებელია',
+    rec_statin_therapy: 'სტატინების თერაპია რეკომენდირებულია',
+    rec_cac_refinement: 'განიხილეთ CAC-ის ღონისძიება დახვეწისთვის',
+    rec_high_intensity_statin: 'მაღალი ინტენსივობის სტატინების თერაპია რეკომენდირებულია',
+    rec_additional_therapies: 'განიხილეთ დამატებითი თერაპიები (ეზეტიმიბი, PCSK9i)',
+    rec_aggressive_lifestyle: 'აგრესიული ცხოვრების სტილის მოდიფიკაცია',
+    rec_ckm_e_monitoring: 'CKM-E ფაქტორები დადგენილია - გაძლიერებული მონიტორინგი საჭიროა',
+    
+    // Chart visualization
+    ten_year_risk_estimates: '10-წლიანი რისკის შეფასებები',
+    thirty_year_risk_estimates: '30-წლიანი რისკის შეფასებები',
+    risk_by_age_description: 'რისკის შეფასებები ასაკის მიხედვით იგივე რისკ ფაქტორების მქონე პირებისთვის',
+    age_years: 'ასაკი (წლები)',
+    risk_percentage: 'რისკი (%)',
+    age: 'ასაკი',
+    years: 'წლები',
+    risk_insights: 'რისკის მიმოხილვა',
+    current_age: 'მიმდინარე ასაკი',
+    year_total_risk: 'წლიური საერთო რისკი',
+    risk_increase_decade: 'რისკის ზრდა/ათწლეული'
   },
 
   // GWTG-HF Risk Calculator

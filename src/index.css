@@ -49,12 +49,20 @@
   40%, 43% {
     transform: translate3d(0, -8px, 0);
   }
-  70% {
-    transform: translate3d(0, -4px, 0);
+}
+
+/* Revolutionary DAPT Calculator Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
   }
-  90% {
-    transform: translate3d(0, -2px, 0);
+  50% {
+    transform: translateY(-20px);
   }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
 
 /* SEAMLESS LAYOUT FIX - Side by side positioning without overlap */
