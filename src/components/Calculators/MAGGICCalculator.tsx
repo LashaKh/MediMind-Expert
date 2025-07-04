@@ -118,116 +118,278 @@ export const MAGGICCalculator: React.FC = () => {
     const bmi = parseFloat(formData.bmi);
     const creatinine = parseFloat(formData.creatinine);
 
+    // DEBUG: Log all input values
+    console.log('=== MAGGIC DEBUG VALUES ===');
+    console.log('Age:', age);
+    console.log('LVEF:', lvef);
+    console.log('Systolic BP:', systolic_bp);
+    console.log('BMI:', bmi);
+    console.log('Creatinine:', creatinine);
+    console.log('Gender:', formData.gender);
+    console.log('Smoker:', formData.smoker);
+    console.log('Diabetes:', formData.diabetes);
+    console.log('COPD:', formData.copd);
+    console.log('First diagnosis (>18 months):', formData.first_diagnosis);
+    console.log('Beta blocker:', formData.beta_blocker);
+    console.log('ACE inhibitor:', formData.ace_inhibitor);
+    console.log('NYHA class:', formData.nyha_class);
+
     let score = 0;
+    const scoreBreakdown = [];
 
     // Basic Risk Factors
     // Male
-    if (formData.gender === 'male') score += 1;
+    if (formData.gender === 'male') {
+      score += 1;
+      scoreBreakdown.push('Male: +1');
+    }
 
     // Smoker
-    if (formData.smoker) score += 1;
+    if (formData.smoker) {
+      score += 1;
+      scoreBreakdown.push('Smoker: +1');
+    }
 
     // Diabetic
-    if (formData.diabetes) score += 3;
+    if (formData.diabetes) {
+      score += 3;
+      scoreBreakdown.push('Diabetes: +3');
+    }
 
     // COPD
-    if (formData.copd) score += 2;
+    if (formData.copd) {
+      score += 2;
+      scoreBreakdown.push('COPD: +2');
+    }
 
     // Heart failure first diagnosed ≥18 months ago
     // If first_diagnosis is true (≥18 months ago), score = +2
     // If first_diagnosis is false (within 18 months), score = 0
-    if (formData.first_diagnosis) score += 2;
+    if (formData.first_diagnosis) {
+      score += 2;
+      scoreBreakdown.push('HF >18 months: +2');
+    }
 
     // Not on beta blocker
-    if (!formData.beta_blocker) score += 3;
+    if (!formData.beta_blocker) {
+      score += 3;
+      scoreBreakdown.push('Not on beta blocker: +3');
+    }
 
     // Not on ACE-I/ARB
-    if (!formData.ace_inhibitor) score += 1;
+    if (!formData.ace_inhibitor) {
+      score += 1;
+      scoreBreakdown.push('Not on ACE/ARB: +1');
+    }
 
     // Ejection Fraction
-    if (lvef < 20) score += 7;
-    else if (lvef >= 20 && lvef <= 24) score += 6;
-    else if (lvef >= 25 && lvef <= 29) score += 5;
-    else if (lvef >= 30 && lvef <= 34) score += 3;
-    else if (lvef >= 35 && lvef <= 39) score += 2;
-    // EF >= 40 = 0 points
+    if (lvef < 20) {
+      score += 7;
+      scoreBreakdown.push('EF <20: +7');
+    } else if (lvef >= 20 && lvef <= 24) {
+      score += 6;
+      scoreBreakdown.push('EF 20-24: +6');
+    } else if (lvef >= 25 && lvef <= 29) {
+      score += 5;
+      scoreBreakdown.push('EF 25-29: +5');
+    } else if (lvef >= 30 && lvef <= 34) {
+      score += 3;
+      scoreBreakdown.push('EF 30-34: +3');
+    } else if (lvef >= 35 && lvef <= 39) {
+      score += 2;
+      scoreBreakdown.push('EF 35-39: +2');
+    } else {
+      scoreBreakdown.push('EF ≥40: +0');
+    }
 
     // NYHA Class
-    if (formData.nyha_class === 4) score += 8;
-    else if (formData.nyha_class === 3) score += 6;
-    else if (formData.nyha_class === 2) score += 2;
-    // NYHA Class 1 = 0 points
+    if (formData.nyha_class === 4) {
+      score += 8;
+      scoreBreakdown.push('NYHA IV: +8');
+    } else if (formData.nyha_class === 3) {
+      score += 6;
+      scoreBreakdown.push('NYHA III: +6');
+    } else if (formData.nyha_class === 2) {
+      score += 2;
+      scoreBreakdown.push('NYHA II: +2');
+    } else {
+      scoreBreakdown.push('NYHA I: +0');
+    }
 
     // Creatinine (μmol/L)
-    if (creatinine >= 250) score += 8;
-    else if (creatinine >= 210 && creatinine < 250) score += 6;
-    else if (creatinine >= 170 && creatinine < 210) score += 5;
-    else if (creatinine >= 150 && creatinine < 170) score += 4;
-    else if (creatinine >= 130 && creatinine < 150) score += 3;
-    else if (creatinine >= 110 && creatinine < 130) score += 2;
-    else if (creatinine >= 90 && creatinine < 110) score += 1;
-    // Creatinine < 90 = 0 points
+    if (creatinine >= 250) {
+      score += 8;
+      scoreBreakdown.push('Creatinine ≥250: +8');
+    } else if (creatinine >= 210 && creatinine < 250) {
+      score += 6;
+      scoreBreakdown.push('Creatinine 210-249: +6');
+    } else if (creatinine >= 170 && creatinine < 210) {
+      score += 5;
+      scoreBreakdown.push('Creatinine 170-209: +5');
+    } else if (creatinine >= 150 && creatinine < 170) {
+      score += 4;
+      scoreBreakdown.push('Creatinine 150-169: +4');
+    } else if (creatinine >= 130 && creatinine < 150) {
+      score += 3;
+      scoreBreakdown.push('Creatinine 130-149: +3');
+    } else if (creatinine >= 110 && creatinine < 130) {
+      score += 2;
+      scoreBreakdown.push('Creatinine 110-129: +2');
+    } else if (creatinine >= 90 && creatinine < 110) {
+      score += 1;
+      scoreBreakdown.push('Creatinine 90-109: +1');
+    } else {
+      scoreBreakdown.push('Creatinine <90: +0');
+    }
 
     // BMI
-    if (bmi < 15) score += 6;
-    else if (bmi >= 15 && bmi < 20) score += 5;
-    else if (bmi >= 20 && bmi < 25) score += 3;
-    else if (bmi >= 25 && bmi < 30) score += 2;
-    // BMI >= 30 = 0 points
+    if (bmi < 15) {
+      score += 6;
+      scoreBreakdown.push('BMI <15: +6');
+    } else if (bmi >= 15 && bmi < 20) {
+      score += 5;
+      scoreBreakdown.push('BMI 15-19: +5');
+    } else if (bmi >= 20 && bmi < 25) {
+      score += 3;
+      scoreBreakdown.push('BMI 20-24: +3');
+    } else if (bmi >= 25 && bmi < 30) {
+      score += 2;
+      scoreBreakdown.push('BMI 25-29: +2');
+    } else {
+      scoreBreakdown.push('BMI ≥30: +0');
+    }
 
     // Extra points for Systolic BP based on EF
     if (lvef < 30) {
       // EF < 30
-      if (systolic_bp < 110) score += 5;
-      else if (systolic_bp >= 110 && systolic_bp < 120) score += 4;
-      else if (systolic_bp >= 120 && systolic_bp < 130) score += 3;
-      else if (systolic_bp >= 130 && systolic_bp < 140) score += 2;
-      else if (systolic_bp >= 140 && systolic_bp < 150) score += 1;
-      // >= 150 = 0 points
+      if (systolic_bp < 110) {
+        score += 5;
+        scoreBreakdown.push('Extra BP (EF<30, <110): +5');
+      } else if (systolic_bp >= 110 && systolic_bp < 120) {
+        score += 4;
+        scoreBreakdown.push('Extra BP (EF<30, 110-119): +4');
+      } else if (systolic_bp >= 120 && systolic_bp < 130) {
+        score += 3;
+        scoreBreakdown.push('Extra BP (EF<30, 120-129): +3');
+      } else if (systolic_bp >= 130 && systolic_bp < 140) {
+        score += 2;
+        scoreBreakdown.push('Extra BP (EF<30, 130-139): +2');
+      } else if (systolic_bp >= 140 && systolic_bp < 150) {
+        score += 1;
+        scoreBreakdown.push('Extra BP (EF<30, 140-149): +1');
+      } else {
+        scoreBreakdown.push('Extra BP (EF<30, ≥150): +0');
+      }
     } else if (lvef >= 30 && lvef <= 39) {
       // EF 30-39
-      if (systolic_bp < 110) score += 3;
-      else if (systolic_bp >= 110 && systolic_bp < 120) score += 2;
-      else if (systolic_bp >= 120 && systolic_bp < 130) score += 1;
-      else if (systolic_bp >= 130 && systolic_bp < 140) score += 1;
-      // >= 140 = 0 points
+      if (systolic_bp < 110) {
+        score += 3;
+        scoreBreakdown.push('Extra BP (EF30-39, <110): +3');
+      } else if (systolic_bp >= 110 && systolic_bp < 120) {
+        score += 2;
+        scoreBreakdown.push('Extra BP (EF30-39, 110-119): +2');
+      } else if (systolic_bp >= 120 && systolic_bp < 130) {
+        score += 1;
+        scoreBreakdown.push('Extra BP (EF30-39, 120-129): +1');
+      } else if (systolic_bp >= 130 && systolic_bp < 140) {
+        score += 1;
+        scoreBreakdown.push('Extra BP (EF30-39, 130-139): +1');
+      } else {
+        scoreBreakdown.push('Extra BP (EF30-39, ≥140): +0');
+      }
     } else if (lvef >= 40) {
       // EF >= 40
-      if (systolic_bp < 110) score += 2;
-      else if (systolic_bp >= 110 && systolic_bp < 120) score += 1;
-      else if (systolic_bp >= 120 && systolic_bp < 130) score += 1;
-      // >= 130 = 0 points
+      if (systolic_bp < 110) {
+        score += 2;
+        scoreBreakdown.push('Extra BP (EF≥40, <110): +2');
+      } else if (systolic_bp >= 110 && systolic_bp < 120) {
+        score += 1;
+        scoreBreakdown.push('Extra BP (EF≥40, 110-119): +1');
+      } else if (systolic_bp >= 120 && systolic_bp < 130) {
+        score += 1;
+        scoreBreakdown.push('Extra BP (EF≥40, 120-129): +1');
+      } else {
+        scoreBreakdown.push('Extra BP (EF≥40, ≥130): +0');
+      }
     }
 
     // Extra points for Age based on EF
     if (lvef < 30) {
       // EF < 30
-      if (age >= 80) score += 10;
-      else if (age >= 75 && age < 80) score += 8;
-      else if (age >= 70 && age < 75) score += 6;
-      else if (age >= 65 && age < 70) score += 4;
-      else if (age >= 60 && age < 65) score += 2;
-      else if (age >= 55 && age < 60) score += 1;
-      // < 55 = 0 points
+      if (age >= 80) {
+        score += 10;
+        scoreBreakdown.push('Extra Age (EF<30, ≥80): +10');
+      } else if (age >= 75 && age < 80) {
+        score += 8;
+        scoreBreakdown.push('Extra Age (EF<30, 75-79): +8');
+      } else if (age >= 70 && age < 75) {
+        score += 6;
+        scoreBreakdown.push('Extra Age (EF<30, 70-74): +6');
+      } else if (age >= 65 && age < 70) {
+        score += 4;
+        scoreBreakdown.push('Extra Age (EF<30, 65-69): +4');
+      } else if (age >= 60 && age < 65) {
+        score += 2;
+        scoreBreakdown.push('Extra Age (EF<30, 60-64): +2');
+      } else if (age >= 55 && age < 60) {
+        score += 1;
+        scoreBreakdown.push('Extra Age (EF<30, 55-59): +1');
+      } else {
+        scoreBreakdown.push('Extra Age (EF<30, <55): +0');
+      }
     } else if (lvef >= 30 && lvef <= 39) {
       // EF 30-39
-      if (age >= 80) score += 13;
-      else if (age >= 75 && age < 80) score += 10;
-      else if (age >= 70 && age < 75) score += 8;
-      else if (age >= 65 && age < 70) score += 6;
-      else if (age >= 60 && age < 65) score += 4;
-      else if (age >= 55 && age < 60) score += 2;
-      // < 55 = 0 points
+      if (age >= 80) {
+        score += 13;
+        scoreBreakdown.push('Extra Age (EF30-39, ≥80): +13');
+      } else if (age >= 75 && age < 80) {
+        score += 10;
+        scoreBreakdown.push('Extra Age (EF30-39, 75-79): +10');
+      } else if (age >= 70 && age < 75) {
+        score += 8;
+        scoreBreakdown.push('Extra Age (EF30-39, 70-74): +8');
+      } else if (age >= 65 && age < 70) {
+        score += 6;
+        scoreBreakdown.push('Extra Age (EF30-39, 65-69): +6');
+      } else if (age >= 60 && age < 65) {
+        score += 4;
+        scoreBreakdown.push('Extra Age (EF30-39, 60-64): +4');
+      } else if (age >= 55 && age < 60) {
+        score += 2;
+        scoreBreakdown.push('Extra Age (EF30-39, 55-59): +2');
+      } else {
+        scoreBreakdown.push('Extra Age (EF30-39, <55): +0');
+      }
     } else if (lvef >= 40) {
       // EF >= 40
-      if (age >= 80) score += 15;
-      else if (age >= 75 && age < 80) score += 12;
-      else if (age >= 70 && age < 75) score += 9;
-      else if (age >= 65 && age < 70) score += 7;
-      else if (age >= 60 && age < 65) score += 5;
-      else if (age >= 55 && age < 60) score += 3;
-      // < 55 = 0 points
+      if (age >= 80) {
+        score += 15;
+        scoreBreakdown.push('Extra Age (EF≥40, ≥80): +15');
+      } else if (age >= 75 && age < 80) {
+        score += 12;
+        scoreBreakdown.push('Extra Age (EF≥40, 75-79): +12');
+      } else if (age >= 70 && age < 75) {
+        score += 9;
+        scoreBreakdown.push('Extra Age (EF≥40, 70-74): +9');
+      } else if (age >= 65 && age < 70) {
+        score += 7;
+        scoreBreakdown.push('Extra Age (EF≥40, 65-69): +7');
+      } else if (age >= 60 && age < 65) {
+        score += 5;
+        scoreBreakdown.push('Extra Age (EF≥40, 60-64): +5');
+      } else if (age >= 55 && age < 60) {
+        score += 3;
+        scoreBreakdown.push('Extra Age (EF≥40, 55-59): +3');
+      } else {
+        scoreBreakdown.push('Extra Age (EF≥40, <55): +0');
+      }
     }
+
+    // DEBUG: Log score breakdown
+    console.log('\n=== SCORE BREAKDOWN ===');
+    scoreBreakdown.forEach(item => console.log(item));
+    console.log(`\nFINAL SCORE: ${score}`);
+    console.log('========================\n');
 
     // Calculate mortality risks
     let oneYearMortality: number;
