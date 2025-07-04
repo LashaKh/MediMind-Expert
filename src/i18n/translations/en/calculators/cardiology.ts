@@ -369,7 +369,7 @@ export default {
     
     // Results
     score_analysis: "DAPT Score Analysis",
-    score_points: "{score} points",
+    score_points: "{{score}} points",
     ischemic_benefit: "Ischemic Benefit",
     bleeding_risk: "Bleeding Risk",
     net_benefit: "Net Clinical Benefit",
@@ -380,8 +380,8 @@ export default {
     low_risk: "Low",
     
     // Risk descriptions
-    mace_reduction: "{reduction}% MACE reduction",
-    bleeding_increase: "{increase}% bleeding increase",
+    mace_reduction: "{{reduction}}% MACE reduction",
+    bleeding_increase: "{{increase}}% bleeding increase",
     
     // Net benefit categories
     favorable_benefit: "Favorable",
@@ -445,9 +445,9 @@ export default {
     score_low_desc: "Limited benefit from extended DAPT, bleeding risk may outweigh benefit",
     
     // Interpretations
-    interpretation_high: "High benefit patient (Score: {score}) - Extended DAPT likely beneficial",
-    interpretation_intermediate: "Intermediate benefit patient (Score: {score}) - Consider extended DAPT",
-    interpretation_low: "Low benefit patient (Score: {score}) - Extended DAPT may be harmful",
+    interpretation_high: "High benefit patient (Score: {{{score}}}) - Extended DAPT likely beneficial",
+    interpretation_intermediate: "Intermediate benefit patient (Score: {{{score}}}) - Consider extended DAPT",
+    interpretation_low: "Low benefit patient (Score: {{{score}}}) - Extended DAPT may be harmful",
     
     // Enhanced algorithm
     enhanced_algorithm: "Enhanced Algorithm Validation",
@@ -591,9 +591,9 @@ export default {
     clinically_validated: "Clinically validated risk assessment tool",
     
     // Interpretations (dynamic)
-    interpretation_low: "Low risk patient with {risk}% 14-day risk of adverse outcomes",
-    interpretation_intermediate: "Intermediate risk patient with {risk}% 14-day risk of adverse outcomes",
-    interpretation_high: "High risk patient with {risk}% 14-day risk of adverse outcomes",
+    interpretation_low: "Low risk patient with {{risk}}% 14-day risk of adverse outcomes",
+    interpretation_intermediate: "Intermediate risk patient with {{risk}}% 14-day risk of adverse outcomes",
+    interpretation_high: "High risk patient with {{risk}}% 14-day risk of adverse outcomes",
     
     // Recommendations (dynamic)
     recommendation_low_0: "Conservative management with medical therapy",
@@ -808,8 +808,8 @@ export default {
     },
     
     // Common labels
-    score_points: '{score} point(s)',
-    risk_percentage: '{risk}% per year',
+    score_points: '{{score}} point(s)',
+    risk_percentage: '{{risk}}% per year',
     
     // Validation messages
     validation: {
@@ -1375,14 +1375,14 @@ export default {
     
     // Results section
     bleeding_risk_analysis: 'PRECISE-DAPT Bleeding Risk Analysis',
-    score_points: '{score} points',
+    score_points: '{{score}} points',
     
     // Risk categories and interpretations
     bleeding_risk: 'Bleeding Risk',
     major_bleeding: 'Major Bleeding Risk',
     safe_duration: 'Safe Duration',
     annual_major_bleeding: 'Annual major bleeding risk',
-    overall_bleeding_risk: 'Overall bleeding risk at 12 months: {risk}%',
+    overall_bleeding_risk: 'Overall bleeding risk at 12 months: {{risk}}%',
     recommended_dapt_duration: 'Recommended DAPT duration',
     
     // Risk levels
@@ -1391,9 +1391,9 @@ export default {
     high_risk: 'High Risk',
     
     // Interpretation messages
-    interpretation_low: 'Low bleeding risk ({risk}% at 12 months) - Extended DAPT may be considered',
-    interpretation_intermediate: 'Intermediate bleeding risk ({risk}% at 12 months) - Standard DAPT with careful monitoring',
-    interpretation_high: 'High bleeding risk ({risk}% at 12 months) - Consider shortened DAPT duration',
+    interpretation_low: 'Low bleeding risk ({{risk}}% at 12 months) - Extended DAPT may be considered',
+    interpretation_intermediate: 'Intermediate bleeding risk ({{risk}}% at 12 months) - Standard DAPT with careful monitoring',
+    interpretation_high: 'High bleeding risk ({{risk}}% at 12 months) - Consider shortened DAPT duration',
     
     // Risk factors
     contributing_risk_factors: 'Contributing Risk Factors',

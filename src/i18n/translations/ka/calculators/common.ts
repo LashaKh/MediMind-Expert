@@ -2,7 +2,7 @@ export const calculatorCommon = {
   title: 'სამედიცინო კალკულატორები',
   back_to: 'უკან კალკულატორებთან',
   categories_label: 'კატეგორიები',
-  tools_count: '{count} ხელსაწყო | {count} ხელსაწყოები',
+  tools_count: '{{count}} ხელსაწყო | {{count}} ხელსაწყოები',
   
   // Common UI elements (these are the missing keys)
   about: 'კალკულატორის შესახებ',

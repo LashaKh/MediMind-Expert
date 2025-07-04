@@ -1473,7 +1473,7 @@ const PREVENTCalculator: React.FC = () => {
       subtitle={t('calculators.cardiology.prevent.subtitle')}
       icon={Star}
       gradient="cardiology"
-      className="max-w-5xl mx-auto"
+      className="max-w-7xl mx-auto"
     >
       <div className="space-y-8">
         {/* PREVENT Alert */}
@@ -1499,7 +1499,7 @@ const PREVENTCalculator: React.FC = () => {
           <>
             {/* Sophisticated Step Navigation System */}
             <div className="relative mb-12">
-              <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center justify-between mb-24">
                 {STEP_CONFIG.slice(0, 4).map((step, index) => (
                   <div key={step.id} className="flex items-center group cursor-pointer" 
                        onClick={() => setCurrentStep(step.id)}>
@@ -1551,7 +1551,7 @@ const PREVENTCalculator: React.FC = () => {
               
               {/* Progress Percentage with Animation */}
               <div className="text-center mb-8">
-                <div className="inline-flex items-center space-x-4 px-8 py-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/20 shadow-2xl">
+                <div className="inline-flex items-center justify-center flex-wrap gap-2 space-x-4 px-8 py-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/20 shadow-2xl max-w-full">
                   <div className="relative">
                     <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
                       <TrendingUp className="w-6 h-6 text-white" />

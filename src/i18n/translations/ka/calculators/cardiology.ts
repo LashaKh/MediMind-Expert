@@ -1003,7 +1003,7 @@ export default {
     
     // შედეგები
     score_analysis: "DAPT ქულების ანალიზი",
-    score_points: "{score} ქულა",
+    score_points: "{{score}} ქულა",
     ischemic_benefit: "იშემიური სარგებელი",
     bleeding_risk: "სისხლდენის რისკი",
     net_benefit: "წმინდა კლინიკური სარგებელი",
@@ -1014,8 +1014,8 @@ export default {
     low_risk: "დაბალი",
     
     // რისკის აღწერილობები
-    mace_reduction: "{reduction}% MACE შემცირება",
-    bleeding_increase: "{increase}% სისხლდენის ზრდა",
+    mace_reduction: "{{reduction}}% MACE შემცირება",
+    bleeding_increase: "{{increase}}% სისხლდენის ზრდა",
     
     // წმინდა სარგებლის კატეგორიები
     favorable_benefit: "ხელსაყრელი",
@@ -1069,9 +1069,9 @@ export default {
     score_low_desc: "შეზღუდული სარგებელი გახანგრძლივებული DAPT-დან, სისხლდენის რისკი შეიძლება აღემატებოდეს სარგებელს",
     
     // ინტერპრეტაციები
-    interpretation_high: "მაღალი სარგებლის პაციენტი (ქულა: {score}) - გახანგრძლივებული DAPT სავარაუდოდ სასარგებლოა",
-    interpretation_intermediate: "საშუალო სარგებლის პაციენტი (ქულა: {score}) - განიხილეთ გახანგრძლივებული DAPT",
-    interpretation_low: "დაბალი სარგებლის პაციენტი (ქულა: {score}) - გახანგრძლივებული DAPT შეიძლება იყოს მავნე",
+    interpretation_high: "მაღალი სარგებლის პაციენტი (ქულა: {{score}}) - გახანგრძლივებული DAPT სავარაუდოდ სასარგებლოა",
+    interpretation_intermediate: "საშუალო სარგებლის პაციენტი (ქულა: {{score}}) - განიხილეთ გახანგრძლივებული DAPT",
+    interpretation_low: "დაბალი სარგებლის პაციენტი (ქულა: {{score}}) - გახანგრძლივებული DAPT შეიძლება იყოს მავნე",
     
     // გაძლიერებული ალგორითმი
     enhanced_algorithm: "გაძლიერებული ალგორითმის ვალიდაცია",
@@ -1214,9 +1214,9 @@ export default {
     clinically_validated: 'კლინიკურად ვალიდირებული რისკის შეფასების ინსტრუმენტი',
     
     // Interpretations (dynamic) - MISSING KEYS ADDED
-    interpretation_low: 'დაბალი რისკის პაციენტი {risk}%-იანი 14-დღიანი არახელსაყრელი შედეგების რისკით',
-    interpretation_intermediate: 'საშუალო რისკის პაციენტი {risk}%-იანი 14-დღიანი არახელსაყრელი შედეგების რისკით',
-    interpretation_high: 'მაღალი რისკის პაციენტი {risk}%-იანი 14-დღიანი არახელსაყრელი შედეგების რისკით',
+    interpretation_low: 'დაბალი რისკის პაციენტი {{risk}}%-იანი 14-დღიანი არახელსაყრელი შედეგების რისკით',
+    interpretation_intermediate: 'საშუალო რისკის პაციენტი {{risk}}%-იანი 14-დღიანი არახელსაყრელი შედეგების რისკით',
+    interpretation_high: 'მაღალი რისკის პაციენტი {{risk}}%-იანი 14-დღიანი არახელსაყრელი შედეგების რისკით',
     
     // Recommendations (dynamic) - MISSING KEYS ADDED
     recommendation_low_0: 'კონსერვატული მართვა მედიკამენტური თერაპიით',
@@ -1571,7 +1571,7 @@ export default {
     major_bleeding: 'მნიშვნელოვანი სისხლდენის რისკი',
     safe_duration: 'უსაფრთხო ხანგრძლივობა',
     annual_major_bleeding: 'წლიური მნიშვნელოვანი სისხლდენის რისკი',
-    overall_bleeding_risk: 'საერთო სისხლდენის რისკი 12 თვეში: {risk}%',
+    overall_bleeding_risk: 'საერთო სისხლდენის რისკი 12 თვეში: {{risk}}%',
     recommended_dapt_duration: 'რეკომენდირებული DAPT ხანგრძლივობა',
     
     // Risk levels
@@ -1580,9 +1580,9 @@ export default {
     high_risk: 'მაღალი რისკი',
     
     // Interpretation messages
-    interpretation_low: 'დაბალი სისხლდენის რისკი ({risk}% 12 თვეში) - შეიძლება განიხილული იქნას ხანგრძლივი DAPT-ი',
-    interpretation_intermediate: 'საშუალო სისხლდენის რისკი ({risk}% 12 თვეში) - სტანდარტული DAPT-ი ფრთხილი მონიტორინგით',
-    interpretation_high: 'მაღალი სისხლდენის რისკი ({risk}% 12 თვეში) - განიხილეთ მოკლე DAPT-ის ხანგრძლივობა',
+    interpretation_low: 'დაბალი სისხლდენის რისკი ({{risk}}% 12 თვეში) - შეიძლება განიხილული იქნას ხანგრძლივი DAPT-ი',
+    interpretation_intermediate: 'საშუალო სისხლდენის რისკი ({{risk}}% 12 თვეში) - სტანდარტული DAPT-ი ფრთხილი მონიტორინგით',
+    interpretation_high: 'მაღალი სისხლდენის რისკი ({{risk}}% 12 თვეში) - განიხილეთ მოკლე DAPT-ის ხანგრძლივობა',
     
     // Risk factors
     contributing_risk_factors: 'ხელის შემწყობი რისკის ფაქტორები',

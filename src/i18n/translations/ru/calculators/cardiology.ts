@@ -335,7 +335,7 @@ export default {
     calculate_button: "Рассчитать DAPT балл",
     // Результаты
     score_analysis: "Анализ DAPT баллов",
-    score_points: "{score} баллов",
+    score_points: "{{score}} баллов",
     ischemic_benefit: "Ишемическая польза",
     bleeding_risk: "Риск кровотечения",
     net_benefit: "Чистая клиническая польза",
@@ -344,8 +344,8 @@ export default {
     intermediate_risk: "Средний", 
     low_risk: "Низкий",
     // Описания рисков
-    mace_reduction: "{reduction}% снижение MACE",
-    bleeding_increase: "{increase}% увеличение кровотечений",
+    mace_reduction: "{{reduction}}% снижение MACE",
+    bleeding_increase: "{{increase}}% увеличение кровотечений",
     // Категории чистой пользы
     favorable_benefit: "Благоприятная",
     uncertain_benefit: "Неопределенная",
@@ -392,9 +392,9 @@ export default {
     score_low: "Балл ≤0 (Низкая/Нет пользы)",
     score_low_desc: "Ограниченная польза от продленной DAPT, риск кровотечения может превышать пользу",
     // Интерпретации
-    interpretation_high: "Пациент с высокой пользой (Балл: {score}) - Продленная DAPT вероятно полезна",
-    interpretation_intermediate: "Пациент со средней пользой (Балл: {score}) - Рассмотрите продленную DAPT",
-    interpretation_low: "Пациент с низкой пользой (Балл: {score}) - Продленная DAPT может быть вредной",
+    interpretation_high: "Пациент с высокой пользой (Балл: {{{score}}}) - Продленная DAPT вероятно полезна",
+    interpretation_intermediate: "Пациент со средней пользой (Балл: {{{score}}}) - Рассмотрите продленную DAPT",
+    interpretation_low: "Пациент с низкой пользой (Балл: {{{score}}}) - Продленная DAPT может быть вредной",
     // Усовершенствованный алгоритм
     enhanced_algorithm: "Валидация усовершенствованного алгоритма",
     algorithm_validation: "Этот калькулятор включает возраст-скорректированную оценку риска кровотечения и основанные на доказательствах рекомендации из исследования DAPT для оптимального клинического принятия решений.",
@@ -462,22 +462,22 @@ export default {
     calculate_button: 'Рассчитать Балл PRECISE-DAPT',
     // Results section
     bleeding_risk_analysis: 'Анализ Риска Кровотечения PRECISE-DAPT',
-    score_points: '{score} баллов',
+    score_points: '{{score}} баллов',
     // Risk categories and interpretations
     bleeding_risk: 'Риск Кровотечения',
     major_bleeding: 'Риск Больших Кровотечений',
     safe_duration: 'Безопасная Длительность',
     annual_major_bleeding: 'Годовой риск больших кровотечений',
-    overall_bleeding_risk: 'Общий риск кровотечения через 12 месяцев: {risk}%',
+    overall_bleeding_risk: 'Общий риск кровотечения через 12 месяцев: {{risk}}%',
     recommended_dapt_duration: 'Рекомендуемая длительность DAPT',
     // Risk levels
     low_risk: 'Низкий Риск',
     intermediate_risk: 'Промежуточный Риск',
     high_risk: 'Высокий Риск',
     // Interpretation messages
-    interpretation_low: 'Низкий риск кровотечения ({risk}% через 12 месяцев) - Может рассматриваться продленная DAPT',
-    interpretation_intermediate: 'Промежуточный риск кровотечения ({risk}% через 12 месяцев) - Стандартная DAPT с тщательным мониторингом',
-    interpretation_high: 'Высокий риск кровотечения ({risk}% через 12 месяцев) - Рассмотреть сокращенную длительность DAPT',
+    interpretation_low: 'Низкий риск кровотечения ({{risk}}% через 12 месяцев) - Может рассматриваться продленная DAPT',
+    interpretation_intermediate: 'Промежуточный риск кровотечения ({{risk}}% через 12 месяцев) - Стандартная DAPT с тщательным мониторингом',
+    interpretation_high: 'Высокий риск кровотечения ({{risk}}% через 12 месяцев) - Рассмотреть сокращенную длительность DAPT',
     // Risk factors
     contributing_risk_factors: 'Способствующие Факторы Риска',
     risk_factor_advanced_age: 'Пожилой возраст (≥75 лет) - Значительно повышенный риск кровотечения',
@@ -954,8 +954,8 @@ export default {
     },
     
     // Common labels
-    score_points: '{score} балл(ов)',
-    risk_percentage: '{risk}% в год',
+    score_points: '{{score}} балл(ов)',
+    risk_percentage: '{{risk}}% в год',
     
     // Validation messages
     validation: {
@@ -1072,9 +1072,9 @@ export default {
     clinically_validated: "Клинически валидированный инструмент оценки риска",
     
     // Interpretations (dynamic)
-    interpretation_low: "Пациент низкого риска с {risk}% 14-дневным риском неблагоприятных исходов",
-    interpretation_intermediate: "Пациент промежуточного риска с {risk}% 14-дневным риском неблагоприятных исходов",
-    interpretation_high: "Пациент высокого риска с {risk}% 14-дневным риском неблагоприятных исходов",
+    interpretation_low: "Пациент низкого риска с {{risk}}% 14-дневным риском неблагоприятных исходов",
+    interpretation_intermediate: "Пациент промежуточного риска с {{risk}}% 14-дневным риском неблагоприятных исходов",
+    interpretation_high: "Пациент высокого риска с {{risk}}% 14-дневным риском неблагоприятных исходов",
     
     // Recommendations (dynamic)
     recommendation_low_0: "Консервативное лечение с медикаментозной терапией",

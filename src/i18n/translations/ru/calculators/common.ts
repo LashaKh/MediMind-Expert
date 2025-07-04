@@ -3,7 +3,7 @@ export default {
   title: 'Медицинские Калькуляторы',
   back_to: 'Назад к Калькуляторам',
   categories_label: 'Категории',
-  tools_count: '{count} Инструмент | {count} Инструменты',
+  tools_count: '{{count}} Инструмент | {{count}} Инструменты',
   
   // Common UI elements (these are the missing keys)
   about: 'О калькуляторе',

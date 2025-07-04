@@ -3,7 +3,7 @@ export default {
   title: 'Medical Calculators',
   back_to: 'Back to Calculators',
   categories_label: 'Categories',
-  tools_count: '{count} Tool | {count} Tools',
+  tools_count: '{{count}} Tool | {{count}} Tools',
   
   // Common UI elements (these are the missing keys)
   about: 'About',
