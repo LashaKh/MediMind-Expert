@@ -23,6 +23,7 @@ export const calculatorCommon = {
   protective_factors: 'დამცავი ფაქტორები',
   prophylactic_surgery_discussion: 'პროფილაქტიკური ოპერაციის განხილვა',
   score: 'ქულა',
+  points: 'ქულა',
   low: 'დაბალი',
   moderate: 'ზომიერი',
   high: 'მაღალი',

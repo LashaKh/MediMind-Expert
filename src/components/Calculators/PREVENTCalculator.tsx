@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Calculator, Info, TrendingUp, Star, Brain, User, Activity, BarChart3, Stethoscope, Award, AlertCircle, Clock, Target } from 'lucide-react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Calculator, Info, TrendingUp, Star, Brain, User, Activity, BarChart3, Stethoscope, Award, AlertCircle, Clock, Target, Heart, Zap, ChevronRight, CheckCircle, ArrowLeft } from 'lucide-react';
 import { 
   CalculatorContainer, 
   CalculatorInput, 
@@ -9,6 +9,7 @@ import {
 } from '../ui/calculator-ui';
 import { useTranslation } from '../../hooks/useTranslation';
 
+// Enhanced interfaces with better typing
 interface PREVENTFormData {
   age: string;
   sex: 'male' | 'female' | '';
@@ -42,6 +43,21 @@ interface PREVENTResult {
     ascvd: number;
     heartFailure: number;
   };
+  riskCategory: 'low' | 'borderline' | 'intermediate' | 'high';
+  recommendations: string[];
+}
+
+interface FormErrors {
+  [key: string]: string;
+}
+
+interface StepConfig {
+  id: number;
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  color: string;
+  gradient: string;
 }
 
 // TypeScript types for PREVENT coefficients
@@ -54,7 +70,6 @@ type CoefficientSet = {
   C30: number; C31: number;
 };
 
-type ModelType = 'FULL' | 'BASE' | 'HBA1C' | 'UACR' | 'SDI';
 type Timeframe = '10' | '30';
 type Gender = 'MALE' | 'FEMALE';
 type Endpoint = 'TOTAL_CVD' | 'ASCVD' | 'HF';
@@ -940,8 +955,84 @@ const RiskVisualizationChart: React.FC<{
   );
 };
 
-export const PREVENTCalculator: React.FC = () => {
+// Sophisticated step configuration for premium UX
+const STEP_CONFIG: StepConfig[] = [
+  {
+    id: 1,
+    title: 'Personal Information',
+    description: 'Basic demographic and anthropometric data',
+    icon: User,
+    color: 'from-blue-500 to-cyan-500',
+    gradient: 'bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20'
+  },
+  {
+    id: 2,
+    title: 'Laboratory Values',
+    description: 'Cholesterol profile and biomarkers',
+    icon: Activity,
+    color: 'from-emerald-500 to-teal-500',
+    gradient: 'bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20'
+  },
+  {
+    id: 3,
+    title: 'Clinical Factors',
+    description: 'Blood pressure and medical history',
+    icon: Stethoscope,
+    color: 'from-purple-500 to-indigo-500',
+    gradient: 'bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20'
+  },
+  {
+    id: 4,
+    title: 'Enhanced Factors',
+    description: 'Optional CKM-E parameters (Optional)',
+    icon: Brain,
+    color: 'from-amber-500 to-orange-500',
+    gradient: 'bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20'
+  },
+  {
+    id: 5,
+    title: 'Risk Assessment',
+    description: 'Comprehensive cardiovascular risk analysis',
+    icon: Target,
+    color: 'from-red-500 to-pink-500',
+    gradient: 'bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20'
+  }
+];
+
+// Premium color system
+const RISK_COLORS = {
+  low: {
+    color: 'text-emerald-700 dark:text-emerald-300',
+    bg: 'bg-emerald-100 dark:bg-emerald-900/30',
+    border: 'border-emerald-200 dark:border-emerald-800',
+    gradient: 'from-emerald-500 to-green-500'
+  },
+  borderline: {
+    color: 'text-yellow-700 dark:text-yellow-300',
+    bg: 'bg-yellow-100 dark:bg-yellow-900/30',
+    border: 'border-yellow-200 dark:border-yellow-800',
+    gradient: 'from-yellow-500 to-amber-500'
+  },
+  intermediate: {
+    color: 'text-orange-700 dark:text-orange-300',
+    bg: 'bg-orange-100 dark:bg-orange-900/30',
+    border: 'border-orange-200 dark:border-orange-800',
+    gradient: 'from-orange-500 to-red-500'
+  },
+  high: {
+    color: 'text-red-700 dark:text-red-300',
+    bg: 'bg-red-100 dark:bg-red-900/30',
+    border: 'border-red-200 dark:border-red-800',
+    gradient: 'from-red-500 to-rose-500'
+  }
+};
+
+// Sophisticated component for enhanced user experience
+const PREVENTCalculator: React.FC = () => {
   const { t } = useTranslation();
+  
+  // State management with enhanced UX
+  const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<PREVENTFormData>({
     age: '',
     sex: '',
@@ -958,11 +1049,102 @@ export const PREVENTCalculator: React.FC = () => {
     hba1c: '',
     uacr: '',
   });
-
-  const [result, setResult] = useState<PREVENTResult | null>(null);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  
+  const [errors, setErrors] = useState<FormErrors>({});
   const [isCalculating, setIsCalculating] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [results, setResults] = useState<PREVENTResult | null>(null);
+  const [showResults, setShowResults] = useState(false);
+  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
+  
+  // Auto-save functionality for premium UX
+  useEffect(() => {
+    const savedData = localStorage.getItem('prevent_calculator_data');
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        setFormData(parsed);
+      } catch (error) {
+        console.error('Error loading saved data:', error);
+      }
+    }
+  }, []);
+  
+  useEffect(() => {
+    localStorage.setItem('prevent_calculator_data', JSON.stringify(formData));
+  }, [formData]);
+
+  // Utility functions - moved before useMemo to avoid temporal dead zone
+  const calculateBMI = (height: number, weight: number): number => {
+    // BMI = Weight(kg) / (Height(m))^2
+    const heightInMeters = height / 100;
+    return weight / (heightInMeters * heightInMeters);
+  };
+
+  const calculateeGFR = (age: number, sex: string, creatinine: number): number => {
+    // Using CKD-EPI equation as specified in PREVENT
+    const isFemale = sex === 'female';
+    const kappa = isFemale ? 0.7 : 0.9;
+    const alpha = isFemale ? -0.241 : -0.302;
+    const sexFactor = isFemale ? 1.012 : 1;
+    
+    const term1 = 142;
+    const term2 = Math.min(creatinine / kappa, 1) ** alpha;
+    const term3 = Math.max(creatinine / kappa, 1) ** (-1.2);
+    const term4 = 0.9938 ** age;
+    
+    return term1 * term2 * term3 * term4 * sexFactor;
+  };
+
+  // Real-time calculations for preview
+  const realTimeCalculations = useMemo(() => {
+    const height = parseFloat(formData.height);
+    const weight = parseFloat(formData.weight);
+    const age = parseFloat(formData.age);
+    const creatinine = parseFloat(formData.serumCreatinine);
+    
+    const bmi = height && weight ? calculateBMI(height, weight) : 0;
+    const eGFR = age && creatinine && formData.sex ? 
+      calculateeGFR(age, formData.sex, creatinine) : 0;
+    
+    return { bmi: Number(bmi.toFixed(1)), eGFR: Number(eGFR.toFixed(1)) };
+  }, [formData.height, formData.weight, formData.age, formData.serumCreatinine, formData.sex]);
+
+  // Step completion validation
+  const isStepComplete = useCallback((step: number): boolean => {
+    switch (step) {
+      case 1:
+        return !!(formData.age && formData.sex && formData.height && formData.weight);
+      case 2:
+        return !!(formData.totalCholesterol && formData.hdlCholesterol);
+      case 3:
+        return !!(formData.systolicBP && formData.serumCreatinine);
+      case 4:
+        return true; // Optional step
+      default:
+        return false;
+    }
+  }, [formData]);
+
+  // Update completed steps
+  useEffect(() => {
+    const newCompletedSteps = new Set<number>();
+    for (let i = 1; i <= 4; i++) {
+      if (isStepComplete(i)) {
+        newCompletedSteps.add(i);
+      }
+    }
+    setCompletedSteps(newCompletedSteps);
+  }, [isStepComplete]);
+
+  // Helper function to render step icons
+  const renderStepIcon = (step: StepConfig, isCompleted: boolean) => {
+    if (isCompleted) {
+      return <CheckCircle className="w-6 h-6" />;
+    }
+    
+    const IconComponent = step.icon;
+    return <IconComponent className="w-6 h-6" />;
+  };
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -1022,27 +1204,6 @@ export const PREVENTCalculator: React.FC = () => {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-
-  const calculateBMI = (height: number, weight: number): number => {
-    // BMI = Weight(kg) / (Height(m))^2
-    const heightInMeters = height / 100;
-    return weight / (heightInMeters * heightInMeters);
-  };
-
-  const calculateeGFR = (age: number, sex: string, creatinine: number): number => {
-    // Using CKD-EPI equation as specified in PREVENT
-    const isFemale = sex === 'female';
-    const kappa = isFemale ? 0.7 : 0.9;
-    const alpha = isFemale ? -0.241 : -0.302;
-    const sexFactor = isFemale ? 1.012 : 1;
-    
-    const term1 = 142;
-    const term2 = Math.min(creatinine / kappa, 1) ** alpha;
-    const term3 = Math.max(creatinine / kappa, 1) ** (-1.2);
-    const term4 = 0.9938 ** age;
-    
-    return term1 * term2 * term3 * term4 * sexFactor;
   };
 
   const getSDIGroup = (zipCode: string): number | null => {
@@ -1234,13 +1395,26 @@ export const PREVENTCalculator: React.FC = () => {
       heartFailure30 = calculateEndpointRisk(getCoefficients('HF', '30'));
     }
 
+    const tenYearTotalCVDRounded = Math.round(totalCVD10 * 10) / 10;
+    
+    const riskCategory: 'low' | 'borderline' | 'intermediate' | 'high' = 
+      tenYearTotalCVDRounded < 5 ? 'low' : 
+      tenYearTotalCVDRounded < 7.5 ? 'borderline' :
+      tenYearTotalCVDRounded < 20 ? 'intermediate' : 'high';
+      
+    const recommendations = [
+      'Discuss lifestyle modifications with your healthcare provider',
+      'Regular follow-up based on risk level',
+      'Consider additional cardiovascular protective measures'
+    ];
+
     return {
       bmi: Math.round(bmi * 10) / 10,
       eGFR: Math.round(eGFR * 10) / 10,
       sdiGroup,
       hasEnhancedCKM: novelFactorCount > 0,
       tenYearRisk: {
-        totalCVD: Math.round(totalCVD10 * 10) / 10,
+        totalCVD: tenYearTotalCVDRounded,
         ascvd: Math.round(ascvd10 * 10) / 10,
         heartFailure: Math.round(heartFailure10 * 10) / 10
       },
@@ -1248,7 +1422,9 @@ export const PREVENTCalculator: React.FC = () => {
         totalCVD: Math.round(totalCVD30! * 10) / 10,
         ascvd: Math.round(ascvd30! * 10) / 10,
         heartFailure: Math.round(heartFailure30! * 10) / 10
-      } : undefined
+      } : undefined,
+      riskCategory,
+      recommendations
     };
   };
 
@@ -1260,7 +1436,8 @@ export const PREVENTCalculator: React.FC = () => {
     // Simulate advanced PREVENT risk calculation with loading animation
     setTimeout(() => {
       const calculatedResult = calculatePREVENTRisk();
-      setResult(calculatedResult);
+      setResults(calculatedResult);
+      setShowResults(true);
       setIsCalculating(false);
     }, 2200);
   };
@@ -1282,10 +1459,12 @@ export const PREVENTCalculator: React.FC = () => {
       hba1c: '',
       uacr: '',
     });
-    setResult(null);
+    setResults(null);
+    setShowResults(false);
     setErrors({});
     setIsCalculating(false);
     setCurrentStep(1);
+    setCompletedSteps(new Set());
   };
 
   return (
@@ -1316,52 +1495,136 @@ export const PREVENTCalculator: React.FC = () => {
           </div>
         </div>
 
-        {!result ? (
+        {!showResults ? (
           <>
-            {/* Progress Indicator */}
-            <div className="flex items-center justify-center space-x-4 mb-8">
-              <div className="flex items-center space-x-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
-                  currentStep >= 1 ? 'bg-purple-500 text-white' : 'bg-gray-200 text-gray-500'
-                }`}>
-                  1
-                </div>
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.cardiology.prevent.step_demographics')}</span>
+            {/* Sophisticated Step Navigation System */}
+            <div className="relative mb-12">
+              <div className="flex items-center justify-between mb-8">
+                {STEP_CONFIG.slice(0, 4).map((step, index) => (
+                  <div key={step.id} className="flex items-center group cursor-pointer" 
+                       onClick={() => setCurrentStep(step.id)}>
+                    <div className="relative">
+                      {/* Step Circle */}
+                      <div className={`w-14 h-14 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500 shadow-xl ${
+                        currentStep >= step.id 
+                          ? `bg-gradient-to-r ${step.color} text-white shadow-lg` 
+                          : 'bg-white dark:bg-gray-800 text-gray-400 border-2 border-gray-200 dark:border-gray-700'
+                      } group-hover:scale-110 group-hover:shadow-2xl transform`}>
+                        {renderStepIcon(step, completedSteps.has(step.id))}
+                      </div>
+                      
+                      {/* Step Label */}
+                      <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-36 text-center">
+                        <div className={`text-sm font-bold transition-colors duration-300 ${
+                          currentStep >= step.id 
+                            ? 'text-gray-900 dark:text-gray-100' 
+                            : 'text-gray-500 dark:text-gray-400'
+                        }`}>
+                          {step.title}
+                        </div>
+                        <div className="text-xs text-gray-400 dark:text-gray-500 mt-1 leading-tight">
+                          {step.description}
+                        </div>
+                      </div>
+                      
+                      {/* Active Step Glow */}
+                      {currentStep === step.id && (
+                        <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${step.color} opacity-20 blur-xl scale-150 animate-pulse`}></div>
+                      )}
+                    </div>
+                    
+                    {/* Connector Line */}
+                    {index < 3 && (
+                      <div className={`flex-1 h-2 mx-6 rounded-full transition-all duration-700 ${
+                        currentStep > step.id 
+                          ? `bg-gradient-to-r ${step.color}` 
+                          : 'bg-gray-200 dark:bg-gray-700'
+                      } overflow-hidden`}>
+                        <div className={`h-full rounded-full transition-all duration-1000 ease-out ${
+                          currentStep > step.id ? 'w-full' : 'w-0'
+                        } bg-gradient-to-r ${step.color}`}></div>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
-              <div className={`w-16 h-1 rounded-full transition-all duration-300 ${
-                currentStep >= 2 ? 'bg-indigo-500' : 'bg-gray-200'
-              }`}></div>
-              <div className="flex items-center space-x-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
-                  currentStep >= 2 ? 'bg-indigo-500 text-white' : 'bg-gray-200 text-gray-500'
-                }`}>
-                  2
+              
+              {/* Progress Percentage with Animation */}
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center space-x-4 px-8 py-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/20 shadow-2xl">
+                  <div className="relative">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                      <TrendingUp className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 opacity-30 blur-lg scale-150 animate-pulse"></div>
+                  </div>
+                  <div className="text-left">
+                    <div className="text-lg font-bold text-gray-800 dark:text-gray-200">
+                      {Math.round((completedSteps.size / 4) * 100)}% Complete
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      {completedSteps.size} of 4 steps completed
+                    </div>
+                  </div>
+                  <div className="w-32 h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-1000 ease-out"
+                      style={{ width: `${(completedSteps.size / 4) * 100}%` }}
+                    ></div>
+                  </div>
                 </div>
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.cardiology.prevent.step_clinical')}</span>
-              </div>
-              <div className={`w-16 h-1 rounded-full transition-all duration-300 ${
-                currentStep >= 3 ? 'bg-pink-500' : 'bg-gray-200'
-              }`}></div>
-              <div className="flex items-center space-x-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
-                  currentStep >= 3 ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-500'
-                }`}>
-                  3
-                </div>
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.cardiology.prevent.step_lab_values')}</span>
-              </div>
-              <div className={`w-16 h-1 rounded-full transition-all duration-300 ${
-                currentStep >= 4 ? 'bg-blue-500' : 'bg-gray-200'
-              }`}></div>
-              <div className="flex items-center space-x-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
-                  currentStep >= 4 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-500'
-                }`}>
-                  4
-                </div>
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('calculators.cardiology.prevent.step_ckm_e')}</span>
               </div>
             </div>
+
+            {/* Real-time Calculations Preview */}
+            {(realTimeCalculations.bmi > 0 || realTimeCalculations.eGFR > 0) && (
+              <div className="mb-8 p-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-900/20 dark:via-indigo-900/20 dark:to-purple-900/20 rounded-3xl border border-blue-200 dark:border-blue-800 backdrop-blur-sm shadow-xl">
+                <div className="text-center mb-6">
+                  <h4 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">Live Calculations</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Values update automatically as you enter data</p>
+                </div>
+                <div className="flex items-center justify-center space-x-12">
+                  {realTimeCalculations.bmi > 0 && (
+                    <div className="text-center group">
+                      <div className="relative">
+                        <div className="flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/40 dark:to-blue-800/40 rounded-full mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                          <Activity className="w-10 h-10 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <div className="absolute inset-0 rounded-full bg-blue-500 opacity-20 blur-xl scale-125 group-hover:scale-150 transition-transform duration-300"></div>
+                      </div>
+                      <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+                        {realTimeCalculations.bmi}
+                      </div>
+                      <div className="text-sm font-medium text-gray-600 dark:text-gray-400">BMI (kg/m²)</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                        {realTimeCalculations.bmi < 18.5 ? 'Underweight' :
+                         realTimeCalculations.bmi < 25 ? 'Normal' :
+                         realTimeCalculations.bmi < 30 ? 'Overweight' : 'Obese'}
+                      </div>
+                    </div>
+                  )}
+                  {realTimeCalculations.eGFR > 0 && (
+                    <div className="text-center group">
+                      <div className="relative">
+                        <div className="flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-100 to-emerald-200 dark:from-emerald-900/40 dark:to-emerald-800/40 rounded-full mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                          <Heart className="w-10 h-10 text-emerald-600 dark:text-emerald-400" />
+                        </div>
+                        <div className="absolute inset-0 rounded-full bg-emerald-500 opacity-20 blur-xl scale-125 group-hover:scale-150 transition-transform duration-300"></div>
+                      </div>
+                      <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">
+                        {realTimeCalculations.eGFR}
+                      </div>
+                      <div className="text-sm font-medium text-gray-600 dark:text-gray-400">eGFR (mL/min/1.73m²)</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                        {realTimeCalculations.eGFR >= 90 ? 'Normal' :
+                         realTimeCalculations.eGFR >= 60 ? 'Mild decrease' :
+                         realTimeCalculations.eGFR >= 30 ? 'Moderate decrease' : 'Severe decrease'}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Step 1: Demographics */}
             {currentStep === 1 && (
@@ -1654,13 +1917,13 @@ export const PREVENTCalculator: React.FC = () => {
           </>
         ) : (
           /* Results Display */
-          result && (
+          results && (
             <div className="space-y-8 animate-scaleIn">
               <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-white/20 dark:border-gray-700/20 rounded-2xl p-6">
                 <div className="flex items-center space-x-3 mb-6">
                   <Star className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                   <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.prevent.results_title')}</h3>
-                  {result.hasEnhancedCKM && (
+                  {results.hasEnhancedCKM && (
                     <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium">
                       CKM-Enhanced
                     </span>
@@ -1675,20 +1938,20 @@ export const PREVENTCalculator: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-2xl border border-white/20 dark:border-gray-700/20">
                       <div className="text-center">
-                        <div className="text-xl font-bold text-blue-600 dark:text-blue-400 mb-1">{result.bmi}</div>
+                        <div className="text-xl font-bold text-blue-600 dark:text-blue-400 mb-1">{results.bmi}</div>
                         <div className="text-sm text-gray-600 dark:text-gray-400">BMI (kg/m²)</div>
                       </div>
                     </div>
                     <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-2xl border border-white/20 dark:border-gray-700/20">
                       <div className="text-center">
-                        <div className="text-xl font-bold text-green-600 dark:text-green-400 mb-1">{result.eGFR}</div>
+                        <div className="text-xl font-bold text-green-600 dark:text-green-400 mb-1">{results.eGFR}</div>
                         <div className="text-sm text-gray-600 dark:text-gray-400">eGFR (mL/min/1.73m²)</div>
                       </div>
                     </div>
-                    {result.sdiGroup && (
+                    {results.sdiGroup && (
                       <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-2xl border border-white/20 dark:border-gray-700/20">
                         <div className="text-center">
-                          <div className="text-xl font-bold text-orange-600 dark:text-orange-400 mb-1">{result.sdiGroup}</div>
+                          <div className="text-xl font-bold text-orange-600 dark:text-orange-400 mb-1">{results.sdiGroup}</div>
                           <div className="text-sm text-gray-600 dark:text-gray-400">SDI Group</div>
                         </div>
                       </div>
@@ -1705,36 +1968,36 @@ export const PREVENTCalculator: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-2xl border border-white/20 dark:border-gray-700/20">
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-1">{result.tenYearRisk.totalCVD}%</div>
+                        <div className="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-1">{results.tenYearRisk.totalCVD}%</div>
                         <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('calculators.cardiology.prevent.total_cvd')}</div>
                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                           <div 
                             className="bg-purple-500 h-2 rounded-full transition-all duration-1000"
-                            style={{ width: `${Math.min(result.tenYearRisk.totalCVD * 2, 100)}%` }}
+                            style={{ width: `${Math.min(results.tenYearRisk.totalCVD * 2, 100)}%` }}
                           ></div>
                         </div>
                       </div>
                     </div>
                     <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-2xl border border-white/20 dark:border-gray-700/20">
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-1">{result.tenYearRisk.ascvd}%</div>
+                        <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-1">{results.tenYearRisk.ascvd}%</div>
                         <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('calculators.cardiology.prevent.ascvd')}</div>
                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                           <div 
                             className="bg-indigo-500 h-2 rounded-full transition-all duration-1000"
-                            style={{ width: `${Math.min(result.tenYearRisk.ascvd * 2, 100)}%` }}
+                            style={{ width: `${Math.min(results.tenYearRisk.ascvd * 2, 100)}%` }}
                           ></div>
                         </div>
                       </div>
                     </div>
                     <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-2xl border border-white/20 dark:border-gray-700/20">
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-pink-600 dark:text-pink-400 mb-1">{result.tenYearRisk.heartFailure}%</div>
+                        <div className="text-2xl font-bold text-pink-600 dark:text-pink-400 mb-1">{results.tenYearRisk.heartFailure}%</div>
                         <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('calculators.cardiology.prevent.heart_failure')}</div>
                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                           <div 
                             className="bg-pink-500 h-2 rounded-full transition-all duration-1000"
-                            style={{ width: `${Math.min(result.tenYearRisk.heartFailure * 2, 100)}%` }}
+                            style={{ width: `${Math.min(results.tenYearRisk.heartFailure * 2, 100)}%` }}
                           ></div>
                         </div>
                       </div>
@@ -1743,7 +2006,7 @@ export const PREVENTCalculator: React.FC = () => {
                 </div>
 
                 {/* 30-Year Risk Display (for ages 30-59) */}
-                {result.thirtyYearRisk && (
+                {results.thirtyYearRisk && (
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3 mb-4">
                       <Clock className="w-5 h-5 text-blue-500" />
@@ -1752,19 +2015,19 @@ export const PREVENTCalculator: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/30 rounded-xl border border-purple-200 dark:border-purple-800">
                         <div className="text-center">
-                          <div className="text-xl font-bold text-purple-700 dark:text-purple-300">{result.thirtyYearRisk.totalCVD}%</div>
+                          <div className="text-xl font-bold text-purple-700 dark:text-purple-300">{results.thirtyYearRisk.totalCVD}%</div>
                           <div className="text-sm text-purple-600 dark:text-purple-400">{t('calculators.cardiology.prevent.total_cvd')}</div>
                         </div>
                       </div>
                       <div className="p-4 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-900/30 rounded-xl border border-indigo-200 dark:border-indigo-800">
                         <div className="text-center">
-                          <div className="text-xl font-bold text-indigo-700 dark:text-indigo-300">{result.thirtyYearRisk.ascvd}%</div>
+                          <div className="text-xl font-bold text-indigo-700 dark:text-indigo-300">{results.thirtyYearRisk.ascvd}%</div>
                           <div className="text-sm text-indigo-600 dark:text-indigo-400">{t('calculators.cardiology.prevent.ascvd')}</div>
                         </div>
                       </div>
                       <div className="p-4 bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-900/20 dark:to-pink-900/30 rounded-xl border border-pink-200 dark:border-pink-800">
                         <div className="text-center">
-                          <div className="text-xl font-bold text-pink-700 dark:text-pink-300">{result.thirtyYearRisk.heartFailure}%</div>
+                          <div className="text-xl font-bold text-pink-700 dark:text-pink-300">{results.thirtyYearRisk.heartFailure}%</div>
                           <div className="text-sm text-pink-600 dark:text-pink-400">{t('calculators.cardiology.prevent.heart_failure')}</div>
                         </div>
                       </div>
@@ -1781,23 +2044,23 @@ export const PREVENTCalculator: React.FC = () => {
                       sex={formData.sex as 'male' | 'female'}
                       formData={formData}
                       currentRisk={{
-                        totalCVD: result.tenYearRisk.totalCVD,
-                        ascvd: result.tenYearRisk.ascvd,
-                        heartFailure: result.tenYearRisk.heartFailure
+                        totalCVD: results.tenYearRisk.totalCVD,
+                        ascvd: results.tenYearRisk.ascvd,
+                        heartFailure: results.tenYearRisk.heartFailure
                       }}
                       timeframe="10"
                     />
 
                     {/* 30-Year Risk Chart (if applicable) */}
-                    {result.thirtyYearRisk && (
+                    {results.thirtyYearRisk && (
                       <RiskVisualizationChart
                         patientAge={parseInt(formData.age)}
                         sex={formData.sex as 'male' | 'female'}
                         formData={formData}
                         currentRisk={{
-                          totalCVD: result.thirtyYearRisk.totalCVD,
-                          ascvd: result.thirtyYearRisk.ascvd,
-                          heartFailure: result.thirtyYearRisk.heartFailure
+                          totalCVD: results.thirtyYearRisk.totalCVD,
+                          ascvd: results.thirtyYearRisk.ascvd,
+                          heartFailure: results.thirtyYearRisk.heartFailure
                         }}
                         timeframe="30"
                       />
@@ -1835,7 +2098,7 @@ export const PREVENTCalculator: React.FC = () => {
                   {t('calculators.cardiology.prevent.new_assessment')}
                 </CalculatorButton>
                 <CalculatorButton
-                  onClick={() => setResult(null)}
+                  onClick={() => setShowResults(false)}
                   variant="secondary"
                   size="lg"
                 >
@@ -1860,4 +2123,6 @@ export const PREVENTCalculator: React.FC = () => {
       </div>
     </CalculatorContainer>
   );
-}; 
+};
+
+export { PREVENTCalculator }; 

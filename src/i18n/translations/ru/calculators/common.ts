@@ -46,6 +46,7 @@ export default {
   protective_factors: 'Защитные факторы',
   prophylactic_surgery_discussion: 'Обсуждение профилактической хирургии',
   score: 'Балл',
+  points: 'баллов',
   low: 'Низкий',
   moderate: 'Умеренный',
   high: 'Высокий',

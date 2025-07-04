@@ -254,11 +254,11 @@ export default function DAPTCalculator() {
 
   const getInterpretation = (category: string, score: number) => {
     if (score >= 2) {
-      return t('calculators.cardiology.dapt.interpretation_high', { score: score.toString() });
+      return t('calculators.cardiology.dapt.interpretation_high', { score });
     } else if (score >= 1) {
-      return t('calculators.cardiology.dapt.interpretation_intermediate', { score: score.toString() });
+      return t('calculators.cardiology.dapt.interpretation_intermediate', { score });
     } else {
-      return t('calculators.cardiology.dapt.interpretation_low', { score: score.toString() });
+      return t('calculators.cardiology.dapt.interpretation_low', { score });
     }
   };
 
@@ -525,45 +525,161 @@ export default function DAPTCalculator() {
         ) : (
           result && (
             <div className="animate-fadeIn">
-              <ResultsDisplay
-                title={t('calculators.cardiology.dapt.score_analysis')}
-                interpretation={getInterpretation(result.ischemicBenefit, result.score)}
-                category={getRiskLevel(result.ischemicBenefit)}
-                value={result.score}
-                unit={t('calculators.common.points')}
-              >
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-6">
-                  <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/30">
-                    <h4 className="font-semibold text-green-700 dark:text-green-300">{t('calculators.cardiology.dapt.ischemic_benefit')}</h4>
-                    <p className="text-lg font-bold">{t(`calculators.cardiology.dapt.${result.ischemicBenefit}_risk`)}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{t('calculators.cardiology.dapt.mace_reduction', { reduction: result.riskBalance.ischemicReduction.toString() })}</p>
-                  </div>
-                  <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/30">
-                    <h4 className="font-semibold text-red-700 dark:text-red-300">{t('calculators.cardiology.dapt.bleeding_risk')}</h4>
-                    <p className="text-lg font-bold">{t(`calculators.cardiology.dapt.${result.bleedingRisk}_risk`)}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{t('calculators.cardiology.dapt.bleeding_increase', { increase: result.riskBalance.bleedingIncrease.toString() })}</p>
-                  </div>
-                  <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30">
-                    <h4 className="font-semibold text-blue-700 dark:text-blue-300">{t('calculators.cardiology.dapt.net_benefit')}</h4>
-                    <p className="text-lg font-bold">{getBenefitInfo(result.netBenefit).label}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{getBenefitInfo(result.netBenefit).description}</p>
-                  </div>
-                </div>
-
-                <div className="my-6 p-4 rounded-lg bg-gray-100 dark:bg-gray-800">
-                  <h4 className="font-semibold mb-2">{t('calculators.cardiology.dapt.duration_recommendation')}</h4>
-                  <p>{result.durationGuidance}</p>
-                </div>
+              {/* Hero Results Card - Matching AF Calculator Style */}
+              <div className={`relative overflow-hidden rounded-2xl border border-white/20 dark:border-gray-700/50 shadow-2xl shadow-black/5 dark:shadow-black/20 mb-8 ${
+                result.score >= 2 ? 'bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-emerald-950/20 dark:via-green-950/20 dark:to-teal-950/20' :
+                result.score >= 0 ? 'bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 dark:from-amber-950/20 dark:via-yellow-950/20 dark:to-orange-950/20' :
+                'bg-gradient-to-br from-rose-50 via-red-50 to-pink-50 dark:from-rose-950/20 dark:via-red-950/20 dark:to-pink-950/20'
+              }`}>
+                {/* Glassmorphism overlay */}
+                <div className="absolute inset-0 backdrop-blur-sm bg-white/80 dark:bg-gray-900/80"></div>
                 
-                <div className="my-6 p-4 rounded-lg bg-gray-100 dark:bg-gray-800">
-                  <h4 className="font-semibold mb-2">{t('calculators.cardiology.dapt.clinical_considerations')}</h4>
-                  <ul className="list-disc list-inside space-y-1">
-                    {result.clinicalConsiderations.map((consideration, index) => (
-                      <li key={index}>{consideration}</li>
-                    ))}
-                  </ul>
+                <div className="relative p-8">
+                  {/* Header */}
+                  <div className="text-center mb-8">
+                    <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                      {t('calculators.cardiology.dapt.score_analysis')}
+                    </h2>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      {getInterpretation(result.ischemicBenefit, result.score)}
+                    </p>
+                  </div>
+
+                  {/* Central Score Display with Circular Progress */}
+                  <div className="flex flex-col items-center mb-8">
+                    <div className="relative">
+                      {/* Circular Progress Ring */}
+                      <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+                        {/* Background circle */}
+                        <circle
+                          cx="60"
+                          cy="60"
+                          r="50"
+                          stroke="currentColor"
+                          strokeWidth="8"
+                          fill="transparent"
+                          className="text-gray-200 dark:text-gray-700"
+                        />
+                        {/* Progress circle */}
+                        <circle
+                          cx="60"
+                          cy="60"
+                          r="50"
+                          stroke="currentColor"
+                          strokeWidth="8"
+                          fill="transparent"
+                          strokeDasharray={`${((result.score + 2) / 6) * 314} 314`}
+                          strokeLinecap="round"
+                          className={`transition-all duration-1000 ease-out ${
+                            result.score >= 2 ? 'text-emerald-500' :
+                            result.score >= 0 ? 'text-amber-500' :
+                            'text-rose-500'
+                          }`}
+                        />
+                      </svg>
+                      
+                      {/* Score Display */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className={`text-4xl font-bold ${
+                          result.score >= 2 ? 'text-emerald-600 dark:text-emerald-400' :
+                          result.score >= 0 ? 'text-amber-600 dark:text-amber-400' :
+                          'text-rose-600 dark:text-rose-400'
+                        }`}>
+                          {result.score}
+                        </span>
+                        <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                          {t('calculators.common.points')}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Risk Category Badge */}
+                    <div className={`mt-4 inline-flex items-center px-4 py-2 rounded-full font-medium text-sm ${
+                      result.score >= 2 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300' :
+                      result.score >= 0 ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300' :
+                      'bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300'
+                    }`}>
+                      <div className={`w-2 h-2 rounded-full mr-2 ${
+                        result.score >= 2 ? 'bg-emerald-500' :
+                        result.score >= 0 ? 'bg-amber-500' :
+                        'bg-rose-500'
+                      }`}></div>
+                      {result.score >= 2 ? t('calculators.cardiology.dapt.high_risk') :
+                       result.score >= 0 ? t('calculators.cardiology.dapt.intermediate_risk') :
+                       t('calculators.cardiology.dapt.low_risk')} Benefit
+                    </div>
+                  </div>
+
+                  {/* Risk Analysis Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div className="backdrop-blur-sm bg-white/60 dark:bg-gray-800/60 rounded-xl p-6 border border-white/40 dark:border-gray-700/40">
+                      <div className="flex items-center mb-3">
+                        <div className="p-2 bg-emerald-500/10 rounded-lg mr-3">
+                          <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                        </div>
+                        <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.dapt.ischemic_benefit')}</h4>
+                      </div>
+                      <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{t(`calculators.cardiology.dapt.${result.ischemicBenefit}_risk`)}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{t('calculators.cardiology.dapt.mace_reduction', { reduction: result.riskBalance.ischemicReduction })}</p>
+                    </div>
+                    
+                    <div className="backdrop-blur-sm bg-white/60 dark:bg-gray-800/60 rounded-xl p-6 border border-white/40 dark:border-gray-700/40">
+                      <div className="flex items-center mb-3">
+                        <div className="p-2 bg-red-500/10 rounded-lg mr-3">
+                          <Droplets className="w-5 h-5 text-red-600 dark:text-red-400" />
+                        </div>
+                        <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.dapt.bleeding_risk')}</h4>
+                      </div>
+                      <p className="text-lg font-bold text-red-600 dark:text-red-400">{t(`calculators.cardiology.dapt.${result.bleedingRisk}_risk`)}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{t('calculators.cardiology.dapt.bleeding_increase', { increase: result.riskBalance.bleedingIncrease })}</p>
+                    </div>
+                    
+                    <div className="backdrop-blur-sm bg-white/60 dark:bg-gray-800/60 rounded-xl p-6 border border-white/40 dark:border-gray-700/40">
+                      <div className="flex items-center mb-3">
+                        <div className="p-2 bg-blue-500/10 rounded-lg mr-3">
+                          <Zap className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.dapt.net_benefit')}</h4>
+                      </div>
+                      <p className="text-lg font-bold text-blue-600 dark:text-blue-400">{getBenefitInfo(result.netBenefit).label}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{getBenefitInfo(result.netBenefit).description}</p>
+                    </div>
+                  </div>
+
+                  {/* Clinical Recommendation */}
+                  <div className="backdrop-blur-sm bg-white/60 dark:bg-gray-800/60 rounded-xl p-6 border border-white/40 dark:border-gray-700/40 mb-6">
+                    <div className="flex items-start space-x-4">
+                      <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
+                        <Brain className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">{t('calculators.cardiology.dapt.duration_recommendation')}</h4>
+                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{result.durationGuidance}</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Clinical Considerations */}
+                  <div className="backdrop-blur-sm bg-white/60 dark:bg-gray-800/60 rounded-xl p-6 border border-white/40 dark:border-gray-700/40">
+                    <div className="flex items-start space-x-4">
+                      <div className="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl shadow-lg">
+                        <Stethoscope className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">{t('calculators.cardiology.dapt.clinical_considerations')}</h4>
+                        <ul className="space-y-2">
+                          {result.clinicalConsiderations.map((consideration, index) => (
+                            <li key={index} className="flex items-start">
+                              <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                              <span className="text-gray-700 dark:text-gray-300">{consideration}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </ResultsDisplay>
+              </div>
 
               {/* Interpretation Guide */}
               <div className="mt-8 p-6 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-900/50 rounded-2xl border border-gray-200 dark:border-gray-700">

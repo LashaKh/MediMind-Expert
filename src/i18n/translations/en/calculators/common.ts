@@ -50,6 +50,8 @@ export default {
   interpretation: 'Interpretation',
   recommendations: 'Recommendations',
   riskLevel: 'Risk Level', // Or simply 'risk' if preferred
+  points: 'points',
+  score: 'Score',
   lifetime_risk: 'Lifetime Risk',
   annual_risk: 'Annual Risk',
   risk_multiplier: 'Risk Multiplier',
