@@ -462,10 +462,7 @@ export default {
     creator_name: "Dr. Robert W. Yeh",
     creator_bio: "Associate Professor of Medicine at Harvard Medical School and Director of the Richard and Susan Smith Center for Outcomes Research in Cardiology at Beth Israel Deaconess Medical Center.",
     
-    creator_insight_1: "The question of how long to continue antiplatelet therapy after coronary stent procedures has troubled physicians for many years. On one hand, continuing these medications can prevent heart attacks. On the other hand, the drugs can also lead to bleeding. We wanted to develop a tool that could help clinicians identify who were the best patients to continue long term antiplatelet medications after heart stents, and who were the patients best served by shorter durations of these medications.",
-    creator_insight_2: "The DAPT Score gives clinicians an opportunity to see how patients with particular characteristics fared when randomized to either 30 months or 12 months of dual antiplatelet therapy after receiving a stent. The data are based on the largest ever randomized blinded trial of antiplatelet therapy that we led at the Baim Institute for Clinical Research (formerly Harvard Clinical Research Institute). However, although this is high quality evidence that has made its way into national guidelines, the DAPT Score is meant to be used in conjunction with clinical judgment. In addition, the score was derived in patients who were not taking long term oral anticoagulants like Coumadin and had no history of major bleeding in the past.",
-    creator_insight_3: "The DAPT Score should be used to guide antiplatelet duration in conjunction with clinical judgment and applied on an individualized basis. It is not a substitute for clinical judgment. It has been validated across a number of different populations, and continues to perform well in multiple settings in terms of separating patients with high ischemic/low bleeding risk (better served with longer durations of antiplatelet medications) from other patients with low ischemic/high bleeding risk (better served with shorter durations of antiplatelets).",
-    creator_insight_4: "We use the DAPT Score to aid in discussions with patients and their referring physicians about the proper duration of antiplatelet therapies each day. In the office, using an app is particularly valuable for patients to see what their risks are and to give context to shared decision making around this common conundrum.",
+    creator_insight_condensed: "Determining optimal antiplatelet therapy duration after coronary stents requires balancing heart attack prevention against bleeding risk. The DAPT Score, developed from the largest randomized trial (11,648 patients) at Harvard Clinical Research Institute, helps identify patients who benefit from extended therapy versus those better served by shorter durations. This validated tool guides clinical decisions alongside physician judgment, effectively separating high ischemic/low bleeding risk patients from those with opposite risk profiles. Essential for shared decision-making in routine practice.",
     
     // Evidence Section
     evidence_title: "Evidence & Formula",
@@ -1733,9 +1730,9 @@ export default {
     race_asian: 'Asian',
     race_other: 'Other',
     height_label: 'Height',
+    height_placeholder: '170',
     weight_label: 'Weight',
     weight_placeholder: '80',
-    zip_code_label: 'US Zip Code',
     
     // Step 2: Clinical Assessment
     clinical_title: 'Clinical Assessment',
@@ -1772,6 +1769,7 @@ export default {
     ckm_e_title: 'CKM-E Enhanced Factors',
     ckm_e_description: 'Cardiovascular-Kidney-Metabolic health enhancement factors',
     hba1c_label: 'HbA1c',
+    hba1c_placeholder: '6.5',
     egfr_label: 'eGFR',
     egfr_placeholder: '90',
     uacr_label: 'UACR',

@@ -25,7 +25,6 @@ interface PREVENTFormData {
   // Optional enhanced factors
   hba1c: string; // %
   uacr: string; // mg/g
-  zipCode: string; // US zip code
 }
 
 interface PREVENTResult {
@@ -958,7 +957,6 @@ export const PREVENTCalculator: React.FC = () => {
     currentSmoker: false,
     hba1c: '',
     uacr: '',
-    zipCode: ''
   });
 
   const [result, setResult] = useState<PREVENTResult | null>(null);
@@ -1075,20 +1073,18 @@ export const PREVENTCalculator: React.FC = () => {
     const onStatin = formData.onStatin;
     const hba1c = formData.hba1c ? parseFloat(formData.hba1c) : undefined;
     const uacr = formData.uacr ? parseFloat(formData.uacr) : undefined;
-    const zipCode = formData.zipCode;
 
     // Calculate BMI and eGFR using exact PREVENT formulas
     const bmi = calculateBMI(height, weight);
     const eGFR = calculateeGFR(age, sex, creatinine);
     
-    // Get SDI group using proper mapping
-    const sdiGroup = getSDIGroup(zipCode);
+    // No SDI group as ZIP code is removed
+    const sdiGroup = null;
 
     // Determine model type based on available novel factors
     const hasHbA1c = hba1c !== undefined;
     const hasUACR = uacr !== undefined;
-    const hasSDI = zipCode !== '';
-    const novelFactorCount = (hasHbA1c ? 1 : 0) + (hasUACR ? 1 : 0) + (hasSDI ? 1 : 0);
+    const novelFactorCount = (hasHbA1c ? 1 : 0) + (hasUACR ? 1 : 0);
 
     let modelType: string;
     if (novelFactorCount >= 2) {
@@ -1096,27 +1092,10 @@ export const PREVENTCalculator: React.FC = () => {
     } else if (novelFactorCount === 1) {
       if (hasHbA1c) modelType = 'HBA1C';
       else if (hasUACR) modelType = 'UACR';
-      else modelType = 'SDI';
+      else modelType = 'BASE';
     } else {
       modelType = 'BASE';
     }
-
-    // Enhanced factor calculations using exact PREVENT specification
-    const calculateSDIFactor = (coeffs: Record<string, number>): number => {
-      if (!zipCode) {
-        return coeffs.C25; // Missing ZIP code
-      }
-      const sdi = getSDIGroup(zipCode);
-      if (sdi === 1) {
-        return 0; // SDI group 1
-      } else if (sdi === 2) {
-        return coeffs.C23; // SDI group 2
-      } else if (sdi === 3) {
-        return coeffs.C24; // SDI group 3
-      } else {
-        return coeffs.C25; // ZIP code not found in SDI tables
-      }
-    };
 
     const calculateUACRFactor = (coeffs: Record<string, number>): number => {
       if (uacr === undefined) {
@@ -1203,14 +1182,6 @@ export const PREVENTCalculator: React.FC = () => {
 
       // Add enhanced factors ONLY when available and appropriate for this model type
       if (modelType !== 'BASE') {
-        // SDI factor - only if zipCode was provided
-        if (hasSDI) {
-        logit += calculateSDIFactor(coeffs);
-        } else if (coeffs.C25 !== undefined) {
-          // Add missing ZIP code penalty if coefficient exists
-          logit += coeffs.C25;
-        }
-        
         // UACR factor - only if uacr was provided
         if (hasUACR) {
         logit += calculateUACRFactor(coeffs);
@@ -1310,7 +1281,6 @@ export const PREVENTCalculator: React.FC = () => {
       currentSmoker: false,
       hba1c: '',
       uacr: '',
-      zipCode: ''
     });
     setResult(null);
     setErrors({});
@@ -1648,9 +1618,9 @@ export const PREVENTCalculator: React.FC = () => {
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{t('calculators.cardiology.prevent.ckm_e_description')}</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <CalculatorInput
-                    label={t('calculators.cardiology.prevent.uacr_label')}
+                    label={`${t('calculators.cardiology.prevent.uacr_label')} (Optional)`}
                     value={formData.uacr}
                     onChange={(value) => setFormData({ ...formData, uacr: value })}
                     type="number"
@@ -1660,29 +1630,6 @@ export const PREVENTCalculator: React.FC = () => {
                     unit={t('calculators.cardiology.prevent.unit_mg_g')}
                     icon={BarChart3}
                   />
-
-                  <CalculatorInput
-                    label={t('calculators.cardiology.prevent.zip_code_label')}
-                    value={formData.zipCode}
-                    onChange={(value) => setFormData({ ...formData, zipCode: value })}
-                    type="text"
-                    placeholder={t('calculators.cardiology.prevent.zip_code_placeholder')}
-                    error={errors.zipCode}
-                    icon={User}
-                  />
-                </div>
-
-                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
-                  <div className="flex items-center space-x-3 mb-3">
-                    <Star className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                    <h4 className="font-semibold text-blue-800 dark:text-blue-200">Enhanced CKM Factors (Optional)</h4>
-                  </div>
-                  <div className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
-                    <p>• <strong>HbA1C:</strong> Hemoglobin A1C level (enhances diabetes risk assessment)</p>
-                    <p>• <strong>UACR:</strong> Urine albumin-to-creatinine ratio (kidney function marker)</p>
-                    <p>• <strong>ZIP Code:</strong> Used for Social Deprivation Index (SDI) assessment</p>
-                    <p className="text-xs mt-2 text-blue-600 dark:text-blue-400">Including these factors provides enhanced CKM (Cardiovascular-Kidney-Metabolic) risk assessment</p>
-                  </div>
                 </div>
 
                 <div className="flex justify-between">

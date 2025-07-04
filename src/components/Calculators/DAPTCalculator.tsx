@@ -628,38 +628,31 @@ export default function DAPTCalculator() {
                           <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                             {t('calculators.cardiology.dapt.creator_bio')}
                           </p>
+                          <a 
+                            href="https://pubmed.ncbi.nlm.nih.gov/?term=Yeh+RW%5BAu%5D" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center mt-3 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                          >
+                            <ExternalLink className="w-4 h-4 mr-1" />
+                            View Publications on PubMed
+                          </a>
                         </div>
                       </div>
                     </div>
 
-                    <div className="grid gap-4">
-                      {[
-                        { icon: MessageCircle, color: 'emerald', insight: 'creator_insight_1' },
-                        { icon: Lightbulb, color: 'teal', insight: 'creator_insight_2' },
-                        { icon: Brain, color: 'cyan', insight: 'creator_insight_3' },
-                        { icon: Target, color: 'blue', insight: 'creator_insight_4' }
-                      ].map((item, index) => {
-                        const IconComponent = item.icon;
-                        return (
-                          <div key={index} className="group bg-gradient-to-r from-white/60 to-white/30 dark:from-gray-800/60 dark:to-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-white/40 dark:border-gray-700/40 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
-                            <div className="flex items-start space-x-4">
-                              <div className={`p-3 bg-gradient-to-br ${
-                                item.color === 'emerald' ? 'from-emerald-500 to-green-600 shadow-emerald-500/25' :
-                                item.color === 'teal' ? 'from-teal-500 to-cyan-600 shadow-teal-500/25' :
-                                item.color === 'cyan' ? 'from-cyan-500 to-blue-600 shadow-cyan-500/25' :
-                                'from-blue-500 to-indigo-600 shadow-blue-500/25'
-                              } rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                                <IconComponent className="w-5 h-5 text-white" />
-                              </div>
-                              <div className="flex-1">
-                                <p className="text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
-                                  {t(`calculators.cardiology.dapt.${item.insight}`)}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
+                    {/* Condensed Insight */}
+                    <div className="bg-gradient-to-r from-white/60 to-white/30 dark:from-gray-800/60 dark:to-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-white/40 dark:border-gray-700/40">
+                      <div className="flex items-start space-x-4">
+                        <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-lg shadow-emerald-500/25">
+                          <Lightbulb className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+                            {t('calculators.cardiology.dapt.creator_insight_condensed')}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
