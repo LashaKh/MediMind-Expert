@@ -1712,6 +1712,20 @@ export default {
     step_lab_values: 'Lab Values',
     step_ckm_e: 'CKM-E',
     
+    // Step navigation titles and descriptions
+    step_1_title: 'Personal Information',
+    step_1_description: 'Basic demographic and anthropometric data',
+    step_2_title: 'Laboratory Values',
+    step_2_description: 'Cholesterol profile and biomarkers',
+    step_3_title: 'Clinical Factors',
+    step_3_description: 'Blood pressure and medical history',
+    step_4_title: 'Enhanced Factors',
+    step_4_description: 'Optional CKM-E parameters (Optional)',
+    
+    // Progress indicators
+    progress_complete: 'Complete',
+    progress_of_steps: 'of 4 steps completed',
+    
     // Step 1: Demographics
     demographics_title: 'Patient Demographics',
     demographics_description: 'Basic demographic information for risk assessment',

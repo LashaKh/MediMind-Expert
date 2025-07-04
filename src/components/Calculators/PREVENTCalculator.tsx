@@ -955,49 +955,7 @@ const RiskVisualizationChart: React.FC<{
   );
 };
 
-// Sophisticated step configuration for premium UX
-const STEP_CONFIG: StepConfig[] = [
-  {
-    id: 1,
-    title: 'Personal Information',
-    description: 'Basic demographic and anthropometric data',
-    icon: User,
-    color: 'from-blue-500 to-cyan-500',
-    gradient: 'bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20'
-  },
-  {
-    id: 2,
-    title: 'Laboratory Values',
-    description: 'Cholesterol profile and biomarkers',
-    icon: Activity,
-    color: 'from-emerald-500 to-teal-500',
-    gradient: 'bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20'
-  },
-  {
-    id: 3,
-    title: 'Clinical Factors',
-    description: 'Blood pressure and medical history',
-    icon: Stethoscope,
-    color: 'from-purple-500 to-indigo-500',
-    gradient: 'bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20'
-  },
-  {
-    id: 4,
-    title: 'Enhanced Factors',
-    description: 'Optional CKM-E parameters (Optional)',
-    icon: Brain,
-    color: 'from-amber-500 to-orange-500',
-    gradient: 'bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20'
-  },
-  {
-    id: 5,
-    title: 'Risk Assessment',
-    description: 'Comprehensive cardiovascular risk analysis',
-    icon: Target,
-    color: 'from-red-500 to-pink-500',
-    gradient: 'bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20'
-  }
-];
+
 
 // Premium color system
 const RISK_COLORS = {
@@ -1030,6 +988,50 @@ const RISK_COLORS = {
 // Sophisticated component for enhanced user experience
 const PREVENTCalculator: React.FC = () => {
   const { t } = useTranslation();
+  
+  // Sophisticated step configuration for premium UX
+  const STEP_CONFIG: StepConfig[] = [
+    {
+      id: 1,
+      title: t('calculators.cardiology.prevent.step_1_title'),
+      description: t('calculators.cardiology.prevent.step_1_description'),
+      icon: User,
+      color: 'from-blue-500 to-cyan-500',
+      gradient: 'bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20'
+    },
+    {
+      id: 2,
+      title: t('calculators.cardiology.prevent.step_2_title'),
+      description: t('calculators.cardiology.prevent.step_2_description'),
+      icon: Activity,
+      color: 'from-emerald-500 to-teal-500',
+      gradient: 'bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20'
+    },
+    {
+      id: 3,
+      title: t('calculators.cardiology.prevent.step_3_title'),
+      description: t('calculators.cardiology.prevent.step_3_description'),
+      icon: Stethoscope,
+      color: 'from-purple-500 to-indigo-500',
+      gradient: 'bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20'
+    },
+    {
+      id: 4,
+      title: t('calculators.cardiology.prevent.step_4_title'),
+      description: t('calculators.cardiology.prevent.step_4_description'),
+      icon: Brain,
+      color: 'from-amber-500 to-orange-500',
+      gradient: 'bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20'
+    },
+    {
+      id: 5,
+      title: 'Risk Assessment',
+      description: 'Comprehensive cardiovascular risk analysis',
+      icon: Target,
+      color: 'from-red-500 to-pink-500',
+      gradient: 'bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20'
+    }
+  ];
   
   // State management with enhanced UX
   const [currentStep, setCurrentStep] = useState(1);
@@ -1499,79 +1501,80 @@ const PREVENTCalculator: React.FC = () => {
           <>
             {/* Sophisticated Step Navigation System */}
             <div className="relative mb-12">
-              <div className="flex items-center justify-between mb-24">
-                {STEP_CONFIG.slice(0, 4).map((step, index) => (
-                  <div key={step.id} className="flex items-center group cursor-pointer" 
-                       onClick={() => setCurrentStep(step.id)}>
-                    <div className="relative">
-                      {/* Step Circle */}
-                      <div className={`w-14 h-14 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500 shadow-xl ${
-                        currentStep >= step.id 
-                          ? `bg-gradient-to-r ${step.color} text-white shadow-lg` 
-                          : 'bg-white dark:bg-gray-800 text-gray-400 border-2 border-gray-200 dark:border-gray-700'
-                      } group-hover:scale-110 group-hover:shadow-2xl transform`}>
-                        {renderStepIcon(step, completedSteps.has(step.id))}
+              <div className="flex items-center justify-between">
+                {/* The connecting line */}
+                <div className="absolute top-8 left-0 w-full h-1 bg-gray-200 dark:bg-gray-700" style={{ zIndex: 1 }}></div>
+                <div 
+                  className="absolute top-8 left-0 h-1 bg-gradient-to-r from-cyan-400 to-purple-500 transition-all duration-1000 ease-out" 
+                  style={{ 
+                    width: `${((completedSteps.size > 0 ? completedSteps.size -1 : 0) / 3) * 100}%`,
+                    zIndex: 2 
+                  }}
+                ></div>
+
+                {STEP_CONFIG.slice(0, 4).map((step, index) => {
+                  const isActive = currentStep === step.id;
+                  const isCompleted = completedSteps.has(step.id);
+                  const isFuture = currentStep < step.id;
+
+                  return (
+                    <div 
+                      key={step.id} 
+                      className="relative flex flex-col items-center text-center group"
+                      style={{ zIndex: 10 }}
+                    >
+                      <div 
+                        className={`relative w-16 h-16 flex items-center justify-center rounded-full transition-all duration-500 transform cursor-pointer ${isActive ? 'scale-110' : 'group-hover:scale-100'}`}
+                        onClick={() => !isFuture && setCurrentStep(step.id)}
+                      >
+                        {/* Glowing effect for active step */}
+                        {isActive && (
+                          <div className={`absolute -inset-2 rounded-full bg-gradient-to-r ${step.color} opacity-30 blur-xl animate-pulse`}></div>
+                        )}
+                        
+                        {/* Step Circle */}
+                        <div className={`
+                          w-full h-full rounded-full flex items-center justify-center text-white font-bold text-2xl transition-all duration-500 shadow-lg
+                          ${isCompleted ? `bg-gradient-to-br ${step.color}` : 'bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600'}
+                          ${isActive ? `shadow-2xl ring-4 ring-offset-4 ring-offset-white dark:ring-offset-gray-900 ring-purple-500` : ''}
+                        `}>
+                          {isCompleted && !isActive ? <CheckCircle className="w-8 h-8" /> : <step.icon className={`w-8 h-8 ${isCompleted ? 'text-white' : `text-transparent bg-clip-text bg-gradient-to-r ${step.color}`}`} />}
+                        </div>
                       </div>
                       
                       {/* Step Label */}
-                      <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-36 text-center">
-                        <div className={`text-sm font-bold transition-colors duration-300 ${
-                          currentStep >= step.id 
-                            ? 'text-gray-900 dark:text-gray-100' 
-                            : 'text-gray-500 dark:text-gray-400'
-                        }`}>
+                      <div className={`mt-5 w-40 transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-70 group-hover:opacity-100'}`}>
+                        <div className={`font-bold transition-colors duration-300 ${isActive ? `text-transparent bg-clip-text bg-gradient-to-r ${step.color}` : 'text-gray-800 dark:text-gray-200'}`}>
                           {step.title}
                         </div>
-                        <div className="text-xs text-gray-400 dark:text-gray-500 mt-1 leading-tight">
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                           {step.description}
                         </div>
                       </div>
-                      
-                      {/* Active Step Glow */}
-                      {currentStep === step.id && (
-                        <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${step.color} opacity-20 blur-xl scale-150 animate-pulse`}></div>
-                      )}
                     </div>
-                    
-                    {/* Connector Line */}
-                    {index < 3 && (
-                      <div className={`flex-1 h-2 mx-6 rounded-full transition-all duration-700 ${
-                        currentStep > step.id 
-                          ? `bg-gradient-to-r ${step.color}` 
-                          : 'bg-gray-200 dark:bg-gray-700'
-                      } overflow-hidden`}>
-                        <div className={`h-full rounded-full transition-all duration-1000 ease-out ${
-                          currentStep > step.id ? 'w-full' : 'w-0'
-                        } bg-gradient-to-r ${step.color}`}></div>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
-              
-              {/* Progress Percentage with Animation */}
-              <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center flex-wrap gap-2 space-x-4 px-8 py-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/20 shadow-2xl max-w-full">
-                  <div className="relative">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
-                      <TrendingUp className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 opacity-30 blur-lg scale-150 animate-pulse"></div>
+            </div>
+
+            {/* Progress Percentage with Animation */}
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center flex-wrap gap-2 space-x-4 px-8 py-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/20 shadow-2xl max-w-full">
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                    <Target className="w-6 h-6 text-white" />
                   </div>
-                  <div className="text-left">
-                    <div className="text-lg font-bold text-gray-800 dark:text-gray-200">
-                      {Math.round((completedSteps.size / 4) * 100)}% Complete
-                    </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      {completedSteps.size} of 4 steps completed
-                    </div>
-                  </div>
-                  <div className="w-32 h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-1000 ease-out"
-                      style={{ width: `${(completedSteps.size / 4) * 100}%` }}
-                    ></div>
-                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    {Math.round((completedSteps.size / 4) * 100)}%
+                  </span>
+                  <span className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+                    {t('calculators.cardiology.prevent.progress_complete')}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  {completedSteps.size} {t('calculators.cardiology.prevent.progress_of_steps')}
                 </div>
               </div>
             </div>

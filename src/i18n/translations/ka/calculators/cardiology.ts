@@ -1665,6 +1665,20 @@ export default {
     step_lab_values: 'ლაბ. მონაცემები',
     step_ckm_e: 'CKM-E',
     
+    // Step navigation titles and descriptions
+    step_1_title: 'პირადი ინფორმაცია',
+    step_1_description: 'ძირითადი დემოგრაფიული და ანთროპომეტრული მონაცემები',
+    step_2_title: 'ლაბორატორიული მონაცემები',
+    step_2_description: 'ქოლესტერინის პროფილი და ბიომარკერები',
+    step_3_title: 'კლინიკური ფაქტორები',
+    step_3_description: 'არტერიული წნევა და სამედიცინო ანამნეზი',
+    step_4_title: 'გაძლიერებული ფაქტორები',
+    step_4_description: 'არჩევითი CKM-E პარამეტრები (არჩევითი)',
+    
+    // Progress indicators
+    progress_complete: 'დასრულებული',
+    progress_of_steps: '4 ნაბიჯიდან დასრულებული',
+    
     // Step 1: Demographics
     demographics_title: 'პაციენტის დემოგრაფია',
     demographics_description: 'ძირითადი დემოგრაფიული ინფორმაცია რისკის შეფასებისთვის',

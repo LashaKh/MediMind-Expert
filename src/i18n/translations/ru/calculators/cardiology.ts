@@ -1155,6 +1155,20 @@ export default {
     step_lab_values: 'Лаб. данные',
     step_ckm_e: 'CKM-E',
     
+    // Step navigation titles and descriptions
+    step_1_title: 'Личная информация',
+    step_1_description: 'Основные демографические и антропометрические данные',
+    step_2_title: 'Лабораторные данные',
+    step_2_description: 'Профиль холестерина и биомаркеры',
+    step_3_title: 'Клинические факторы',
+    step_3_description: 'Артериальное давление и медицинская история',
+    step_4_title: 'Расширенные факторы',
+    step_4_description: 'Дополнительные CKM-E параметры (Дополнительно)',
+    
+    // Progress indicators
+    progress_complete: 'Завершено',
+    progress_of_steps: 'из 4 шагов завершено',
+    
     // Step 1: Demographics
     demographics_title: 'Демография пациента',
     demographics_description: 'Основная демографическая информация для оценки риска',
