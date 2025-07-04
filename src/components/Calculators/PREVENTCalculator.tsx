@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Calculator, Info, TrendingUp, Star, Brain, User, Activity, BarChart3, Stethoscope, Award, Shield, AlertCircle, Clock, Target } from 'lucide-react';
+import { Calculator, Info, TrendingUp, Star, Brain, User, Activity, BarChart3, Stethoscope, Award, AlertCircle, Clock, Target } from 'lucide-react';
 import { 
   CalculatorContainer, 
   CalculatorInput, 
   CalculatorSelect, 
   CalculatorCheckbox, 
-  CalculatorButton, 
-  ResultsDisplay 
+  CalculatorButton 
 } from '../ui/calculator-ui';
 import { useTranslation } from '../../hooks/useTranslation';
 
@@ -33,73 +32,106 @@ interface PREVENTResult {
   bmi: number;
   eGFR: number;
   sdiGroup: number | null;
-  tenYearCVD: number;
-  tenYearASCVD: number;
-  tenYearHeartFailure: number;
-  thirtyYearCVD?: number;
-  thirtyYearASCVD?: number;
-  thirtyYearHeartFailure?: number;
-  riskCategory: 'low' | 'borderline' | 'intermediate' | 'high';
-  ckmeEnhanced: boolean;
-  recommendations: string[];
-  preventionStrategy: string;
+  hasEnhancedCKM: boolean;
+  tenYearRisk: {
+    totalCVD: number;
+    ascvd: number;
+    heartFailure: number;
+  };
+  thirtyYearRisk?: {
+    totalCVD: number;
+    ascvd: number;
+    heartFailure: number;
+  };
 }
 
-// Coefficient tables for PREVENT equations - Updated with realistic values
+// Official AHA PREVENT 2023 Coefficient Tables from the published appendix
 const PREVENT_COEFFICIENTS = {
-  // 10-year ASCVD coefficients (Male)
-  ASCVD_10_MALE: {
-    C0: 0.452, C1: 0.0, C2: 0.318, C3: -0.231, C4: 0.0, C5: 0.385,
-    C6: 0.649, C7: 0.485, C8: 0.0, C9: 0.349, C10: 0.0, C11: 0.0,
-    C12: 0.270, C13: -0.249, C14: 0.0, C15: 0.0, C16: 0.042, C17: 0.038,
-    C18: 0.055, C19: 0.0, C20: 0.065, C21: 0.0, C22: 0.0, C23: 0.211,
-    C24: 0.379, C25: 0.345, C26: 0.218, C27: 0.0, C28: 0.188, C29: 0.377,
-    C30: 0.0, C31: -6.239
+  // 10-year Base Model coefficients
+  BASE_10_FEMALE_TOTAL_CVD: {
+    C0: 0.7939329, C1: 0, C2: 0.0305239, C3: -0.1606857, C4: -0.2394003, C5: 0.3600781,
+    C6: 0.8667604, C7: 0.5360739, C8: 0, C9: 0, C10: 0.6045917, C11: 0.0433769,
+    C12: 0.3151672, C13: -0.1477655, C14: -0.0663612, C15: 0.1197879, C16: -0.0819715, C17: 0.0306769,
+    C18: -0.0946348, C19: -0.27057, C20: -0.078715, C21: 0, C22: -0.1637806, C23: 0,
+    C24: 0, C25: 0, C26: 0, C27: 0, C28: 0, C29: 0, C30: 0, C31: -3.307728
   },
-  // 10-year ASCVD coefficients (Female)
-  ASCVD_10_FEMALE: {
-    C0: 0.385, C1: 0.0, C2: 0.249, C3: -0.191, C4: 0.0, C5: 0.305,
-    C6: 0.549, C7: 0.385, C8: 0.0, C9: 0.249, C10: 0.0, C11: 0.0,
-    C12: 0.170, C13: -0.149, C14: 0.0, C15: 0.0, C16: 0.032, C17: 0.028,
-    C18: 0.045, C19: 0.0, C20: 0.055, C21: 0.0, C22: 0.0, C23: 0.161,
-    C24: 0.279, C25: 0.245, C26: 0.168, C27: 0.0, C28: 0.138, C29: 0.277,
-    C30: 0.0, C31: -6.739
+  BASE_10_MALE_TOTAL_CVD: {
+    C0: 0.7688528, C1: 0, C2: 0.0736174, C3: -0.0954431, C4: -0.4347345, C5: 0.3362658,
+    C6: 0.7692857, C7: 0.4386871, C8: 0, C9: 0, C10: 0.5378979, C11: 0.0164827,
+    C12: 0.288879, C13: -0.1337349, C14: -0.0475924, C15: 0.150273, C16: -0.0517874, C17: 0.0191169,
+    C18: -0.1049477, C19: -0.2251948, C20: -0.0895067, C21: 0, C22: -0.1543702, C23: 0,
+    C24: 0, C25: 0, C26: 0, C27: 0, C28: 0, C29: 0, C30: 0, C31: -3.031168
   },
-  // 10-year Heart Failure coefficients (Male)
-  HF_10_MALE: {
-    C0: 0.548, C1: 0.0, C2: 0.0, C3: -0.192, C4: 0.0, C5: 0.454,
-    C6: 0.649, C7: 0.355, C8: 0.0, C9: 0.454, C10: 0.508, C11: 0.0,
-    C12: 0.0, C13: 0.0, C14: 0.0, C15: 0.0, C16: 0.0, C17: 0.0,
-    C18: 0.050, C19: 0.0, C20: 0.0, C21: 0.0, C22: 0.0, C23: 0.0,
-    C24: 0.0, C25: 0.0, C26: 0.256, C27: 0.0, C28: 0.0, C29: 0.0,
-    C30: 0.0, C31: -7.423
+  BASE_10_FEMALE_ASCVD: {
+    C0: 0.719883, C1: 0, C2: 0.1176967, C3: -0.151185, C4: -0.0835358, C5: 0.3592852,
+    C6: 0.8348585, C7: 0.4831078, C8: 0, C9: 0, C10: 0.4864619, C11: 0.0397779,
+    C12: 0.2265309, C13: -0.0592374, C14: -0.0395762, C15: 0.0844423, C16: -0.0567839, C17: 0.0325692,
+    C18: -0.1035985, C19: -0.2417542, C20: -0.0791142, C21: 0, C22: -0.1671492, C23: 0,
+    C24: 0, C25: 0, C26: 0, C27: 0, C28: 0, C29: 0, C30: 0, C31: -3.819975
   },
-  // 10-year Heart Failure coefficients (Female)
-  HF_10_FEMALE: {
-    C0: 0.448, C1: 0.0, C2: 0.0, C3: -0.142, C4: 0.0, C5: 0.354,
-    C6: 0.549, C7: 0.255, C8: 0.0, C9: 0.354, C10: 0.408, C11: 0.0,
-    C12: 0.0, C13: 0.0, C14: 0.0, C15: 0.0, C16: 0.0, C17: 0.0,
-    C18: 0.040, C19: 0.0, C20: 0.0, C21: 0.0, C22: 0.0, C23: 0.0,
-    C24: 0.0, C25: 0.0, C26: 0.206, C27: 0.0, C28: 0.0, C29: 0.0,
-    C30: 0.0, C31: -7.823
+  BASE_10_MALE_ASCVD: {
+    C0: 0.7099847, C1: 0, C2: 0.1658663, C3: -0.1144285, C4: -0.2837212, C5: 0.3239977,
+    C6: 0.7189597, C7: 0.3956973, C8: 0, C9: 0, C10: 0.3690075, C11: 0.0203619,
+    C12: 0.2036522, C13: -0.0865581, C14: -0.0322916, C15: 0.114563, C16: -0.0300005, C17: 0.0232747,
+    C18: -0.0927024, C19: -0.2018525, C20: -0.0970527, C21: 0, C22: -0.1217081, C23: 0,
+    C24: 0, C25: 0, C26: 0, C27: 0, C28: 0, C29: 0, C30: 0, C31: -3.500655
   },
-  // 10-year Total CVD coefficients (Male)
-  CVD_10_MALE: {
-    C0: 0.514, C1: 0.0, C2: 0.187, C3: -0.211, C4: 0.0, C5: 0.424,
-    C6: 0.649, C7: 0.424, C8: 0.0, C9: 0.401, C10: 0.254, C11: 0.0,
-    C12: 0.135, C13: -0.187, C14: 0.0, C15: 0.0, C16: 0.032, C17: 0.021,
-    C18: 0.047, C19: 0.0, C20: 0.041, C21: 0.0, C22: 0.0, C23: 0.167,
-    C24: 0.307, C25: 0.287, C26: 0.235, C27: 0.0, C28: 0.153, C29: 0.306,
-    C30: 0.0, C31: -6.461
+  BASE_10_FEMALE_HF: {
+    C0: 0.8998235, C1: 0, C2: 0, C3: 0, C4: -0.4559771, C5: 0.3576505,
+    C6: 1.038346, C7: 0.583916, C8: -0.0072294, C9: 0.2997706, C10: 0.7451638, C11: 0.0557087,
+    C12: 0.3534442, C13: 0, C14: -0.0981511, C15: 0, C16: 0, C17: 0,
+    C18: -0.0946663, C19: -0.3581041, C20: -0.1159453, C21: -0.003878, C22: -0.1884289, C23: 0,
+    C24: 0, C25: 0, C26: 0, C27: 0, C28: 0, C29: 0, C30: 0, C31: -4.310409
   },
-  // 10-year Total CVD coefficients (Female)
-  CVD_10_FEMALE: {
-    C0: 0.414, C1: 0.0, C2: 0.127, C3: -0.171, C4: 0.0, C5: 0.324,
-    C6: 0.549, C7: 0.324, C8: 0.0, C9: 0.301, C10: 0.204, C11: 0.0,
-    C12: 0.085, C13: -0.127, C14: 0.0, C15: 0.0, C16: 0.022, C17: 0.017,
-    C18: 0.037, C19: 0.0, C20: 0.031, C21: 0.0, C22: 0.0, C23: 0.117,
-    C24: 0.207, C25: 0.187, C26: 0.185, C27: 0.0, C28: 0.103, C29: 0.206,
-    C30: 0.0, C31: -6.961
+  BASE_10_MALE_HF: {
+    C0: 0.8972642, C1: 0, C2: 0, C3: 0, C4: -0.6811466, C5: 0.3634461,
+    C6: 0.923776, C7: 0.5023736, C8: -0.0485841, C9: 0.3726929, C10: 0.6926917, C11: 0.0251827,
+    C12: 0.2980922, C13: 0, C14: -0.0497731, C15: 0, C16: 0, C17: 0,
+    C18: -0.1289201, C19: -0.3040924, C20: -0.1401688, C21: 0.0068126, C22: -0.1797778, C23: 0,
+    C24: 0, C25: 0, C26: 0, C27: 0, C28: 0, C29: 0, C30: 0, C31: -3.946391
+  },
+  // 30-year Base Model coefficients
+  BASE_30_FEMALE_TOTAL_CVD: {
+    C0: 0.5503079, C1: -0.0928369, C2: 0.0409794, C3: -0.1663306, C4: -0.1628654, C5: 0.3299505,
+    C6: 0.6793894, C7: 0.3196112, C8: 0, C9: 0, C10: 0.1857101, C11: 0.0553528,
+    C12: 0.2894, C13: -0.075688, C14: -0.056367, C15: 0.1071019, C16: -0.0751438, C17: 0.0301786,
+    C18: -0.0998776, C19: -0.3206166, C20: -0.1607862, C21: 0, C22: -0.1450788, C23: 0,
+    C24: 0, C25: 0, C26: 0, C27: 0, C28: 0, C29: 0, C30: 0, C31: -1.318827
+  },
+  BASE_30_MALE_TOTAL_CVD: {
+    C0: 0.4627309, C1: -0.0984281, C2: 0.0836088, C3: -0.1029824, C4: -0.2140352, C5: 0.2904325,
+    C6: 0.5331276, C7: 0.2141914, C8: 0, C9: 0, C10: 0.1155556, C11: 0.0603775,
+    C12: 0.232714, C13: -0.0272112, C14: -0.0384488, C15: 0.134192, C16: -0.0511759, C17: 0.0165865,
+    C18: -0.1101437, C19: -0.2585943, C20: -0.1566406, C21: 0, C22: -0.1166776, C23: 0,
+    C24: 0, C25: 0, C26: 0, C27: 0, C28: 0, C29: 0, C30: 0, C31: -1.148204
+  },
+  BASE_30_FEMALE_ASCVD: {
+    C0: 0.4669202, C1: -0.0893118, C2: 0.1256901, C3: -0.1542255, C4: -0.0018093, C5: 0.322949,
+    C6: 0.6296707, C7: 0.268292, C8: 0, C9: 0, C10: 0.100106, C11: 0.0499663,
+    C12: 0.1875292, C13: 0.0152476, C14: -0.0276123, C15: 0.0736147, C16: -0.0521962, C17: 0.0316918,
+    C18: -0.1046101, C19: -0.2727793, C20: -0.1530907, C21: 0, C22: -0.1299149, C23: 0,
+    C24: 0, C25: 0, C26: 0, C27: 0, C28: 0, C29: 0, C30: 0, C31: -1.974074
+  },
+  BASE_30_MALE_ASCVD: {
+    C0: 0.3994099, C1: -0.0937484, C2: 0.1744643, C3: -0.120203, C4: -0.0665117, C5: 0.2753037,
+    C6: 0.4790257, C7: 0.1782635, C8: 0, C9: 0, C10: -0.0218789, C11: 0.0602553,
+    C12: 0.1421182, C13: 0.0135996, C14: -0.0218265, C15: 0.1013148, C16: -0.0312619, C17: 0.020673,
+    C18: -0.0920935, C19: -0.2159947, C20: -0.1548811, C21: 0, C22: -0.0712547, C23: 0,
+    C24: 0, C25: 0, C26: 0, C27: 0, C28: 0, C29: 0, C30: 0, C31: -1.736444
+  },
+  BASE_30_FEMALE_HF: {
+    C0: 0.6254374, C1: -0.0983038, C2: 0, C3: 0, C4: -0.3919241, C5: 0.3142295,
+    C6: 0.8330787, C7: 0.3438651, C8: 0.0594874, C9: 0.2525536, C10: 0.2981642, C11: 0.0667159,
+    C12: 0.333921, C13: 0, C14: -0.0893177, C15: 0, C16: 0, C17: 0,
+    C18: -0.0974299, C19: -0.404855, C20: -0.1982991, C21: -0.0035619, C22: -0.1564215, C23: 0,
+    C24: 0, C25: 0, C26: 0, C27: 0, C28: 0, C29: 0, C30: 0, C31: -2.205379
+  },
+  BASE_30_MALE_HF: {
+    C0: 0.5681541, C1: -0.1048388, C2: 0, C3: 0, C4: -0.4761564, C5: 0.30324,
+    C6: 0.6840338, C7: 0.2656273, C8: 0.0833107, C9: 0.26999, C10: 0.2541805, C11: 0.0638923,
+    C12: 0.2583631, C13: 0, C14: -0.0391938, C15: 0, C16: 0, C17: 0,
+    C18: -0.1269124, C19: -0.3273572, C20: -0.2043019, C21: -0.0182831, C22: -0.1342618, C23: 0,
+    C24: 0, C25: 0, C26: 0, C27: 0, C28: 0, C29: 0, C30: 0, C31: -1.95751
   }
 };
 
@@ -222,88 +254,169 @@ export const PREVENTCalculator: React.FC = () => {
     return null;
   };
 
-  const calculateEndpointRisk = (coeffs: Record<string, number>, age: number, sex: string, 
-    totalChol: number, hdlChol: number, systolicBP: number, bmi: number, 
-    eGFR: number, diabetes: boolean, smoking: boolean, onHypertensionMeds: boolean, 
-    onStatin: boolean, hba1c?: number, uacr?: number, sdiGroup?: number | null): number => {
+  const calculatePREVENTRisk = (): PREVENTResult => {
+    const age = parseInt(formData.age);
+    const sex = formData.sex;
+    const height = parseFloat(formData.height);
+    const weight = parseFloat(formData.weight);
+    const totalChol = parseInt(formData.totalCholesterol);
+    const hdlChol = parseInt(formData.hdlCholesterol);
+    const systolicBP = parseInt(formData.systolicBP);
+    const creatinine = parseFloat(formData.serumCreatinine);
+    const diabetes = formData.diabetes;
+    const currentSmoker = formData.currentSmoker;
+    const onHypertensionMeds = formData.onHypertensionMeds;
+    const onStatin = formData.onStatin;
+    const hba1c = formData.hba1c ? parseFloat(formData.hba1c) : undefined;
+    const uacr = formData.uacr ? parseFloat(formData.uacr) : undefined;
+    const zipCode = formData.zipCode || undefined;
+
+    // Calculate derived values
+    const bmi = calculateBMI(weight, height);
+     const eGFR = calculateeGFR(age, sex, creatinine);
+
+    // Convert cholesterol to mmol/L if needed (assuming input is in mg/dL)
+    const totalCholMmol = totalChol * 0.02586;
+    const hdlCholMmol = hdlChol * 0.02586;
+    const nonHdlChol = totalCholMmol - hdlCholMmol;
+
+    // Calculate enhanced factors
+    const sdiGroup = zipCode ? getSDIGroup(zipCode) : null;
     
-    // Base calculations
-    const ageNorm = (age - 55) / 10;
-    const cholRatio = (totalChol - hdlChol) * 0.02586 - 3.5;
-    const hdlNorm = (hdlChol * 0.02586 - 1.3) / 0.3;
-    const sbpLow = (Math.min(systolicBP, 110) - 110) / 20;
-    const sbpHigh = (Math.max(systolicBP, 110) - 130) / 20;
-    const bmiLow = (Math.min(bmi, 30) - 25) / 5;
-    const bmiHigh = (Math.max(bmi, 30) - 30) / 5;
-    const eGFRLow = (Math.min(eGFR, 60) - 60) / -15;
-    const eGFRHigh = (Math.max(eGFR, 60) - 90) / -15;
+    const calculateSDIFactor = (coeffs: Record<string, number>): number => {
+      if (!zipCode) return coeffs.C25; // Missing ZIP code
+      if (sdiGroup === 1) return 0; // SDI group 1
+      if (sdiGroup === 2) return coeffs.C23; // SDI group 2
+      if (sdiGroup === 3) return coeffs.C24; // SDI group 3
+      return coeffs.C25; // ZIP not found in SDI tables
+    };
 
-    // Convert boolean to numeric
-    const diabetesNum = diabetes ? 1 : 0;
-    const smokingNum = smoking ? 1 : 0;
-    const hypertensionMedsNum = onHypertensionMeds ? 1 : 0;
-    const statinNum = onStatin ? 1 : 0;
+    const calculateUACRFactor = (coeffs: Record<string, number>): number => {
+      if (uacr === undefined) return coeffs.C27; // Missing UACR
+      return Math.log(uacr) * coeffs.C26; // ln(UACR) * C26
+    };
 
-    // SDI Factor calculation
-    let sdiFactor = coeffs.C25; // Default missing value
-    if (sdiGroup === 1) {
-      sdiFactor = 0;
-    } else if (sdiGroup === 2) {
-      sdiFactor = coeffs.C23;
-    } else if (sdiGroup === 3) {
-      sdiFactor = coeffs.C24;
-    }
+    const calculateHbA1CFactor = (coeffs: Record<string, number>): number => {
+      if (hba1c === undefined) return coeffs.C30; // Missing HbA1C
+      if (diabetes) return (hba1c - 5.3) * coeffs.C28; // Diabetes present
+      return (hba1c - 5.3) * coeffs.C29; // Diabetes not present
+    };
 
-    // UACR Factor calculation
-    let uacrFactor = coeffs.C27; // Default missing value
-    if (uacr !== undefined && !isNaN(uacr)) {
-      uacrFactor = Math.log(uacr) * coeffs.C26;
-    }
+    const calculateEndpointRisk = (coeffs: Record<string, number>, includeEnhanced = false): number => {
+      // Core predictors (centered as specified)
+      const ageNorm = (age - 55) / 10;
+      const ageSquared = ageNorm * ageNorm; // For 30-year models
+      const nonHdlCNorm = nonHdlChol - 3.5;
+      const hdlCNorm = (hdlCholMmol - 1.3) / 0.3;
+      const sbpLt110 = (Math.min(systolicBP, 110) - 110) / 20;
+      const sbpGte110 = (Math.max(systolicBP, 110) - 130) / 20;
+      const bmiLt30 = (Math.min(bmi, 30) - 25) / 5;
+      const bmiGte30 = (Math.max(bmi, 30) - 30) / 5;
+      const egfrLt60 = (Math.min(eGFR, 60) - 60) / -15;
+      const egfrGte60 = (Math.max(eGFR, 60) - 90) / -15;
 
-    // HbA1C Factor calculation
-    let hba1cFactor = coeffs.C30; // Default missing value
-    if (hba1c !== undefined && !isNaN(hba1c)) {
-      if (diabetes) {
-        hba1cFactor = (hba1c - 5.3) * coeffs.C28;
-      } else {
-        hba1cFactor = (hba1c - 5.3) * coeffs.C29;
+      // Binary variables
+      const diabetesVal = diabetes ? 1 : 0;
+      const smokingVal = currentSmoker ? 1 : 0;
+      const bpTxVal = onHypertensionMeds ? 1 : 0;
+      const statinVal = onStatin ? 1 : 0;
+
+      // Interaction terms
+      const bpTxSbpGte110 = bpTxVal * sbpGte110;
+      const statinNonHdlC = statinVal * nonHdlCNorm;
+      const ageNonHdlC = ageNorm * nonHdlCNorm;
+      const ageHdlC = ageNorm * hdlCNorm;
+      const ageSbpGte110 = ageNorm * sbpGte110;
+      const ageDm = ageNorm * diabetesVal;
+      const ageSmoking = ageNorm * smokingVal;
+      const ageBmiGte30 = ageNorm * bmiGte30;
+      const ageEgfrLt60 = ageNorm * egfrLt60;
+
+      // Core logit calculation
+      let logit = coeffs.C0 * ageNorm +
+                  coeffs.C1 * ageSquared +
+                  coeffs.C2 * nonHdlCNorm +
+                  coeffs.C3 * hdlCNorm +
+                  coeffs.C4 * sbpLt110 +
+                  coeffs.C5 * sbpGte110 +
+                  coeffs.C6 * diabetesVal +
+                  coeffs.C7 * smokingVal +
+                  coeffs.C8 * bmiLt30 +
+                  coeffs.C9 * bmiGte30 +
+                  coeffs.C10 * egfrLt60 +
+                  coeffs.C11 * egfrGte60 +
+                  coeffs.C12 * bpTxVal +
+                  coeffs.C13 * statinVal +
+                  coeffs.C14 * bpTxSbpGte110 +
+                  coeffs.C15 * statinNonHdlC +
+                  coeffs.C16 * ageNonHdlC +
+                  coeffs.C17 * ageHdlC +
+                  coeffs.C18 * ageSbpGte110 +
+                  coeffs.C19 * ageDm +
+                  coeffs.C20 * ageSmoking +
+                  coeffs.C21 * ageBmiGte30 +
+                  coeffs.C22 * ageEgfrLt60;
+
+      // Add enhanced factors if available
+      if (includeEnhanced) {
+        logit += calculateSDIFactor(coeffs);
+        logit += calculateUACRFactor(coeffs);
+        logit += calculateHbA1CFactor(coeffs);
       }
+
+      // Add intercept
+      logit += coeffs.C31;
+
+      // Convert to probability (risk percentage)
+      const expLogit = Math.exp(logit);
+      return (100 * expLogit) / (1 + expLogit);
+    };
+
+    // Select appropriate coefficient sets based on sex
+    const isMale = sex === 'male';
+    const cvdCoeffs10 = isMale ? PREVENT_COEFFICIENTS.BASE_10_MALE_TOTAL_CVD : PREVENT_COEFFICIENTS.BASE_10_FEMALE_TOTAL_CVD;
+    const ascvdCoeffs10 = isMale ? PREVENT_COEFFICIENTS.BASE_10_MALE_ASCVD : PREVENT_COEFFICIENTS.BASE_10_FEMALE_ASCVD;
+    const hfCoeffs10 = isMale ? PREVENT_COEFFICIENTS.BASE_10_MALE_HF : PREVENT_COEFFICIENTS.BASE_10_FEMALE_HF;
+
+    // Determine if enhanced CKM factors are available
+    const hasEnhancedFactors = hba1c !== undefined || uacr !== undefined || zipCode !== undefined;
+
+    // Calculate 10-year risks
+    const totalCVD10 = calculateEndpointRisk(cvdCoeffs10, hasEnhancedFactors);
+    const ascvd10 = calculateEndpointRisk(ascvdCoeffs10, hasEnhancedFactors);
+    const heartFailure10 = calculateEndpointRisk(hfCoeffs10, hasEnhancedFactors);
+
+    let totalCVD30: number | undefined;
+    let ascvd30: number | undefined;
+    let heartFailure30: number | undefined;
+
+    // Calculate 30-year risks only for ages 30-59
+    if (age >= 30 && age <= 59) {
+      const cvdCoeffs30 = isMale ? PREVENT_COEFFICIENTS.BASE_30_MALE_TOTAL_CVD : PREVENT_COEFFICIENTS.BASE_30_FEMALE_TOTAL_CVD;
+      const ascvdCoeffs30 = isMale ? PREVENT_COEFFICIENTS.BASE_30_MALE_ASCVD : PREVENT_COEFFICIENTS.BASE_30_FEMALE_ASCVD;
+      const hfCoeffs30 = isMale ? PREVENT_COEFFICIENTS.BASE_30_MALE_HF : PREVENT_COEFFICIENTS.BASE_30_FEMALE_HF;
+
+      totalCVD30 = calculateEndpointRisk(cvdCoeffs30, hasEnhancedFactors);
+      ascvd30 = calculateEndpointRisk(ascvdCoeffs30, hasEnhancedFactors);
+      heartFailure30 = calculateEndpointRisk(hfCoeffs30, hasEnhancedFactors);
     }
 
-    // Calculate the complete logit according to PREVENT formula
-    const logit = coeffs.C0 * ageNorm +
-      coeffs.C1 * (ageNorm * ageNorm) +
-      coeffs.C2 * cholRatio +
-      coeffs.C3 * hdlNorm +
-      coeffs.C4 * sbpLow +
-      coeffs.C5 * sbpHigh +
-      coeffs.C6 * diabetesNum +
-      coeffs.C7 * smokingNum +
-      coeffs.C8 * bmiLow +
-      coeffs.C9 * bmiHigh +
-      coeffs.C10 * eGFRLow +
-      coeffs.C11 * eGFRHigh +
-      coeffs.C12 * hypertensionMedsNum +
-      coeffs.C13 * statinNum +
-      coeffs.C14 * hypertensionMedsNum * sbpHigh +
-      coeffs.C15 * statinNum * cholRatio +
-      coeffs.C16 * ageNorm * cholRatio +
-      coeffs.C17 * ageNorm * hdlNorm +
-      coeffs.C18 * ageNorm * sbpHigh +
-      coeffs.C19 * ageNorm * diabetesNum +
-      coeffs.C20 * ageNorm * smokingNum +
-      coeffs.C21 * bmiHigh +
-      coeffs.C22 * ageNorm * eGFRLow +
-      sdiFactor +
-      uacrFactor +
-      hba1cFactor +
-      coeffs.C31;
-
-    // Convert logit to risk percentage
-    const expLogit = Math.exp(logit);
-    const riskPercent = 100 * expLogit / (1 + expLogit);
-    
-    return riskPercent;
+    return {
+      bmi: Math.round(bmi * 10) / 10,
+      eGFR: Math.round(eGFR * 10) / 10,
+      sdiGroup,
+      hasEnhancedCKM: hasEnhancedFactors,
+      tenYearRisk: {
+        totalCVD: Math.round(totalCVD10 * 10) / 10,
+        ascvd: Math.round(ascvd10 * 10) / 10,
+        heartFailure: Math.round(heartFailure10 * 10) / 10
+      },
+      thirtyYearRisk: (age >= 30 && age <= 59) ? {
+        totalCVD: Math.round(totalCVD30! * 10) / 10,
+        ascvd: Math.round(ascvd30! * 10) / 10,
+        heartFailure: Math.round(heartFailure30! * 10) / 10
+      } : undefined
+    };
   };
 
   const handleCalculate = () => {
@@ -343,111 +456,7 @@ export const PREVENTCalculator: React.FC = () => {
     setCurrentStep(1);
   };
 
-  const getRiskBgColor = (category: string) => {
-    switch (category) {
-      case 'low': return 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800';
-      case 'borderline': return 'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800';
-      case 'intermediate': return 'bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-800';
-      case 'high': return 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800';
-      default: return 'bg-gray-50 border-gray-200 dark:bg-gray-900/20 dark:border-gray-800';
-    }
-  };
 
-  const calculatePREVENTRisk = (): PREVENTResult => {
-    const age = parseInt(formData.age);
-    const sex = formData.sex;
-    const height = parseFloat(formData.height);
-    const weight = parseFloat(formData.weight);
-    const totalChol = parseInt(formData.totalCholesterol);
-    const hdlChol = parseInt(formData.hdlCholesterol);
-    const systolicBP = parseInt(formData.systolicBP);
-    const creatinine = parseFloat(formData.serumCreatinine);
-    const diabetes = formData.diabetes;
-    const currentSmoker = formData.currentSmoker;
-    const onHypertensionMeds = formData.onHypertensionMeds;
-    const onStatin = formData.onStatin;
-    const hba1c = formData.hba1c ? parseFloat(formData.hba1c) : undefined;
-    const uacr = formData.uacr ? parseFloat(formData.uacr) : undefined;
-    const zipCode = formData.zipCode;
-
-    // Calculate derived values
-    const bmi = calculateBMI(height, weight);
-    const eGFR = calculateeGFR(age, sex, creatinine);
-    const sdiGroup = getSDIGroup(zipCode);
-
-    // Select appropriate coefficient sets based on sex
-    const isMale = sex === 'male';
-    const cvdCoeffs = isMale ? PREVENT_COEFFICIENTS.CVD_10_MALE : PREVENT_COEFFICIENTS.CVD_10_FEMALE;
-    const ascvdCoeffs = isMale ? PREVENT_COEFFICIENTS.ASCVD_10_MALE : PREVENT_COEFFICIENTS.ASCVD_10_FEMALE;
-    const hfCoeffs = isMale ? PREVENT_COEFFICIENTS.HF_10_MALE : PREVENT_COEFFICIENTS.HF_10_FEMALE;
-
-    // Calculate risks using PREVENT equations (already returns percentages)
-    const tenYearCVD = calculateEndpointRisk(cvdCoeffs, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup);
-    const tenYearASCVD = calculateEndpointRisk(ascvdCoeffs, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup);
-    const tenYearHeartFailure = calculateEndpointRisk(hfCoeffs, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup);
-
-    // 30-year risks (only for ages 30-59)
-    let thirtyYearCVD, thirtyYearASCVD, thirtyYearHeartFailure;
-    if (age >= 30 && age <= 59) {
-      // Note: 30-year coefficients would be different - using 10-year as placeholder
-      thirtyYearCVD = calculateEndpointRisk(cvdCoeffs, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup) * 2.5;
-      thirtyYearASCVD = calculateEndpointRisk(ascvdCoeffs, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup) * 2.5;
-      thirtyYearHeartFailure = calculateEndpointRisk(hfCoeffs, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup) * 3;
-    }
-
-    // Calculate overall risk category based on highest risk
-    const maxRisk = Math.max(tenYearASCVD, tenYearHeartFailure);
-    let riskCategory: 'low' | 'borderline' | 'intermediate' | 'high';
-    if (maxRisk < 5) {
-      riskCategory = 'low';
-    } else if (maxRisk < 7.5) {
-      riskCategory = 'borderline';
-    } else if (maxRisk < 20) {
-      riskCategory = 'intermediate';
-    } else {
-      riskCategory = 'high';
-    }
-
-    // Generate recommendations based on risk level
-    const recommendations = [];
-    if (riskCategory === 'high') {
-      recommendations.push('Consider high-intensity statin therapy');
-      recommendations.push('Blood pressure target <130/80 mmHg');
-      recommendations.push('Lifestyle counseling for weight management');
-      recommendations.push('Consider cardiology consultation');
-    } else if (riskCategory === 'intermediate') {
-      recommendations.push('Consider moderate-intensity statin therapy');
-      recommendations.push('Lifestyle modifications for diet and exercise');
-      recommendations.push('Blood pressure monitoring');
-    } else if (riskCategory === 'borderline') {
-      recommendations.push('Risk factor modification');
-      recommendations.push('Consider CAC scoring for risk refinement');
-      recommendations.push('Lifestyle counseling');
-    } else {
-      recommendations.push('Continue current preventive measures');
-      recommendations.push('Regular follow-up');
-    }
-
-    const preventionStrategy = hba1c !== undefined || uacr !== undefined || sdiGroup !== null 
-      ? 'CKM-Enhanced PREVENT™'
-      : 'Base PREVENT™';
-
-    return {
-      bmi: Math.round(bmi * 10) / 10,
-      eGFR: Math.round(eGFR * 10) / 10,
-      sdiGroup,
-      tenYearCVD: Math.round(tenYearCVD * 10) / 10,
-      tenYearASCVD: Math.round(tenYearASCVD * 10) / 10,
-      tenYearHeartFailure: Math.round(tenYearHeartFailure * 10) / 10,
-      thirtyYearCVD: thirtyYearCVD ? Math.round(thirtyYearCVD * 10) / 10 : undefined,
-      thirtyYearASCVD: thirtyYearASCVD ? Math.round(thirtyYearASCVD * 10) / 10 : undefined,
-      thirtyYearHeartFailure: thirtyYearHeartFailure ? Math.round(thirtyYearHeartFailure * 10) / 10 : undefined,
-      riskCategory,
-      ckmeEnhanced: hba1c !== undefined || uacr !== undefined || sdiGroup !== null,
-      recommendations,
-      preventionStrategy
-    };
-  };
 
   return (
     <CalculatorContainer
@@ -840,13 +849,16 @@ export const PREVENTCalculator: React.FC = () => {
           /* Results Display */
           result && (
             <div className="space-y-8 animate-scaleIn">
-              <ResultsDisplay
-                title={t('calculators.cardiology.prevent.results_title')}
-                value={`${result.riskCategory.charAt(0).toUpperCase() + result.riskCategory.slice(1)} Risk`}
-                category={result.riskCategory as 'low' | 'intermediate' | 'high'}
-                interpretation={result.preventionStrategy}
-                icon={Star}
-              >
+              <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-white/20 dark:border-gray-700/20 rounded-2xl p-6">
+                <div className="flex items-center space-x-3 mb-6">
+                  <Star className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.prevent.results_title')}</h3>
+                  {result.hasEnhancedCKM && (
+                    <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium">
+                      CKM-Enhanced
+                    </span>
+                  )}
+                </div>
                 {/* Calculated Values Display */}
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3 mb-4">
@@ -886,36 +898,36 @@ export const PREVENTCalculator: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-2xl border border-white/20 dark:border-gray-700/20">
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-1">{result.tenYearCVD}%</div>
+                        <div className="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-1">{result.tenYearRisk.totalCVD}%</div>
                         <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('calculators.cardiology.prevent.total_cvd')}</div>
                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                           <div 
                             className="bg-purple-500 h-2 rounded-full transition-all duration-1000"
-                            style={{ width: `${Math.min(result.tenYearCVD * 2, 100)}%` }}
+                            style={{ width: `${Math.min(result.tenYearRisk.totalCVD * 2, 100)}%` }}
                           ></div>
                         </div>
                       </div>
                     </div>
                     <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-2xl border border-white/20 dark:border-gray-700/20">
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-1">{result.tenYearASCVD}%</div>
+                        <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-1">{result.tenYearRisk.ascvd}%</div>
                         <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('calculators.cardiology.prevent.ascvd')}</div>
                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                           <div 
                             className="bg-indigo-500 h-2 rounded-full transition-all duration-1000"
-                            style={{ width: `${Math.min(result.tenYearASCVD * 2, 100)}%` }}
+                            style={{ width: `${Math.min(result.tenYearRisk.ascvd * 2, 100)}%` }}
                           ></div>
                         </div>
                       </div>
                     </div>
                     <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-2xl border border-white/20 dark:border-gray-700/20">
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-pink-600 dark:text-pink-400 mb-1">{result.tenYearHeartFailure}%</div>
+                        <div className="text-2xl font-bold text-pink-600 dark:text-pink-400 mb-1">{result.tenYearRisk.heartFailure}%</div>
                         <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('calculators.cardiology.prevent.heart_failure')}</div>
                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                           <div 
                             className="bg-pink-500 h-2 rounded-full transition-all duration-1000"
-                            style={{ width: `${Math.min(result.tenYearHeartFailure * 2, 100)}%` }}
+                            style={{ width: `${Math.min(result.tenYearRisk.heartFailure * 2, 100)}%` }}
                           ></div>
                         </div>
                       </div>
@@ -924,7 +936,7 @@ export const PREVENTCalculator: React.FC = () => {
                 </div>
 
                 {/* 30-Year Risk Display (for ages 30-59) */}
-                {result.thirtyYearCVD && (
+                {result.thirtyYearRisk && (
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3 mb-4">
                       <Clock className="w-5 h-5 text-blue-500" />
@@ -933,19 +945,19 @@ export const PREVENTCalculator: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/30 rounded-xl border border-purple-200 dark:border-purple-800">
                         <div className="text-center">
-                          <div className="text-xl font-bold text-purple-700 dark:text-purple-300">{result.thirtyYearCVD}%</div>
+                          <div className="text-xl font-bold text-purple-700 dark:text-purple-300">{result.thirtyYearRisk.totalCVD}%</div>
                           <div className="text-sm text-purple-600 dark:text-purple-400">{t('calculators.cardiology.prevent.total_cvd')}</div>
                         </div>
                       </div>
                       <div className="p-4 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-900/30 rounded-xl border border-indigo-200 dark:border-indigo-800">
                         <div className="text-center">
-                          <div className="text-xl font-bold text-indigo-700 dark:text-indigo-300">{result.thirtyYearASCVD}%</div>
+                          <div className="text-xl font-bold text-indigo-700 dark:text-indigo-300">{result.thirtyYearRisk.ascvd}%</div>
                           <div className="text-sm text-indigo-600 dark:text-indigo-400">{t('calculators.cardiology.prevent.ascvd')}</div>
                         </div>
                       </div>
                       <div className="p-4 bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-900/20 dark:to-pink-900/30 rounded-xl border border-pink-200 dark:border-pink-800">
                         <div className="text-center">
-                          <div className="text-xl font-bold text-pink-700 dark:text-pink-300">{result.thirtyYearHeartFailure}%</div>
+                          <div className="text-xl font-bold text-pink-700 dark:text-pink-300">{result.thirtyYearRisk.heartFailure}%</div>
                           <div className="text-sm text-pink-600 dark:text-pink-400">{t('calculators.cardiology.prevent.heart_failure')}</div>
                         </div>
                       </div>
@@ -953,78 +965,7 @@ export const PREVENTCalculator: React.FC = () => {
                   </div>
                 )}
 
-                {/* Risk Stratification */}
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <Shield className="w-5 h-5 text-green-500" />
-                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.prevent.risk_stratification_title')}</h4>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                    <div className={`p-4 rounded-xl border-2 transition-all ${
-                      result.riskCategory === 'low' ? 'border-green-300 bg-green-50 dark:bg-green-900/20' : 'border-green-200 bg-green-50/50 dark:bg-green-900/10'
-                    }`}>
-                      <div className="text-center">
-                        <div className="text-sm font-semibold text-green-800 dark:text-green-200">{t('calculators.cardiology.prevent.low_risk')}</div>
-                        <div className="text-xs text-green-600 dark:text-green-400">{t('calculators.cardiology.prevent.low_risk_range')}</div>
-                      </div>
-                    </div>
-                    <div className={`p-4 rounded-xl border-2 transition-all ${
-                      result.riskCategory === 'borderline' ? 'border-yellow-300 bg-yellow-50 dark:bg-yellow-900/20' : 'border-yellow-200 bg-yellow-50/50 dark:bg-yellow-900/10'
-                    }`}>
-                      <div className="text-center">
-                        <div className="text-sm font-semibold text-yellow-800 dark:text-yellow-200">{t('calculators.cardiology.prevent.borderline_risk')}</div>
-                        <div className="text-xs text-yellow-600 dark:text-yellow-400">{t('calculators.cardiology.prevent.borderline_risk_range')}</div>
-                      </div>
-                    </div>
-                    <div className={`p-4 rounded-xl border-2 transition-all ${
-                      result.riskCategory === 'intermediate' ? 'border-orange-300 bg-orange-50 dark:bg-orange-900/20' : 'border-orange-200 bg-orange-50/50 dark:bg-orange-900/10'
-                    }`}>
-                      <div className="text-center">
-                        <div className="text-sm font-semibold text-orange-800 dark:text-orange-200">{t('calculators.cardiology.prevent.intermediate_risk')}</div>
-                        <div className="text-xs text-orange-600 dark:text-orange-400">{t('calculators.cardiology.prevent.intermediate_risk_range')}</div>
-                      </div>
-                    </div>
-                    <div className={`p-4 rounded-xl border-2 transition-all ${
-                      result.riskCategory === 'high' ? 'border-red-300 bg-red-50 dark:bg-red-900/20' : 'border-red-200 bg-red-50/50 dark:bg-red-900/10'
-                    }`}>
-                      <div className="text-center">
-                        <div className="text-sm font-semibold text-red-800 dark:text-red-200">{t('calculators.cardiology.prevent.high_risk')}</div>
-                        <div className="text-xs text-red-600 dark:text-red-400">{t('calculators.cardiology.prevent.high_risk_range')}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Clinical Recommendations */}
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <Stethoscope className="w-5 h-5 text-blue-500" />
-                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.prevent.clinical_recommendations_title')}</h4>
-                  </div>
-                  <div className={`p-6 rounded-2xl border-2 ${getRiskBgColor(result.riskCategory)}`}>
-                    <div className="space-y-3">
-                      {result.recommendations.map((rec, index) => (
-                        <div key={index} className="flex items-start space-x-2">
-                          <div className="w-2 h-2 bg-current rounded-full mt-2 flex-shrink-0"></div>
-                          <p className="text-sm text-gray-700 dark:text-gray-300">{rec}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* CKM-E Enhancement Status */}
-                {result.ckmeEnhanced && (
-                  <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-xl p-4">
-                    <div className="flex items-center space-x-3 mb-3">
-                      <Star className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                      <h4 className="font-semibold text-purple-800 dark:text-purple-200">CKM-Enhanced Assessment</h4>
-                    </div>
-                    <div className="text-sm text-purple-700 dark:text-purple-300">
-                      This assessment includes enhanced Cardiovascular-Kidney-Metabolic (CKM) factors for more comprehensive risk evaluation.
-                    </div>
-                  </div>
-                )}
 
                 {/* Algorithm Information */}
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
@@ -1043,7 +984,7 @@ export const PREVENTCalculator: React.FC = () => {
                     </ul>
                   </div>
                 </div>
-              </ResultsDisplay>
+              </div>
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

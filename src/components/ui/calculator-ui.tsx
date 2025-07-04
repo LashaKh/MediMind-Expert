@@ -1,6 +1,6 @@
 import React, { forwardRef, HTMLAttributes, ReactNode, useState, useEffect } from 'react';
 import { cn } from '../../lib/utils';
-import { Check, AlertCircle, Info, Eye, EyeOff, Calculator, TrendingUp, Heart, Award, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
+import { Check, AlertCircle, Info, Calculator, TrendingUp, Award, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from '../../hooks/useTranslation';
 
 // Enhanced Calculator Container
@@ -80,6 +80,7 @@ export const CalculatorContainer = forwardRef<HTMLDivElement, CalculatorContaine
 interface CalculatorInputProps extends HTMLAttributes<HTMLInputElement> {
   label: string;
   value: string;
+  onChange: (value: string) => void;
   error?: string;
   helpText?: string;
   unit?: string;
@@ -93,7 +94,7 @@ interface CalculatorInputProps extends HTMLAttributes<HTMLInputElement> {
 }
 
 export const CalculatorInput = forwardRef<HTMLInputElement, CalculatorInputProps>(
-  ({ className, label, value, error, helpText, unit, icon: Icon, type = 'text', required, ...props }, ref) => {
+  ({ className, label, value, onChange, error, helpText, unit, icon: Icon, type = 'text', required, ...props }, ref) => {
     const [isFocused, setIsFocused] = useState(false);
     const [isValid, setIsValid] = useState<boolean | null>(null);
 
@@ -135,6 +136,7 @@ export const CalculatorInput = forwardRef<HTMLInputElement, CalculatorInputProps
             ref={ref}
             type={type}
             value={value}
+            onChange={(e) => onChange(e.target.value)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             className={cn(
@@ -192,6 +194,7 @@ export const CalculatorInput = forwardRef<HTMLInputElement, CalculatorInputProps
 interface CalculatorSelectProps extends HTMLAttributes<HTMLSelectElement> {
   label: string;
   value: string;
+  onChange: (value: string) => void;
   error?: string;
   helpText?: string;
   icon?: React.ComponentType<{ className?: string }>;
@@ -201,7 +204,7 @@ interface CalculatorSelectProps extends HTMLAttributes<HTMLSelectElement> {
 }
 
 export const CalculatorSelect = forwardRef<HTMLSelectElement, CalculatorSelectProps>(
-  ({ className, label, value, error, helpText, icon: Icon, required, options, placeholder, ...props }, ref) => {
+  ({ className, label, value, onChange, error, helpText, icon: Icon, required, options, placeholder, ...props }, ref) => {
     const [isFocused, setIsFocused] = useState(false);
     const [isValid, setIsValid] = useState<boolean | null>(null);
 
@@ -241,6 +244,7 @@ export const CalculatorSelect = forwardRef<HTMLSelectElement, CalculatorSelectPr
           <select
             ref={ref}
             value={value}
+            onChange={(e) => onChange(e.target.value)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             className={cn(
@@ -294,12 +298,13 @@ export const CalculatorSelect = forwardRef<HTMLSelectElement, CalculatorSelectPr
 interface CalculatorCheckboxProps extends HTMLAttributes<HTMLInputElement> {
   label: string;
   checked: boolean;
+  onChange: (checked: boolean) => void;
   description?: string;
   icon?: React.ComponentType<{ className?: string }>;
 }
 
 export const CalculatorCheckbox = forwardRef<HTMLInputElement, CalculatorCheckboxProps>(
-  ({ className, label, checked, description, icon: Icon, ...props }, ref) => (
+  ({ label, checked, onChange, description, icon: Icon, ...props }, ref) => (
     <div className="group">
       <label className="flex items-start space-x-3 cursor-pointer p-4 rounded-xl hover:bg-white/50 dark:hover:bg-gray-800/50 transition-all duration-200">
         <div className="relative">
@@ -307,6 +312,7 @@ export const CalculatorCheckbox = forwardRef<HTMLInputElement, CalculatorCheckbo
             ref={ref}
             type="checkbox"
             checked={checked}
+            onChange={(e) => onChange(e.target.checked)}
             className="sr-only"
             {...props}
           />

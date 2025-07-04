@@ -455,7 +455,36 @@ export default {
     
     // Action buttons
     new_assessment: "New Assessment",
-    modify_inputs: "Modify Inputs"
+    modify_inputs: "Modify Inputs",
+    
+    // Creator Insights Section
+    creator_insights_title: "Creator Insights",
+    creator_name: "Dr. Robert W. Yeh",
+    creator_bio: "Associate Professor of Medicine at Harvard Medical School and Director of the Richard and Susan Smith Center for Outcomes Research in Cardiology at Beth Israel Deaconess Medical Center.",
+    
+    creator_insight_1: "The question of how long to continue antiplatelet therapy after coronary stent procedures has troubled physicians for many years. On one hand, continuing these medications can prevent heart attacks. On the other hand, the drugs can also lead to bleeding. We wanted to develop a tool that could help clinicians identify who were the best patients to continue long term antiplatelet medications after heart stents, and who were the patients best served by shorter durations of these medications.",
+    creator_insight_2: "The DAPT Score gives clinicians an opportunity to see how patients with particular characteristics fared when randomized to either 30 months or 12 months of dual antiplatelet therapy after receiving a stent. The data are based on the largest ever randomized blinded trial of antiplatelet therapy that we led at the Baim Institute for Clinical Research (formerly Harvard Clinical Research Institute). However, although this is high quality evidence that has made its way into national guidelines, the DAPT Score is meant to be used in conjunction with clinical judgment. In addition, the score was derived in patients who were not taking long term oral anticoagulants like Coumadin and had no history of major bleeding in the past.",
+    creator_insight_3: "The DAPT Score should be used to guide antiplatelet duration in conjunction with clinical judgment and applied on an individualized basis. It is not a substitute for clinical judgment. It has been validated across a number of different populations, and continues to perform well in multiple settings in terms of separating patients with high ischemic/low bleeding risk (better served with longer durations of antiplatelet medications) from other patients with low ischemic/high bleeding risk (better served with shorter durations of antiplatelets).",
+    creator_insight_4: "We use the DAPT Score to aid in discussions with patients and their referring physicians about the proper duration of antiplatelet therapies each day. In the office, using an app is particularly valuable for patients to see what their risks are and to give context to shared decision making around this common conundrum.",
+    
+    // Evidence Section
+    evidence_title: "Evidence & Formula",
+    evidence_formula_title: "DAPT Score Formula",
+    formula_description: "Addition of the selected points:",
+    age_scoring: "Age: ≥75 years (-2 points), 65-74 years (-1 point), <65 years (0 points)",
+    risk_factors_scoring: "Risk factors: Each selected factor adds +1 point (smoking, diabetes, MI at presentation, prior PCI/MI, paclitaxel stent, stent <3mm, CHF/LVEF<30%, vein graft)",
+    interpretation_note: "Score ≥2: High ischemic/low bleeding risk - Prolonged DAPT recommended | Score -2 to 1: Low ischemic/high bleeding risk - Prolonged DAPT not recommended",
+    
+    evidence_validation_title: "Study Validation",
+    evidence_validation_description: "Developed and validated using data from the DAPT Study, the largest randomized trial of DAPT duration involving 11,648 patients. The score was subsequently validated in multiple independent cohorts including Japanese PCI studies and real-world registries, consistently demonstrating its ability to identify patients who benefit from extended DAPT.",
+    
+    evidence_guidelines_title: "Clinical Guidelines",
+    evidence_guidelines_description: "Incorporated into the 2016 ACC/AHA Guideline Focused Update on Duration of Dual Antiplatelet Therapy. The DAPT Score is recommended as a clinical decision tool to inform DAPT duration decisions in patients who have completed 12 months of DAPT without bleeding complications.",
+    
+    references_title: "References",
+    reference_original: "Original DAPT Score Development (Yeh et al. JAMA 2016)",
+    reference_validation: "Validation Studies (Piccolo et al. Ann Intern Med 2017)",
+    reference_guidelines: "ACC/AHA Guidelines (Levine et al. JACC 2016)"
   },
 
   // TIMI Risk Calculator
