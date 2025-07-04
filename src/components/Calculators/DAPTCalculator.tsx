@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from '../../hooks/useTranslation';
-import { Calculator, Info, Heart, AlertTriangle, Clock, TrendingUp, Pill, Activity, User, FileText, Target, Stethoscope, Award, BarChart3, Shield, Droplets, Zap, Brain, TimerIcon, CheckCircle2, UserCheck, BookOpen, ExternalLink, MessageCircle, Lightbulb, CircleCheck } from 'lucide-react';
+import { Calculator, Info, Heart, AlertTriangle, Clock, TrendingUp, Pill, Activity, User, FileText, Target, Stethoscope, Award, BarChart3, Shield, Droplets, Zap, Brain, TimerIcon, CheckCircle2, UserCheck, BookOpen, ExternalLink, MessageCircle, Lightbulb } from 'lucide-react';
 import { 
   CalculatorContainer, 
   CalculatorInput, 
@@ -594,6 +594,210 @@ export default function DAPTCalculator() {
                    <p className="text-xs text-gray-500 dark:text-gray-400 italic">
                     {t('calculators.cardiology.dapt.algorithm_validation')}
                   </p>
+                </div>
+              </div>
+
+              {/* Creator Insights Section */}
+              <div className="relative mt-8">
+                {/* Gradient Background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950/20 dark:via-teal-950/20 dark:to-cyan-950/20 rounded-2xl" />
+                
+                <div className="relative backdrop-blur-sm bg-white/70 dark:bg-gray-900/70 rounded-2xl border border-white/30 dark:border-gray-700/30 shadow-xl">
+                  <div className="p-8">
+                    {/* Header */}
+                    <div className="flex items-center space-x-3 mb-6">
+                      <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-lg shadow-emerald-500/25">
+                        <UserCheck className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">
+                        {t('calculators.cardiology.dapt.creator_insights_title')}
+                      </h3>
+                    </div>
+
+                    {/* Creator Profile */}
+                    <div className="bg-gradient-to-r from-white/60 to-white/30 dark:from-gray-800/60 dark:to-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-white/40 dark:border-gray-700/40 mb-6">
+                      <div className="flex items-start space-x-4">
+                        <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg shadow-blue-500/25">
+                          <User className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2 text-lg">
+                            {t('calculators.cardiology.dapt.creator_name')}
+                          </h4>
+                          <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                            {t('calculators.cardiology.dapt.creator_bio')}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid gap-4">
+                      {[
+                        { icon: MessageCircle, color: 'emerald', insight: 'creator_insight_1' },
+                        { icon: Lightbulb, color: 'teal', insight: 'creator_insight_2' },
+                        { icon: Brain, color: 'cyan', insight: 'creator_insight_3' },
+                        { icon: Target, color: 'blue', insight: 'creator_insight_4' }
+                      ].map((item, index) => {
+                        const IconComponent = item.icon;
+                        return (
+                          <div key={index} className="group bg-gradient-to-r from-white/60 to-white/30 dark:from-gray-800/60 dark:to-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-white/40 dark:border-gray-700/40 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
+                            <div className="flex items-start space-x-4">
+                              <div className={`p-3 bg-gradient-to-br ${
+                                item.color === 'emerald' ? 'from-emerald-500 to-green-600 shadow-emerald-500/25' :
+                                item.color === 'teal' ? 'from-teal-500 to-cyan-600 shadow-teal-500/25' :
+                                item.color === 'cyan' ? 'from-cyan-500 to-blue-600 shadow-cyan-500/25' :
+                                'from-blue-500 to-indigo-600 shadow-blue-500/25'
+                              } rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                                <IconComponent className="w-5 h-5 text-white" />
+                              </div>
+                              <div className="flex-1">
+                                <p className="text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+                                  {t(`calculators.cardiology.dapt.${item.insight}`)}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Evidence Section */}
+              <div className="relative mt-8">
+                {/* Gradient Background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/20 dark:via-indigo-950/20 dark:to-purple-950/20 rounded-2xl" />
+                
+                <div className="relative backdrop-blur-sm bg-white/70 dark:bg-gray-900/70 rounded-2xl border border-white/30 dark:border-gray-700/30 shadow-xl">
+                  <div className="p-8">
+                    {/* Header */}
+                    <div className="flex items-center space-x-3 mb-6">
+                      <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg shadow-blue-500/25">
+                        <FileText className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+                        {t('calculators.cardiology.dapt.evidence_title')}
+                      </h3>
+                    </div>
+
+                    <div className="grid gap-6">
+                      {/* Formula Section */}
+                      <div className="bg-gradient-to-r from-white/60 to-white/30 dark:from-gray-800/60 dark:to-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-white/40 dark:border-gray-700/40 hover:shadow-lg transition-all duration-300">
+                        <div className="flex items-start space-x-3">
+                          <div className="p-2 bg-blue-500/10 rounded-lg">
+                            <Calculator className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                              {t('calculators.cardiology.dapt.evidence_formula_title')}
+                            </h4>
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-4">
+                              <div className="text-sm text-gray-700 dark:text-gray-300 space-y-2">
+                                <p className="font-mono">{t('calculators.cardiology.dapt.formula_description')}</p>
+                                <div className="mt-3 space-y-1">
+                                  <p><strong>{t('calculators.cardiology.dapt.age_scoring')}</strong></p>
+                                  <p><strong>{t('calculators.cardiology.dapt.risk_factors_scoring')}</strong></p>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+                              <p className="text-sm text-blue-800 dark:text-blue-200 font-medium">
+                                {t('calculators.cardiology.dapt.interpretation_note')}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Evidence Cards */}
+                      <div className="bg-gradient-to-r from-white/60 to-white/30 dark:from-gray-800/60 dark:to-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-white/40 dark:border-gray-700/40 hover:shadow-lg transition-all duration-300">
+                        <div className="flex items-start space-x-3">
+                          <div className="p-2 bg-indigo-500/10 rounded-lg">
+                            <CheckCircle2 className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                              {t('calculators.cardiology.dapt.evidence_validation_title')}
+                            </h4>
+                            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                              {t('calculators.cardiology.dapt.evidence_validation_description')}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-gradient-to-r from-white/60 to-white/30 dark:from-gray-800/60 dark:to-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-white/40 dark:border-gray-700/40 hover:shadow-lg transition-all duration-300">
+                        <div className="flex items-start space-x-3">
+                          <div className="p-2 bg-purple-500/10 rounded-lg">
+                            <Award className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                              {t('calculators.cardiology.dapt.evidence_guidelines_title')}
+                            </h4>
+                            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                              {t('calculators.cardiology.dapt.evidence_guidelines_description')}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Reference Links */}
+                      <div className="bg-gradient-to-r from-gray-50/80 to-white/80 dark:from-gray-800/80 dark:to-gray-700/80 backdrop-blur-sm rounded-xl p-6 border border-gray-200/50 dark:border-gray-600/50">
+                        <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
+                          <BookOpen className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
+                          {t('calculators.cardiology.dapt.references_title')}
+                        </h4>
+                        <div className="space-y-3">
+                          <a 
+                            href="https://jamanetwork.com/journals/jama/fullarticle/2516815"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group flex items-center p-3 bg-white/60 dark:bg-gray-800/60 rounded-lg border border-white/50 dark:border-gray-700/50 hover:shadow-md transition-all duration-300 hover:scale-[1.02]"
+                          >
+                            <div className="p-2 bg-blue-500/10 rounded-lg mr-3 group-hover:bg-blue-500/20 transition-colors">
+                              <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                            </div>
+                            <span className="font-medium text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300">
+                              {t('calculators.cardiology.dapt.reference_original')}
+                            </span>
+                            <ExternalLink className="w-4 h-4 ml-auto text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400" />
+                          </a>
+                          
+                          <a 
+                            href="https://www.sciencedirect.com/science/article/pii/S0003497516309080"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group flex items-center p-3 bg-white/60 dark:bg-gray-800/60 rounded-lg border border-white/50 dark:border-gray-700/50 hover:shadow-md transition-all duration-300 hover:scale-[1.02]"
+                          >
+                            <div className="p-2 bg-indigo-500/10 rounded-lg mr-3 group-hover:bg-indigo-500/20 transition-colors">
+                              <FileText className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                            </div>
+                            <span className="font-medium text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300">
+                              {t('calculators.cardiology.dapt.reference_validation')}
+                            </span>
+                            <ExternalLink className="w-4 h-4 ml-auto text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" />
+                          </a>
+
+                          <a 
+                            href="https://www.sciencedirect.com/science/article/pii/S0735109716004549"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group flex items-center p-3 bg-white/60 dark:bg-gray-800/60 rounded-lg border border-white/50 dark:border-gray-700/50 hover:shadow-md transition-all duration-300 hover:scale-[1.02]"
+                          >
+                            <div className="p-2 bg-green-500/10 rounded-lg mr-3 group-hover:bg-green-500/20 transition-colors">
+                              <FileText className="w-4 h-4 text-green-600 dark:text-green-400" />
+                            </div>
+                            <span className="font-medium text-green-600 dark:text-green-400 group-hover:text-green-700 dark:group-hover:text-green-300">
+                              {t('calculators.cardiology.dapt.reference_guidelines')}
+                            </span>
+                            <ExternalLink className="w-4 h-4 ml-auto text-gray-400 group-hover:text-green-600 dark:group-hover:text-green-400" />
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 

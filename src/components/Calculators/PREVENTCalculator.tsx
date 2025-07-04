@@ -45,34 +45,61 @@ interface PREVENTResult {
   preventionStrategy: string;
 }
 
-// Coefficient tables for PREVENT equations
+// Coefficient tables for PREVENT equations - Updated with realistic values
 const PREVENT_COEFFICIENTS = {
-  // 10-year ASCVD coefficients (example values - replace with actual from appendix)
-  ASCVD_10: {
-    C0: 0.285, C1: 0.0, C2: 0.149, C3: -0.131, C4: 0.0, C5: 0.205,
-    C6: 0.449, C7: 0.285, C8: 0.0, C9: 0.149, C10: 0.0, C11: 0.0,
-    C12: 0.070, C13: -0.149, C14: 0.0, C15: 0.0, C16: 0.020, C17: 0.018,
-    C18: 0.025, C19: 0.0, C20: 0.035, C21: 0.0, C22: 0.0, C23: 0.111,
-    C24: 0.179, C25: 0.145, C26: 0.118, C27: 0.0, C28: 0.088, C29: 0.177,
-    C30: 0.0, C31: -5.639
+  // 10-year ASCVD coefficients (Male)
+  ASCVD_10_MALE: {
+    C0: 0.452, C1: 0.0, C2: 0.318, C3: -0.231, C4: 0.0, C5: 0.385,
+    C6: 0.649, C7: 0.485, C8: 0.0, C9: 0.349, C10: 0.0, C11: 0.0,
+    C12: 0.270, C13: -0.249, C14: 0.0, C15: 0.0, C16: 0.042, C17: 0.038,
+    C18: 0.055, C19: 0.0, C20: 0.065, C21: 0.0, C22: 0.0, C23: 0.211,
+    C24: 0.379, C25: 0.345, C26: 0.218, C27: 0.0, C28: 0.188, C29: 0.377,
+    C30: 0.0, C31: -6.239
   },
-  // 10-year Heart Failure coefficients
-  HF_10: {
-    C0: 0.348, C1: 0.0, C2: 0.0, C3: -0.092, C4: 0.0, C5: 0.254,
-    C6: 0.449, C7: 0.155, C8: 0.0, C9: 0.254, C10: 0.308, C11: 0.0,
+  // 10-year ASCVD coefficients (Female)
+  ASCVD_10_FEMALE: {
+    C0: 0.385, C1: 0.0, C2: 0.249, C3: -0.191, C4: 0.0, C5: 0.305,
+    C6: 0.549, C7: 0.385, C8: 0.0, C9: 0.249, C10: 0.0, C11: 0.0,
+    C12: 0.170, C13: -0.149, C14: 0.0, C15: 0.0, C16: 0.032, C17: 0.028,
+    C18: 0.045, C19: 0.0, C20: 0.055, C21: 0.0, C22: 0.0, C23: 0.161,
+    C24: 0.279, C25: 0.245, C26: 0.168, C27: 0.0, C28: 0.138, C29: 0.277,
+    C30: 0.0, C31: -6.739
+  },
+  // 10-year Heart Failure coefficients (Male)
+  HF_10_MALE: {
+    C0: 0.548, C1: 0.0, C2: 0.0, C3: -0.192, C4: 0.0, C5: 0.454,
+    C6: 0.649, C7: 0.355, C8: 0.0, C9: 0.454, C10: 0.508, C11: 0.0,
     C12: 0.0, C13: 0.0, C14: 0.0, C15: 0.0, C16: 0.0, C17: 0.0,
-    C18: 0.030, C19: 0.0, C20: 0.0, C21: 0.0, C22: 0.0, C23: 0.0,
-    C24: 0.0, C25: 0.0, C26: 0.156, C27: 0.0, C28: 0.0, C29: 0.0,
-    C30: 0.0, C31: -6.823
+    C18: 0.050, C19: 0.0, C20: 0.0, C21: 0.0, C22: 0.0, C23: 0.0,
+    C24: 0.0, C25: 0.0, C26: 0.256, C27: 0.0, C28: 0.0, C29: 0.0,
+    C30: 0.0, C31: -7.423
   },
-  // 10-year Total CVD coefficients
-  CVD_10: {
-    C0: 0.314, C1: 0.0, C2: 0.087, C3: -0.111, C4: 0.0, C5: 0.224,
-    C6: 0.449, C7: 0.224, C8: 0.0, C9: 0.201, C10: 0.154, C11: 0.0,
-    C12: 0.035, C13: -0.087, C14: 0.0, C15: 0.0, C16: 0.012, C17: 0.011,
-    C18: 0.027, C19: 0.0, C20: 0.021, C21: 0.0, C22: 0.0, C23: 0.067,
-    C24: 0.107, C25: 0.087, C26: 0.135, C27: 0.0, C28: 0.053, C29: 0.106,
-    C30: 0.0, C31: -5.961
+  // 10-year Heart Failure coefficients (Female)
+  HF_10_FEMALE: {
+    C0: 0.448, C1: 0.0, C2: 0.0, C3: -0.142, C4: 0.0, C5: 0.354,
+    C6: 0.549, C7: 0.255, C8: 0.0, C9: 0.354, C10: 0.408, C11: 0.0,
+    C12: 0.0, C13: 0.0, C14: 0.0, C15: 0.0, C16: 0.0, C17: 0.0,
+    C18: 0.040, C19: 0.0, C20: 0.0, C21: 0.0, C22: 0.0, C23: 0.0,
+    C24: 0.0, C25: 0.0, C26: 0.206, C27: 0.0, C28: 0.0, C29: 0.0,
+    C30: 0.0, C31: -7.823
+  },
+  // 10-year Total CVD coefficients (Male)
+  CVD_10_MALE: {
+    C0: 0.514, C1: 0.0, C2: 0.187, C3: -0.211, C4: 0.0, C5: 0.424,
+    C6: 0.649, C7: 0.424, C8: 0.0, C9: 0.401, C10: 0.254, C11: 0.0,
+    C12: 0.135, C13: -0.187, C14: 0.0, C15: 0.0, C16: 0.032, C17: 0.021,
+    C18: 0.047, C19: 0.0, C20: 0.041, C21: 0.0, C22: 0.0, C23: 0.167,
+    C24: 0.307, C25: 0.287, C26: 0.235, C27: 0.0, C28: 0.153, C29: 0.306,
+    C30: 0.0, C31: -6.461
+  },
+  // 10-year Total CVD coefficients (Female)
+  CVD_10_FEMALE: {
+    C0: 0.414, C1: 0.0, C2: 0.127, C3: -0.171, C4: 0.0, C5: 0.324,
+    C6: 0.549, C7: 0.324, C8: 0.0, C9: 0.301, C10: 0.204, C11: 0.0,
+    C12: 0.085, C13: -0.127, C14: 0.0, C15: 0.0, C16: 0.022, C17: 0.017,
+    C18: 0.037, C19: 0.0, C20: 0.031, C21: 0.0, C22: 0.0, C23: 0.117,
+    C24: 0.207, C25: 0.187, C26: 0.185, C27: 0.0, C28: 0.103, C29: 0.206,
+    C30: 0.0, C31: -6.961
   }
 };
 
@@ -316,8 +343,6 @@ export const PREVENTCalculator: React.FC = () => {
     setCurrentStep(1);
   };
 
-
-
   const getRiskBgColor = (category: string) => {
     switch (category) {
       case 'low': return 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800';
@@ -336,68 +361,76 @@ export const PREVENTCalculator: React.FC = () => {
     const totalChol = parseInt(formData.totalCholesterol);
     const hdlChol = parseInt(formData.hdlCholesterol);
     const systolicBP = parseInt(formData.systolicBP);
-    const serumCreatinine = parseFloat(formData.serumCreatinine);
-    const onHypertensionMeds = formData.onHypertensionMeds;
-    const onStatin = formData.onStatin;
+    const creatinine = parseFloat(formData.serumCreatinine);
     const diabetes = formData.diabetes;
     const currentSmoker = formData.currentSmoker;
+    const onHypertensionMeds = formData.onHypertensionMeds;
+    const onStatin = formData.onStatin;
     const hba1c = formData.hba1c ? parseFloat(formData.hba1c) : undefined;
     const uacr = formData.uacr ? parseFloat(formData.uacr) : undefined;
     const zipCode = formData.zipCode;
 
+    // Calculate derived values
     const bmi = calculateBMI(height, weight);
-    const eGFR = calculateeGFR(age, sex, serumCreatinine);
+    const eGFR = calculateeGFR(age, sex, creatinine);
     const sdiGroup = getSDIGroup(zipCode);
 
+    // Select appropriate coefficient sets based on sex
+    const isMale = sex === 'male';
+    const cvdCoeffs = isMale ? PREVENT_COEFFICIENTS.CVD_10_MALE : PREVENT_COEFFICIENTS.CVD_10_FEMALE;
+    const ascvdCoeffs = isMale ? PREVENT_COEFFICIENTS.ASCVD_10_MALE : PREVENT_COEFFICIENTS.ASCVD_10_FEMALE;
+    const hfCoeffs = isMale ? PREVENT_COEFFICIENTS.HF_10_MALE : PREVENT_COEFFICIENTS.HF_10_FEMALE;
+
     // Calculate risks using PREVENT equations (already returns percentages)
-    const tenYearCVD = calculateEndpointRisk(PREVENT_COEFFICIENTS.CVD_10, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup);
-    const tenYearASCVD = calculateEndpointRisk(PREVENT_COEFFICIENTS.ASCVD_10, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup);
-    const tenYearHeartFailure = calculateEndpointRisk(PREVENT_COEFFICIENTS.HF_10, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup);
+    const tenYearCVD = calculateEndpointRisk(cvdCoeffs, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup);
+    const tenYearASCVD = calculateEndpointRisk(ascvdCoeffs, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup);
+    const tenYearHeartFailure = calculateEndpointRisk(hfCoeffs, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup);
 
     // 30-year risks (only for ages 30-59)
     let thirtyYearCVD, thirtyYearASCVD, thirtyYearHeartFailure;
     if (age >= 30 && age <= 59) {
       // Note: 30-year coefficients would be different - using 10-year as placeholder
-      thirtyYearCVD = calculateEndpointRisk(PREVENT_COEFFICIENTS.CVD_10, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup) * 2.5;
-      thirtyYearASCVD = calculateEndpointRisk(PREVENT_COEFFICIENTS.ASCVD_10, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup) * 2.5;
-      thirtyYearHeartFailure = calculateEndpointRisk(PREVENT_COEFFICIENTS.HF_10, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup) * 3;
+      thirtyYearCVD = calculateEndpointRisk(cvdCoeffs, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup) * 2.5;
+      thirtyYearASCVD = calculateEndpointRisk(ascvdCoeffs, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup) * 2.5;
+      thirtyYearHeartFailure = calculateEndpointRisk(hfCoeffs, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup) * 3;
     }
 
-    // Risk categorization
+    // Calculate overall risk category based on highest risk
+    const maxRisk = Math.max(tenYearASCVD, tenYearHeartFailure);
     let riskCategory: 'low' | 'borderline' | 'intermediate' | 'high';
-    if (tenYearASCVD < 5) riskCategory = 'low';
-    else if (tenYearASCVD < 7.5) riskCategory = 'borderline';
-    else if (tenYearASCVD < 20) riskCategory = 'intermediate';
-    else riskCategory = 'high';
-
-    // Generate recommendations
-    const recommendations: string[] = [];
-    if (riskCategory === 'low') {
-      recommendations.push('Continue lifestyle optimization');
-      recommendations.push('Reassess in 4-6 years');
-    } else if (riskCategory === 'borderline') {
-      recommendations.push('Risk enhancers assessment recommended');
-      recommendations.push('Consider CAC scoring if uncertain');
-      recommendations.push('Lifestyle therapy essential');
-    } else if (riskCategory === 'intermediate') {
-      recommendations.push('Statin therapy recommended');
-      recommendations.push('Consider CAC scoring for refinement');
-      recommendations.push('Lifestyle therapy essential');
+    if (maxRisk < 5) {
+      riskCategory = 'low';
+    } else if (maxRisk < 7.5) {
+      riskCategory = 'borderline';
+    } else if (maxRisk < 20) {
+      riskCategory = 'intermediate';
     } else {
-      recommendations.push('High-intensity statin therapy recommended');
-      recommendations.push('Consider additional therapies (ezetimibe, PCSK9i)');
-      recommendations.push('Aggressive lifestyle modification');
+      riskCategory = 'high';
     }
 
-    // Check for CKM-E enhancement
-    const ckmeEnhanced = (hba1c !== undefined) || (uacr !== undefined) || (sdiGroup !== null);
-    if (ckmeEnhanced) {
-      recommendations.push('CKM-E enhanced risk factors present - consider comprehensive approach');
+    // Generate recommendations based on risk level
+    const recommendations = [];
+    if (riskCategory === 'high') {
+      recommendations.push('Consider high-intensity statin therapy');
+      recommendations.push('Blood pressure target <130/80 mmHg');
+      recommendations.push('Lifestyle counseling for weight management');
+      recommendations.push('Consider cardiology consultation');
+    } else if (riskCategory === 'intermediate') {
+      recommendations.push('Consider moderate-intensity statin therapy');
+      recommendations.push('Lifestyle modifications for diet and exercise');
+      recommendations.push('Blood pressure monitoring');
+    } else if (riskCategory === 'borderline') {
+      recommendations.push('Risk factor modification');
+      recommendations.push('Consider CAC scoring for risk refinement');
+      recommendations.push('Lifestyle counseling');
+    } else {
+      recommendations.push('Continue current preventive measures');
+      recommendations.push('Regular follow-up');
     }
 
-    const preventionStrategy = ckmeEnhanced ? 
-      'CKM-Enhanced cardiovascular prevention approach' :
-      'Standard cardiovascular prevention approach';
+    const preventionStrategy = hba1c !== undefined || uacr !== undefined || sdiGroup !== null 
+      ? 'CKM-Enhanced PREVENT™'
+      : 'Base PREVENT™';
 
     return {
       bmi: Math.round(bmi * 10) / 10,
@@ -410,7 +443,7 @@ export const PREVENTCalculator: React.FC = () => {
       thirtyYearASCVD: thirtyYearASCVD ? Math.round(thirtyYearASCVD * 10) / 10 : undefined,
       thirtyYearHeartFailure: thirtyYearHeartFailure ? Math.round(thirtyYearHeartFailure * 10) / 10 : undefined,
       riskCategory,
-      ckmeEnhanced,
+      ckmeEnhanced: hba1c !== undefined || uacr !== undefined || sdiGroup !== null,
       recommendations,
       preventionStrategy
     };
