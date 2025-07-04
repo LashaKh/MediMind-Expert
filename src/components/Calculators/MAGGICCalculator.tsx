@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from '../../hooks/useTranslation';
-import { Heart, Info, TrendingUp, Calculator, User, BarChart3, Activity, Stethoscope, Award, Shield, Zap, AlertCircle, CheckCircle, FileText, Clock, Pill, Target } from 'lucide-react';
+import { Heart, Info, TrendingUp, Calculator, User, BarChart3, Activity, Stethoscope, Award, AlertCircle, Clock, Pill, Target } from 'lucide-react';
 import { 
   CalculatorContainer, 
   CalculatorInput, 
@@ -74,7 +74,9 @@ export const MAGGICCalculator: React.FC = () => {
       newErrors.gender = t('calculators.cardiology.maggic.validation_gender');
     }
 
-    // NYHA class validation removed - not part of MAGGIC formula
+    if (formData.nyha_class === 0) {
+      newErrors.nyha_class = t('calculators.cardiology.maggic.validation_nyha_class');
+    }
 
     const lvef = parseInt(formData.lv_ejection_fraction);
     if (!formData.lv_ejection_fraction || isNaN(lvef)) {
@@ -131,10 +133,10 @@ export const MAGGICCalculator: React.FC = () => {
     // COPD
     if (formData.copd) score += 2;
 
-    // Heart failure first diagnosed >18 months ago
-    // If first_diagnosis is true (>18 months ago), score = +2
-    // If first_diagnosis is false (within 18 months), score = 0
-    if (formData.first_diagnosis) score += 2;
+    // Heart failure first diagnosed ≥18 months ago
+    // If first_diagnosis is false (≥18 months ago), score = +2
+    // If first_diagnosis is true (within 18 months), score = 0
+    if (!formData.first_diagnosis) score += 2;
 
     // Not on beta blocker
     if (!formData.beta_blocker) score += 3;
@@ -150,7 +152,11 @@ export const MAGGICCalculator: React.FC = () => {
     else if (lvef >= 35 && lvef <= 39) score += 2;
     // EF >= 40 = 0 points
 
-    // NYHA Class is NOT part of the MAGGIC formula - removed to match official formula
+    // NYHA Class
+    if (formData.nyha_class === 4) score += 8;
+    else if (formData.nyha_class === 3) score += 6;
+    else if (formData.nyha_class === 2) score += 2;
+    // NYHA Class 1 = 0 points
 
     // Creatinine (μmol/L)
     if (creatinine >= 250) score += 8;
@@ -359,15 +365,7 @@ export const MAGGICCalculator: React.FC = () => {
     setCurrentStep(1);
   };
 
-  const getRiskIcon = (risk: string) => {
-    switch (risk) {
-      case 'Low': return 'text-green-500';
-      case 'Intermediate': return 'text-yellow-500';
-      case 'High': return 'text-orange-500';
-      case 'Very High': return 'text-red-500';
-      default: return 'text-gray-500';
-    }
-  };
+
 
   return (
     <CalculatorContainer
