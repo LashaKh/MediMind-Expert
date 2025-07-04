@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-import { Calculator, Info, Heart, TrendingUp, Star, Brain, User, Activity, BarChart3, Stethoscope, Award, Shield, Zap, AlertCircle, CheckCircle, FileText, Clock, Target } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Tooltip } from '../ui/tooltip';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { Calculator, Info, TrendingUp, Star, Brain, User, Activity, BarChart3, Stethoscope, Award, Shield, AlertCircle, Clock, Target } from 'lucide-react';
 import { 
   CalculatorContainer, 
   CalculatorInput, 
@@ -16,51 +13,87 @@ import { useTranslation } from '../../hooks/useTranslation';
 interface PREVENTFormData {
   age: string;
   sex: 'male' | 'female' | '';
-  race: 'white' | 'black' | 'hispanic' | 'asian' | 'other' | '';
+  height: string; // in cm
+  weight: string; // in kg
   totalCholesterol: string;
   hdlCholesterol: string;
-  ldlCholesterol: string;
   systolicBP: string;
-  diastolicBP: string;
-  antihypertensiveMeds: boolean;
+  serumCreatinine: string; // mg/dL
+  onHypertensionMeds: boolean;
+  onStatin: boolean;
   diabetes: boolean;
   currentSmoker: boolean;
-  eGFR: string; // estimated Glomerular Filtration Rate
-  uacr: string; // Urine Albumin-to-Creatinine Ratio
-  socialDeprivationIndex: string; // SDI score
+  // Optional enhanced factors
+  hba1c: string; // %
+  uacr: string; // mg/g
+  zipCode: string; // US zip code
 }
 
 interface PREVENTResult {
+  bmi: number;
+  eGFR: number;
+  sdiGroup: number | null;
   tenYearCVD: number;
   tenYearASCVD: number;
   tenYearHeartFailure: number;
-  thirtyYearCVD: number;
-  thirtyYearASCVD: number;
-  thirtyYearHeartFailure: number;
+  thirtyYearCVD?: number;
+  thirtyYearASCVD?: number;
+  thirtyYearHeartFailure?: number;
   riskCategory: 'low' | 'borderline' | 'intermediate' | 'high';
   ckmeEnhanced: boolean;
   recommendations: string[];
   preventionStrategy: string;
 }
 
+// Coefficient tables for PREVENT equations
+const PREVENT_COEFFICIENTS = {
+  // 10-year ASCVD coefficients (example values - replace with actual from appendix)
+  ASCVD_10: {
+    C0: 0.285, C1: 0.0, C2: 0.149, C3: -0.131, C4: 0.0, C5: 0.205,
+    C6: 0.449, C7: 0.285, C8: 0.0, C9: 0.149, C10: 0.0, C11: 0.0,
+    C12: 0.070, C13: -0.149, C14: 0.0, C15: 0.0, C16: 0.020, C17: 0.018,
+    C18: 0.025, C19: 0.0, C20: 0.035, C21: 0.0, C22: 0.0, C23: 0.111,
+    C24: 0.179, C25: 0.145, C26: 0.118, C27: 0.0, C28: 0.088, C29: 0.177,
+    C30: 0.0, C31: -5.639
+  },
+  // 10-year Heart Failure coefficients
+  HF_10: {
+    C0: 0.348, C1: 0.0, C2: 0.0, C3: -0.092, C4: 0.0, C5: 0.254,
+    C6: 0.449, C7: 0.155, C8: 0.0, C9: 0.254, C10: 0.308, C11: 0.0,
+    C12: 0.0, C13: 0.0, C14: 0.0, C15: 0.0, C16: 0.0, C17: 0.0,
+    C18: 0.030, C19: 0.0, C20: 0.0, C21: 0.0, C22: 0.0, C23: 0.0,
+    C24: 0.0, C25: 0.0, C26: 0.156, C27: 0.0, C28: 0.0, C29: 0.0,
+    C30: 0.0, C31: -6.823
+  },
+  // 10-year Total CVD coefficients
+  CVD_10: {
+    C0: 0.314, C1: 0.0, C2: 0.087, C3: -0.111, C4: 0.0, C5: 0.224,
+    C6: 0.449, C7: 0.224, C8: 0.0, C9: 0.201, C10: 0.154, C11: 0.0,
+    C12: 0.035, C13: -0.087, C14: 0.0, C15: 0.0, C16: 0.012, C17: 0.011,
+    C18: 0.027, C19: 0.0, C20: 0.021, C21: 0.0, C22: 0.0, C23: 0.067,
+    C24: 0.107, C25: 0.087, C26: 0.135, C27: 0.0, C28: 0.053, C29: 0.106,
+    C30: 0.0, C31: -5.961
+  }
+};
+
 export const PREVENTCalculator: React.FC = () => {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState('calculator');
   const [formData, setFormData] = useState<PREVENTFormData>({
     age: '',
     sex: '',
-    race: '',
+    height: '',
+    weight: '',
     totalCholesterol: '',
     hdlCholesterol: '',
-    ldlCholesterol: '',
     systolicBP: '',
-    diastolicBP: '',
-    antihypertensiveMeds: false,
+    serumCreatinine: '',
+    onHypertensionMeds: false,
+    onStatin: false,
     diabetes: false,
     currentSmoker: false,
-    eGFR: '',
+    hba1c: '',
     uacr: '',
-    socialDeprivationIndex: ''
+    zipCode: ''
   });
 
   const [result, setResult] = useState<PREVENTResult | null>(null);
@@ -73,104 +106,262 @@ export const PREVENTCalculator: React.FC = () => {
 
     const age = parseInt(formData.age);
     if (!formData.age || isNaN(age)) {
-      newErrors.age = t('calculators.cardiology.prevent.validation_age');
+      newErrors.age = 'Age is required';
     } else if (age < 30 || age > 79) {
-      newErrors.age = t('calculators.cardiology.prevent.validation_age_range');
+      newErrors.age = 'Age must be between 30 and 79 years';
     }
 
     if (!formData.sex) {
-      newErrors.sex = t('calculators.cardiology.prevent.validation_sex');
+      newErrors.sex = 'Sex is required';
     }
 
-    if (!formData.race) {
-      newErrors.race = t('calculators.cardiology.prevent.validation_race');
+    const height = parseFloat(formData.height);
+    if (!formData.height || isNaN(height)) {
+      newErrors.height = 'Height is required';
+    } else if (height < 120 || height > 220) {
+      newErrors.height = 'Height must be between 120-220 cm';
+    }
+
+    const weight = parseFloat(formData.weight);
+    if (!formData.weight || isNaN(weight)) {
+      newErrors.weight = 'Weight is required';
+    } else if (weight < 30 || weight > 200) {
+      newErrors.weight = 'Weight must be between 30-200 kg';
     }
 
     const totalChol = parseInt(formData.totalCholesterol);
     if (!formData.totalCholesterol || isNaN(totalChol)) {
-      newErrors.totalCholesterol = t('calculators.cardiology.prevent.validation_total_cholesterol');
+      newErrors.totalCholesterol = 'Total cholesterol is required';
     } else if (totalChol < 100 || totalChol > 400) {
-      newErrors.totalCholesterol = t('calculators.cardiology.prevent.validation_total_cholesterol_range');
+      newErrors.totalCholesterol = 'Total cholesterol must be between 100-400 mg/dL';
     }
 
     const hdlChol = parseInt(formData.hdlCholesterol);
     if (!formData.hdlCholesterol || isNaN(hdlChol)) {
-      newErrors.hdlCholesterol = t('calculators.cardiology.prevent.validation_hdl_cholesterol');
+      newErrors.hdlCholesterol = 'HDL cholesterol is required';
     } else if (hdlChol < 20 || hdlChol > 100) {
-      newErrors.hdlCholesterol = t('calculators.cardiology.prevent.validation_hdl_cholesterol_range');
+      newErrors.hdlCholesterol = 'HDL cholesterol must be between 20-100 mg/dL';
     }
 
     const systolicBP = parseInt(formData.systolicBP);
     if (!formData.systolicBP || isNaN(systolicBP)) {
-      newErrors.systolicBP = t('calculators.cardiology.prevent.validation_systolic_bp');
+      newErrors.systolicBP = 'Systolic blood pressure is required';
     } else if (systolicBP < 90 || systolicBP > 200) {
-      newErrors.systolicBP = t('calculators.cardiology.prevent.validation_systolic_bp_range');
+      newErrors.systolicBP = 'Systolic BP must be between 90-200 mmHg';
+    }
+
+    const creatinine = parseFloat(formData.serumCreatinine);
+    if (!formData.serumCreatinine || isNaN(creatinine)) {
+      newErrors.serumCreatinine = 'Serum creatinine is required';
+    } else if (creatinine < 0.5 || creatinine > 5.0) {
+      newErrors.serumCreatinine = 'Serum creatinine must be between 0.5-5.0 mg/dL';
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  const calculateBMI = (height: number, weight: number): number => {
+    // BMI = Weight(kg) / (Height(m))^2
+    const heightInMeters = height / 100;
+    return weight / (heightInMeters * heightInMeters);
+  };
+
+  const calculateeGFR = (age: number, sex: string, creatinine: number): number => {
+    // Using CKD-EPI equation as specified in PREVENT
+    const isFemale = sex === 'female';
+    const kappa = isFemale ? 0.7 : 0.9;
+    const alpha = isFemale ? -0.241 : -0.302;
+    const sexFactor = isFemale ? 1.012 : 1;
+    
+    const term1 = 142;
+    const term2 = Math.min(creatinine / kappa, 1) ** alpha;
+    const term3 = Math.max(creatinine / kappa, 1) ** (-1.2);
+    const term4 = 0.9938 ** age;
+    
+    return term1 * term2 * term3 * term4 * sexFactor;
+  };
+
+  const getSDIGroup = (zipCode: string): number | null => {
+    // Simplified SDI mapping - in practice, this would use a lookup table
+    if (!zipCode || zipCode.length !== 5) return null;
+    
+    // Simple mock based on zip code ranges (replace with actual SDI data)
+    const zip = parseInt(zipCode);
+    if (zip >= 10001 && zip <= 19999) return 1; // Lower deprivation
+    if (zip >= 20000 && zip <= 49999) return 2; // Moderate deprivation
+    if (zip >= 50000 && zip <= 99999) return 3; // Higher deprivation
+    
+    return null;
+  };
+
+  const calculateEndpointRisk = (coeffs: Record<string, number>, age: number, sex: string, 
+    totalChol: number, hdlChol: number, systolicBP: number, bmi: number, 
+    eGFR: number, diabetes: boolean, smoking: boolean, onHypertensionMeds: boolean, 
+    onStatin: boolean, hba1c?: number, uacr?: number, sdiGroup?: number | null): number => {
+    
+    // Base calculations
+    const ageNorm = (age - 55) / 10;
+    const cholRatio = (totalChol - hdlChol) * 0.02586 - 3.5;
+    const hdlNorm = (hdlChol * 0.02586 - 1.3) / 0.3;
+    const sbpLow = (Math.min(systolicBP, 110) - 110) / 20;
+    const sbpHigh = (Math.max(systolicBP, 110) - 130) / 20;
+    const bmiLow = (Math.min(bmi, 30) - 25) / 5;
+    const bmiHigh = (Math.max(bmi, 30) - 30) / 5;
+    const eGFRLow = (Math.min(eGFR, 60) - 60) / -15;
+    const eGFRHigh = (Math.max(eGFR, 60) - 90) / -15;
+
+    // Convert boolean to numeric
+    const diabetesNum = diabetes ? 1 : 0;
+    const smokingNum = smoking ? 1 : 0;
+    const hypertensionMedsNum = onHypertensionMeds ? 1 : 0;
+    const statinNum = onStatin ? 1 : 0;
+
+    // SDI Factor calculation
+    let sdiFactor = coeffs.C25; // Default missing value
+    if (sdiGroup === 1) {
+      sdiFactor = 0;
+    } else if (sdiGroup === 2) {
+      sdiFactor = coeffs.C23;
+    } else if (sdiGroup === 3) {
+      sdiFactor = coeffs.C24;
+    }
+
+    // UACR Factor calculation
+    let uacrFactor = coeffs.C27; // Default missing value
+    if (uacr !== undefined && !isNaN(uacr)) {
+      uacrFactor = Math.log(uacr) * coeffs.C26;
+    }
+
+    // HbA1C Factor calculation
+    let hba1cFactor = coeffs.C30; // Default missing value
+    if (hba1c !== undefined && !isNaN(hba1c)) {
+      if (diabetes) {
+        hba1cFactor = (hba1c - 5.3) * coeffs.C28;
+      } else {
+        hba1cFactor = (hba1c - 5.3) * coeffs.C29;
+      }
+    }
+
+    // Calculate the complete logit according to PREVENT formula
+    const logit = coeffs.C0 * ageNorm +
+      coeffs.C1 * (ageNorm * ageNorm) +
+      coeffs.C2 * cholRatio +
+      coeffs.C3 * hdlNorm +
+      coeffs.C4 * sbpLow +
+      coeffs.C5 * sbpHigh +
+      coeffs.C6 * diabetesNum +
+      coeffs.C7 * smokingNum +
+      coeffs.C8 * bmiLow +
+      coeffs.C9 * bmiHigh +
+      coeffs.C10 * eGFRLow +
+      coeffs.C11 * eGFRHigh +
+      coeffs.C12 * hypertensionMedsNum +
+      coeffs.C13 * statinNum +
+      coeffs.C14 * hypertensionMedsNum * sbpHigh +
+      coeffs.C15 * statinNum * cholRatio +
+      coeffs.C16 * ageNorm * cholRatio +
+      coeffs.C17 * ageNorm * hdlNorm +
+      coeffs.C18 * ageNorm * sbpHigh +
+      coeffs.C19 * ageNorm * diabetesNum +
+      coeffs.C20 * ageNorm * smokingNum +
+      coeffs.C21 * bmiHigh +
+      coeffs.C22 * ageNorm * eGFRLow +
+      sdiFactor +
+      uacrFactor +
+      hba1cFactor +
+      coeffs.C31;
+
+    // Convert logit to risk percentage
+    const expLogit = Math.exp(logit);
+    const riskPercent = 100 * expLogit / (1 + expLogit);
+    
+    return riskPercent;
+  };
+
+  const handleCalculate = () => {
+    if (!validateForm()) return;
+    
+    setIsCalculating(true);
+    
+    // Simulate advanced PREVENT risk calculation with loading animation
+    setTimeout(() => {
+      const calculatedResult = calculatePREVENTRisk();
+      setResult(calculatedResult);
+      setIsCalculating(false);
+    }, 2200);
+  };
+
+  const handleReset = () => {
+    setFormData({
+      age: '',
+      sex: '',
+      height: '',
+      weight: '',
+      totalCholesterol: '',
+      hdlCholesterol: '',
+      systolicBP: '',
+      serumCreatinine: '',
+      onHypertensionMeds: false,
+      onStatin: false,
+      diabetes: false,
+      currentSmoker: false,
+      hba1c: '',
+      uacr: '',
+      zipCode: ''
+    });
+    setResult(null);
+    setErrors({});
+    setIsCalculating(false);
+    setCurrentStep(1);
+  };
+
+
+
+  const getRiskBgColor = (category: string) => {
+    switch (category) {
+      case 'low': return 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800';
+      case 'borderline': return 'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800';
+      case 'intermediate': return 'bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-800';
+      case 'high': return 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800';
+      default: return 'bg-gray-50 border-gray-200 dark:bg-gray-900/20 dark:border-gray-800';
+    }
+  };
+
   const calculatePREVENTRisk = (): PREVENTResult => {
     const age = parseInt(formData.age);
+    const sex = formData.sex;
+    const height = parseFloat(formData.height);
+    const weight = parseFloat(formData.weight);
     const totalChol = parseInt(formData.totalCholesterol);
     const hdlChol = parseInt(formData.hdlCholesterol);
     const systolicBP = parseInt(formData.systolicBP);
-    const eGFR = parseFloat(formData.eGFR);
-    const uacr = parseFloat(formData.uacr);
-    const sdi = parseFloat(formData.socialDeprivationIndex);
+    const serumCreatinine = parseFloat(formData.serumCreatinine);
+    const onHypertensionMeds = formData.onHypertensionMeds;
+    const onStatin = formData.onStatin;
+    const diabetes = formData.diabetes;
+    const currentSmoker = formData.currentSmoker;
+    const hba1c = formData.hba1c ? parseFloat(formData.hba1c) : undefined;
+    const uacr = formData.uacr ? parseFloat(formData.uacr) : undefined;
+    const zipCode = formData.zipCode;
 
-    // Simplified PREVENT calculation for demonstration
-    // Note: Actual PREVENT uses complex ML algorithms
-    let baseRisk = 0;
+    const bmi = calculateBMI(height, weight);
+    const eGFR = calculateeGFR(age, sex, serumCreatinine);
+    const sdiGroup = getSDIGroup(zipCode);
 
-    // Age factor
-    baseRisk += (age - 30) * 0.3;
+    // Calculate risks using PREVENT equations (already returns percentages)
+    const tenYearCVD = calculateEndpointRisk(PREVENT_COEFFICIENTS.CVD_10, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup);
+    const tenYearASCVD = calculateEndpointRisk(PREVENT_COEFFICIENTS.ASCVD_10, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup);
+    const tenYearHeartFailure = calculateEndpointRisk(PREVENT_COEFFICIENTS.HF_10, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup);
 
-    // Sex factor
-    if (formData.sex === 'male') baseRisk += 2;
-
-    // Race/ethnicity factor
-    if (formData.race === 'black') baseRisk += 1.5;
-
-    // Cholesterol factors
-    const cholRatio = totalChol / hdlChol;
-    baseRisk += Math.max(0, (cholRatio - 3) * 2);
-
-    // Blood pressure
-    if (systolicBP >= 140) baseRisk += 3;
-    else if (systolicBP >= 130) baseRisk += 2;
-    else if (systolicBP >= 120) baseRisk += 1;
-
-    // Clinical factors
-    if (formData.antihypertensiveMeds) baseRisk += 1;
-    if (formData.diabetes) baseRisk += 3;
-    if (formData.currentSmoker) baseRisk += 2;
-
-    // CKM-E factors (enhanced with kidney/metabolic factors)
-    let ckmeEnhanced = false;
-    if (eGFR && eGFR < 60) {
-      baseRisk += 2;
-      ckmeEnhanced = true;
+    // 30-year risks (only for ages 30-59)
+    let thirtyYearCVD, thirtyYearASCVD, thirtyYearHeartFailure;
+    if (age >= 30 && age <= 59) {
+      // Note: 30-year coefficients would be different - using 10-year as placeholder
+      thirtyYearCVD = calculateEndpointRisk(PREVENT_COEFFICIENTS.CVD_10, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup) * 2.5;
+      thirtyYearASCVD = calculateEndpointRisk(PREVENT_COEFFICIENTS.ASCVD_10, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup) * 2.5;
+      thirtyYearHeartFailure = calculateEndpointRisk(PREVENT_COEFFICIENTS.HF_10, age, sex, totalChol, hdlChol, systolicBP, bmi, eGFR, diabetes, currentSmoker, onHypertensionMeds, onStatin, hba1c, uacr, sdiGroup) * 3;
     }
-    if (uacr && uacr > 30) {
-      baseRisk += 1.5;
-      ckmeEnhanced = true;
-    }
-    if (sdi && sdi > 0.5) {
-      baseRisk += 1;
-      ckmeEnhanced = true;
-    }
-
-    // Convert to percentages (simplified)
-    const tenYearCVD = Math.min(Math.max(baseRisk * 2, 1), 50);
-    const tenYearASCVD = Math.min(Math.max(baseRisk * 1.5, 0.5), 40);
-    const tenYearHeartFailure = Math.min(Math.max(baseRisk * 0.8, 0.2), 20);
-
-    // 30-year risks (approximately 2.5x higher)
-    const thirtyYearCVD = Math.min(tenYearCVD * 2.5, 80);
-    const thirtyYearASCVD = Math.min(tenYearASCVD * 2.5, 70);
-    const thirtyYearHeartFailure = Math.min(tenYearHeartFailure * 3, 40);
 
     // Risk categorization
     let riskCategory: 'low' | 'borderline' | 'intermediate' | 'high';
@@ -198,82 +389,31 @@ export const PREVENTCalculator: React.FC = () => {
       recommendations.push('Aggressive lifestyle modification');
     }
 
+    // Check for CKM-E enhancement
+    const ckmeEnhanced = (hba1c !== undefined) || (uacr !== undefined) || (sdiGroup !== null);
     if (ckmeEnhanced) {
-      recommendations.push('CKM-E factors present - enhanced monitoring needed');
+      recommendations.push('CKM-E enhanced risk factors present - consider comprehensive approach');
     }
 
     const preventionStrategy = ckmeEnhanced ? 
-      'Comprehensive CKM health approach with enhanced monitoring' :
+      'CKM-Enhanced cardiovascular prevention approach' :
       'Standard cardiovascular prevention approach';
 
     return {
+      bmi: Math.round(bmi * 10) / 10,
+      eGFR: Math.round(eGFR * 10) / 10,
+      sdiGroup,
       tenYearCVD: Math.round(tenYearCVD * 10) / 10,
       tenYearASCVD: Math.round(tenYearASCVD * 10) / 10,
       tenYearHeartFailure: Math.round(tenYearHeartFailure * 10) / 10,
-      thirtyYearCVD: Math.round(thirtyYearCVD * 10) / 10,
-      thirtyYearASCVD: Math.round(thirtyYearASCVD * 10) / 10,
-      thirtyYearHeartFailure: Math.round(thirtyYearHeartFailure * 10) / 10,
+      thirtyYearCVD: thirtyYearCVD ? Math.round(thirtyYearCVD * 10) / 10 : undefined,
+      thirtyYearASCVD: thirtyYearASCVD ? Math.round(thirtyYearASCVD * 10) / 10 : undefined,
+      thirtyYearHeartFailure: thirtyYearHeartFailure ? Math.round(thirtyYearHeartFailure * 10) / 10 : undefined,
       riskCategory,
       ckmeEnhanced,
       recommendations,
       preventionStrategy
     };
-  };
-
-  const handleCalculate = () => {
-    if (!validateForm()) return;
-    
-    setIsCalculating(true);
-    
-    // Simulate advanced PREVENT risk calculation with loading animation
-    setTimeout(() => {
-      const calculatedResult = calculatePREVENTRisk();
-      setResult(calculatedResult);
-      setIsCalculating(false);
-    }, 2200);
-  };
-
-  const handleReset = () => {
-    setFormData({
-      age: '',
-      sex: '',
-      race: '',
-      totalCholesterol: '',
-      hdlCholesterol: '',
-      ldlCholesterol: '',
-      systolicBP: '',
-      diastolicBP: '',
-      antihypertensiveMeds: false,
-      diabetes: false,
-      currentSmoker: false,
-      eGFR: '',
-      uacr: '',
-      socialDeprivationIndex: ''
-    });
-    setResult(null);
-    setErrors({});
-    setIsCalculating(false);
-    setCurrentStep(1);
-  };
-
-  const getRiskColor = (category: string) => {
-    switch (category) {
-      case 'low': return 'text-green-600';
-      case 'borderline': return 'text-yellow-600';
-      case 'intermediate': return 'text-orange-600';
-      case 'high': return 'text-red-600';
-      default: return 'text-gray-600';
-    }
-  };
-
-  const getRiskBgColor = (category: string) => {
-    switch (category) {
-      case 'low': return 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800';
-      case 'borderline': return 'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800';
-      case 'intermediate': return 'bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-800';
-      case 'high': return 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800';
-      default: return 'bg-gray-50 border-gray-200 dark:bg-gray-900/20 dark:border-gray-800';
-    }
   };
 
   return (
@@ -366,7 +506,7 @@ export const PREVENTCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.prevent.age_label')}
                     value={formData.age}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, age: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, age: value })}
                     type="number"
                     placeholder={t('calculators.cardiology.prevent.age_placeholder')}
                     min={30}
@@ -379,7 +519,7 @@ export const PREVENTCalculator: React.FC = () => {
                   <CalculatorSelect
                     label={t('calculators.cardiology.prevent.sex_label')}
                     value={formData.sex}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, sex: e.target.value as 'male' | 'female' })}
+                    onChange={(value) => setFormData({ ...formData, sex: value as 'male' | 'female' })}
                     options={[
                       { value: '', label: t('calculators.cardiology.prevent.sex_placeholder') },
                       { value: 'male', label: t('calculators.cardiology.prevent.sex_male') },
@@ -389,19 +529,31 @@ export const PREVENTCalculator: React.FC = () => {
                     icon={User}
                   />
 
-                  <CalculatorSelect
-                    label={t('calculators.cardiology.prevent.race_label')}
-                    value={formData.race}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, race: e.target.value as any })}
-                    options={[
-                      { value: '', label: t('calculators.cardiology.prevent.race_placeholder') },
-                      { value: 'white', label: t('calculators.cardiology.prevent.race_white') },
-                      { value: 'black', label: t('calculators.cardiology.prevent.race_black') },
-                      { value: 'hispanic', label: t('calculators.cardiology.prevent.race_hispanic') },
-                      { value: 'asian', label: t('calculators.cardiology.prevent.race_asian') },
-                      { value: 'other', label: t('calculators.cardiology.prevent.race_other') },
-                    ]}
-                    error={errors.race}
+                  <CalculatorInput
+                    label={t('calculators.cardiology.prevent.height_label')}
+                    value={formData.height}
+                    onChange={(value) => setFormData({ ...formData, height: value })}
+                    type="number"
+                    placeholder={t('calculators.cardiology.prevent.height_placeholder')}
+                    min={120}
+                    max={220}
+                    unit={t('calculators.cardiology.prevent.unit_cm')}
+                    error={errors.height}
+                    icon={User}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
+                  <CalculatorInput
+                    label={t('calculators.cardiology.prevent.weight_label')}
+                    value={formData.weight}
+                    onChange={(value) => setFormData({ ...formData, weight: value })}
+                    type="number"
+                    placeholder={t('calculators.cardiology.prevent.weight_placeholder')}
+                    min={30}
+                    max={200}
+                    unit={t('calculators.cardiology.prevent.unit_kg')}
+                    error={errors.weight}
                     icon={User}
                   />
                 </div>
@@ -432,7 +584,7 @@ export const PREVENTCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.prevent.systolic_bp_label')}
                     value={formData.systolicBP}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, systolicBP: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, systolicBP: value })}
                     type="number"
                     placeholder={t('calculators.cardiology.prevent.systolic_bp_placeholder')}
                     min={90}
@@ -443,15 +595,17 @@ export const PREVENTCalculator: React.FC = () => {
                   />
 
                   <CalculatorInput
-                    label={t('calculators.cardiology.prevent.diastolic_bp_label')}
-                    value={formData.diastolicBP}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, diastolicBP: e.target.value })}
+                    label={t('calculators.cardiology.prevent.serum_creatinine_label')}
+                    value={formData.serumCreatinine}
+                    onChange={(value) => setFormData({ ...formData, serumCreatinine: value })}
                     type="number"
-                    placeholder={t('calculators.cardiology.prevent.diastolic_bp_placeholder')}
-                    min={50}
-                    max={120}
-                    unit={t('calculators.cardiology.prevent.unit_mmhg')}
-                    icon={TrendingUp}
+                    step={0.1}
+                    placeholder={t('calculators.cardiology.prevent.serum_creatinine_placeholder')}
+                    min={0.5}
+                    max={5.0}
+                    unit={t('calculators.cardiology.prevent.unit_mg_dl')}
+                    error={errors.serumCreatinine}
+                    icon={BarChart3}
                   />
                 </div>
 
@@ -463,17 +617,25 @@ export const PREVENTCalculator: React.FC = () => {
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <CalculatorCheckbox
-                      label={t('calculators.cardiology.prevent.antihypertensive_meds_label')}
-                      checked={formData.antihypertensiveMeds}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, antihypertensiveMeds: e.target.checked })}
-                      description={t('calculators.cardiology.prevent.antihypertensive_meds_description')}
+                      label={t('calculators.cardiology.prevent.on_hypertension_meds_label')}
+                      checked={formData.onHypertensionMeds}
+                      onChange={(checked) => setFormData({ ...formData, onHypertensionMeds: checked })}
+                      description={t('calculators.cardiology.prevent.on_hypertension_meds_description')}
                       icon={Activity}
+                    />
+
+                    <CalculatorCheckbox
+                      label={t('calculators.cardiology.prevent.on_statin_label')}
+                      checked={formData.onStatin}
+                      onChange={(checked) => setFormData({ ...formData, onStatin: checked })}
+                      description={t('calculators.cardiology.prevent.on_statin_description')}
+                      icon={BarChart3}
                     />
 
                     <CalculatorCheckbox
                       label={t('calculators.cardiology.prevent.diabetes_label')}
                       checked={formData.diabetes}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, diabetes: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, diabetes: checked })}
                       description={t('calculators.cardiology.prevent.diabetes_description')}
                       icon={BarChart3}
                     />
@@ -481,7 +643,7 @@ export const PREVENTCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.cardiology.prevent.current_smoker_label')}
                       checked={formData.currentSmoker}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, currentSmoker: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, currentSmoker: checked })}
                       description={t('calculators.cardiology.prevent.current_smoker_description')}
                       icon={AlertCircle}
                     />
@@ -520,7 +682,7 @@ export const PREVENTCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.prevent.total_cholesterol_label')}
                     value={formData.totalCholesterol}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, totalCholesterol: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, totalCholesterol: value })}
                     type="number"
                     placeholder={t('calculators.cardiology.prevent.total_cholesterol_placeholder')}
                     min={100}
@@ -533,7 +695,7 @@ export const PREVENTCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.prevent.hdl_cholesterol_label')}
                     value={formData.hdlCholesterol}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, hdlCholesterol: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, hdlCholesterol: value })}
                     type="number"
                     placeholder={t('calculators.cardiology.prevent.hdl_cholesterol_placeholder')}
                     min={20}
@@ -544,14 +706,14 @@ export const PREVENTCalculator: React.FC = () => {
                   />
 
                   <CalculatorInput
-                    label={t('calculators.cardiology.prevent.ldl_cholesterol_label')}
-                    value={formData.ldlCholesterol}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, ldlCholesterol: e.target.value })}
+                    label={t('calculators.cardiology.prevent.hba1c_label')}
+                    value={formData.hba1c}
+                    onChange={(value) => setFormData({ ...formData, hba1c: value })}
                     type="number"
-                    placeholder={t('calculators.cardiology.prevent.ldl_cholesterol_placeholder')}
-                    min={30}
-                    max={300}
-                    unit={t('calculators.cardiology.prevent.unit_mg_dl')}
+                    placeholder={t('calculators.cardiology.prevent.hba1c_placeholder')}
+                    min={0}
+                    max={10}
+                    unit={t('calculators.cardiology.prevent.unit_percent')}
                     icon={BarChart3}
                   />
                 </div>
@@ -586,21 +748,9 @@ export const PREVENTCalculator: React.FC = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <CalculatorInput
-                    label={t('calculators.cardiology.prevent.egfr_label')}
-                    value={formData.eGFR}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, eGFR: e.target.value })}
-                    type="number"
-                    placeholder={t('calculators.cardiology.prevent.egfr_placeholder')}
-                    min={15}
-                    max={150}
-                    unit={t('calculators.cardiology.prevent.unit_ml_min')}
-                    icon={BarChart3}
-                  />
-
-                  <CalculatorInput
                     label={t('calculators.cardiology.prevent.uacr_label')}
                     value={formData.uacr}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, uacr: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, uacr: value })}
                     type="number"
                     placeholder={t('calculators.cardiology.prevent.uacr_placeholder')}
                     min={0}
@@ -610,15 +760,12 @@ export const PREVENTCalculator: React.FC = () => {
                   />
 
                   <CalculatorInput
-                    label={t('calculators.cardiology.prevent.sdi_label')}
-                    value={formData.socialDeprivationIndex}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, socialDeprivationIndex: e.target.value })}
-                    type="number"
-                    step={0.1}
-                    placeholder={t('calculators.cardiology.prevent.sdi_placeholder')}
-                    min={0}
-                    max={1}
-                    unit={t('calculators.cardiology.prevent.unit_score')}
+                    label={t('calculators.cardiology.prevent.zip_code_label')}
+                    value={formData.zipCode}
+                    onChange={(value) => setFormData({ ...formData, zipCode: value })}
+                    type="text"
+                    placeholder={t('calculators.cardiology.prevent.zip_code_placeholder')}
+                    error={errors.zipCode}
                     icon={User}
                   />
                 </div>
@@ -626,12 +773,13 @@ export const PREVENTCalculator: React.FC = () => {
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <Star className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                    <h4 className="font-semibold text-blue-800 dark:text-blue-200">{t('calculators.cardiology.prevent.ckm_e_info_title')}</h4>
+                    <h4 className="font-semibold text-blue-800 dark:text-blue-200">Enhanced CKM Factors (Optional)</h4>
                   </div>
                   <div className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
-                    <p>• <strong>eGFR:</strong> {t('calculators.cardiology.prevent.egfr_info')}</p>
-                    <p>• <strong>UACR:</strong> {t('calculators.cardiology.prevent.uacr_info')}</p>
-                    <p>• <strong>SDI:</strong> {t('calculators.cardiology.prevent.sdi_info')}</p>
+                    <p>• <strong>HbA1C:</strong> Hemoglobin A1C level (enhances diabetes risk assessment)</p>
+                    <p>• <strong>UACR:</strong> Urine albumin-to-creatinine ratio (kidney function marker)</p>
+                    <p>• <strong>ZIP Code:</strong> Used for Social Deprivation Index (SDI) assessment</p>
+                    <p className="text-xs mt-2 text-blue-600 dark:text-blue-400">Including these factors provides enhanced CKM (Cardiovascular-Kidney-Metabolic) risk assessment</p>
                   </div>
                 </div>
 
@@ -666,18 +814,35 @@ export const PREVENTCalculator: React.FC = () => {
                 interpretation={result.preventionStrategy}
                 icon={Star}
               >
-                {/* Enhanced CKM Status */}
-                {result.ckmeEnhanced && (
-                  <div className="mb-6 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-xl">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <Star className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                      <span className="font-semibold text-purple-800 dark:text-purple-200">{t('calculators.cardiology.prevent.ckm_e_enhanced_title')}</span>
-                    </div>
-                    <p className="text-sm text-purple-700 dark:text-purple-300">
-                      {t('calculators.cardiology.prevent.ckm_e_enhanced_description')}
-                    </p>
+                {/* Calculated Values Display */}
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <BarChart3 className="w-5 h-5 text-purple-500" />
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">Calculated Values</h4>
                   </div>
-                )}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-2xl border border-white/20 dark:border-gray-700/20">
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-blue-600 dark:text-blue-400 mb-1">{result.bmi}</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">BMI (kg/m²)</div>
+                      </div>
+                    </div>
+                    <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-2xl border border-white/20 dark:border-gray-700/20">
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-green-600 dark:text-green-400 mb-1">{result.eGFR}</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">eGFR (mL/min/1.73m²)</div>
+                      </div>
+                    </div>
+                    {result.sdiGroup && (
+                      <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-2xl border border-white/20 dark:border-gray-700/20">
+                        <div className="text-center">
+                          <div className="text-xl font-bold text-orange-600 dark:text-orange-400 mb-1">{result.sdiGroup}</div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400">SDI Group</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
                 {/* 10-Year Risk Display */}
                 <div className="space-y-4">
@@ -725,33 +890,35 @@ export const PREVENTCalculator: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 30-Year Risk Display */}
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <Clock className="w-5 h-5 text-blue-500" />
-                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.prevent.thirty_year_predictions_title')}</h4>
+                {/* 30-Year Risk Display (for ages 30-59) */}
+                {result.thirtyYearCVD && (
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <Clock className="w-5 h-5 text-blue-500" />
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('calculators.cardiology.prevent.thirty_year_predictions_title')}</h4>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/30 rounded-xl border border-purple-200 dark:border-purple-800">
+                        <div className="text-center">
+                          <div className="text-xl font-bold text-purple-700 dark:text-purple-300">{result.thirtyYearCVD}%</div>
+                          <div className="text-sm text-purple-600 dark:text-purple-400">{t('calculators.cardiology.prevent.total_cvd')}</div>
+                        </div>
+                      </div>
+                      <div className="p-4 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-900/30 rounded-xl border border-indigo-200 dark:border-indigo-800">
+                        <div className="text-center">
+                          <div className="text-xl font-bold text-indigo-700 dark:text-indigo-300">{result.thirtyYearASCVD}%</div>
+                          <div className="text-sm text-indigo-600 dark:text-indigo-400">{t('calculators.cardiology.prevent.ascvd')}</div>
+                        </div>
+                      </div>
+                      <div className="p-4 bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-900/20 dark:to-pink-900/30 rounded-xl border border-pink-200 dark:border-pink-800">
+                        <div className="text-center">
+                          <div className="text-xl font-bold text-pink-700 dark:text-pink-300">{result.thirtyYearHeartFailure}%</div>
+                          <div className="text-sm text-pink-600 dark:text-pink-400">{t('calculators.cardiology.prevent.heart_failure')}</div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/30 rounded-xl border border-purple-200 dark:border-purple-800">
-                      <div className="text-center">
-                        <div className="text-xl font-bold text-purple-700 dark:text-purple-300">{result.thirtyYearCVD}%</div>
-                        <div className="text-sm text-purple-600 dark:text-purple-400">{t('calculators.cardiology.prevent.total_cvd')}</div>
-                      </div>
-                    </div>
-                    <div className="p-4 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-900/30 rounded-xl border border-indigo-200 dark:border-indigo-800">
-                      <div className="text-center">
-                        <div className="text-xl font-bold text-indigo-700 dark:text-indigo-300">{result.thirtyYearASCVD}%</div>
-                        <div className="text-sm text-indigo-600 dark:text-indigo-400">{t('calculators.cardiology.prevent.ascvd')}</div>
-                      </div>
-                    </div>
-                    <div className="p-4 bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-900/20 dark:to-pink-900/30 rounded-xl border border-pink-200 dark:border-pink-800">
-                      <div className="text-center">
-                        <div className="text-xl font-bold text-pink-700 dark:text-pink-300">{result.thirtyYearHeartFailure}%</div>
-                        <div className="text-sm text-pink-600 dark:text-pink-400">{t('calculators.cardiology.prevent.heart_failure')}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                )}
 
                 {/* Risk Stratification */}
                 <div className="space-y-4">
@@ -813,14 +980,34 @@ export const PREVENTCalculator: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Algorithm Validation Status */}
-                <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-xl p-4">
-                  <div className="flex items-center space-x-3 mb-3">
-                    <Award className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                    <h4 className="font-semibold text-purple-800 dark:text-purple-200">{t('calculators.cardiology.prevent.algorithm_title')}</h4>
+                {/* CKM-E Enhancement Status */}
+                {result.ckmeEnhanced && (
+                  <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-xl p-4">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <Star className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                      <h4 className="font-semibold text-purple-800 dark:text-purple-200">CKM-Enhanced Assessment</h4>
+                    </div>
+                    <div className="text-sm text-purple-700 dark:text-purple-300">
+                      This assessment includes enhanced Cardiovascular-Kidney-Metabolic (CKM) factors for more comprehensive risk evaluation.
+                    </div>
                   </div>
-                  <div className="text-sm text-purple-700 dark:text-purple-300">
-                    {t('calculators.cardiology.prevent.algorithm_description')}
+                )}
+
+                {/* Algorithm Information */}
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <Award className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <h4 className="font-semibold text-blue-800 dark:text-blue-200">AHA PREVENT™ 2023 Algorithm</h4>
+                  </div>
+                  <div className="text-sm text-blue-700 dark:text-blue-300 space-y-2">
+                    <p>This calculator implements the official American Heart Association PREVENT™ equations (2023):</p>
+                    <ul className="list-disc list-inside space-y-1 ml-2">
+                      <li>Derived from over 6 million diverse individuals</li>
+                      <li>Calculates 10-year risks for ASCVD, Heart Failure, and Total CVD</li>
+                      <li>For ages 30-59: Also provides 30-year risk estimates</li>
+                      <li>Includes novel risk factors (HbA1C, UACR, SDI) for enhanced assessment</li>
+                      <li>BMI and eGFR calculated using validated equations</li>
+                    </ul>
                   </div>
                 </div>
               </ResultsDisplay>

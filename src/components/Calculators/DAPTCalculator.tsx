@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from '../../hooks/useTranslation';
-import { Calculator, Info, Heart, AlertTriangle, Clock, TrendingUp, Pill, Activity, User, FileText, Target, Stethoscope, Award, BarChart3, Shield, Droplets, Zap, Brain, TimerIcon, CheckCircle2 } from 'lucide-react';
+import { Calculator, Info, Heart, AlertTriangle, Clock, TrendingUp, Pill, Activity, User, FileText, Target, Stethoscope, Award, BarChart3, Shield, Droplets, Zap, Brain, TimerIcon, CheckCircle2, UserCheck, BookOpen, ExternalLink, MessageCircle, Lightbulb, CircleCheck } from 'lucide-react';
 import { 
   CalculatorContainer, 
   CalculatorInput, 
