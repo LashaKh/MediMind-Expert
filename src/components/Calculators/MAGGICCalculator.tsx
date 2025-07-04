@@ -134,9 +134,9 @@ export const MAGGICCalculator: React.FC = () => {
     if (formData.copd) score += 2;
 
     // Heart failure first diagnosed ≥18 months ago
-    // If first_diagnosis is false (≥18 months ago), score = +2
-    // If first_diagnosis is true (within 18 months), score = 0
-    if (!formData.first_diagnosis) score += 2;
+    // If first_diagnosis is true (≥18 months ago), score = +2
+    // If first_diagnosis is false (within 18 months), score = 0
+    if (formData.first_diagnosis) score += 2;
 
     // Not on beta blocker
     if (!formData.beta_blocker) score += 3;
