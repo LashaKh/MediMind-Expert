@@ -269,51 +269,77 @@ export const PREVENTCalculator: React.FC = () => {
     const onStatin = formData.onStatin;
     const hba1c = formData.hba1c ? parseFloat(formData.hba1c) : undefined;
     const uacr = formData.uacr ? parseFloat(formData.uacr) : undefined;
-    const zipCode = formData.zipCode || undefined;
+    const zipCode = formData.zipCode;
 
-    // Calculate derived values
-    const bmi = calculateBMI(weight, height);
-     const eGFR = calculateeGFR(age, sex, creatinine);
-
-    // Convert cholesterol to mmol/L if needed (assuming input is in mg/dL)
-    const totalCholMmol = totalChol * 0.02586;
-    const hdlCholMmol = hdlChol * 0.02586;
-    const nonHdlChol = totalCholMmol - hdlCholMmol;
-
-    // Calculate enhanced factors
-    const sdiGroup = zipCode ? getSDIGroup(zipCode) : null;
+    // Calculate BMI and eGFR
+    const bmi = calculateBMI(height, weight);
+    const eGFR = calculateeGFR(age, sex, creatinine);
     
+    // Convert cholesterol from mg/dL to mmol/L (divide by 38.67)
+    const totalCholMmol = totalChol / 38.67;
+    const hdlCholMmol = hdlChol / 38.67;
+    const nonHdlCholMmol = totalCholMmol - hdlCholMmol;
+
+    // Get SDI group
+    const sdiGroup = getSDIGroup(zipCode);
+
+    // Enhanced factor calculations based on PREVENT specification
     const calculateSDIFactor = (coeffs: Record<string, number>): number => {
-      if (!zipCode) return coeffs.C25; // Missing ZIP code
-      if (sdiGroup === 1) return 0; // SDI group 1
-      if (sdiGroup === 2) return coeffs.C23; // SDI group 2
-      if (sdiGroup === 3) return coeffs.C24; // SDI group 3
-      return coeffs.C25; // ZIP not found in SDI tables
+      if (!zipCode) {
+        return coeffs.C25; // Missing ZIP code
+      }
+      const sdi = getSDIGroup(zipCode);
+      if (sdi === 1 || sdi === 2 || sdi === 3) {
+        return 0; // SDI group 1-3
+      } else if (sdi === 4 || sdi === 5 || sdi === 6) {
+        return coeffs.C23; // SDI group 4-6
+      } else if (sdi === 7 || sdi === 8 || sdi === 9 || sdi === 10) {
+        return coeffs.C24; // SDI group 7-10
+      }
+      return coeffs.C25; // ZIP code not found
     };
 
     const calculateUACRFactor = (coeffs: Record<string, number>): number => {
-      if (uacr === undefined) return coeffs.C27; // Missing UACR
+      if (uacr === undefined) {
+        return coeffs.C27; // Missing UACR
+      }
       return Math.log(uacr) * coeffs.C26; // ln(UACR) * C26
     };
 
     const calculateHbA1CFactor = (coeffs: Record<string, number>): number => {
-      if (hba1c === undefined) return coeffs.C30; // Missing HbA1C
-      if (diabetes) return (hba1c - 5.3) * coeffs.C28; // Diabetes present
-      return (hba1c - 5.3) * coeffs.C29; // Diabetes not present
+      if (hba1c === undefined) {
+        return coeffs.C30; // Missing HbA1c
+      }
+      if (diabetes) {
+        return (hba1c - 5.3) * coeffs.C28; // HbA1c in diabetes
+      } else {
+        return (hba1c - 5.3) * coeffs.C29; // HbA1c no diabetes
+      }
     };
 
     const calculateEndpointRisk = (coeffs: Record<string, number>, includeEnhanced = false): number => {
-      // Core predictors (centered as specified)
+      // Variable transformations exactly as specified in PREVENT paper
+      // Models centered at: age 55, non-HDL-C 3.5 mmol/L, HDL-C 1.3 mmol/L, SBP 130 mmHg, BMI 25 kg/m², eGFR 90 mL/min/1.73m²
+      
+      // Age transformation (centered at 55, per 10 years)
       const ageNorm = (age - 55) / 10;
       const ageSquared = ageNorm * ageNorm; // For 30-year models
-      const nonHdlCNorm = nonHdlChol - 3.5;
-      const hdlCNorm = (hdlCholMmol - 1.3) / 0.3;
-      const sbpLt110 = (Math.min(systolicBP, 110) - 110) / 20;
-      const sbpGte110 = (Math.max(systolicBP, 110) - 130) / 20;
-      const bmiLt30 = (Math.min(bmi, 30) - 25) / 5;
-      const bmiGte30 = (Math.max(bmi, 30) - 30) / 5;
-      const egfrLt60 = (Math.min(eGFR, 60) - 60) / -15;
-      const egfrGte60 = (Math.max(eGFR, 60) - 90) / -15;
+      
+      // Cholesterol transformations
+      const nonHdlCNorm = nonHdlCholMmol - 3.5; // Centered at 3.5 mmol/L, per 1 mmol/L
+      const hdlCNorm = (hdlCholMmol - 1.3) / 0.3; // Centered at 1.3 mmol/L, per 0.3 mmol/L
+      
+      // Blood pressure transformations (piecewise linear splines)
+      const sbpLt110 = (Math.min(systolicBP, 110) - 110) / 20; // <110 mmHg per 20 mmHg
+      const sbpGte110 = (Math.max(systolicBP, 110) - 130) / 20; // ≥110 mmHg per 20 mmHg, centered at 130
+      
+      // BMI transformations (piecewise linear splines)
+      const bmiLt30 = (Math.min(bmi, 30) - 25) / 5; // <30 kg/m² per 5 kg/m², centered at 25
+      const bmiGte30 = (Math.max(bmi, 30) - 30) / 5; // ≥30 kg/m² per 5 kg/m²
+      
+      // eGFR transformations (piecewise linear splines)
+      const egfrLt60 = (Math.min(eGFR, 60) - 60) / (-15); // <60 mL/min/1.73m² per -15 mL/min/1.73m²
+      const egfrGte60 = (Math.max(eGFR, 60) - 90) / (-15); // ≥60 mL/min/1.73m² per -15 mL/min/1.73m², centered at 90
 
       // Binary variables
       const diabetesVal = diabetes ? 1 : 0;
@@ -332,7 +358,7 @@ export const PREVENTCalculator: React.FC = () => {
       const ageBmiGte30 = ageNorm * bmiGte30;
       const ageEgfrLt60 = ageNorm * egfrLt60;
 
-      // Core logit calculation
+      // Core logit calculation based on PREVENT specification
       let logit = coeffs.C0 * ageNorm +
                   coeffs.C1 * ageSquared +
                   coeffs.C2 * nonHdlCNorm +
@@ -455,8 +481,6 @@ export const PREVENTCalculator: React.FC = () => {
     setIsCalculating(false);
     setCurrentStep(1);
   };
-
-
 
   return (
     <CalculatorContainer
@@ -964,8 +988,6 @@ export const PREVENTCalculator: React.FC = () => {
                     </div>
                   </div>
                 )}
-
-
 
                 {/* Algorithm Information */}
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
