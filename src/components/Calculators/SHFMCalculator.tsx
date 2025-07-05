@@ -508,7 +508,7 @@ export const SHFMCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.shfm.age_label')}
                     value={formData.age}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, age: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, age: value })}
                     type="number"
                     placeholder={t('calculators.cardiology.shfm.age_placeholder')}
                     min={18}
@@ -521,7 +521,7 @@ export const SHFMCalculator: React.FC = () => {
                   <CalculatorSelect
                     label={t('calculators.cardiology.shfm.gender_label')}
                     value={formData.gender}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, gender: e.target.value as 'male' | 'female' })}
+                    onChange={(value) => setFormData({ ...formData, gender: value as 'male' | 'female' })}
                     options={[
                       { value: '', label: t('calculators.cardiology.shfm.gender_placeholder') },
                       { value: 'male', label: t('calculators.cardiology.shfm.gender_male') },
@@ -534,7 +534,7 @@ export const SHFMCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.shfm.lvef_label')}
                     value={formData.lvef}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, lvef: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, lvef: value })}
                     type="number"
                     placeholder={t('calculators.cardiology.shfm.lvef_placeholder')}
                     min={5}
@@ -547,8 +547,7 @@ export const SHFMCalculator: React.FC = () => {
                   <CalculatorSelect
                     label={t('calculators.cardiology.shfm.nyha_class_label')}
                     value={formData.nyha_class === 0 ? '' : formData.nyha_class.toString()}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                      const value = e.target.value;
+                    onChange={(value) => {
                       setFormData({ ...formData, nyha_class: value === '' ? 0 : parseInt(value) as 1 | 2 | 3 | 4 });
                     }}
                     options={[
@@ -566,7 +565,7 @@ export const SHFMCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.cardiology.shfm.ischemic_etiology_label')}
                       checked={formData.ischemic_etiology}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, ischemic_etiology: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, ischemic_etiology: checked })}
                       description="Heart failure due to coronary artery disease"
                       icon={Heart}
                     />
@@ -599,7 +598,7 @@ export const SHFMCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.shfm.systolic_bp_label')}
                     value={formData.systolic_bp}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, systolic_bp: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, systolic_bp: value })}
                     type="number"
                     placeholder={t('calculators.cardiology.shfm.systolic_bp_placeholder')}
                     min={60}
@@ -612,7 +611,7 @@ export const SHFMCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.shfm.peak_vo2_label')}
                     value={formData.peak_vo2}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, peak_vo2: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, peak_vo2: value })}
                     type="number"
                     step={0.1}
                     placeholder="14.0"
@@ -657,7 +656,7 @@ export const SHFMCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.shfm.sodium_label')}
                     value={formData.sodium}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, sodium: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, sodium: value })}
                     type="number"
                     placeholder={t('calculators.cardiology.shfm.sodium_placeholder')}
                     min={120}
@@ -670,7 +669,7 @@ export const SHFMCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.shfm.cholesterol_label')}
                     value={formData.cholesterol}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cholesterol: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, cholesterol: value })}
                     type="number"
                     placeholder={t('calculators.cardiology.shfm.cholesterol_placeholder')}
                     min={50}
@@ -683,7 +682,7 @@ export const SHFMCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.shfm.hemoglobin_label')}
                     value={formData.hemoglobin}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, hemoglobin: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, hemoglobin: value })}
                     type="number"
                     step={0.1}
                     placeholder="12.5"
@@ -698,7 +697,7 @@ export const SHFMCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.shfm.lymphocyte_percent_label')}
                     value={formData.lymphocyte_percent}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, lymphocyte_percent: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, lymphocyte_percent: value })}
                     type="number"
                     placeholder={t('calculators.cardiology.shfm.lymphocyte_percent_placeholder')}
                     min={1}
@@ -711,7 +710,7 @@ export const SHFMCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.cardiology.shfm.uric_acid_label')}
                     value={formData.uric_acid}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, uric_acid: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, uric_acid: value })}
                     type="number"
                     step={0.1}
                     placeholder="7.0"
@@ -763,7 +762,7 @@ export const SHFMCalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.cardiology.shfm.ace_inhibitor_label')}
                         checked={formData.ace_inhibitor}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, ace_inhibitor: e.target.checked })}
+                        onChange={(checked) => setFormData({ ...formData, ace_inhibitor: checked })}
                         description="Evidence-based neurohormonal blockade"
                         icon={Pill}
                       />
@@ -771,7 +770,7 @@ export const SHFMCalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.cardiology.shfm.beta_blocker_label')}
                         checked={formData.beta_blocker}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, beta_blocker: e.target.checked })}
+                        onChange={(checked) => setFormData({ ...formData, beta_blocker: checked })}
                         description="Proven mortality benefit in HFrEF"
                         icon={Pill}
                       />
@@ -779,7 +778,7 @@ export const SHFMCalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.cardiology.shfm.aldosterone_antagonist_label')}
                         checked={formData.aldosterone_antagonist}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, aldosterone_antagonist: e.target.checked })}
+                        onChange={(checked) => setFormData({ ...formData, aldosterone_antagonist: checked })}
                         description="Mortality benefit in NYHA III-IV patients"
                         icon={Pill}
                       />
@@ -787,7 +786,7 @@ export const SHFMCalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.cardiology.shfm.statin_label')}
                         checked={formData.statin}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, statin: e.target.checked })}
+                        onChange={(checked) => setFormData({ ...formData, statin: checked })}
                         description="Lipid management therapy"
                         icon={Pill}
                       />
@@ -795,7 +794,7 @@ export const SHFMCalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.cardiology.shfm.allopurinol_label')}
                         checked={formData.allopurinol}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, allopurinol: e.target.checked })}
+                        onChange={(checked) => setFormData({ ...formData, allopurinol: checked })}
                         description="Uric acid lowering therapy"
                         icon={Pill}
                       />
@@ -812,7 +811,7 @@ export const SHFMCalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.cardiology.shfm.icd_label')}
                         checked={formData.icd}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, icd: e.target.checked })}
+                        onChange={(checked) => setFormData({ ...formData, icd: checked })}
                         description="Primary or secondary prevention device"
                         icon={Cpu}
                       />
@@ -820,7 +819,7 @@ export const SHFMCalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.cardiology.shfm.crt_label')}
                         checked={formData.crt}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, crt: e.target.checked })}
+                        onChange={(checked) => setFormData({ ...formData, crt: checked })}
                         description="Biventricular pacing therapy"
                         icon={Cpu}
                       />

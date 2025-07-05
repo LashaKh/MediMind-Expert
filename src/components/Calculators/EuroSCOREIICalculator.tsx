@@ -428,7 +428,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.eurscoreII.age_label')}
                     value={formData.age}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, age: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, age: value })}
                     type="number"
                     placeholder={t('calculators.eurscoreII.age_placeholder')}
                     min={18}
@@ -441,7 +441,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                   <CalculatorSelect
                     label={t('calculators.eurscoreII.gender_label')}
                     value={formData.gender}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, gender: e.target.value as 'male' | 'female' })}
+                    onChange={(value) => setFormData({ ...formData, gender: value as 'male' | 'female' })}
                     options={[
                       { value: '', label: t('calculators.eurscoreII.gender_placeholder') },
                       { value: 'male', label: t('calculators.eurscoreII.gender_male') },
@@ -454,7 +454,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.eurscoreII.creatinine_label')}
                     value={formData.creatinine}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, creatinine: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, creatinine: value })}
                     type="number"
                     step={0.1}
                     placeholder={t('calculators.eurscoreII.creatinine_placeholder')}
@@ -475,7 +475,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.eurscoreII.poor_mobility_label')}
                       checked={formData.poorMobility}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, poorMobility: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, poorMobility: checked })}
                       description={t('calculators.eurscoreII.poor_mobility_description')}
                       icon={Activity}
                     />
@@ -483,7 +483,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.eurscoreII.diabetes_insulin_label')}
                       checked={formData.diabetesOnInsulin}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, diabetesOnInsulin: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, diabetesOnInsulin: checked })}
                       description={t('calculators.eurscoreII.diabetes_insulin_description')}
                       icon={BarChart3}
                     />
@@ -491,7 +491,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.eurscoreII.chronic_pulmonary_label')}
                       checked={formData.chronicPulmonaryDisease}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, chronicPulmonaryDisease: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, chronicPulmonaryDisease: checked })}
                       description={t('calculators.eurscoreII.chronic_pulmonary_description')}
                       icon={Activity}
                     />
@@ -499,7 +499,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.eurscoreII.pvd_label')}
                       checked={formData.pvd}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pvd: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, pvd: checked })}
                       description={t('calculators.eurscoreII.pvd_description')}
                       icon={Activity}
                     />
@@ -532,7 +532,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                   <CalculatorSelect
                     label={t('calculators.eurscoreII.nyha_label')}
                     value={formData.nyhaClass}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, nyhaClass: e.target.value as any })}
+                    onChange={(value) => setFormData({ ...formData, nyhaClass: value as any })}
                     options={[
                       { value: '', label: t('calculators.eurscoreII.nyha_placeholder') },
                       { value: '1', label: t('calculators.eurscoreII.nyha_class_1') },
@@ -547,7 +547,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                   <CalculatorSelect
                     label={t('calculators.eurscoreII.urgency_label')}
                     value={formData.urgency}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, urgency: e.target.value as any })}
+                    onChange={(value) => setFormData({ ...formData, urgency: value as any })}
                     options={[
                       { value: '', label: t('calculators.eurscoreII.urgency_placeholder') },
                       { value: 'elective', label: t('calculators.eurscoreII.urgency_elective') },
@@ -568,7 +568,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.eurscoreII.recent_mi_label')}
                       checked={formData.recentMI}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, recentMI: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, recentMI: checked })}
                       description={t('calculators.eurscoreII.recent_mi_description')}
                       icon={Heart}
                     />
@@ -576,7 +576,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.eurscoreII.unstable_angina_label')}
                       checked={formData.unstableAngina}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, unstableAngina: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, unstableAngina: checked })}
                       description={t('calculators.eurscoreII.unstable_angina_description')}
                       icon={Heart}
                     />
@@ -584,7 +584,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.eurscoreII.pulmonary_hypertension_label')}
                       checked={formData.pulmonaryHypertension}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pulmonaryHypertension: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, pulmonaryHypertension: checked })}
                       description={t('calculators.eurscoreII.pulmonary_hypertension_description')}
                       icon={Activity}
                     />
@@ -592,7 +592,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.eurscoreII.extracardiac_arteriopathy_label')}
                       checked={formData.extracardiacArteriopathy}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, extracardiacArteriopathy: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, extracardiacArteriopathy: checked })}
                       description={t('calculators.eurscoreII.extracardiac_arteriopathy_description')}
                       icon={Brain}
                     />
@@ -600,7 +600,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.eurscoreII.neurological_dysfunction_label')}
                       checked={formData.neurologicalDysfunction}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, neurologicalDysfunction: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, neurologicalDysfunction: checked })}
                       description={t('calculators.eurscoreII.neurological_dysfunction_description')}
                       icon={Brain}
                     />
@@ -608,7 +608,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.eurscoreII.previous_cardiac_surgery_label')}
                       checked={formData.previousCardiacSurgery}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, previousCardiacSurgery: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, previousCardiacSurgery: checked })}
                       description={t('calculators.eurscoreII.previous_cardiac_surgery_description')}
                       icon={Heart}
                     />
@@ -616,7 +616,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.eurscoreII.active_endocarditis_label')}
                       checked={formData.activeEndocarditis}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, activeEndocarditis: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, activeEndocarditis: checked })}
                       description={t('calculators.eurscoreII.active_endocarditis_description')}
                       icon={AlertTriangle}
                     />
@@ -655,7 +655,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                   <CalculatorSelect
                     label={t('calculators.eurscoreII.procedure_weight_label')}
                     value={formData.procedureWeight}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, procedureWeight: e.target.value as any })}
+                    onChange={(value) => setFormData({ ...formData, procedureWeight: value as any })}
                     options={[
                       { value: '', label: t('calculators.eurscoreII.procedure_weight_placeholder') },
                       { value: 'low', label: t('calculators.eurscoreII.procedure_weight_low') },
@@ -676,7 +676,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.eurscoreII.critical_preoperative_label')}
                       checked={formData.criticalPreoperativeState}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, criticalPreoperativeState: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, criticalPreoperativeState: checked })}
                       description={t('calculators.eurscoreII.critical_preoperative_description')}
                       icon={AlertTriangle}
                     />
@@ -733,7 +733,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.eurscoreII.aortic_surgery_label')}
                         checked={formData.aorticSurgery}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, aorticSurgery: e.target.checked })}
+                        onChange={(checked) => setFormData({ ...formData, aorticSurgery: checked })}
                         description={t('calculators.eurscoreII.aortic_surgery_description')}
                         icon={Heart}
                       />
@@ -741,7 +741,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.eurscoreII.mitral_surgery_label')}
                         checked={formData.mitralSurgery}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, mitralSurgery: e.target.checked })}
+                        onChange={(checked) => setFormData({ ...formData, mitralSurgery: checked })}
                         description={t('calculators.eurscoreII.mitral_surgery_description')}
                         icon={Heart}
                       />
@@ -749,7 +749,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.eurscoreII.tricuspid_surgery_label')}
                         checked={formData.tricuspidSurgery}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, tricuspidSurgery: e.target.checked })}
+                        onChange={(checked) => setFormData({ ...formData, tricuspidSurgery: checked })}
                         description={t('calculators.eurscoreII.tricuspid_surgery_description')}
                         icon={Heart}
                       />
@@ -757,7 +757,7 @@ export const EuroSCOREIICalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.eurscoreII.pulmonary_surgery_label')}
                         checked={formData.pulmonarySurgery}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pulmonarySurgery: e.target.checked })}
+                        onChange={(checked) => setFormData({ ...formData, pulmonarySurgery: checked })}
                         description={t('calculators.eurscoreII.pulmonary_surgery_description')}
                         icon={Heart}
                       />

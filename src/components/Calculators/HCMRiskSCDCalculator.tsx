@@ -421,7 +421,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.hcm_risk_scd.age_label')}
                     value={formData.age}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, age: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, age: value })}
                     type="number"
                     placeholder={t('calculators.hcm_risk_scd.age_placeholder')}
                     min={16}
@@ -434,7 +434,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                   <CalculatorSelect
                     label={t('calculators.hcm_risk_scd.gender_label')}
                     value={formData.gender}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, gender: e.target.value as 'male' | 'female' })}
+                    onChange={(value) => setFormData({ ...formData, gender: value as 'male' | 'female' })}
                     options={[
                       { value: '', label: t('calculators.hcm_risk_scd.select_option') },
                       { value: 'male', label: t('calculators.hcm_risk_scd.gender_male') },
@@ -483,7 +483,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.hcm_risk_scd.max_wall_thickness')}
                     value={formData.maxWallThickness}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, maxWallThickness: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, maxWallThickness: value })}
                     type="number"
                     step={0.1}
                     placeholder={t('calculators.hcm_risk_scd.max_wall_thickness_placeholder')}
@@ -497,7 +497,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.hcm_risk_scd.left_atrial_size')}
                     value={formData.leftAtrialSize}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, leftAtrialSize: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, leftAtrialSize: value })}
                     type="number"
                     step={0.1}
                     placeholder={t('calculators.hcm_risk_scd.left_atrial_size_placeholder')}
@@ -511,7 +511,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.hcm_risk_scd.max_lvot_gradient')}
                     value={formData.maxLVOTGradient}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, maxLVOTGradient: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, maxLVOTGradient: value })}
                     type="number"
                     placeholder={t('calculators.hcm_risk_scd.max_lvot_gradient_placeholder')}
                     min={0}
@@ -572,7 +572,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.hcm_risk_scd.family_history_scd_label')}
                         checked={formData.familyHistorySCD}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, familyHistorySCD: e.target.checked })}
+                        onChange={(checked) => setFormData({ ...formData, familyHistorySCD: checked })}
                         description={t('calculators.hcm_risk_scd.family_history_info')}
                         icon={Heart}
                       />
@@ -580,7 +580,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.hcm_risk_scd.non_sustained_vt_label')}
                         checked={formData.nonSustainedVT}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, nonSustainedVT: e.target.checked })}
+                        onChange={(checked) => setFormData({ ...formData, nonSustainedVT: checked })}
                         description={t('calculators.hcm_risk_scd.nsvt_info')}
                         icon={Zap}
                       />
@@ -588,7 +588,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.hcm_risk_scd.unexplained_syncope_label')}
                         checked={formData.unexplainedSyncope}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, unexplainedSyncope: e.target.checked })}
+                        onChange={(checked) => setFormData({ ...formData, unexplainedSyncope: checked })}
                         description={t('calculators.hcm_risk_scd.unexplained_syncope_info')}
                         icon={Brain}
                       />
@@ -604,7 +604,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.hcm_risk_scd.apical_aneurysm_label')}
                         checked={formData.apicalAneurysm}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, apicalAneurysm: e.target.checked })}
+                        onChange={(checked) => setFormData({ ...formData, apicalAneurysm: checked })}
                         description={t('calculators.hcm_risk_scd.apical_aneurysm_info')}
                         icon={Heart}
                       />
@@ -612,7 +612,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.hcm_risk_scd.extensive_lge_label')}
                         checked={formData.extensiveLGE}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, extensiveLGE: e.target.checked })}
+                        onChange={(checked) => setFormData({ ...formData, extensiveLGE: checked })}
                         description={t('calculators.hcm_risk_scd.lge_info')}
                         icon={BarChart3}
                       />
@@ -669,7 +669,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.hcm_risk_scd.prior_scd_label')}
                       checked={formData.priorSCD}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, priorSCD: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, priorSCD: checked })}
                       description={t('calculators.hcm_risk_scd.prior_scd_desc')}
                       icon={AlertTriangle}
                     />
@@ -677,7 +677,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.hcm_risk_scd.prior_icd_label')}
                       checked={formData.priorICD}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, priorICD: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, priorICD: checked })}
                       description={t('calculators.hcm_risk_scd.prior_icd_desc')}
                       icon={Zap}
                     />
@@ -685,7 +685,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.hcm_risk_scd.concurrent_vhd_label')}
                       checked={formData.concurrentVHD}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, concurrentVHD: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, concurrentVHD: checked })}
                       description={t('calculators.hcm_risk_scd.concurrent_vhd_desc')}
                       icon={Heart}
                     />
@@ -693,7 +693,7 @@ export const HCMRiskSCDCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.hcm_risk_scd.infiltrative_disease_label')}
                       checked={formData.infiltrativeDisease}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, infiltrativeDisease: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, infiltrativeDisease: checked })}
                       description={t('calculators.hcm_risk_scd.infiltrative_disease_desc')}
                       icon={Activity}
                     />

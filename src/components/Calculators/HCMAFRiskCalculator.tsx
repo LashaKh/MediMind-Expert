@@ -443,7 +443,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.hcm_af_risk.age_label')}
                     value={formData.age}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, age: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, age: value })}
                     type="number"
                     placeholder={t('calculators.hcm_af_risk.age_placeholder')}
                     min={18}
@@ -456,7 +456,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                   <CalculatorSelect
                     label={t('calculators.hcm_af_risk.gender_label')}
                     value={formData.gender}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, gender: e.target.value as 'male' | 'female' })}
+                    onChange={(value) => setFormData({ ...formData, gender: value as 'male' | 'female' })}
                     options={[
                       { value: '', label: t('calculators.hcm_af_risk.gender_placeholder') },
                       { value: 'male', label: t('calculators.hcm_af_risk.gender_male') },
@@ -505,7 +505,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.hcm_af_risk.left_atrial_size')}
                     value={formData.leftAtrialSize}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, leftAtrialSize: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, leftAtrialSize: value })}
                     type="number"
                     step={0.1}
                     placeholder={t('calculators.hcm_af_risk.left_atrial_size_placeholder')}
@@ -519,7 +519,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.hcm_af_risk.max_wall_thickness')}
                     value={formData.maxWallThickness}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, maxWallThickness: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, maxWallThickness: value })}
                     type="number"
                     step={0.1}
                     placeholder={t('calculators.hcm_af_risk.max_wall_thickness_placeholder')}
@@ -533,7 +533,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                   <CalculatorInput
                     label={t('calculators.hcm_af_risk.max_lvot_gradient')}
                     value={formData.maxLVOTGradient}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, maxLVOTGradient: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, maxLVOTGradient: value })}
                     type="number"
                     placeholder={t('calculators.hcm_af_risk.max_lvot_gradient_placeholder')}
                     min={0}
@@ -548,7 +548,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                   <CalculatorSelect
                     label={t('calculators.hcm_af_risk.mitral_regurgitation')}
                     value={formData.mitralRegurgitation}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, mitralRegurgitation: e.target.value as any })}
+                    onChange={(value) => setFormData({ ...formData, mitralRegurgitation: value as any })}
                     options={[
                       { value: '', label: t('calculators.hcm_af_risk.mitral_regurgitation_placeholder') },
                       { value: '0', label: t('calculators.hcm_af_risk.mitral_regurgitation_0') },
@@ -613,7 +613,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.hcm_af_risk.hypertension')}
                         checked={formData.hypertension}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, hypertension: e.target.checked })}
+                        onChange={(checked) => setFormData({ ...formData, hypertension: checked })}
                         description={t('calculators.hcm_af_risk.hypertension_desc')}
                         icon={TrendingUp}
                       />
@@ -621,7 +621,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                       <CalculatorCheckbox
                         label={t('calculators.hcm_af_risk.family_history_af')}
                         checked={formData.familyHistoryAF}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, familyHistoryAF: e.target.checked })}
+                        onChange={(checked) => setFormData({ ...formData, familyHistoryAF: checked })}
                         description={t('calculators.hcm_af_risk.family_history_af_desc')}
                         icon={Brain}
                       />
@@ -679,7 +679,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.hcm_af_risk.prior_af')}
                       checked={formData.priorAF}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, priorAF: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, priorAF: checked })}
                       description={t('calculators.hcm_af_risk.prior_af_desc')}
                       icon={AlertTriangle}
                     />
@@ -687,7 +687,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.hcm_af_risk.permanent_af')}
                       checked={formData.permanentAF}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, permanentAF: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, permanentAF: checked })}
                       description={t('calculators.hcm_af_risk.permanent_af_desc')}
                       icon={Activity}
                     />
@@ -695,7 +695,7 @@ export const HCMAFRiskCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.hcm_af_risk.concurrent_valve_disease')}
                       checked={formData.concurrentValveDisease}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, concurrentValveDisease: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, concurrentValveDisease: checked })}
                       description={t('calculators.hcm_af_risk.concurrent_valve_disease_desc')}
                       icon={Heart}
                     />

@@ -468,7 +468,7 @@ export const STSCalculator: React.FC = () => {
                   <CalculatorInput
                     label="Age"
                     value={formData.age}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, age: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, age: value })}
                     type="number"
                     placeholder="65"
                     min={18}
@@ -481,7 +481,7 @@ export const STSCalculator: React.FC = () => {
                   <CalculatorSelect
                     label="Gender"
                     value={formData.gender}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, gender: e.target.value as 'male' | 'female' })}
+                    onChange={(value) => setFormData({ ...formData, gender: value as 'male' | 'female' })}
                     options={[
                       { value: '', label: t('calculators.cardiology.sts.select_gender') },
                       { value: 'male', label: t('calculators.cardiology.sts.male') },
@@ -494,7 +494,7 @@ export const STSCalculator: React.FC = () => {
                   <CalculatorSelect
                     label="Race/Ethnicity"
                     value={formData.race}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, race: e.target.value as any })}
+                    onChange={(value) => setFormData({ ...formData, race: value as any })}
                     options={[
                       { value: '', label: t('calculators.cardiology.sts.select_race') },
                       { value: 'white', label: t('calculators.cardiology.sts.white') },
@@ -511,7 +511,7 @@ export const STSCalculator: React.FC = () => {
                   <CalculatorInput
                     label="Height"
                     value={formData.height}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, height: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, height: value })}
                     type="number"
                     placeholder="170"
                     min={100}
@@ -524,7 +524,7 @@ export const STSCalculator: React.FC = () => {
                   <CalculatorInput
                     label="Weight"
                     value={formData.weight}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, weight: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, weight: value })}
                     type="number"
                     placeholder="70"
                     min={30}
@@ -561,7 +561,7 @@ export const STSCalculator: React.FC = () => {
                   <CalculatorSelect
                     label="Procedure Type"
                     value={formData.procedure}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, procedure: e.target.value as any })}
+                    onChange={(value) => setFormData({ ...formData, procedure: value as any })}
                     options={[
                       { value: '', label: t('calculators.cardiology.sts.select_procedure') },
                       { value: 'cabg_only', label: t('calculators.cardiology.sts.cabg_only') },
@@ -575,7 +575,7 @@ export const STSCalculator: React.FC = () => {
                   <CalculatorSelect
                     label="Urgency"
                     value={formData.urgency}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, urgency: e.target.value as any })}
+                    onChange={(value) => setFormData({ ...formData, urgency: value as any })}
                     options={[
                       { value: '', label: t('calculators.cardiology.sts.select_urgency') },
                       { value: 'elective', label: t('calculators.cardiology.sts.elective') },
@@ -597,7 +597,7 @@ export const STSCalculator: React.FC = () => {
                     <CalculatorSelect
                       label="Mitral Insufficiency"
                       value={formData.mitralInsufficiency}
-                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, mitralInsufficiency: e.target.value as any })}
+                      onChange={(value) => setFormData({ ...formData, mitralInsufficiency: value as any })}
                       options={[
                         { value: '', label: t('calculators.cardiology.sts.select_severity') },
                         { value: '0', label: t('calculators.cardiology.sts.severity_none') },
@@ -612,7 +612,7 @@ export const STSCalculator: React.FC = () => {
                     <CalculatorSelect
                       label="Tricuspid Insufficiency"
                       value={formData.tricuspidInsufficiency}
-                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, tricuspidInsufficiency: e.target.value as any })}
+                      onChange={(value) => setFormData({ ...formData, tricuspidInsufficiency: value as any })}
                       options={[
                         { value: '', label: t('calculators.cardiology.sts.select_severity') },
                         { value: '0', label: t('calculators.cardiology.sts.severity_none') },
@@ -627,7 +627,7 @@ export const STSCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label="Aortic Stenosis"
                       checked={formData.aorticStenosis}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, aorticStenosis: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, aorticStenosis: checked })}
                       description={t('calculators.cardiology.sts.aortic_stenosis_description')}
                       icon={Heart}
                     />
@@ -635,7 +635,7 @@ export const STSCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label="Mitral Stenosis"
                       checked={formData.mitralStenosis}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, mitralStenosis: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, mitralStenosis: checked })}
                       description={t('calculators.cardiology.sts.mitral_stenosis_description')}
                       icon={Heart}
                     />
@@ -674,7 +674,7 @@ export const STSCalculator: React.FC = () => {
                   <CalculatorInput
                     label="Ejection Fraction"
                     value={formData.ejectionFraction}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, ejectionFraction: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, ejectionFraction: value })}
                     type="number"
                     placeholder="55"
                     min={10}
@@ -687,7 +687,7 @@ export const STSCalculator: React.FC = () => {
                   <CalculatorSelect
                     label="NYHA Class"
                     value={formData.nyhaClass}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, nyhaClass: e.target.value as any })}
+                    onChange={(value) => setFormData({ ...formData, nyhaClass: value as any })}
                     options={[
                       { value: '', label: t('calculators.cardiology.sts.select_nyha') },
                       { value: '1', label: t('calculators.cardiology.sts.nyha_1') },
@@ -709,7 +709,7 @@ export const STSCalculator: React.FC = () => {
                     <CalculatorInput
                       label="Creatinine"
                       value={formData.creatinine}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, creatinine: e.target.value })}
+                      onChange={(value) => setFormData({ ...formData, creatinine: value })}
                       type="number"
                       step={0.1}
                       placeholder="1.0"
@@ -723,7 +723,7 @@ export const STSCalculator: React.FC = () => {
                     <CalculatorInput
                       label="Hematocrit"
                       value={formData.hematocrit}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, hematocrit: e.target.value })}
+                      onChange={(value) => setFormData({ ...formData, hematocrit: value })}
                       type="number"
                       step={0.1}
                       placeholder="40"
@@ -769,7 +769,7 @@ export const STSCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.cardiology.sts.diabetes_label')}
                       checked={formData.diabetes}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, diabetes: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, diabetes: checked })}
                       description={t('calculators.cardiology.sts.diabetes_description')}
                       icon={BarChart3}
                     />
@@ -777,7 +777,7 @@ export const STSCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.cardiology.sts.hypertension_label')}
                       checked={formData.hypertension}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, hypertension: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, hypertension: checked })}
                       description={t('calculators.cardiology.sts.hypertension_description')}
                       icon={TrendingUp}
                     />
@@ -785,7 +785,7 @@ export const STSCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.cardiology.sts.pvd_label')}
                       checked={formData.pvd}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, pvd: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, pvd: checked })}
                       description={t('calculators.cardiology.sts.pvd_description')}
                       icon={Activity}
                     />
@@ -793,7 +793,7 @@ export const STSCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.cardiology.sts.cerebrovascular_disease_label')}
                       checked={formData.cerebrovascularDisease}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cerebrovascularDisease: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, cerebrovascularDisease: checked })}
                       description={t('calculators.cardiology.sts.cerebrovascular_description')}
                       icon={Brain}
                     />
@@ -801,7 +801,7 @@ export const STSCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.cardiology.sts.chronic_lung_disease_label')}
                       checked={formData.chronicLungDisease}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, chronicLungDisease: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, chronicLungDisease: checked })}
                       description={t('calculators.cardiology.sts.chronic_lung_description')}
                       icon={Activity}
                     />
@@ -809,7 +809,7 @@ export const STSCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.cardiology.sts.immunosuppression_label')}
                       checked={formData.immunosuppression}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, immunosuppression: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, immunosuppression: checked })}
                       description={t('calculators.cardiology.sts.immunosuppression_description')}
                       icon={Shield}
                     />
@@ -817,7 +817,7 @@ export const STSCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.cardiology.sts.previous_cardiac_surgery_label')}
                       checked={formData.previousCardiacSurgery}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, previousCardiacSurgery: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, previousCardiacSurgery: checked })}
                       description={t('calculators.cardiology.sts.previous_cardiac_surgery_description')}
                       icon={Heart}
                     />
@@ -825,7 +825,7 @@ export const STSCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.cardiology.sts.cardiogenic_shock_label')}
                       checked={formData.cardiogenicShock}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, cardiogenicShock: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, cardiogenicShock: checked })}
                       description={t('calculators.cardiology.sts.cardiogenic_shock_description')}
                       icon={AlertTriangle}
                     />
@@ -833,7 +833,7 @@ export const STSCalculator: React.FC = () => {
                     <CalculatorCheckbox
                       label={t('calculators.cardiology.sts.dialysis_label')}
                       checked={formData.dialysis}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, dialysis: e.target.checked })}
+                      onChange={(checked) => setFormData({ ...formData, dialysis: checked })}
                       description={t('calculators.cardiology.sts.dialysis_description')}
                       icon={BarChart3}
                     />

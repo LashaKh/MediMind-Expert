@@ -398,9 +398,6 @@ export const MAGGICCalculator: React.FC = () => {
     // 16 points = 7% 1-year, 17.5% 3-year
     // 50 points = 84.2% 1-year, ~90% 3-year (estimated)
     
-    let oneYearMortality: number;
-    let threeYearMortality: number;
-
     // Continuous interpolation function based on exponential growth
     // Using empirically validated data points from MAGGIC studies
     const calculateMortalityRisk = (score: number) => {
@@ -468,8 +465,8 @@ export const MAGGICCalculator: React.FC = () => {
     };
 
     const mortalityRisk = calculateMortalityRisk(score);
-    oneYearMortality = mortalityRisk.oneYear;
-    threeYearMortality = mortalityRisk.threeYear;
+    const oneYearMortality = mortalityRisk.oneYear;
+    const threeYearMortality = mortalityRisk.threeYear;
 
     let risk: 'Low' | 'Intermediate' | 'High' | 'Very High';
     let interpretation: string;
@@ -1011,6 +1008,420 @@ export const MAGGICCalculator: React.FC = () => {
                   </div>
                   <div className="text-sm text-purple-700 dark:text-purple-300">
                     {t('calculators.cardiology.maggic.algorithm_validation_text')}
+                  </div>
+                </div>
+
+                {/* About Creator Section */}
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <h4 className="font-semibold text-blue-800 dark:text-blue-200">{t('calculators.cardiology.maggic.about_creator_title')}</h4>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="font-medium text-blue-900 dark:text-blue-100">{t('calculators.cardiology.maggic.creator_name')}</div>
+                    <p className="text-sm text-blue-700 dark:text-blue-300 leading-relaxed">
+                      {t('calculators.cardiology.maggic.creator_description')}
+                    </p>
+                    <div className="pt-2">
+                      <a 
+                        href="https://www.ncbi.nlm.nih.gov/pubmed/?term=Pocock+SJ%5BAuthor%5D"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center space-x-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors"
+                      >
+                        <span className="text-sm font-medium">{t('calculators.cardiology.maggic.view_publications')}</span>
+                        <span className="text-xs bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded">
+                          {t('calculators.cardiology.maggic.pubmed_link_text')}
+                        </span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Evidence Section */}
+                <div className="bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-xl p-6">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <BarChart3 className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <h4 className="font-semibold text-gray-800 dark:text-gray-200">{t('calculators.cardiology.maggic.evidence_title')}</h4>
+                  </div>
+                  
+                  {/* Formula */}
+                  <div className="mb-6">
+                    <h5 className="font-medium text-gray-900 dark:text-gray-100 mb-2">{t('calculators.cardiology.maggic.formula_title')}</h5>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">{t('calculators.cardiology.maggic.formula_description')}</p>
+                  </div>
+
+                  {/* Facts & Figures */}
+                  <div>
+                    <h5 className="font-medium text-gray-900 dark:text-gray-100 mb-4">{t('calculators.cardiology.maggic.facts_figures_title')}</h5>
+                    
+                    {/* Risk Factors Table */}
+                    <div className="space-y-6">
+                      {/* Basic Risk Factors */}
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm border-collapse">
+                          <thead>
+                            <tr className="bg-gray-100 dark:bg-gray-800">
+                              <th className="text-left p-3 font-medium text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700">
+                                {t('calculators.cardiology.maggic.risk_factor_title')}
+                              </th>
+                              <th className="text-left p-3 font-medium text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700">
+                                {t('calculators.cardiology.maggic.points_title')}
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td className="p-3 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">
+                                {t('calculators.cardiology.maggic.male_factor')}
+                              </td>
+                              <td className="p-3 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">+1</td>
+                            </tr>
+                            <tr className="bg-gray-50 dark:bg-gray-800/50">
+                              <td className="p-3 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">
+                                {t('calculators.cardiology.maggic.smoker_factor')}
+                              </td>
+                              <td className="p-3 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">+1</td>
+                            </tr>
+                            <tr>
+                              <td className="p-3 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">
+                                {t('calculators.cardiology.maggic.diabetic_factor')}
+                              </td>
+                              <td className="p-3 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">+3</td>
+                            </tr>
+                            <tr className="bg-gray-50 dark:bg-gray-800/50">
+                              <td className="p-3 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">
+                                {t('calculators.cardiology.maggic.copd_factor')}
+                              </td>
+                              <td className="p-3 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">+2</td>
+                            </tr>
+                            <tr>
+                              <td className="p-3 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">
+                                {t('calculators.cardiology.maggic.heart_failure_18_months')}
+                              </td>
+                              <td className="p-3 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">+2</td>
+                            </tr>
+                            <tr className="bg-gray-50 dark:bg-gray-800/50">
+                              <td className="p-3 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">
+                                {t('calculators.cardiology.maggic.not_on_beta_blocker')}
+                              </td>
+                              <td className="p-3 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">+3</td>
+                            </tr>
+                            <tr>
+                              <td className="p-3 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">
+                                {t('calculators.cardiology.maggic.not_on_ace_arb')}
+                              </td>
+                              <td className="p-3 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">+1</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* Ejection Fraction Table */}
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm border-collapse">
+                          <thead>
+                            <tr className="bg-blue-100 dark:bg-blue-900/30">
+                              <th className="text-left p-3 font-medium text-blue-900 dark:text-blue-100 border border-blue-200 dark:border-blue-700">
+                                {t('calculators.cardiology.maggic.ejection_fraction_title')}
+                              </th>
+                              <th className="text-left p-3 font-medium text-blue-900 dark:text-blue-100 border border-blue-200 dark:border-blue-700">
+                                {t('calculators.cardiology.maggic.points_title')}
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td className="p-3 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300">
+                                {t('calculators.cardiology.maggic.ef_less_than_20')}
+                              </td>
+                              <td className="p-3 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300">+7</td>
+                            </tr>
+                            <tr className="bg-blue-50 dark:bg-blue-900/20">
+                              <td className="p-3 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300">
+                                {t('calculators.cardiology.maggic.ef_20_24')}
+                              </td>
+                              <td className="p-3 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300">+6</td>
+                            </tr>
+                            <tr>
+                              <td className="p-3 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300">
+                                {t('calculators.cardiology.maggic.ef_25_29')}
+                              </td>
+                              <td className="p-3 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300">+5</td>
+                            </tr>
+                            <tr className="bg-blue-50 dark:bg-blue-900/20">
+                              <td className="p-3 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300">
+                                {t('calculators.cardiology.maggic.ef_30_34')}
+                              </td>
+                              <td className="p-3 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300">+3</td>
+                            </tr>
+                            <tr>
+                              <td className="p-3 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300">
+                                {t('calculators.cardiology.maggic.ef_35_39')}
+                              </td>
+                              <td className="p-3 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300">+2</td>
+                            </tr>
+                            <tr className="bg-blue-50 dark:bg-blue-900/20">
+                              <td className="p-3 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300">
+                                {t('calculators.cardiology.maggic.ef_40_plus')}
+                              </td>
+                              <td className="p-3 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300">+0</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* NYHA Class Table */}
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm border-collapse">
+                          <thead>
+                            <tr className="bg-green-100 dark:bg-green-900/30">
+                              <th className="text-left p-3 font-medium text-green-900 dark:text-green-100 border border-green-200 dark:border-green-700">
+                                {t('calculators.cardiology.maggic.nyha_class_title')}
+                              </th>
+                              <th className="text-left p-3 font-medium text-green-900 dark:text-green-100 border border-green-200 dark:border-green-700">
+                                {t('calculators.cardiology.maggic.points_title')}
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td className="p-3 border border-green-200 dark:border-green-700 text-green-700 dark:text-green-300">
+                                {t('calculators.cardiology.maggic.nyha_1')}
+                              </td>
+                              <td className="p-3 border border-green-200 dark:border-green-700 text-green-700 dark:text-green-300">+0</td>
+                            </tr>
+                            <tr className="bg-green-50 dark:bg-green-900/20">
+                              <td className="p-3 border border-green-200 dark:border-green-700 text-green-700 dark:text-green-300">
+                                {t('calculators.cardiology.maggic.nyha_2')}
+                              </td>
+                              <td className="p-3 border border-green-200 dark:border-green-700 text-green-700 dark:text-green-300">+2</td>
+                            </tr>
+                            <tr>
+                              <td className="p-3 border border-green-200 dark:border-green-700 text-green-700 dark:text-green-300">
+                                {t('calculators.cardiology.maggic.nyha_3')}
+                              </td>
+                              <td className="p-3 border border-green-200 dark:border-green-700 text-green-700 dark:text-green-300">+6</td>
+                            </tr>
+                            <tr className="bg-green-50 dark:bg-green-900/20">
+                              <td className="p-3 border border-green-200 dark:border-green-700 text-green-700 dark:text-green-300">
+                                {t('calculators.cardiology.maggic.nyha_4')}
+                              </td>
+                              <td className="p-3 border border-green-200 dark:border-green-700 text-green-700 dark:text-green-300">+8</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* Creatinine Table */}
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm border-collapse">
+                          <thead>
+                            <tr className="bg-yellow-100 dark:bg-yellow-900/30">
+                              <th className="text-left p-3 font-medium text-yellow-900 dark:text-yellow-100 border border-yellow-200 dark:border-yellow-700">
+                                {t('calculators.cardiology.maggic.creatinine_title')}
+                              </th>
+                              <th className="text-left p-3 font-medium text-yellow-900 dark:text-yellow-100 border border-yellow-200 dark:border-yellow-700">
+                                {t('calculators.cardiology.maggic.points_title')}
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td className="p-3 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300">
+                                {t('calculators.cardiology.maggic.creatinine_less_90')}
+                              </td>
+                              <td className="p-3 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300">+0</td>
+                            </tr>
+                            <tr className="bg-yellow-50 dark:bg-yellow-900/20">
+                              <td className="p-3 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300">
+                                {t('calculators.cardiology.maggic.creatinine_90_109')}
+                              </td>
+                              <td className="p-3 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300">+1</td>
+                            </tr>
+                            <tr>
+                              <td className="p-3 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300">
+                                {t('calculators.cardiology.maggic.creatinine_110_129')}
+                              </td>
+                              <td className="p-3 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300">+2</td>
+                            </tr>
+                            <tr className="bg-yellow-50 dark:bg-yellow-900/20">
+                              <td className="p-3 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300">
+                                {t('calculators.cardiology.maggic.creatinine_130_149')}
+                              </td>
+                              <td className="p-3 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300">+3</td>
+                            </tr>
+                            <tr>
+                              <td className="p-3 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300">
+                                {t('calculators.cardiology.maggic.creatinine_150_169')}
+                              </td>
+                              <td className="p-3 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300">+4</td>
+                            </tr>
+                            <tr className="bg-yellow-50 dark:bg-yellow-900/20">
+                              <td className="p-3 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300">
+                                {t('calculators.cardiology.maggic.creatinine_170_209')}
+                              </td>
+                              <td className="p-3 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300">+5</td>
+                            </tr>
+                            <tr>
+                              <td className="p-3 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300">
+                                {t('calculators.cardiology.maggic.creatinine_210_249')}
+                              </td>
+                              <td className="p-3 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300">+6</td>
+                            </tr>
+                            <tr className="bg-yellow-50 dark:bg-yellow-900/20">
+                              <td className="p-3 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300">
+                                {t('calculators.cardiology.maggic.creatinine_250_plus')}
+                              </td>
+                              <td className="p-3 border border-yellow-200 dark:border-yellow-700 text-yellow-700 dark:text-yellow-300">+8</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* BMI Table */}
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm border-collapse">
+                          <thead>
+                            <tr className="bg-purple-100 dark:bg-purple-900/30">
+                              <th className="text-left p-3 font-medium text-purple-900 dark:text-purple-100 border border-purple-200 dark:border-purple-700">
+                                {t('calculators.cardiology.maggic.bmi_title')}
+                              </th>
+                              <th className="text-left p-3 font-medium text-purple-900 dark:text-purple-100 border border-purple-200 dark:border-purple-700">
+                                {t('calculators.cardiology.maggic.points_title')}
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td className="p-3 border border-purple-200 dark:border-purple-700 text-purple-700 dark:text-purple-300">
+                                {t('calculators.cardiology.maggic.bmi_less_15')}
+                              </td>
+                              <td className="p-3 border border-purple-200 dark:border-purple-700 text-purple-700 dark:text-purple-300">+6</td>
+                            </tr>
+                            <tr className="bg-purple-50 dark:bg-purple-900/20">
+                              <td className="p-3 border border-purple-200 dark:border-purple-700 text-purple-700 dark:text-purple-300">
+                                {t('calculators.cardiology.maggic.bmi_15_19')}
+                              </td>
+                              <td className="p-3 border border-purple-200 dark:border-purple-700 text-purple-700 dark:text-purple-300">+5</td>
+                            </tr>
+                            <tr>
+                              <td className="p-3 border border-purple-200 dark:border-purple-700 text-purple-700 dark:text-purple-300">
+                                {t('calculators.cardiology.maggic.bmi_20_24')}
+                              </td>
+                              <td className="p-3 border border-purple-200 dark:border-purple-700 text-purple-700 dark:text-purple-300">+3</td>
+                            </tr>
+                            <tr className="bg-purple-50 dark:bg-purple-900/20">
+                              <td className="p-3 border border-purple-200 dark:border-purple-700 text-purple-700 dark:text-purple-300">
+                                {t('calculators.cardiology.maggic.bmi_25_29')}
+                              </td>
+                              <td className="p-3 border border-purple-200 dark:border-purple-700 text-purple-700 dark:text-purple-300">+2</td>
+                            </tr>
+                            <tr>
+                              <td className="p-3 border border-purple-200 dark:border-purple-700 text-purple-700 dark:text-purple-300">
+                                {t('calculators.cardiology.maggic.bmi_30_plus')}
+                              </td>
+                              <td className="p-3 border border-purple-200 dark:border-purple-700 text-purple-700 dark:text-purple-300">+0</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                      <p className="text-xs text-yellow-800 dark:text-yellow-200">
+                        {t('calculators.cardiology.maggic.creatinine_note')}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Evidence Appraisal Section */}
+                <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-6">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <BarChart3 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                    <h4 className="font-semibold text-emerald-800 dark:text-emerald-200">{t('calculators.cardiology.maggic.evidence_appraisal_title')}</h4>
+                  </div>
+                  <div className="space-y-4 text-sm text-emerald-700 dark:text-emerald-300">
+                    <p className="leading-relaxed">{t('calculators.cardiology.maggic.evidence_appraisal_description')}</p>
+                    <p className="leading-relaxed">{t('calculators.cardiology.maggic.poisson_regression_description')}</p>
+                    <p className="leading-relaxed">{t('calculators.cardiology.maggic.subsequent_study_description')}</p>
+                    <p className="leading-relaxed font-medium">{t('calculators.cardiology.maggic.validation_note')}</p>
+                  </div>
+                </div>
+
+                {/* Literature Section */}
+                <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-xl p-6">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <Award className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                    <h4 className="font-semibold text-indigo-800 dark:text-indigo-200">{t('calculators.cardiology.maggic.literature_title')}</h4>
+                  </div>
+                  
+                  <div className="space-y-6">
+                    {/* Original/Primary Reference */}
+                    <div>
+                      <h5 className="font-medium text-indigo-900 dark:text-indigo-100 mb-2">
+                        {t('calculators.cardiology.maggic.original_reference_title')}
+                      </h5>
+                      <div className="bg-indigo-100 dark:bg-indigo-900/30 rounded-lg p-4">
+                        <div className="text-xs font-medium text-indigo-700 dark:text-indigo-300 mb-1">
+                          {t('calculators.cardiology.maggic.primary_reference_title')}
+                        </div>
+                        <p className="text-sm text-indigo-800 dark:text-indigo-200 leading-relaxed">
+                          {t('calculators.cardiology.maggic.primary_reference_citation')}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Validation */}
+                    <div>
+                      <h5 className="font-medium text-indigo-900 dark:text-indigo-100 mb-2">
+                        {t('calculators.cardiology.maggic.validation_title')}
+                      </h5>
+                      <div className="bg-indigo-100 dark:bg-indigo-900/30 rounded-lg p-4">
+                        <div className="text-xs font-medium text-indigo-700 dark:text-indigo-300 mb-1">
+                          {t('calculators.cardiology.maggic.validation_reference_title')}
+                        </div>
+                        <p className="text-sm text-indigo-800 dark:text-indigo-200 leading-relaxed">
+                          {t('calculators.cardiology.maggic.validation_reference_citation')}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Other References */}
+                    <div>
+                      <h5 className="font-medium text-indigo-900 dark:text-indigo-100 mb-2">
+                        {t('calculators.cardiology.maggic.other_references_title')}
+                      </h5>
+                      <div className="space-y-3">
+                        <div className="bg-indigo-100 dark:bg-indigo-900/30 rounded-lg p-4">
+                          <div className="text-xs font-medium text-indigo-700 dark:text-indigo-300 mb-1">
+                            {t('calculators.cardiology.maggic.other_reference_1_title')}
+                          </div>
+                          <p className="text-sm text-indigo-800 dark:text-indigo-200 leading-relaxed">
+                            {t('calculators.cardiology.maggic.other_reference_1_citation')}
+                          </p>
+                        </div>
+                        
+                        <div className="bg-indigo-100 dark:bg-indigo-900/30 rounded-lg p-4">
+                          <div className="text-xs font-medium text-indigo-700 dark:text-indigo-300 mb-1">
+                            {t('calculators.cardiology.maggic.other_reference_2_title')}
+                          </div>
+                          <p className="text-sm text-indigo-800 dark:text-indigo-200 leading-relaxed">
+                            {t('calculators.cardiology.maggic.other_reference_2_citation')}
+                          </p>
+                        </div>
+                        
+                        <div className="bg-indigo-100 dark:bg-indigo-900/30 rounded-lg p-4">
+                          <div className="text-xs font-medium text-indigo-700 dark:text-indigo-300 mb-1">
+                            {t('calculators.cardiology.maggic.other_reference_3_title')}
+                          </div>
+                          <p className="text-sm text-indigo-800 dark:text-indigo-200 leading-relaxed">
+                            {t('calculators.cardiology.maggic.other_reference_3_citation')}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </ResultsDisplay>
