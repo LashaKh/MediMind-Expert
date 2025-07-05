@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from '../../hooks/useTranslation';
-import { Heart, Info, Activity, Calculator, TrendingUp, User, BarChart3, Target, Stethoscope, Award, Shield, Zap, AlertCircle, CheckCircle, FileText, Clock, Pill, Cpu, Monitor } from 'lucide-react';
+import { Heart, Info, Activity, Calculator, TrendingUp, User, BarChart3, Target, Stethoscope, Award, Shield, Zap, AlertCircle, CheckCircle, FileText, Clock, Pill, Cpu, Monitor, Droplet } from 'lucide-react';
 import { 
   CalculatorContainer, 
   CalculatorInput, 
@@ -20,13 +20,21 @@ interface SHFMData {
   sodium: string;
   cholesterol: string;
   hemoglobin: string;
-  peak_vo2: string;
   lymphocyte_percent: string;
   uric_acid: string;
+  
+  // Diuretic medications with doses
+  furosemide_dose: string;
+  torsemide_dose: string;
+  bumetanide_dose: string;
+  metolazone_dose: string;
+  hydrochlorothiazide_dose: string;
+  weight: string;
   
   // Medications
   ace_inhibitor: boolean;
   beta_blocker: boolean;
+  arb: boolean;
   statin: boolean;
   aldosterone_antagonist: boolean;
   allopurinol: boolean;
@@ -34,6 +42,7 @@ interface SHFMData {
   // Devices
   icd: boolean;
   crt: boolean;
+  biventricular_icd: boolean;
 }
 
 interface SurvivalResult {
@@ -42,6 +51,7 @@ interface SurvivalResult {
   threeYear: number;
   fiveYear: number;
   medianSurvival: number;
+  shfmScore: number;
   risk: 'Low' | 'Intermediate' | 'High' | 'Very High';
   interpretation: string;
   recommendations: string[];
@@ -49,8 +59,10 @@ interface SurvivalResult {
     aceInhibitor?: number;
     betaBlocker?: number;
     aldosteroneAntagonist?: number;
+    arb?: number;
     icd?: number;
     crt?: number;
+    biventricularicd?: number;
   };
 }
 
@@ -66,13 +78,21 @@ export const SHFMCalculator: React.FC = () => {
     sodium: '',
     cholesterol: '',
     hemoglobin: '',
-    peak_vo2: '',
     lymphocyte_percent: '',
     uric_acid: '',
+    
+    // Diuretic medications with doses
+    furosemide_dose: '',
+    torsemide_dose: '',
+    bumetanide_dose: '',
+    metolazone_dose: '',
+    hydrochlorothiazide_dose: '',
+    weight: '',
     
     // Medications
     ace_inhibitor: true,
     beta_blocker: true,
+    arb: false,
     statin: true,
     aldosterone_antagonist: false,
     allopurinol: false,
@@ -80,6 +100,7 @@ export const SHFMCalculator: React.FC = () => {
     // Devices
     icd: false,
     crt: false,
+    biventricular_icd: false,
   });
 
   const [result, setResult] = useState<SurvivalResult | null>(null);
@@ -142,13 +163,6 @@ export const SHFMCalculator: React.FC = () => {
       newErrors.hemoglobin = 'Hemoglobin must be between 5-20 g/dL';
     }
 
-    const peak_vo2 = parseFloat(formData.peak_vo2);
-    if (!formData.peak_vo2 || isNaN(peak_vo2)) {
-      newErrors.peak_vo2 = 'Peak VO2 is required';
-    } else if (peak_vo2 < 5 || peak_vo2 > 50) {
-      newErrors.peak_vo2 = 'Peak VO2 must be between 5-50 mL/kg/min';
-    }
-
     const lymphocyte_percent = parseInt(formData.lymphocyte_percent);
     if (!formData.lymphocyte_percent || isNaN(lymphocyte_percent)) {
       newErrors.lymphocyte_percent = 'Lymphocyte % is required';
@@ -163,139 +177,175 @@ export const SHFMCalculator: React.FC = () => {
       newErrors.uric_acid = 'Uric acid must be between 2-20 mg/dL';
     }
 
+    const weight = parseFloat(formData.weight);
+    if (!formData.weight || isNaN(weight)) {
+      newErrors.weight = 'Weight is required for diuretic dose calculation';
+    } else if (weight < 20 || weight > 300) {
+      newErrors.weight = 'Weight must be between 20-300 kg';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const calculateSHFM = (): SurvivalResult => {
-    // Parse all string values to numbers
-    const age = parseInt(formData.age);
-    const lvef = parseInt(formData.lvef);
-    const systolic_bp = parseInt(formData.systolic_bp);
-    const sodium = parseInt(formData.sodium);
-    const cholesterol = parseInt(formData.cholesterol);
-    const hemoglobin = parseFloat(formData.hemoglobin);
-    const peak_vo2 = parseFloat(formData.peak_vo2);
-    const lymphocyte_percent = parseInt(formData.lymphocyte_percent);
-    const uric_acid = parseFloat(formData.uric_acid);
+    const {
+      age: ageStr,
+      gender,
+      ischemic_etiology,
+      lvef: lvefStr,
+      nyha_class,
+      systolic_bp: sbpStr,
+      sodium: sodiumStr,
+      cholesterol: cholStr,
+      hemoglobin: hgbStr,
+      lymphocyte_percent: lymphStr,
+      uric_acid: uricAcidStr,
+      furosemide_dose: furosemideStr,
+      torsemide_dose: torsemideStr,
+      bumetanide_dose: bumetanideStr,
+      metolazone_dose: metolazoneStr,
+      hydrochlorothiazide_dose: hctzStr,
+      weight: weightStr,
+      ace_inhibitor,
+      beta_blocker,
+      arb,
+      statin,
+      aldosterone_antagonist,
+      allopurinol,
+      icd,
+      crt,
+      biventricular_icd,
+    } = formData;
 
-    // Simplified SHFM risk calculation (actual model uses complex regression)
-    let riskScore = 0;
+    // --- Data Parsing and Capping ---
+    let age = parseInt(ageStr);
+    let lvef = parseInt(lvefStr);
+    let sbp = parseInt(sbpStr);
+    let sodium = parseInt(sodiumStr);
+    let chol = parseInt(cholStr);
+    let hgb = parseFloat(hgbStr);
+    let lymph = parseInt(lymphStr);
+    let uricAcid = parseFloat(uricAcidStr);
+    const weight = parseFloat(weightStr);
+    
+    const furosemide = parseFloat(furosemideStr) || 0;
+    const torsemide = parseFloat(torsemideStr) || 0;
+    const bumetanide = parseFloat(bumetanideStr) || 0;
+    const metolazone = parseFloat(metolazoneStr) || 0;
+    const hctz = parseFloat(hctzStr) || 0;
 
-    // Age
-    riskScore += (age - 50) * 0.03;
+    // Apply model constraints
+    sbp = Math.min(sbp, 160);
+    sodium = Math.min(sodium, 138);
+    lymph = Math.min(lymph, 47);
+    uricAcid = Math.max(uricAcid, 3.4);
 
-    // Gender (male increases risk)
-    if (formData.gender === 'male') riskScore += 0.5;
+    // --- Diuretic Dose Calculation ---
+    const diureticDose = (furosemide + 2 * torsemide + 26.7 * bumetanide + 40 * metolazone + 3.2 * hctz) / weight;
 
-    // Ischemic etiology
-    if (formData.ischemic_etiology) riskScore += 0.6;
-
-    // LVEF (lower = higher risk)
-    riskScore += (45 - lvef) * 0.04;
-
-    // NYHA Class
-    riskScore += ((formData.nyha_class as number) - 1) * 0.4;
-
-    // Systolic BP (lower = higher risk)
-    if (systolic_bp < 100) riskScore += 0.8;
-    else if (systolic_bp < 110) riskScore += 0.4;
-
-    // Sodium (lower = higher risk)
-    if (sodium < 135) riskScore += 0.6;
-    else if (sodium < 140) riskScore += 0.3;
-
-    // Cholesterol (lower = higher risk in HF)
-    if (cholesterol < 150) riskScore += 0.4;
-
-    // Hemoglobin (lower = higher risk)
-    if (hemoglobin < 12) riskScore += 0.5;
-
-    // Peak VO2 (lower = higher risk)
-    if (peak_vo2 < 10) riskScore += 1.0;
-    else if (peak_vo2 < 14) riskScore += 0.5;
-
-    // Lymphocyte % (lower = higher risk)
-    if (lymphocyte_percent < 15) riskScore += 0.4;
-
-    // Uric acid (higher = higher risk)
-    if (uric_acid > 9) riskScore += 0.4;
-    else if (uric_acid > 7) riskScore += 0.2;
-
-    // Medication benefits (reduce risk)
-    if (formData.ace_inhibitor) riskScore -= 0.3;
-    if (formData.beta_blocker) riskScore -= 0.4;
-    if (formData.aldosterone_antagonist) riskScore -= 0.2;
-
-    // Device benefits
-    if (formData.icd) riskScore -= 0.4;
-    if (formData.crt) riskScore -= 0.3;
-
-    // Calculate survival percentages (simplified model)
-    const baseOneYear = Math.max(10, Math.min(95, 85 - riskScore * 8));
-    const baseTwoYear = Math.max(5, Math.min(90, 75 - riskScore * 10));
-    const baseThreeYear = Math.max(5, Math.min(85, 65 - riskScore * 12));
-    const baseFiveYear = Math.max(5, Math.min(75, 45 - riskScore * 15));
-
-    // Calculate median survival (years)
-    let medianSurvival: number;
-    if (baseFiveYear > 50) {
-      medianSurvival = 7.5;
-    } else if (baseThreeYear > 50) {
-      medianSurvival = 4.5;
-    } else if (baseTwoYear > 50) {
-      medianSurvival = 2.5;
-    } else if (baseOneYear > 50) {
-      medianSurvival = 1.2;
+    // --- Hemoglobin Score Calculation ---
+    let hgbScore = 0;
+    if (hgb < 16) {
+      hgbScore = (16 - hgb) * Math.log(1.124);
     } else {
-      medianSurvival = 0.8;
+      hgbScore = (hgb - 16) * Math.log(1.336);
     }
 
-    // Risk stratification
+    // --- Core SHFM Score Calculation ---
+    let shfmScore = 0;
+    shfmScore += (age / 10) * Math.log(1.09);
+    shfmScore += (gender === 'male' ? 1 : 0) * Math.log(1.089);
+    shfmScore += nyha_class * Math.log(1.6);
+    shfmScore += (100 / lvef) * Math.log(1.03);
+    shfmScore += (ischemic_etiology ? 1 : 0) * Math.log(1.354);
+    shfmScore += (sbp / 10) * Math.log(0.877);
+    shfmScore += diureticDose * Math.log(1.178);
+    shfmScore += (allopurinol ? 1 : 0) * Math.log(1.571);
+    shfmScore += (statin ? 1 : 0) * Math.log(0.63);
+    shfmScore += (ace_inhibitor ? 1 : 0) * Math.log(0.73); // Assuming ACE-I has a similar effect to ICD
+    shfmScore += (beta_blocker ? 1 : 0) * Math.log(0.66);
+    shfmScore += (arb ? 1 : 0) * Math.log(0.85);
+    shfmScore += (aldosterone_antagonist ? 1 : 0) * Math.log(0.74);
+    shfmScore += (icd ? 1 : 0) * Math.log(0.73);
+    shfmScore += (crt ? 1 : 0) * Math.log(0.79); // Assuming CRT is biventricular pacemaker
+    shfmScore += (biventricular_icd ? 1 : 0) * Math.log(0.79);
+    shfmScore += (138 - sodium) * Math.log(1.05);
+    shfmScore += (100 / chol) * Math.log(2.206);
+    shfmScore += hgbScore;
+    shfmScore += (lymph / 5) * Math.log(0.897);
+    shfmScore += uricAcid * Math.log(1.064);
+
+    // --- Survival Calculation ---
+    const baselineSurvival = (years: number) => Math.exp(-Math.exp(shfmScore - 11) * years);
+    
+    const oneYear = baselineSurvival(1) * 100;
+    const twoYear = baselineSurvival(2) * 100;
+    const threeYear = baselineSurvival(3) * 100;
+    const fiveYear = baselineSurvival(5) * 100;
+
+    // --- Median Survival Calculation ---
+    const medianSurvival = Math.log(Math.log(2)) / Math.exp(shfmScore - 11);
+
+    // --- Risk Stratification ---
     let risk: 'Low' | 'Intermediate' | 'High' | 'Very High';
     let interpretation: string;
-
-    if (baseOneYear >= 90) {
+    if (oneYear >= 95) {
       risk = 'Low';
-      interpretation = 'Excellent prognosis with optimal medical therapy';
-    } else if (baseOneYear >= 80) {
+      interpretation = 'Excellent 1-year survival. Focus on maintaining optimal therapy.';
+    } else if (oneYear >= 90) {
       risk = 'Intermediate';
-      interpretation = 'Good prognosis with continued optimization';
-    } else if (baseOneYear >= 70) {
+      interpretation = 'Good 1-year survival. Continue to monitor and optimize GDMT.';
+    } else if (oneYear >= 80) {
       risk = 'High';
-      interpretation = 'Guarded prognosis, consider advanced therapies';
+      interpretation = 'Guarded prognosis. Consider referral for advanced heart failure therapies.';
     } else {
       risk = 'Very High';
-      interpretation = 'Poor prognosis, urgent need for advanced interventions';
+      interpretation = 'Poor prognosis. Urgent evaluation for advanced therapies is recommended.';
     }
 
-    // Calculate therapy impact
-    const therapyImpact: SurvivalResult['therapyImpact'] = {};
+    // --- Therapy Impact Analysis ---
+    const calculateSurvivalWithTherapy = (modifiedScore: number) => Math.exp(-Math.exp(modifiedScore - 11)) * 100;
     
-    if (!formData.ace_inhibitor) {
-      therapyImpact.aceInhibitor = 3; // 3% improvement in 1-year survival
+    const therapyImpact: SurvivalResult['therapyImpact'] = {};
+    if (!ace_inhibitor) {
+      const scoreWithoutAce = shfmScore - (1 * Math.log(0.73));
+      therapyImpact.aceInhibitor = calculateSurvivalWithTherapy(scoreWithoutAce) - oneYear;
     }
-    if (!formData.beta_blocker) {
-      therapyImpact.betaBlocker = 4; // 4% improvement
+    if (!beta_blocker) {
+      const scoreWithoutBB = shfmScore - (1 * Math.log(0.66));
+      therapyImpact.betaBlocker = calculateSurvivalWithTherapy(scoreWithoutBB) - oneYear;
     }
-    if (!formData.aldosterone_antagonist && (formData.nyha_class as number) >= 3) {
-      therapyImpact.aldosteroneAntagonist = 2; // 2% improvement
+    if (!aldosterone_antagonist) {
+        const scoreWithoutAldo = shfmScore - (1* Math.log(0.74));
+        therapyImpact.aldosteroneAntagonist = calculateSurvivalWithTherapy(scoreWithoutAldo) - oneYear;
     }
-    if (!formData.icd && lvef <= 35) {
-      therapyImpact.icd = 7; // 7% reduction in sudden death
+    if (!arb) {
+        const scoreWithoutArb = shfmScore - (1* Math.log(0.85));
+        therapyImpact.arb = calculateSurvivalWithTherapy(scoreWithoutArb) - oneYear;
     }
-    if (!formData.crt && lvef <= 35 && (formData.nyha_class as number) >= 3) {
-      therapyImpact.crt = 5; // 5% improvement in survival
+    if (!icd) {
+        const scoreWithoutIcd = shfmScore - (1* Math.log(0.73));
+        therapyImpact.icd = calculateSurvivalWithTherapy(scoreWithoutIcd) - oneYear;
+    }
+    if (!crt) {
+        const scoreWithoutCrt = shfmScore - (1* Math.log(0.79));
+        therapyImpact.crt = calculateSurvivalWithTherapy(scoreWithoutCrt) - oneYear;
+    }
+    if (!biventricular_icd) {
+        const scoreWithoutBivIcd = shfmScore - (1* Math.log(0.79));
+        therapyImpact.biventricularicd = calculateSurvivalWithTherapy(scoreWithoutBivIcd) - oneYear;
     }
 
     const recommendations = getRecommendations(risk, formData, therapyImpact);
 
     return {
-      oneYear: Math.round(baseOneYear),
-      twoYear: Math.round(baseTwoYear),
-      threeYear: Math.round(baseThreeYear),
-      fiveYear: Math.round(baseFiveYear),
+      oneYear: Math.round(oneYear),
+      twoYear: Math.round(twoYear),
+      threeYear: Math.round(threeYear),
+      fiveYear: Math.round(fiveYear),
       medianSurvival: Math.round(medianSurvival * 10) / 10,
+      shfmScore: shfmScore,
       risk,
       interpretation,
       recommendations,
@@ -379,16 +429,23 @@ export const SHFMCalculator: React.FC = () => {
       sodium: '',
       cholesterol: '',
       hemoglobin: '',
-      peak_vo2: '',
       lymphocyte_percent: '',
       uric_acid: '',
+      furosemide_dose: '',
+      torsemide_dose: '',
+      bumetanide_dose: '',
+      metolazone_dose: '',
+      hydrochlorothiazide_dose: '',
+      weight: '',
       ace_inhibitor: true,
       beta_blocker: true,
+      arb: false,
       statin: true,
       aldosterone_antagonist: false,
       allopurinol: false,
       icd: false,
       crt: false,
+      biventricular_icd: false,
     });
     setResult(null);
     setErrors({});
@@ -607,21 +664,6 @@ export const SHFMCalculator: React.FC = () => {
                     error={errors.systolic_bp}
                     icon={TrendingUp}
                   />
-
-                  <CalculatorInput
-                    label={t('calculators.cardiology.shfm.peak_vo2_label')}
-                    value={formData.peak_vo2}
-                    onChange={(value) => setFormData({ ...formData, peak_vo2: value })}
-                    type="number"
-                    step={0.1}
-                    placeholder="14.0"
-                    min={5}
-                    max={50}
-                    unit="mL/kg/min"
-                    error={errors.peak_vo2}
-                    icon={TrendingUp}
-                    className="transition-all duration-300"
-                  />
                 </div>
 
                 <div className="flex justify-between">
@@ -798,6 +840,22 @@ export const SHFMCalculator: React.FC = () => {
                         description="Uric acid lowering therapy"
                         icon={Pill}
                       />
+                    </div>
+                  </div>
+
+                  {/* Diuretic Dosing */}
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center space-x-2">
+                      <Droplet className="w-5 h-5 text-blue-600" />
+                      <span>Diuretic Dosing (enter 0 if not used)</span>
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <CalculatorInput label="Furosemide" value={formData.furosemide_dose} onChange={(v) => setFormData({...formData, furosemide_dose: v})} type="number" unit="mg" />
+                      <CalculatorInput label="Torsemide" value={formData.torsemide_dose} onChange={(v) => setFormData({...formData, torsemide_dose: v})} type="number" unit="mg" />
+                      <CalculatorInput label="Bumetanide" value={formData.bumetanide_dose} onChange={(v) => setFormData({...formData, bumetanide_dose: v})} type="number" unit="mg" />
+                      <CalculatorInput label="Metolazone" value={formData.metolazone_dose} onChange={(v) => setFormData({...formData, metolazone_dose: v})} type="number" unit="mg" />
+                      <CalculatorInput label="Hydrochlorothiazide" value={formData.hydrochlorothiazide_dose} onChange={(v) => setFormData({...formData, hydrochlorothiazide_dose: v})} type="number" unit="mg" />
+                      <CalculatorInput label="Weight" value={formData.weight} onChange={(v) => setFormData({...formData, weight: v})} type="number" unit="kg" error={errors.weight} />
                     </div>
                   </div>
 

@@ -21,7 +21,7 @@ import { PRECISEDAPTCalculator } from './PRECISEDAPTCalculator';
 import { PREVENTCalculator } from './PREVENTCalculator';
 
 // Phase 4: Heart Failure Management
-import { HeartFailureStaging } from './HeartFailureStaging';
+import HeartFailureStagingCalculator from './HeartFailureStaging';
 import { GWTGHFCalculator } from './GWTGHFCalculator';
 import { MAGGICCalculator } from './MAGGICCalculator';
 import { SHFMCalculator } from './SHFMCalculator';
@@ -89,6 +89,8 @@ interface CalculatorCategory {
     id: CalculatorType;
     name: string;
     description: string;
+    component: React.FC;
+    tags?: string[];
   }[];
 }
 
@@ -114,12 +116,14 @@ const cardiologyCalculatorCategories: CalculatorCategory[] = [
       {
         id: 'ascvd',
           name: t('calculators.ascvd.title'),
-          description: t('calculators.ascvd.subtitle')
+          description: t('calculators.ascvd.subtitle'),
+          component: ASCVDCalculator,
       },
       {
         id: 'atrial-fibrillation',
           name: t('calculators.atrial_fibrillation.title'),
-          description: t('calculators.atrial_fibrillation.subtitle')
+          description: t('calculators.atrial_fibrillation.subtitle'),
+          component: AtrialFibrillationCalculators,
       }
     ]
   },
@@ -132,12 +136,14 @@ const cardiologyCalculatorCategories: CalculatorCategory[] = [
       {
         id: 'timi-risk',
           name: t('calculators.timi_risk.title'),
-          description: t('calculators.timi_risk.subtitle')
+          description: t('calculators.timi_risk.subtitle'),
+          component: TIMIRiskCalculator,
       },
       {
         id: 'grace-risk',
           name: t('calculators.grace_acs.title'),
-          description: t('calculators.grace_acs.subtitle')
+          description: t('calculators.grace_acs.subtitle'),
+          component: GRACERiskCalculator,
       }
     ]
   },
@@ -150,17 +156,20 @@ const cardiologyCalculatorCategories: CalculatorCategory[] = [
       {
         id: 'dapt',
           name: t('calculators.dapt.title'),
-          description: t('calculators.dapt.subtitle')
+          description: t('calculators.dapt.subtitle'),
+          component: DAPTCalculator,
       },
       {
         id: 'precise-dapt',
           name: t('calculators.precise_dapt.title'),
-          description: t('calculators.precise_dapt.subtitle')
+          description: t('calculators.precise_dapt.subtitle'),
+          component: PRECISEDAPTCalculator,
       },
       {
         id: 'prevent',
           name: t('calculators.prevent.title'),
-          description: t('calculators.prevent.subtitle')
+          description: t('calculators.prevent.subtitle'),
+          component: PREVENTCalculator,
       }
     ]
   },
@@ -172,24 +181,29 @@ const cardiologyCalculatorCategories: CalculatorCategory[] = [
     calculators: [
       {
         id: 'heart-failure-staging',
-          name: t('calculators.heart_failure_staging.title'),
-          description: t('calculators.heart_failure_staging.subtitle')
-      },
-      {
-        id: 'gwtg-hf',
-          name: t('calculators.gwtg_hf.title'),
-          description: t('calculators.gwtg_hf.subtitle')
-      },
-      {
-        id: 'maggic',
-          name: t('calculators.maggic.title'),
-          description: t('calculators.maggic.subtitle')
-      },
-      {
-        id: 'shfm',
-          name: t('calculators.shfm.title'),
-          description: t('calculators.shfm.subtitle')
-      }
+          name: t('calculators.cardiology.heartFailureStaging.title'),
+          description: t('calculators.cardiology.heartFailureStaging.description'),
+          component: HeartFailureStagingCalculator,
+          tags: ['Heart Failure', 'Staging', 'ACC/AHA', 'Guideline'],
+        },
+        {
+          id: 'gwtg-hf',
+            name: t('calculators.gwtg_hf.title'),
+            description: t('calculators.gwtg_hf.subtitle'),
+            component: GWTGHFCalculator,
+        },
+        {
+          id: 'maggic',
+            name: t('calculators.maggic.title'),
+            description: t('calculators.maggic.subtitle'),
+            component: MAGGICCalculator,
+        },
+        {
+          id: 'shfm',
+            name: t('calculators.shfm.title'),
+            description: t('calculators.shfm.subtitle'),
+            component: SHFMCalculator,
+        }
     ]
   },
   {
@@ -201,12 +215,14 @@ const cardiologyCalculatorCategories: CalculatorCategory[] = [
       {
         id: 'sts',
           name: t('calculators.sts.title'),
-          description: t('calculators.sts.subtitle')
+          description: t('calculators.sts.subtitle'),
+          component: STSCalculator,
       },
       {
         id: 'euroscore',
           name: t('calculators.euroscore.title'),
-          description: t('calculators.euroscore.subtitle')
+          description: t('calculators.euroscore.subtitle'),
+          component: EuroSCOREIICalculator,
       }
     ]
   },
@@ -219,13 +235,15 @@ const cardiologyCalculatorCategories: CalculatorCategory[] = [
       {
         id: 'hcm-risk-scd',
           name: t('calculators.hcm_risk_scd.title'),
-          description: t('calculators.hcm_risk_scd.subtitle')
-      },
-      {
-        id: 'hcm-af-risk',
-          name: t('calculators.hcm_af_risk.title'),
-          description: t('calculators.hcm_af_risk.subtitle')
-      }
+          description: t('calculators.hcm_risk_scd.subtitle'),
+          component: HCMRiskSCDCalculator,
+        },
+        {
+          id: 'hcm-af-risk',
+            name: t('calculators.hcm_af_risk.title'),
+            description: t('calculators.hcm_af_risk.subtitle'),
+            component: HCMAFRiskCalculator,
+        }
     ]
   }
 ];
@@ -241,12 +259,14 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
       {
         id: 'edd-calculator',
           name: t('calculators.edd.title'),
-          description: t('calculators.edd.subtitle')
+          description: t('calculators.edd.subtitle'),
+          component: EDDCalculator,
       },
       {
         id: 'gestational-age',
           name: t('calculators.gestational_age.title'),
-          description: t('calculators.gestational_age.subtitle')
+          description: t('calculators.gestational_age.subtitle'),
+          component: GestationalAgeCalculator,
       }
     ]
   },
@@ -259,18 +279,21 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
       {
         id: 'preeclampsia-risk',
           name: t('calculators.preeclampsia_risk.title'),
-          description: t('calculators.preeclampsia_risk.subtitle')
-      },
-      {
-        id: 'preterm-birth-risk',
-          name: t('calculators.preterm_birth_risk.title'),
-          description: t('calculators.preterm_birth_risk.subtitle')
-      },
-      {
-        id: 'gdm-screening',
-          name: t('calculators.gdm_screening.title'),
-          description: t('calculators.gdm_screening.subtitle')
-      }
+          description: t('calculators.preeclampsia_risk.subtitle'),
+          component: PreeclampsiaRiskCalculator,
+        },
+        {
+          id: 'preterm-birth-risk',
+            name: t('calculators.preterm_birth_risk.title'),
+            description: t('calculators.preterm_birth_risk.subtitle'),
+            component: PretermBirthRiskCalculator,
+        },
+        {
+          id: 'gdm-screening',
+            name: t('calculators.gdm_screening.title'),
+            description: t('calculators.gdm_screening.subtitle'),
+            component: GDMScreeningCalculator,
+        }
     ]
   },
   {
@@ -282,13 +305,15 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
       {
         id: 'bishop-score',
           name: t('calculators.bishop_score.title'),
-          description: t('calculators.bishop_score.subtitle')
-      },
-      {
-        id: 'vbac-success',
-          name: t('calculators.vbac_success.title'),
-          description: t('calculators.vbac_success.subtitle')
-      }
+          description: t('calculators.bishop_score.subtitle'),
+          component: BishopScoreCalculator,
+        },
+        {
+          id: 'vbac-success',
+            name: t('calculators.vbac_success.title'),
+            description: t('calculators.vbac_success.subtitle'),
+            component: VBACSuccessCalculator,
+        }
     ]
   },
   {
@@ -300,13 +325,15 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
       {
         id: 'apgar-score',
           name: t('calculators.obgyn.apgar_score.title'),
-          description: t('calculators.obgyn.apgar_score.subtitle')
-      },
-      {
-        id: 'pph-risk',
-          name: t('calculators.pph_risk.title'),
-          description: t('calculators.pph_risk.subtitle')
-      }
+          description: t('calculators.obgyn.apgar_score.subtitle'),
+          component: ApgarScoreCalculator,
+        },
+        {
+          id: 'pph-risk',
+            name: t('calculators.pph_risk.title'),
+            description: t('calculators.pph_risk.subtitle'),
+            component: PPHRiskCalculator,
+        }
     ]
   },
   {
@@ -318,18 +345,21 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
       {
         id: 'cervical-cancer-risk',
           name: t('calculators.cervical_cancer_risk.title'),
-          description: t('calculators.cervical_cancer_risk.subtitle')
-      },
-      {
-        id: 'ovarian-cancer-risk',
-          name: t('calculators.ovarian_cancer_risk.title'),
-          description: t('calculators.ovarian_cancer_risk.subtitle')
-      },
-      {
-        id: 'endometrial-cancer-risk',
-          name: t('calculators.endometrial_cancer_risk.title'),
-          description: t('calculators.endometrial_cancer_risk.subtitle')
-      }
+          description: t('calculators.cervical_cancer_risk.subtitle'),
+          component: CervicalCancerRiskCalculator,
+        },
+        {
+          id: 'ovarian-cancer-risk',
+            name: t('calculators.ovarian_cancer_risk.title'),
+            description: t('calculators.ovarian_cancer_risk.subtitle'),
+            component: OvarianCancerRiskCalculator,
+        },
+        {
+          id: 'endometrial-cancer-risk',
+            name: t('calculators.endometrial_cancer_risk.title'),
+            description: t('calculators.endometrial_cancer_risk.subtitle'),
+            component: EndometrialCancerRiskCalculator,
+        }
     ]
   },
   {
@@ -341,13 +371,15 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
       {
         id: 'ovarian-reserve',
           name: t('calculators.ovarian_reserve.title'),
-          description: t('calculators.ovarian_reserve.description')
-      },
-      {
-        id: 'menopause-assessment',
-          name: t('calculators.menopause_assessment.title'),
-          description: t('calculators.menopause_assessment.subtitle')
-      }
+          description: t('calculators.ovarian_reserve.description'),
+          component: OvarianReserveCalculator,
+        },
+        {
+          id: 'menopause-assessment',
+            name: t('calculators.menopause_assessment.title'),
+            description: t('calculators.menopause_assessment.subtitle'),
+            component: MenopauseAssessmentCalculator,
+        }
     ]
   }
 ];
@@ -408,7 +440,7 @@ const obgynCalculatorCategories: CalculatorCategory[] = [
       
       // Phase 4: Heart Failure Management
       case 'heart-failure-staging':
-        return <HeartFailureStaging />;
+        return <HeartFailureStagingCalculator />;
       case 'gwtg-hf':
         return <GWTGHFCalculator />;
       case 'maggic':

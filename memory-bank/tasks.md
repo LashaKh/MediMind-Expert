@@ -6,6 +6,17 @@
 - **CRITICAL Database Setup**: Execute updated `supabase_setup_safe.sql` in Supabase dashboard to fix user signup AND add profile_picture_url column
 - **Storage Setup**: Create 'user-uploads' bucket in Supabase Storage with proper policies for profile pictures
 
+**🔧 NEW ACTIVE TASK - MAGGIC Calculator Translation Extraction (Priority: active)**
+- **Task 36: Extract MAGGIC Calculator Translations from Cardiology.ts Files (Status: in-progress)**
+    - Subtask 36.1: Extract MAGGIC section from English cardiology.ts (Status: pending)
+    - Subtask 36.2: Extract MAGGIC section from Russian cardiology.ts (Status: pending)  
+    - Subtask 36.3: Extract MAGGIC section from Georgian cardiology.ts (Status: pending)
+    - Subtask 36.4: Create standalone maggic.ts files in each language (Status: pending)
+    - Subtask 36.5: Update import paths in cardiology.ts files (Status: pending)
+    - Subtask 36.6: Verify no breaking changes to functionality (Status: pending)
+
+**🎯 EXTRACTION GOAL:** Modularize massive cardiology.ts files by extracting MAGGIC calculator translations (~200+ lines each) into standalone files for easier maintenance
+
 **🏆 NEW ACTIVE TASK - Hypertrophic Cardiomyopathy Implementation (Priority: active)**
 - **✅ Task 35: Step-by-Step Hypertrophic Cardiomyopathy Article Implementation (Status: Step 2 Complete)**
     - Subtask 35.1: Create Modular Folder Structure (Status: completed) ✅

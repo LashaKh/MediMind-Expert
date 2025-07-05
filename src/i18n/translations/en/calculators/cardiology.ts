@@ -1,19 +1,24 @@
+import maggicTranslations from './maggic';
+import riskAssessmentTranslations from './risk-assessment';
+import { timiRiskScoreTranslations } from './timi-risk-score';
+import grace2Translations from './grace-2';
+import daptTranslations from './dapt';
+import preciseDaptTranslations from './precise-dapt';
+import ahaPreventTranslations from './aha-prevent';
+
 export default {
+  // Import risk assessment translations
+  ...riskAssessmentTranslations,
+  
   // Common translations
   title: 'Cardiology Calculators',
   description: 'Evidence-based cardiovascular risk assessment and clinical decision support tools',
   category: 'Cardiology',
-  
-  // Risk Assessment Category (Phase 1)
-  riskAssessment: 'Risk Assessment',
-  ascvdTitle: 'ASCVD Risk Calculator',
-  framinghamTitle: 'Framingham Risk Score',
-  reyonldsTitle: 'Reynolds Risk Score',
 
   // Calculator titles for navigation
   graceTitle: 'GRACE 2.0 Calculator',
   hcmRiskScdTitle: 'HCM Risk-SCD Calculator',
-  maggicTitle: 'MAGGIC Calculator',
+  maggicTitle: maggicTranslations.title,
   gwtgHfTitle: 'GWTG-HF Calculator',
   heartFailureStagingTitle: 'Heart Failure Staging',
   shfmTitle: 'SHFM Risk Calculator',
@@ -40,877 +45,18 @@ export default {
   // HCM Risk-SCD Calculator
   // hcm_risk_scd: { ... } // Moved to hcm-risk-scd.ts
 
-  // ASCVD Risk Calculator
-  ascvd: {
-    title: 'ASCVD Risk Calculator',
-    subtitle: '10-Year Atherosclerotic Cardiovascular Disease Risk Assessment',
-    description: 'ACC/AHA Pooled Cohort Equations to calculate 10-year risk of first major ASCVD event (MI, CHD death, or stroke).',
-    calculate_button: "Calculate ASCVD Risk",
-    risk_category: "Risk category",
-    recommendations: "Clinical recommendations",
-    low_risk: "Low risk (<5%)",
-    high_risk: "High risk (≥20%)",
-    intermediate_risk: "Intermediate risk (5-20%)",
-    
-    age_label: 'Age (years)',
-    age_placeholder: '20-79',
-    sex_label: 'Sex',
-    sex_placeholder: 'Select sex...',
-    sex_male: 'Male',
-    sex_female: 'Female',
-    race_label: 'Race/Ethnicity',
-    race_placeholder: 'Select race...',
-    race_white: 'White',
-    race_african_american: 'African American',
-    race_other: 'Other',
-    total_cholesterol_label: 'Total cholesterol (mg/dL)',
-    total_cholesterol_placeholder: '130-320',
-    hdl_cholesterol_label: 'HDL cholesterol (mg/dL)',
-    hdl_cholesterol_placeholder: '20-100',
-    systolic_bp_label: 'Systolic blood pressure (mmHg)',
-    systolic_bp_placeholder: '90-200',
-    on_htn_meds_label: 'Currently on blood pressure medication',
-    diabetes_label: 'Diabetes mellitus',
-    smoker_label: 'Current smoker',
-    validation_age: 'Age must be 20-79 years for ASCVD risk calculation',
-    validation_sex: 'Sex is required',
-    validation_race: 'Race is required for accurate risk calculation',
-    validation_total_cholesterol: 'Total cholesterol must be between 130-320 mg/dL',
-    validation_hdl_cholesterol: 'HDL cholesterol must be between 20-100 mg/dL',
-    validation_systolic_bp: 'Systolic blood pressure must be between 90-200 mmHg',
-    ten_year_risk: '10-Year ASCVD Risk',
-    lifetime_risk: 'Lifetime risk',
-    statin_benefit: 'Statin therapy benefit',
-    bp_control_benefit: 'Blood pressure control benefit',
-    smoking_cessation_benefit: 'Smoking cessation benefit',
-    aspirin_benefit: 'Aspirin therapy benefit',
-    demographics_section: "Demographics",
-    lab_values_section: "Lab Values",
-    risk_factors_section: "Risk Factors",
-    evidence_title: "Evidence",
-    evidence_description: "This calculator is based on the 2013 ACC/AHA Guideline on the Assessment of Cardiovascular Risk and the Pooled Cohort Equations.",
-    evidence_link_text: "View Original Research Publication",
-    about_creator_title: "About the Creator",
-    creator_name: "Dr. David C. Goff, Jr., MD, PhD",
-    creator_bio: "David C. Goff, Jr., MD, PhD, is a professor of epidemiology at the University of Colorado and is the dean of the Colorado School of Public Health. He is a former recipient of the Public Policy Award from the National Forum for Heart Disease and Stroke Prevention, and he is currently the Interim Chair of the ASPPH accreditation and credentialing committee. His research interests include the prevention and understanding of heart disease and stroke.",
-    // Detailed Analysis Section
-    lifetime_risk_title: "Lifetime Risk",
-    lifetime_risk_description: "Estimated lifetime cardiovascular risk for patients aged 20-59",
-    risk_classification_title: "Risk Classification",
-    risk_classification_low: "Risk < 5% - Focus on lifestyle modifications",
-    risk_classification_borderline: "Risk 5-7.4% - Consider risk enhancing factors",
-    risk_classification_intermediate: "Risk 7.5-19.9% - Statin therapy reasonable",
-    risk_classification_high: "Risk ≥ 20% - High-intensity statin recommended",
-    therapy_reduction_title: "Estimated Risk Reduction with Therapy",
-    statin_therapy: "Statin Therapy",
-    bp_control: "BP Control",
-    smoking_cessation: "Smoking Cessation",
-    aspirin_therapy: "Aspirin (if appropriate)",
-    // Interpretation messages
-    interpretation_low: "Low cardiovascular risk. Focus on lifestyle modifications and routine preventive care.",
-    interpretation_borderline: "Borderline risk. Consider risk enhancing factors and shared decision-making for preventive therapy.",
-    interpretation_intermediate: "Intermediate risk. Moderate-intensity statin therapy is reasonable along with lifestyle modifications.",
-    interpretation_high: "High cardiovascular risk. High-intensity statin therapy recommended unless contraindicated.",
-    // Validation message
-    calibration_applied: "Calibration Applied",
-    // Footer text
-    footer_guidelines: "Based on ACC/AHA 2019 Primary Prevention Guideline and Pooled Cohort Equations",
-    footer_validated: "100% Validated"
-  },
+  // GRACE 2.0 Risk Calculator - Extracted to standalone file
+  grace: grace2Translations,
 
-  // GRACE 2.0 Risk Calculator
-  grace: {
-    title: "GRACE 2.0 Risk Calculator",
-    subtitle: "Acute Coronary Syndrome Risk Assessment",
-    description: "Global Registry of Acute Coronary Events - risk stratification for patients with NSTEMI/UA and STEMI.",
-    calculate_button: "Calculate GRACE Score",
-    risk_category: "Risk category",
-    recommendations: "Clinical recommendations",
-    low_risk: "Low risk (<109)",
-    high_risk: "High risk (>140)",
-    intermediate_risk: "Intermediate risk (109-140)",
-    
-    // Patient demographics
-    age_label: "Age (years)",
-    age_placeholder: "Enter patient age",
-    heart_rate_label: "Heart rate (bpm)",
-    heart_rate_placeholder: "Enter heart rate",
-    systolic_bp_label: "Systolic blood pressure (mmHg)",
-    systolic_bp_placeholder: "Enter systolic pressure",
-    creatinine_label: "Serum creatinine (mg/dL)",
-    creatinine_placeholder: "Enter creatinine level",
-    
-    // Clinical characteristics
-    killip_class_label: "Killip classification",
-    killip_class_1: "Class I (no heart failure)",
-    killip_class_2: "Class II (mild heart failure, rales)",
-    killip_class_3: "Class III (pulmonary edema)",
-    killip_class_4: "Class IV (cardiogenic shock)",
-    
-    cardiac_arrest_label: "Cardiac arrest at admission",
-    st_deviation_label: "ST segment deviation",
-    elevated_markers_label: "Elevated cardiac markers",
-    
-    // Section headers
-    demographics_section: "Patient Demographics",
-    clinical_section: "Clinical Presentation",
-    labs_section: "Laboratory Values",
-    
-    // Results
-    in_hospital_mortality: "In-hospital mortality",
-    one_year_mortality: "1-year mortality",
-    invasive_strategy: "Invasive strategy",
-    recommendation: "Treatment recommendation",
-    
-    // Validation messages
-    age_error: "Age must be between 18-120 years",
-    heart_rate_error: "Heart rate must be between 30-300 bpm",
-    systolic_bp_error: "Systolic blood pressure must be between 60-300 mmHg",
-    creatinine_error: "Creatinine must be between 0.3-15.0 mg/dL",
-    
-    // Strategy and recommendation texts
-    strategy_conservative: "Conservative management appropriate",
-    strategy_early_invasive: "Early invasive strategy within 24-72 hours",
-    strategy_urgent_invasive: "Urgent invasive strategy within 2-24 hours",
-    recommendation_low: "Medical therapy, consider invasive if refractory symptoms",
-    recommendation_intermediate: "Consider early catheterization and revascularization",
-    recommendation_high: "Immediate catheterization and revascularization if indicated",
-    
-    // Results section labels
-    results_title: "GRACE 2.0 Results",
-    results_description: "Advanced cardiovascular risk assessment complete",
-    grace_score: "GRACE Score",
-    short_term_risk: "Short-term risk assessment",
-    long_term_prognosis: "Long-term prognosis",
-    risk_category_label: "Risk Category",
-    clinical_risk_stratification: "Clinical risk stratification",
-    clinical_recommendations_title: "Clinical Recommendations",
-    intervention_window: "Intervention window",
-    
-    // NEW - Missing translation keys for hardcoded text
-    baseline_patient_info: "Enter baseline patient information",
-    high_risk_features: "High-Risk Features",
-    at_presentation: "At presentation",
-    on_initial_ecg: "On initial ECG",
-    troponin_ck_mb: "Troponin/CK-MB",
-    back_to_demographics: "Back to Demographics",
-    calculate_risk_score: "Calculate Risk Score",
-    review_data_assessment: "Review data and generate GRACE 2.0 assessment",
-    patient_summary: "Patient Summary",
-    demographics: "Demographics",
-    vital_signs: "Vital Signs",
-    hr_label: "HR:",
-    sbp_label: "SBP:",
-    labs_clinical: "Labs & Clinical",
-    creatinine_short: "Creatinine:",
-    killip_short: "Killip:",
-    high_risk_features_present: "High-Risk Features Present",
-    cardiac_arrest: "Cardiac Arrest",
-    st_deviation: "ST Deviation",
-    elevated_markers: "Elevated Markers",
-    no_additional_risk_factors: "No additional risk factors",
-    back_to_clinical: "Back to Clinical",
-    reset: "Reset",
-    calculating: "Calculating...",
-    continue_to_clinical_data: "Continue to Clinical Data",
-    
-    // Expert insights section
-    expert_insights_title: "Expert Insights from the Creators",
-    expert_insights_subtitle: "From Dr. Joel Gore and Dr. Keith A. A. Fox",
-    dr_joel_gore: "Dr. Joel Gore",
-    dr_joel_gore_title: "Director, Anticoagulation Clinic, UMass Memorial",
-    dr_keith_fox: "Dr. Keith A. A. Fox",
-    dr_keith_fox_title: "Professor of Cardiology, University of Edinburgh",
-    
-    // Facts and figures section
-    facts_figures_title: "Facts & Figures",
-    facts_figures_subtitle: "GRACE Score Interpretation",
-    grace_score_range: "GRACE Score Range",
-    mortality_risk: "Mortality Risk",
-    risk_category_column: "Risk Category",
-    
-    // Evidence and validation section
-    evidence_validation_title: "Evidence & Validation",
-    evidence_validation_subtitle: "Scientific Foundation",
-    database_scale: "Database Scale",
-    
-    // Clinical pearls section
-    clinical_pearls_title: "Clinical Pearls & Pitfalls",
-    
-    // Score interpretation table rows
-    score_0_87: "0-87",
-    score_88_128: "88-128",
-    score_129_149: "129-149",
-    score_150_173: "150-173",
-    score_174_182: "174-182",
-    score_183_190: "183-190",
-    score_191_199: "191-199",
-    score_200_207: "200-207",
-    score_208_218: "208-218",
-    score_219_284: "219-284",
-    score_285_plus: "285+",
-    
-    mortality_0_2: "0-2%",
-    mortality_3_10: "3-10%",
-    mortality_10_20: "10-20%",
-    mortality_20_30: "20-30%",
-    mortality_40: "40%",
-    mortality_50: "50%",
-    mortality_60: "60%",
-    mortality_70: "70%",
-    mortality_80: "80%",
-    mortality_90: "90%",
-    mortality_99: "99%",
-    
-    risk_low: "Low",
-    risk_moderate: "Moderate",
-    risk_high: "High",
-    risk_very_high: "Very High",
-    
-    // PubMed links
-    joel_gore_publications: "Dr. Joel Gore's Publications",
-    keith_fox_publications: "Dr. Keith A. A. Fox's Publications",
-    
-    // Expert quotes and detailed content
-    gore_grace_quote: "GRACE 2.0 is an improved and refined list of outcomes from GRACE; instead of using score ranges to calculate outcomes like in-hospital mortality, we can actually calculate a mortality for every score. People should use GRACE 2.0.",
-    gore_clinical_usage: "We use the in-hospital mortality outcome with the GRACE score. It helps us determine disposition in our STEMI patients; those with a score of 130 or higher go to the ICU after catheterization, and those with lower scores can go to our step down unit.",
-    gore_nstemi_quote: "We'll also occasionally use the GRACE score on our high risk NSTEMI patients to consider doing early invasive management as opposed to delayed intervention.",
-    fox_development_purpose: "We developed the GRACE ACS risk score because we saw the need for better risk stratification to guide treatment of ACS and to help address the 'Treatment-Risk' paradox.",
-    fox_clinical_pearl: "It is important to consider not only total risk, but also risk that can be modified (MI risk helps with this).",
-    fox_current_research: "We are currently working on developing models to identify modifiable risk and long term risk in ACS patients.",
-    
-    // Section labels for expert content
-    on_grace_vs_grace_2: "On GRACE vs GRACE 2.0:",
-    clinical_usage: "Clinical Usage:",
-    on_nstemi_patients: "On NSTEMI Patients:",
-    development_purpose: "Development Purpose:",
-    clinical_pearl: "Clinical Pearl:",
-    current_research: "Current Research:",
-    
-    // Facts and figures table content
-    grace_score_range_header: "GRACE Score Range",
-    mortality_risk_header: "Mortality Risk",
-    risk_category_header: "Risk Category",
-    
-    // Evidence and validation content
-    database_scale_title: "Database Scale",
-    database_scale_description: "The GRACE (Global Registry of Acute Coronary Events) is a massive, international database of ACS in 94 hospitals in 14 countries which gives it excellent external validity.",
-    patient_population_title: "Patient Population",
-    patient_population_description: "11,389 ACS patients studied with 98.1% in-hospital mortality status available. 22% of in-hospital deaths occurred within 24 hours of admission, suggesting a very sick cohort.",
-    grace_2_improvements_title: "GRACE 2.0 Improvements",
-    grace_2_improvements_description: "GRACE 2.0 evaluated variables for non-linear mortality associations, providing more accurate estimates. Includes mortality estimates up to 3 years after ACS event.",
-    validation_status_title: "Validation Status",
-    validation_status_description: "Validated in >20,000 patients in multiple databases and is extremely well studied. NICE guidelines recommend the GRACE Score for ACS risk stratification.",
-    
-    // Clinical pearls content
-    essential_clinical_insights: "Essential Clinical Insights",
-    purpose_limitations_title: "Purpose & Limitations",
-    purpose_limitations_description: "The GRACE Score is a prospectively studied scoring system to risk stratify patients with diagnosed ACS to estimate their in-hospital and 6-month to 3-year mortality. Like the TIMI Score, it was not designed to assess which patients' anginal symptoms are due to ACS.",
-    score_version_title: "Score Version",
-    score_version_description: "The GRACE Score was recently improved (GRACE 2.0); this calculator uses the GRACE 2.0 scoring system, which has been shown to be more accurate than the original score.",
-    clinical_validation_title: "Clinical Validation",
-    clinical_validation_description: "This score has been validated in >20,000 patients in multiple databases and is extremely well studied and supported. The NICE guidelines recommend the GRACE Score for risk stratification of patients with ACS.",
-    mini_grace_title: "Mini-GRACE Alternative",
-    mini_grace_description: "An alternative version, the mini-GRACE, allows substitutions of Killip class with diuretic usage and/or serum creatinine with a history of renal dysfunction. However, this platform uses the full version requiring both Killip class and serum creatinine."
-  },
+  // DAPT Score Calculator - Extracted to standalone file
+  dapt: daptTranslations,
 
-  // DAPT Score Calculator - COMPLETE TRANSLATION
-  dapt: {
-    title: 'DAPT Score Calculator',
-    subtitle: 'Dual Antiplatelet Therapy Duration • Risk-Benefit Assessment',
-    description: "Risk-benefit assessment of extended dual antiplatelet therapy duration after PCI.",
-    
-    // Alert section
-    therapy_management_tool: "Therapy Management Tool",
-    tool_description: "DAPT Score Calculator helps determine optimal dual antiplatelet therapy duration after percutaneous coronary intervention (PCI) by balancing ischemic and bleeding risks.",
-    study_validated: "DAPT Study Validated",
-    
-    // Progress steps
-    patient_profile: "Patient Profile",
-    risk_assessment: "Risk Assessment", 
-    dapt_analysis: "DAPT Analysis",
-    
-    // Step 1: Demographics
-    demographics_section: "Patient Demographics & Procedure Details",
-    demographics_description: "Enter basic patient information and procedural details",
-    age_label: "Age",
-    age_help: "Patient age in years (affects bleeding risk calculation)",
-    age_error: "Age must be between 18-120 years",
-    stent_diameter_label: "Stent Diameter",
-    stent_diameter_help: "Smallest stent diameter used during PCI procedure",
-    stent_diameter_error: "Stent diameter must be between 1-10 mm",
-    next_risk_factors: "Next: Risk Factors",
-    
-    // Step 2: Risk factors
-    risk_factors_section: "Clinical Risk Factors",
-    risk_factors_description: "Select all applicable clinical risk factors for this patient",
-    cigarette_smoking: "Cigarette Smoking",
-    cigarette_smoking_desc: "Current smoker or quit within past year",
-    diabetes_mellitus: "Diabetes Mellitus",
-    diabetes_mellitus_desc: "Type 1 or Type 2 diabetes requiring medication",
-    mi_at_presentation: "MI at Presentation",
-    mi_at_presentation_desc: "STEMI or NSTEMI as indication for current PCI",
-    prior_pci_mi: "Prior PCI or MI",
-    prior_pci_mi_desc: "Previous percutaneous coronary intervention or myocardial infarction",
-    paclitaxel_stent: "Paclitaxel-Eluting Stent",
-    paclitaxel_stent_desc: "Use of paclitaxel-eluting drug-eluting stent",
-    chf_lvef: "CHF or LVEF <30%",
-    chf_lvef_desc: "Congestive heart failure or left ventricular ejection fraction <30%",
-    next_specialized_factors: "Next: Specialized Factors",
-    
-    // Step 3: Specialized factors
-    specialized_factors_section: "Specialized Procedural Factors",
-    specialized_factors_description: "Additional procedural and anatomical considerations",
-    vein_graft_pci: "Vein Graft PCI",
-    vein_graft_pci_desc: "PCI performed on saphenous vein graft or other bypass graft",
-    
-    // Calculation button
-    calculate_button: "Calculate DAPT Score",
-    
-    // Results
-    score_analysis: "DAPT Score Analysis",
-    score_points: "{{score}} points",
-    ischemic_benefit: "Ischemic Benefit",
-    bleeding_risk: "Bleeding Risk",
-    net_benefit: "Net Clinical Benefit",
-    
-    // Risk levels
-    high_risk: "High",
-    intermediate_risk: "Intermediate", 
-    low_risk: "Low",
-    
-    // Risk descriptions
-    mace_reduction: "{{reduction}}% MACE reduction",
-    bleeding_increase: "{{increase}}% bleeding increase",
-    
-    // Net benefit categories
-    favorable_benefit: "Favorable",
-    uncertain_benefit: "Uncertain",
-    unfavorable_benefit: "Unfavorable",
-    benefits_outweigh_risks: "Benefits outweigh risks",
-    requires_individual_assessment: "Requires individualized assessment",
-    risks_outweigh_benefits: "Risks outweigh benefits",
-    assessment_required: "Assessment Required",
-    clinical_evaluation_needed: "Clinical evaluation needed",
-    
-    // Net benefit descriptions
-    net_benefit_strong: "Strong net clinical benefit - ischemic risk reduction substantially outweighs bleeding risk",
-    net_benefit_modest: "Modest net clinical benefit with careful patient selection", 
-    net_benefit_harm: "Net clinical harm - bleeding risk outweighs ischemic benefit",
-    net_benefit_modest_uncertain: "Modest benefit with uncertainty - individualized assessment recommended",
-    net_benefit_neutral: "Neutral net benefit - requires careful individual consideration",
-    net_benefit_unfavorable: "Unfavorable balance - bleeding risk likely outweighs benefit",
-    net_benefit_harm_elderly: "Net harm in elderly - high bleeding risk with limited ischemic benefit",
-    net_benefit_neutral_unfavorable: "Neutral to unfavorable - limited ischemic benefit",
-    
-    // Recommendations
-    recommendation_extended_strongly: "Extended DAPT strongly recommended - high ischemic benefit with acceptable bleeding risk",
-    recommendation_extended_may_benefit: "Extended DAPT may provide benefit - consider individualized assessment",
-    recommendation_not_recommended_bleeding: "Extended DAPT not recommended due to excessive bleeding risk",
-    recommendation_individualized_assessment: "Individualized assessment recommended - benefits and risks are balanced",
-    recommendation_careful_consideration: "Careful consideration needed - uncertain net benefit",
-    recommendation_not_recommended: "Extended DAPT not recommended - unfavorable risk-benefit ratio",
-    recommendation_not_recommended_limited: "Extended DAPT not recommended - limited ischemic benefit",
-    
-    // Duration guidance
-    duration_18_30_months: "Consider 18-30 months of DAPT with close monitoring",
-    duration_18_months_monitoring: "Consider 18 months with enhanced bleeding monitoring",
-    duration_12_months_early: "Standard 12 months, consider early discontinuation if bleeding occurs",
-    duration_12_18_individualized: "12-18 months based on individualized risk assessment",
-    duration_12_months_rationale: "Standard 12 months unless compelling rationale for extension",
-    duration_12_months_early_consideration: "Standard 12 months with early discontinuation consideration",
-    duration_12_months_shorter: "Standard 12 months or shorter if high bleeding risk",
-    
-    // Clinical considerations
-    consideration_advanced_age: "Advanced age (≥75 years) significantly increases bleeding risk",
-    consideration_moderate_age: "Moderate age-related bleeding risk (65-74 years)",
-    consideration_diabetes: "Diabetes increases both ischemic and bleeding risk",
-    consideration_mi_presentation: "Recent MI increases ischemic risk and DAPT benefit",
-    consideration_small_vessel: "Small vessel PCI (<3mm) increases risk of stent thrombosis",
-    consideration_heart_failure: "Heart failure increases both ischemic and bleeding risk",
-    consideration_paclitaxel_stent: "Paclitaxel-eluting stents may benefit from extended DAPT",
-    consideration_vein_graft: "Vein graft PCI has unique risk profile requiring individualized approach",
-    
-    // Duration recommendation section
-    duration_recommendation: "Duration Recommendation",
-    clinical_considerations: "Clinical Considerations",
-    
-    // Interpretation guide
-    interpretation_guide: "DAPT Score Interpretation Guide",
-    score_high: "Score ≥2 (High Benefit)",
-    score_high_desc: "Likely to benefit from extended DAPT duration",
-    score_intermediate: "Score 1 (Intermediate Benefit)", 
-    score_intermediate_desc: "May benefit from extended DAPT with careful assessment",
-    score_low: "Score ≤0 (Low/No Benefit)",
-    score_low_desc: "Limited benefit from extended DAPT, bleeding risk may outweigh benefit",
-    
-    // Interpretations
-    interpretation_high: "High benefit patient (Score: {{{score}}}) - Extended DAPT likely beneficial",
-    interpretation_intermediate: "Intermediate benefit patient (Score: {{{score}}}) - Consider extended DAPT",
-    interpretation_low: "Low benefit patient (Score: {{{score}}}) - Extended DAPT may be harmful",
-    
-    // Enhanced algorithm
-    enhanced_algorithm: "Enhanced Algorithm Validation",
-    algorithm_validation: "This calculator incorporates age-adjusted bleeding risk assessment and evidence-based recommendations from the DAPT Study for optimal clinical decision-making.",
-    
-    // Action buttons
-    new_assessment: "New Assessment",
-    modify_inputs: "Modify Inputs",
-    
-    // Creator Insights Section
-    creator_insights_title: "Creator Insights",
-    creator_name: "Dr. Robert W. Yeh",
-    creator_bio: "Associate Professor of Medicine at Harvard Medical School and Director of the Richard and Susan Smith Center for Outcomes Research in Cardiology at Beth Israel Deaconess Medical Center.",
-    
-    creator_insight_condensed: "Determining optimal antiplatelet therapy duration after coronary stents requires balancing heart attack prevention against bleeding risk. The DAPT Score, developed from the largest randomized trial (11,648 patients) at Harvard Clinical Research Institute, helps identify patients who benefit from extended therapy versus those better served by shorter durations. This validated tool guides clinical decisions alongside physician judgment, effectively separating high ischemic/low bleeding risk patients from those with opposite risk profiles. Essential for shared decision-making in routine practice.",
-    
-    // Evidence Section
-    evidence_title: "Evidence & Formula",
-    evidence_formula_title: "DAPT Score Formula",
-    formula_description: "Addition of the selected points:",
-    age_scoring: "Age: ≥75 years (-2 points), 65-74 years (-1 point), <65 years (0 points)",
-    risk_factors_scoring: "Risk factors: Each selected factor adds +1 point (smoking, diabetes, MI at presentation, prior PCI/MI, paclitaxel stent, stent <3mm, CHF/LVEF<30%, vein graft)",
-    interpretation_note: "Score ≥2: High ischemic/low bleeding risk - Prolonged DAPT recommended | Score -2 to 1: Low ischemic/high bleeding risk - Prolonged DAPT not recommended",
-    
-    evidence_validation_title: "Study Validation",
-    evidence_validation_description: "Developed and validated using data from the DAPT Study, the largest randomized trial of DAPT duration involving 11,648 patients. The score was subsequently validated in multiple independent cohorts including Japanese PCI studies and real-world registries, consistently demonstrating its ability to identify patients who benefit from extended DAPT.",
-    
-    evidence_guidelines_title: "Clinical Guidelines",
-    evidence_guidelines_description: "Incorporated into the 2016 ACC/AHA Guideline Focused Update on Duration of Dual Antiplatelet Therapy. The DAPT Score is recommended as a clinical decision tool to inform DAPT duration decisions in patients who have completed 12 months of DAPT without bleeding complications.",
-    
-    references_title: "References",
-    reference_original: "Original DAPT Score Development (Yeh et al. JAMA 2016)",
-    reference_validation: "Validation Studies (Piccolo et al. Ann Intern Med 2017)",
-    reference_guidelines: "ACC/AHA Guidelines (Levine et al. JACC 2016)"
-  },
+  // PRECISE-DAPT Calculator - Extracted to standalone file
+  precise_dapt: preciseDaptTranslations,
 
-  // TIMI Risk Calculator
-  timi: {
-    title: "TIMI Risk Score Calculator",
-    subtitle: "Unstable Angina/NSTEMI Risk Assessment",
-    description: "Thrombolysis in Myocardial Infarction risk score for patients with unstable angina or NSTEMI.",
-    
-    // Emergency alert
-    emergency_tool: "Emergency Risk Assessment Tool",
-    tool_description: "TIMI Risk Score for rapid evaluation of patients with unstable angina or NSTEMI. This validated tool helps stratify risk and guide management decisions in the emergency setting.",
-    
-    // Step labels
-    patient_info: "Patient Info",
-    clinical_factors: "Clinical Factors",
-    
-    // Section headers
-    demographics_section: "Demographics",
-    clinical_assessment: "Clinical Assessment",
-    clinical_assessment_description: "Select all clinical factors that apply to this patient:",
-    risk_factors_section: "Risk Factors",
-    clinical_section: "Clinical Presentation",
-    
-    // Demographics
-    age_label: "Age ≥65 years",
-    age_help: "Patients 65 years or older receive 1 point",
-    age_error: "Age must be between 18-120 years",
-    
-    // Risk factors
-    coronary_risk_factors: "Coronary artery disease risk factors",
-    risk_factors_help: "Number of CAD risk factors (0-3+)",
-    risk_factors_detail: "Risk factors include: family history of CAD, hypertension, hypercholesterolemia, diabetes mellitus, current smoking",
-    
-    cad_risk_factors_label: "≥3 CAD risk factors",
-    known_cad_label: "Known CAD (stenosis ≥50%)",
-    known_cad: "Known coronary artery disease",
-    
-    aspirin_use_label: "Aspirin use in prior 7 days",
-    aspirin_use: "Aspirin use in prior 7 days",
-    
-    severe_angina_label: "Severe angina (≥2 episodes in 24h)",
-    severe_angina: "Severe anginal symptoms",
-    
-    st_deviation_label: "ST deviation ≥0.5mm",
-    st_deviation: "ST segment deviation ≥0.5mm",
-    
-    elevated_markers_label: "Elevated cardiac markers",
-    elevated_biomarkers: "Elevated cardiac biomarkers",
-    
-    // Navigation
-    next_clinical_factors: "Next: Clinical Factors",
-    
-    // Results
-    score_analysis: "TIMI Risk Score Analysis",
-    timi_score: "TIMI Score",
-    fourteen_day_breakdown: "14-Day Risk Breakdown",
-    fourteen_day_risk: "14-day risk",
-    mortality: "Mortality",
-    myocardial_infarction: "Myocardial Infarction",
-    urgent_revascularization: "Urgent Revascularization",
-    
-    composite_endpoint: "Composite endpoint",
-    death_mi_revascularization: "Death, MI, or urgent revascularization",
-    risk_category: "Risk category",
-    management_strategy: "Management strategy",
-    management_urgency: "Management Urgency",
-    recommended_timeframe: "Recommended timeframe:",
-    
-    // Time frames
-    timeframe_under_24: "< 24 hours",
-    timeframe_24_48: "24-48 hours",
-    timeframe_24_72: "24-72 hours",
-    
-    // Risk categories
-    low_risk: "Low risk (0-2 points)",
-    intermediate_risk: "Intermediate risk (3-4 points)",
-    high_risk: "High risk (5-7 points)",
-    
-    // Management recommendations
-    conservative_management: "Conservative management",
-    routine_management: "Routine Management",
-    early_invasive_strategy: "Early invasive strategy",
-    early_intervention: "Early Intervention",
-    urgent_invasive_strategy: "Urgent invasive strategy",
-    urgent_management: "Urgent Management",
-    
-    // Score components
-    score_components: "Score Components",
-    age_component: "Age ≥65 years",
-    cad_risk_factors_component: "≥3 CAD risk factors",
-    known_cad_component: "Known CAD (≥50% stenosis)",
-    aspirin_component: "Aspirin use (prior 7 days)",
-    angina_component: "Severe angina (≥2 episodes/24h)",
-    st_component: "ST deviation ≥0.5mm",
-    biomarkers_component: "Elevated cardiac markers",
-    
-    // Clinical strategy
-    clinical_strategy: "Clinical Management Strategy",
-    
-    // Action buttons
-    calculate_button: "Calculate TIMI Score",
-    new_assessment: "New Assessment",
-    modify_inputs: "Modify Inputs",
-    
-    // Footer
-    based_on_timi: "Based on TIMI Risk Score",
-    clinically_validated: "Clinically validated risk assessment tool",
-    
-    // Interpretations (dynamic)
-    interpretation_low: "Low risk patient with {{risk}}% 14-day risk of adverse outcomes",
-    interpretation_intermediate: "Intermediate risk patient with {{risk}}% 14-day risk of adverse outcomes",
-    interpretation_high: "High risk patient with {{risk}}% 14-day risk of adverse outcomes",
-    
-    // Recommendations (dynamic)
-    recommendation_low_0: "Conservative management with medical therapy",
-    recommendation_low_1: "Conservative management with medical therapy",
-    recommendation_low_2: "Conservative management with close monitoring",
-    recommendation_intermediate_3: "Consider early invasive strategy within 24-48 hours",
-    recommendation_intermediate_4: "Early invasive strategy recommended within 24 hours",
-    recommendation_high_5: "Urgent invasive strategy within 24 hours",
-    recommendation_high_6: "Urgent invasive strategy within 12-24 hours",
-    recommendation_high_7: "Immediate invasive strategy - highest risk",
-    
-    // Simplified category recommendations
-    recommendation_low: "Conservative management with medical therapy and close monitoring. Consider early discharge with outpatient follow-up.",
-    recommendation_intermediate: "Early invasive strategy within 24-48 hours recommended. Hospitalization with cardiology consultation advised.",
-    recommendation_high: "Urgent invasive strategy within 24 hours required. Immediate cardiology consultation and aggressive medical therapy indicated.",
-    
-    // Risk factor descriptions
-    known_cad_desc: "Prior catheterization showing ≥50% stenosis in any major coronary vessel",
-    aspirin_use_desc: "Aspirin use within 7 days before hospital presentation",
-    severe_angina_desc: "Two or more anginal episodes within 24 hours before presentation",
-    st_deviation_desc: "ST segment changes ≥0.5mm on admission ECG",
-    elevated_biomarkers_desc: "Elevated troponin, CK-MB, or other cardiac markers",
-    
-    // About the Creator
-    about_creator_title: "About the Creator",
-    creator_name: "Dr. Elliott M. Antman",
-    creator_description: "Elliott M. Antman, MD, is a professor and associate dean for Clinical/Translational Research at Harvard Medical School. He is also a senior physician in the Cardiovascular Division of the Brigham and Women's Hospital in Massachusetts and President of the American Heart Association (2014-2015). As a senior investigator in the TIMI Study Group, Dr. Antman has published on the use of serum cardiac markers for diagnosis and prognosis of patients with unstable angina and acute myocardial infarction, cyclooxygenase and cardiovascular risk, and antithrombotic therapy for acute coronary syndromes.",
-    creator_publications: "To view Dr. Elliott M. Antman's publications, visit",
-    
-    // Evidence Section
-    evidence_title: "Evidence",
-    formula_title: "FORMULA",
-    formula_description: "Addition of the selected points:",
-    variable_age: "Age ≥65",
-    variable_risk_factors: "≥3 CAD risk factors*",
-    variable_known_cad: "Known CAD (stenosis ≥50%)",
-    variable_aspirin: "ASA use in past 7 days",
-    variable_angina: "Severe angina (≥2 episodes in 24 hrs)",
-    variable_st_changes: "EKG ST changes ≥0.5mm",
-    variable_st_deviation: "ST deviation ≥0.5mm",
-    variable_biomarkers: "Positive cardiac marker",
-    risk_factors_note: "*Risk factors for CAD: Family history of CAD, hypertension, hypercholesterolemia, diabetes, or current smoker",
-    
-    // Evidence Appraisal
-    evidence_appraisal_title: "Evidence Appraisal",
-    evidence_appraisal_description: "Antman et al (2000) used a merged database of 7,081 UA/NSTEMI patients in the TIMI 11B and ESSENCE trails for the original derivation and validation of this TIMI risk score for UA/NSTEMI. The risk score was originally derived from 1,957 UA/NSTEMI patients receiving unfractionated heparin in the TIMI 11B trial and internally validated in 3 cohorts of patients from the rest of the merged data: 1,953 patients receiving enoxaparin in the TIMI 11B trial, 1,564 patient receiving unfractionated heparin in the ESSENCE trial, and 1,607 receiving enoxaparin in the ESSENCE trial.",
-    validation_studies: "By the end of the 14 days, 16.7% of the derivation group died, had a myocardial infarction, or needed urgent revascularization. An increase of the TIMI Score correlated with an increase in all-cause mortality, MI, or urgent revascularization. The same pattern was seen in the internally validated groups. There have been many external validation studies since its derivation.",
-    validation_studies_title: "Validation Studies",
-    external_validation: "External validation studies by Scirica et al (2002), Pollack et al (2006), and Chase et al (2006) have consistently demonstrated the prognostic value of the TIMI Risk Score across diverse patient populations, including undifferentiated chest pain patients in emergency department settings.",
-    
-    // Literature
-    literature_title: "Literature",
-    original_reference_title: "Original/Primary Reference",
-    original_reference: "Antman EM, Cohen M, Bernink PJLM, McCabe CH, Hoacek T, Papuchis G, Mautner B, Corbalan R, Radley D, Braunwald E. The TIMI risk score for unstable angina/non-ST elevation MI: a method for prognostication and therapeutic decision making JAMA. 2000;284(7):835-42.",
-    validation_title: "Validation",
-    validation_pollack: "Pollack CV, Sites FD, Shofer FS, Sease KL, Hollander JE. Application of the TIMI risk score for unstable angina and non-ST elevation acute coronary syndrome to an unselected emergency department chest pain population. Acad Emerg Med. 2006;13(1):13-18.",
-    validation_scirica: "Scirica BM, Cannon CP, Antman EM, Murphy SA, Morrow DA, Sabatine MS, McCabe CH, Gibson CM, Braunwald E. Validation of the thrombolysis in myocardial infarction (TIMI) risk score for unstable angina pectoris and non-ST-elevation myocardial infarction in the TIMI III registry. Am J Cardiol. 2002;90(3):303-5.",
-    validation_chase: "Chase M, Robey JL, Zogby KE, Sease KL, Shofer FS, Hollander JE. Prospective validation of the thrombolysis in myocardial infarction risk score in the emergency department chest pain population. Ann Emerg Med. 2006;48(3):252-9.",
-    other_references_title: "Other References",
-    other_reference: "Than M, Cullen L, Aldous S, et al. 2-Hour accelerated diagnostic protocol to assess patients with chest pain symptoms using contemporary troponins as the only biomarker: the ADAPT trial. J Am Coll Cardiol. 2012;59(23):2091-8."
-  },
+  // TIMI Risk Calculator - Extracted to standalone file
+  timi: timiRiskScoreTranslations,
 
-  // ADDING/ENSURING ENTRIES FOR MAIN CALCULATOR PAGE CARD DISPLAY
-  atrial_fibrillation: {
-    title: 'Atrial Fibrillation Risk Assessment',
-    subtitle: 'CHA₂DS₂-VASc stroke risk and HAS-BLED bleeding risk • Comprehensive AF management',
-    
-    // Component header and description
-    component_title: 'Atrial Fibrillation Risk Assessment',
-    component_subtitle: 'CHA₂DS₂-VASc stroke risk and HAS-BLED bleeding risk • Comprehensive AF management',
-    
-    // Alert section
-    alert_title: 'Comprehensive Atrial Fibrillation Risk Assessment',
-    alert_description: 'Evidence-based stroke and bleeding risk assessment for patients with non-valvular atrial fibrillation. Guide anticoagulation therapy decisions with balanced benefit-risk analysis.',
-    alert_badge: 'Validated by ACC/AHA/ESC Guidelines - Advanced Risk Analysis',
-    
-    // Tab labels
-    tab_cha2ds2vasc: 'CHA₂DS₂-VASc',
-    tab_cha2ds2vasc_subtitle: '(Stroke Risk)',
-    tab_hasbled: 'HAS-BLED',
-    tab_hasbled_subtitle: '(Bleeding Risk)',
-    
-    // CHA₂DS₂-VASc section
-    cha2ds2vasc: {
-      title: 'CHA₂DS₂-VASc Score',
-      description: 'Stroke risk assessment in non-valvular atrial fibrillation',
-      
-      // Form fields
-      age_label: 'Age (years)',
-      age_placeholder: '65',
-      age_tooltip: 'Age 65-74 = 1 point, Age ≥75 = 2 points',
-      
-      sex_label: 'Sex',
-      sex_placeholder: 'Select...',
-      sex_tooltip: 'Female sex = 1 point',
-      sex_male: 'Male',
-      sex_female: 'Female',
-      
-      // Risk factors
-      risk_factors_title: 'Risk Factors (1 point each)',
-      chf_label: 'Congestive heart failure/LV dysfunction',
-      hypertension_label: 'Hypertension',
-      diabetes_label: 'Diabetes mellitus',
-      vascular_disease_label: 'Vascular disease (MI, PAD, aortic plaques)',
-      
-      // High-risk factors
-      high_risk_title: 'High-Risk Factor (2 points)',
-      stroke_tia_label: 'Previous stroke, TIA, or thromboembolism',
-      
-      // Buttons
-      calculate_button: 'Calculate Score',
-      reset_button: 'Reset',
-      
-      // Results
-      score_label: 'CHA₂DS₂-VASc Score',
-      annual_stroke_risk: 'Annual stroke risk',
-      risk_category: 'Risk category',
-      recommendation: 'Recommendation',
-      
-      // Evidence section
-      evidence_title: 'Evidence & Validation',
-      evidence_origin_title: 'Score Development',
-      evidence_origin_description: 'The CHA₂DS₂-VASc score was developed in 2010 as a refinement of the CHADS₂ score, incorporating additional stroke risk factors. It was derived from the Euro Heart Survey cohort of 5,333 patients with atrial fibrillation.',
-      evidence_validation_title: 'Validation Studies',
-      evidence_validation_description: 'The score has been extensively validated in multiple large cohorts worldwide, consistently demonstrating superior performance to CHADS₂ in identifying truly low-risk patients and providing better stroke risk stratification.',
-      evidence_guidelines_title: 'Guideline Recommendations',
-      evidence_guidelines_description: 'The CHA₂DS₂-VASc score is recommended by major international guidelines including the 2023 ACC/AHA/ACCP/HRS, 2020 ESC, and 2021 NICE guidelines for stroke risk assessment in non-valvular atrial fibrillation.',
-      evidence_link_guidelines: '2023 ACC/AHA/ACCP/HRS Guideline for AF Management',
-      evidence_link_original: 'Original CHA₂DS₂-VASc Validation Study (Lip et al., 2010)',
-      
-      // Clinical pearls
-      clinical_pearls_title: 'Clinical Pearls',
-      clinical_pearl_1: 'Female sex confers stroke risk only in the presence of ≥1 other stroke risk factor. A CHA₂DS₂-VASc score of 1 in women (sex category only) is considered low risk.',
-      clinical_pearl_2: 'The score performs best for identifying truly low-risk patients (score 0 in men, 1 in women) who may not require anticoagulation.',
-      clinical_pearl_3: 'Annual stroke risk increases progressively with higher scores, from 0.2% at score 0 to >10% at scores ≥7.',
-      clinical_pearl_4: 'Direct oral anticoagulants (DOACs) are preferred over warfarin for most patients with AF requiring anticoagulation, unless contraindicated.'
-    },
-    
-    // HAS-BLED section
-    hasbled: {
-      title: 'HAS-BLED Score',
-      description: 'Bleeding risk assessment during anticoagulation therapy',
-      
-      // Risk factors
-      risk_factors_title: 'Bleeding Risk Factors (1 point each)',
-      hypertension_label: 'Uncontrolled hypertension (systolic BP >160 mmHg)',
-      abnormal_renal_label: 'Abnormal renal function (dialysis, transplant, creatinine >200 μmol/L)',
-      abnormal_liver_label: 'Abnormal liver function (cirrhosis, bilirubin >2x normal, ALT/AST >3x normal)',
-      stroke_label: 'Stroke history',
-      bleeding_label: 'Bleeding history or predisposition',
-      labile_inr_label: 'Labile INR (unstable/high INR, <60% time in therapeutic range)',
-      elderly_label: 'Elderly (>65 years)',
-      drugs_label: 'Drugs or alcohol (antiplatelet agents, NSAIDs)',
-      alcohol_label: 'Alcohol (≥8 drinks per week)',
-      
-      // Buttons
-      calculate_button: 'Calculate Score',
-      reset_button: 'Reset',
-      
-      // Results
-      score_label: 'HAS-BLED Score',
-      annual_bleeding_risk: 'Annual bleeding risk',
-      risk_category: 'Risk category',
-      recommendation: 'Recommendation',
-
-      // Author Information
-      author_title: 'From the Creator',
-      author_name: 'Dr. Ron Pisters, MD, PhD',
-      author_bio: 'Dr. Ron Pisters is a cardiologist at Rijnstate Hospital, Netherlands, specializing in atrial fibrillation and antithrombotic management.',
-      author_key_message_title: 'Key Clinical Message',
-      author_key_message: 'HAS-BLED should be used as a clinical tool to identify and address modifiable bleeding risk factors, not as an absolute contraindication to anticoagulation. Remember: in most AF patients, stroke risk outweighs bleeding risk.',
-      author_pubmed_link: 'View Dr. Ron Pisters\' publications on PubMed',
-      
-      // Formula Section
-      formula_title: 'FORMULA',
-      formula_description: 'Addition of the selected points:',
-      formula_note: 'HAS-BLED is an acronym for Hypertension, Abnormal liver/renal function, Stroke history, Bleeding predisposition, Labile INR, Elderly, Drug/alcohol usage.',
-      
-      // Risk Table
-      facts_figures_title: 'Facts & Figures',
-      risk_table_title: 'HAS-BLED Score Risk Assessment',
-      risk_table_score: 'Score',
-      risk_table_group: 'Risk Group',
-      risk_table_major_bleeding: 'Risk of Major Bleeding**',
-      risk_table_bleeds_per_100: 'Bleeds per 100 Patient-Years***',
-      risk_table_recommendation: 'Recommendation',
-      
-      // Risk Groups
-      risk_low: 'Low',
-      risk_moderate: 'Moderate', 
-      risk_high: 'High',
-      risk_very_high: 'Very High',
-      
-      // Risk Recommendations
-      risk_rec_0_1: 'Anticoagulation should be considered',
-      risk_rec_2: 'Anticoagulation can be considered',
-      risk_rec_3_4: 'Alternatives to anticoagulation should be considered',
-      risk_rec_5_plus: 'Scores greater than 5 were too rare to determine risk, but are likely over 10%',
-      
-      // Evidence Section
-      evidence_title: 'Evidence Appraisal',
-      evidence_development: 'The HAS-BLED Score was developed in 2010 as a practical risk score to estimate the 1-year risk of major bleeding in patients with atrial fibrillation (AF). The original study used data from the prospective Euro Heart Survey on AF, and included 3456 ambulatory and hospitalized patients with AF and one-year follow-up status regarding major bleeding, and without mitral valve stenosis or valvular surgery.',
-      evidence_validation: 'Many external validations of the HAS-BLED score have been published. A 2020 network meta-analysis of 18 studies found HAS-BLED to be the most balanced predictive score for major bleeding in terms of sensitivity and specificity, compared to other contemporary scores including the ABC‐bleeding score, ATRIA, European score, GARFIELD‐AF, HEMORR₂HAGES, ORBIT, Shireman, and mOBRI.',
-      evidence_guidelines: 'The simplicity of the HAS-BLED score and the extensive external validations have led to widespread clinical adoption, with the 2020 ESC guidelines specifically recommending HAS-BLED for the assessment of bleeding risk in patients with AF. However, the more recent 2024 ESC guidelines and the 2023 ACC/AHA/ACCP/HRS guidelines both did not recommend a specific predictive score for major bleeding, citing uncertainties over accuracy and potential harms of not anticoagulating appropriately.',
-      evidence_limitations: 'Such reservation at least partly stemmed from the fact that HAS-BLED was derived when DOAC were only starting to become available, which casts doubt on the predictive accuracy of HAS-BLED in truly contemporary cohorts with DOAC use. Additionally, even though clinicians are advised to balance the risks of bleeding and thromboembolism in patients with AF when considering anticoagulation, the real-life implications of these events may not be equivalent.',
-      
-      // Reference Links
-      reference_original: 'Original Research: Pisters et al. (2010)',
-      reference_validation: 'Validation Study: Lip et al. (2011)',
-      reference_guidelines_2020: '2020 ESC Guidelines',
-      reference_guidelines_2023: '2023 ACC/AHA/ACCP/HRS Guidelines'
-    },
-    
-    // Common labels
-    score_points: '{{score}} point(s)',
-    risk_percentage: '{{risk}}% per year',
-    
-    // Validation messages
-    validation: {
-      age_required: 'Age is required',
-      age_range: 'Age must be between 18-120 years',
-      sex_required: 'Sex selection is required'
-    }
-  },
-
-  // CHA2DS2-VASc Calculator - UPDATED TO PATTERN COMPLIANCE
-  chads_vasc: {
-    title: "CHA2DS2-VASc Calculator",
-    subtitle: "Stroke risk assessment in atrial fibrillation",
-    description: "Risk stratification for stroke in patients with non-valvular atrial fibrillation.",
-    calculate_button: "Calculate CHA2DS2-VASc",
-    risk_category: "Risk category",
-    recommendations: "Clinical recommendations",
-    low_risk: "Low risk (0 points)",
-    high_risk: "High risk (≥2 points)",
-    
-    // Risk factors
-    congestive_heart_failure_label: "Congestive heart failure",
-    hypertension_label: "Hypertension",
-    age_75_label: "Age ≥75 years",
-    diabetes_label: "Diabetes mellitus",
-    stroke_tia_label: "Previous stroke/TIA",
-    vascular_disease_label: "Vascular disease",
-    age_65_74_label: "Age 65-74 years",
-    female_sex_label: "Female sex",
-    
-    // Section headers
-    risk_factors: "Risk Factors",
-    
-    // Results
-    chads_vasc_score: "CHA2DS2-VASc Score",
-    annual_stroke_risk: "Annual stroke risk",
-    anticoagulation_recommendation: "Anticoagulation recommendation",
-    
-    // Recommendations
-    no_anticoagulation: "No anticoagulation indicated. Continue to monitor risk factors annually.",
-    consider_anticoagulation: "Consider oral anticoagulation based on individual patient characteristics and shared decision-making.",
-    anticoagulation_recommended: "Oral anticoagulation is recommended unless contraindicated. Prefer DOACs over warfarin in most patients."
-  },
-
-  // HAS-BLED Calculator - UPDATED TO PATTERN COMPLIANCE
-  has_bled: {
-    title: "HAS-BLED Calculator",
-    subtitle: "Bleeding risk assessment during anticoagulation therapy",
-    description: "Assessment of major bleeding risk in AF patients receiving anticoagulants.",
-    calculate_button: "Calculate HAS-BLED",
-    risk_category: "Risk category",
-    recommendations: "Clinical recommendations",
-    low_risk: "Low risk (0-2 points)",
-    high_risk: "High risk (≥3 points)",
-    
-    // Risk factors
-    hypertension_label: "Uncontrolled hypertension",
-    abnormal_renal_function_label: "Abnormal renal function",
-    abnormal_liver_function_label: "Abnormal liver function",
-    stroke_label: "Previous stroke",
-    bleeding_history_label: "Bleeding history",
-    labile_inr_label: "Labile INR",
-    elderly_label: "Elderly (>65 years)",
-    drugs_alcohol_label: "Drugs/alcohol",
-    
-    // Section headers
-    risk_factors: "Risk Factors",
-    
-    // Results
-    has_bled_score: "HAS-BLED Score",
-    annual_bleeding_risk: "Annual bleeding risk",
-    clinical_recommendation: "Clinical recommendations"
-  },
-
-  // CHADS2 Calculator - UPDATED TO PATTERN COMPLIANCE
-  chads2: {
-    title: "CHADS2 Calculator",
-    subtitle: "Classic stroke risk assessment in atrial fibrillation",
-    description: "Original stroke risk stratification scale for non-valvular AF.",
-    calculate_button: "Calculate CHADS2",
-    risk_category: "Risk category",
-    recommendations: "Clinical recommendations",
-    low_risk: "Low risk (0 points)",
-    high_risk: "High risk (≥2 points)",
-    
-    // Risk factors
-    congestive_heart_failure_label: "Congestive heart failure",
-    hypertension_label: "Hypertension",
-    age_75_label: "Age ≥75 years",
-    diabetes_label: "Diabetes mellitus",
-    stroke_tia_label: "Previous stroke/TIA",
-    
-    // Section headers
-    risk_factors: "Risk Factors",
-    
-    // Results
-    chads2_score: "CHADS2 Score",
-    annual_stroke_risk: "Annual stroke risk",
-    anticoagulation_recommendation: "Anticoagulation recommendation"
-  },
-  
   // HCM-AF Risk Calculator - PLACEHOLDER FOR PATTERN COMPLIANCE
   hcm_af: {
     title: 'HCM-AF Risk Calculator',
@@ -923,211 +69,11 @@ export default {
     high_risk: 'High risk'
   },
 
-  // MAGGIC Risk Calculator
-  maggic: {
-    title: 'MAGGIC Risk Calculator',
-    subtitle: 'Meta-Analysis Global Group In Chronic Heart Failure • 1-3 Year Mortality Risk',
-    description: 'Evidence-based prognostic tool for chronic heart failure mortality risk using large-scale meta-analysis data.',
-    
-    // Alert section
-    alert_title: 'MAGGIC Risk Assessment Tool',
-    alert_description: 'Meta-Analysis Global Group in Chronic Heart Failure (MAGGIC) risk calculator provides evidence-based mortality prediction for patients with chronic heart failure. This tool is validated across diverse patient populations and helps guide clinical decision-making and prognosis discussions.',
-    
-    // Step labels
-    demographics_step: 'Demographics',
-    clinical_step: 'Clinical Assessment',
-    therapy_step: 'Therapy Assessment',
-    
-    // Demographics section
-    patient_demographics: 'Patient Demographics',
-    demographics_description: 'Basic patient demographic and clinical characteristics',
-    age_label: 'Age',
-    age_placeholder: 'Enter age in years',
-    gender_label: 'Gender',
-    gender_placeholder: 'Select gender',
-    gender_male: 'Male',
-    gender_female: 'Female',
-    lvef_label: 'Left Ventricular Ejection Fraction (LVEF)',
-    lvef_placeholder: 'Enter LVEF percentage',
-    nyha_class_label: 'NYHA Functional Class',
-    nyha_class_placeholder: 'Select NYHA class',
-    nyha_class_1: 'Class I - No limitation',
-    nyha_class_2: 'Class II - Slight limitation',
-    nyha_class_3: 'Class III - Marked limitation',
-    nyha_class_4: 'Class IV - Severe limitation',
-    
-    // Clinical assessment section
-    clinical_assessment: 'Clinical Assessment',
-    clinical_description: 'Current vital signs, laboratory values, and comorbidity status',
-    systolic_bp_label: 'Systolic Blood Pressure',
-    systolic_bp_placeholder: 'Enter systolic BP',
-    bmi_label: 'Body Mass Index (BMI)',
-    bmi_placeholder: 'Enter BMI',
-    creatinine_label: 'Serum Creatinine',
-    creatinine_placeholder: 'Enter creatinine level',
-    comorbidities_section: 'Comorbidities',
-    diabetes_label: 'Diabetes Mellitus',
-    copd_label: 'Chronic Obstructive Pulmonary Disease (COPD)',
-    first_diagnosis_label: 'First HF Diagnosis (within 18 months)',
-    
-    // Therapy assessment section
-    therapy_assessment: 'Current Therapy Assessment',
-    therapy_description: 'Current guideline-directed medical therapy status',
-    gdmt_section: 'Guideline-Directed Medical Therapy',
-    beta_blocker_label: 'Beta-blocker therapy',
-    ace_inhibitor_label: 'ACE inhibitor or ARB therapy',
-    
-    // Button labels
-    next_clinical_assessment: 'Next: Clinical Assessment',
-    next_therapy_assessment: 'Next: Therapy Assessment',
-    calculate_maggic_risk: 'Calculate MAGGIC Risk',
-    new_assessment_button: 'New Assessment',
-    
-    // Validation messages
-    validation_age: 'Please enter a valid age between 18 and 100 years',
-    validation_gender: 'Please select gender',
-    validation_nyha_class: 'Please select NYHA functional class',
-    validation_lvef: 'Please enter a valid LVEF between 10% and 80%',
-    validation_systolic_bp: 'Please enter a valid systolic BP between 70 and 250 mmHg',
-    validation_bmi: 'Please enter a valid BMI between 15 and 50 kg/m²',
-    validation_creatinine: 'Please enter a valid creatinine between 0.5 and 10.0 mg/dL',
-    
-    // Results section
-    results_title: 'MAGGIC Risk Assessment Results',
-    one_year_mortality: '1-Year Mortality Risk',
-    three_year_mortality: '3-Year Mortality Risk',
-    risk_stratification_title: 'Risk Stratification Categories',
-    low_risk_category: 'Low Risk (<10% 1-year)',
-    intermediate_risk_category: 'Intermediate Risk (10-19% 1-year)',
-    high_risk_category: 'High Risk (20-34% 1-year)',
-    very_high_risk_category: 'Very High Risk (≥35% 1-year)',
-    mortality_rates_note: '* Mortality rates based on MAGGIC consortium meta-analysis of >39,000 patients',
-    recommendations_title: 'Clinical Management Recommendations',
-    algorithm_validation_title: 'MAGGIC Algorithm Validation',
-    algorithm_validation_text: '✓ Validated in >39,000 HF patients • Meta-analysis derived • Comprehensive risk assessment',
-    
-    // About Creator section
-    about_creator_title: 'About the Creator',
-    creator_name: 'Dr. Stuart Pocock',
-    creator_description: 'Stuart Pocock, PhD, is a professor of medical statistics at the London School of Hygiene and Tropical Medicine. Dr. Pocock is a director of multiple research groups investigating epidemiology and pharmacoepidemiology. He has published many papers on major trials he has conducted, especially in cardiovascular disease.',
-    view_publications: 'View Dr. Stuart Pocock\'s Publications',
-    pubmed_link_text: 'PubMed',
-    
-    // Evidence section
-    evidence_title: 'Evidence',
-    formula_title: 'Formula',
-    formula_description: 'Addition of selected points.',
-    facts_figures_title: 'Facts & Figures',
-    
-    // Risk factor tables
-    risk_factor_title: 'Risk Factor',
-    points_title: 'Points',
-    
-    // Basic risk factors
-    male_factor: 'Male',
-    smoker_factor: 'Smoker',
-    diabetic_factor: 'Diabetic',
-    copd_factor: 'COPD',
-    heart_failure_18_months: 'Heart failure first diagnosed ≥18 months ago',
-    not_on_beta_blocker: 'Not on beta blocker',
-    not_on_ace_arb: 'Not on ACE-I/ARB',
-    
-    // Ejection fraction ranges
-    ejection_fraction_title: 'Ejection fraction (EF)',
-    ef_less_than_20: '<20',
-    ef_20_24: '20-24',
-    ef_25_29: '25-29',
-    ef_30_34: '30-34',
-    ef_35_39: '35-39',
-    ef_40_plus: '≥40',
-    
-    // NYHA class
-    nyha_class_title: 'NYHA class',
-    nyha_1: '1',
-    nyha_2: '2',
-    nyha_3: '3',
-    nyha_4: '4',
-    
-    // Creatinine ranges
-    creatinine_title: 'Creatinine*',
-    creatinine_less_90: '<90',
-    creatinine_90_109: '90-109',
-    creatinine_110_129: '110-129',
-    creatinine_130_149: '130-149',
-    creatinine_150_169: '150-169',
-    creatinine_170_209: '170-209',
-    creatinine_210_249: '210-249',
-    creatinine_250_plus: '≥250',
-    
-    // BMI ranges
-    bmi_title: 'BMI',
-    bmi_less_15: '<15',
-    bmi_15_19: '15-19',
-    bmi_20_24: '20-24',
-    bmi_25_29: '25-29',
-    bmi_30_plus: '≥30',
-    
-    // Systolic BP extra points for different EF ranges
-    systolic_bp_ef_less_30_title: 'Extra for systolic BP (mm Hg) if EF <30',
-    systolic_bp_ef_30_39_title: 'Extra for systolic BP (mm Hg) if EF 30-39',
-    systolic_bp_ef_40_plus_title: 'Extra for systolic BP (mm Hg) if EF ≥40',
-    
-    // BP ranges
-    bp_less_110: '<110',
-    bp_110_119: '110-119',
-    bp_120_129: '120-129',
-    bp_130_139: '130-139',
-    bp_140_149: '140-149',
-    bp_150_plus: '≥150',
-    
-    // Age extra points for different EF ranges
-    age_ef_less_30_title: 'Extra for age (years) if EF <30',
-    age_ef_30_39_title: 'Extra for age (years) if EF 30-39',
-    age_ef_40_plus_title: 'Extra for age (years) if EF ≥40',
-    
-    // Age ranges
-    age_less_55: '<55',
-    age_55_59: '55-59',
-    age_60_64: '60-64',
-    age_65_69: '65-69',
-    age_70_74: '70-74',
-    age_75_79: '75-79',
-    age_80_plus: '≥80',
-    
-    // Creatinine note
-    creatinine_note: '*Note: while this score uses creatinine as a proxy for renal function, eGFR is generally considered a more accurate indicator.',
-    
-    // Evidence Appraisal section
-    evidence_appraisal_title: 'Evidence Appraisal',
-    evidence_appraisal_description: 'The Meta-Analysis Global Group in Chronic Heart Failure (MAGGIC) Risk Calculator was developed by an international group of researchers led by Pocock et al based on a database of 39,372 patients from 30 cohort studies (of which 6 were randomized clinical trials, accounting for approximately 24,000 patients).',
-    poisson_regression_description: 'A Poisson regression model was built to identify 13 risk factors contributing to mortality in patients with heart failure. Comparisons of observed and expected 3-year mortality rates across all 30 studies showed acceptable goodness-of-fit. Two separate models were used for preserved versus reduced ejection fraction (EF).',
-    subsequent_study_description: 'A subsequent study by Freed et al (2016) showed that for 308 patients with heart failure with preserved EF, a higher MAGGIC risk score was associated with more adverse events.',
-    validation_note: 'The data have not yet been externally validated for reduced EF.',
-    
-    // Literature section
-    literature_title: 'Literature',
-    original_reference_title: 'Original/Primary Reference',
-    validation_title: 'Validation',
-    other_references_title: 'Other References',
-    
-    // Primary reference
-    primary_reference_title: 'Research Paper',
-    primary_reference_citation: 'Pocock SJ et al. Predicting survival in heart failure: a risk score based on 39 372 patients from 30 studies. Eur Heart J. 2013 May;34(19):1404-13. doi: 10.1093/eurheartj/ehs337. Epub 2012 Oct 24.',
-    
-    // Validation reference
-    validation_reference_title: 'Research Paper',
-    validation_reference_citation: 'Freed BH, Daruwalla V, Cheng JY, Aguilar FG, Beussink L, Choi A, Klein DA, Dixon D, Baldridge A, Rasmussen-Torvik LJ, Maganti K, Shah SJ. Prognostic Utility and Clinical Significance of Cardiac Mechanics in Heart Failure With Preserved Ejection Fraction: Importance of Left Atrial Strain. Circ Cardiovasc Imaging. 2016 Mar;9(3). pii: e003754. doi: 10.1161/CIRCIMAGING.115.003754.',
-    
-    // Other references
-    other_reference_1_title: 'Research Paper',
-    other_reference_1_citation: 'Meta-analysis Global Group in Chronic Heart Failure (MAGGIC). The survival of patients with heart failure with preserved or reduced left ventricular ejection fraction: an individual patient data meta-analysis. Eur Heart J. 2012 Jul;33(14):1750-7. doi: 10.1093/eurheartj/ehr254. Epub 2011 Aug 6.',
-    
-    other_reference_2_title: 'Research Paper',
-    other_reference_2_citation: 'Nanayakkara S, Kaye DM. Management of heart failure with preserved ejection fraction: a review. Clin Ther. 2015 Oct 1;37(10):2186-98. doi: 10.1016/j.clinthera.2015.08.005. Epub 2015 Sep 16.',
-    
-    other_reference_3_title: 'Research Paper',
-    other_reference_3_citation: 'Chapter 1: Definition and classification of CKD. Kidney Int Suppl (2011). 2013;3(1):19-62.'
-  },
+  // MAGGIC Risk Calculator - Extracted to standalone file
+  maggic: maggicTranslations,
+
+  // AHA PREVENT™ Calculator - Extracted to standalone file
+  prevent: ahaPreventTranslations,
 
   // GWTG-HF Risk Calculator
   gwtgHf: {
@@ -1424,6 +370,85 @@ export default {
     results_management_recommendations: 'Management Recommendations',
     results_next_steps: 'Next Steps',
     results_staging_system_reference: 'ACC/AHA Heart Failure Staging Reference',
+
+    // Results nested structure for stages
+    results: {
+      stageA: {
+        title: 'Stage A - At Risk',
+        description: 'At high risk for heart failure development but without structural heart disease or symptoms',
+        recommendations: [
+          'Optimal hypertension management per current guidelines',
+          'Comprehensive diabetes management with target HbA1c <7%',
+          'Evidence-based lipid management and statin therapy',
+          'Smoking cessation counseling and support programs',
+          'Regular aerobic exercise and weight management',
+          'Alcohol moderation and dietary sodium restriction'
+        ],
+        nextSteps: [
+          'Primary care optimization with cardiovascular risk focus',
+          'Comprehensive risk factor modification program',
+          'Patient education on cardiovascular health',
+          'Regular monitoring with annual assessments',
+          'Baseline echocardiogram if multiple high-risk factors present'
+        ]
+      },
+      stageB: {
+        title: 'Stage B - Structural Disease',
+        description: 'Structural heart disease without signs or symptoms of heart failure requiring preventive therapy',
+        recommendations: [
+          'ACE inhibitor or ARB therapy for cardiac protection',
+          'Beta-blocker therapy if prior MI or reduced ejection fraction',
+          'Treatment of underlying cardiovascular conditions',
+          'Comprehensive risk factor modification program',
+          'Regular echocardiographic monitoring for progression',
+          'Symptom surveillance and patient education'
+        ],
+        nextSteps: [
+          'Cardiology evaluation for structural heart disease management',
+          'Annual or biannual echocardiogram monitoring',
+          'Optimal medical therapy initiation and titration',
+          'Patient education on heart failure symptoms recognition',
+          'Aggressive risk factor management and lifestyle modification'
+        ]
+      },
+      stageC: {
+        title: 'Stage C - Symptomatic HF',
+        description: 'Symptomatic heart failure with structural heart disease requiring guideline-directed medical therapy',
+        recommendations: [
+          'Comprehensive guideline-directed medical therapy optimization',
+          'ACE inhibitor/ARB/ARNI therapy at maximum tolerated dose',
+          'Evidence-based beta-blocker therapy initiation and titration',
+          'Diuretics for optimal volume management and symptom control',
+          'Device therapy evaluation (ICD/CRT) per current guidelines',
+          'Regular monitoring and medication optimization'
+        ],
+        nextSteps: [
+          'Cardiology referral for specialized heart failure management',
+          'Comprehensive echocardiographic evaluation and monitoring',
+          'Laboratory monitoring and medication adjustment',
+          'Patient education and self-care management training',
+          'Device therapy consideration and electrophysiology consultation'
+        ]
+      },
+      stageD: {
+        title: 'Stage D - Advanced HF',
+        description: 'Advanced heart failure with refractory symptoms despite guideline-directed medical therapy requiring specialized interventions',
+        recommendations: [
+          'Advanced heart failure therapies and specialized care coordination',
+          'Mechanical circulatory support evaluation with heart team consultation',
+          'Heart transplantation evaluation at qualified center',
+          'Palliative care consultation for symptom management',
+          'Specialized heart failure center referral for comprehensive care',
+          'Clinical trial consideration for experimental therapies'
+        ],
+        nextSteps: [
+          'Immediate advanced heart failure specialist consultation',
+          'Comprehensive hemodynamic and functional assessment',
+          'Multidisciplinary heart team evaluation',
+          'End-of-life planning and advanced directive discussions'
+        ]
+      }
+    },
     
     // Stage reference results
     results_stage_a_reference: 'Stage A - At Risk',
@@ -1743,135 +768,7 @@ export default {
     uric_acid_invalid: 'Uric acid must be between 2 and 20 mg/dL'
   },
 
-  // PRECISE-DAPT Calculator - COMPLETE TRANSLATION IMPLEMENTATION
-  precise_dapt: {
-    title: 'PRECISE-DAPT Bleeding Risk Calculator',
-    subtitle: 'Bleeding Risk Assessment • DAPT Duration Guidance',
-    description: 'Prediction of bleeding risk associated with dual antiplatelet therapy to guide optimal duration after PCI.',
-    
-    // Tool description
-    bleeding_assessment_tool: 'Bleeding Risk Assessment Tool',
-    tool_description: 'PRECISE-DAPT Calculator predicts bleeding risk associated with dual antiplatelet therapy (DAPT) to guide optimal duration selection after percutaneous coronary intervention. This validated tool balances bleeding safety with ischemic protection.',
-    
-    // Step navigation
-    patient_labs: 'Patient Labs',
-    bleeding_history: 'Bleeding History',
-    
-    // Step 1: Demographics & Lab Values
-    demographics_labs_section: 'Patient Demographics and Laboratory Values',
-    laboratory_description: 'Enter patient age and key laboratory parameters that influence bleeding risk',
-    
-    // Form fields
-    age_label: 'Age',
-    age_error: 'Age must be between 18-120 years',
-    
-    creatinine_label: 'Serum Creatinine',
-    creatinine_unit: 'mg/dL',
-    creatinine_error: 'Creatinine must be between 0.5-15.0 mg/dL',
-    
-    hemoglobin_label: 'Hemoglobin',
-    hemoglobin_unit: 'g/dL',
-    hemoglobin_error: 'Hemoglobin must be between 5.0-20.0 g/dL',
-    
-    white_blood_count_label: 'White Blood Cell Count',
-    white_blood_count_unit: '×10³/μL',
-    white_blood_count_error: 'White blood count must be between 1.0-50.0 ×10³/μL',
-    
-    // Step 2: Bleeding History
-    bleeding_history_section: 'Bleeding History Assessment',
-    bleeding_history_description: 'Prior bleeding history is a strong predictor of future bleeding risk',
-    
-    previous_bleed: 'Previous Bleeding History',
-    previous_bleed_desc: 'History of major bleeding requiring hospitalization, transfusion, or surgery',
-    
-    // Navigation buttons
-    next_bleeding_history: 'Next: Bleeding History',
-    calculate_button: 'Calculate PRECISE-DAPT Score',
-    
-    // Results section
-    bleeding_risk_analysis: 'PRECISE-DAPT Bleeding Risk Analysis',
-    score_points: '{{score}} points',
-    
-    // Risk categories and interpretations
-    bleeding_risk: 'Bleeding Risk',
-    major_bleeding: 'Major Bleeding Risk',
-    safe_duration: 'Safe Duration',
-    annual_major_bleeding: 'Annual major bleeding risk',
-    overall_bleeding_risk: 'Overall bleeding risk at 12 months: {{risk}}%',
-    recommended_dapt_duration: 'Recommended DAPT duration',
-    
-    // Risk levels
-    low_risk: 'Low Risk',
-    intermediate_risk: 'Intermediate Risk',
-    high_risk: 'High Risk',
-    
-    // Interpretation messages
-    interpretation_low: 'Low bleeding risk ({{risk}}% at 12 months) - Extended DAPT may be considered',
-    interpretation_intermediate: 'Intermediate bleeding risk ({{risk}}% at 12 months) - Standard DAPT with careful monitoring',
-    interpretation_high: 'High bleeding risk ({{risk}}% at 12 months) - Consider shortened DAPT duration',
-    
-    // Risk factors
-    contributing_risk_factors: 'Contributing Risk Factors',
-    risk_factor_advanced_age: 'Advanced age (≥75 years) - Significantly increased bleeding risk',
-    risk_factor_elderly_age: 'Elderly age (65-74 years) - Moderately increased bleeding risk',
-    risk_factor_severe_renal: 'Severe renal impairment (Creatinine ≥2.0 mg/dL) - High bleeding risk',
-    risk_factor_moderate_renal: 'Moderate renal impairment (Creatinine 1.5-1.9 mg/dL) - Increased bleeding risk',
-    risk_factor_mild_renal: 'Mild renal impairment (Creatinine 1.2-1.4 mg/dL) - Mildly increased bleeding risk',
-    risk_factor_severe_anemia: 'Severe anemia (Hemoglobin <10 g/dL) - Significantly increased bleeding risk and complications',
-    risk_factor_moderate_anemia: 'Moderate anemia (Hemoglobin 10-11.9 g/dL) - Increased bleeding risk',
-    risk_factor_low_hemoglobin: 'Low hemoglobin (Hemoglobin 12-12.9 g/dL) - Mildly increased bleeding risk',
-    risk_factor_elevated_wbc: 'Elevated white blood count (>12 ×10³/μL) - Inflammation marker, increased bleeding risk',
-    risk_factor_low_wbc: 'Low white blood count (<4 ×10³/μL) - Increased bleeding and infection risk',
-    risk_factor_previous_bleeding: 'Previous major bleeding - Strongest predictor of future bleeding events',
-    
-    // Recommendations by risk level
-    recommendation_low: 'Extended DAPT (12-30 months) may provide ischemic benefit with acceptable bleeding risk',
-    recommendation_intermediate: 'Standard DAPT duration (12 months) with enhanced bleeding monitoring and risk factor modification',
-    recommendation_high: 'Consider shortened DAPT duration (3-6 months) due to elevated bleeding risk, but ensure adequate ischemic protection',
-    
-    // Duration guidance
-    duration_low: '12-30 months with monitoring',
-    duration_intermediate: '12 months with surveillance',
-    duration_high: '3-6 months with assessment',
-    
-    // Clinical guidance
-    guidance_low: 'Low bleeding risk allows consideration of extended DAPT for high ischemic risk patients',
-    guidance_intermediate: 'Balance bleeding and ischemic risks with individualized duration assessment',
-    guidance_high: 'High bleeding risk warrants consideration of shorter DAPT duration and bleeding risk modification',
-    
-    // Clinical benefit
-    benefit_low: 'Favorable bleeding safety profile supports extended DAPT consideration for ischemic benefit',
-    benefit_intermediate: 'Moderate bleeding risk requires careful balance with ischemic protection needs',
-    benefit_high: 'Elevated bleeding risk may limit extended DAPT benefit, consider alternative antiplatelet strategies',
-    
-    // Safe duration recommendations
-    safe_duration_low: '12-30 months with monitoring',
-    safe_duration_intermediate: '12 months with surveillance',
-    safe_duration_high: '3-6 months with assessment',
-    
-    // Clinical sections
-    clinical_recommendation: 'Clinical Recommendation',
-    clinical_benefit_analysis: 'Clinical Benefit Analysis',
-    
-    // Score interpretation guide
-    score_interpretation: 'PRECISE-DAPT Score Interpretation Guide',
-    score_low_range: 'Low Risk (<25 points)',
-    score_low_description: 'Extended DAPT may be beneficial with acceptable bleeding risk',
-    score_intermediate_range: 'Intermediate Risk (25-35 points)',
-    score_intermediate_description: 'Standard DAPT with enhanced monitoring recommended',
-    score_high_range: 'High Risk (≥35 points)',
-    score_high_description: 'Consider shortened DAPT due to elevated bleeding risk',
-    
-    // Algorithm validation
-    enhanced_algorithm: 'Enhanced PRECISE-DAPT Algorithm',
-    algorithm_validation: '✓ PRECISE-DAPT Study Validated • Enhanced bleeding risk assessment with quantitative safety analysis',
-    based_on_precise_dapt: 'Based on PRECISE-DAPT Study • Bleeding risk assessment for DAPT duration guidance',
-    bleeding_safety_validated: 'Bleeding Safety Validated',
-    
-    // Action buttons
-    new_assessment: 'New Assessment',
-    modify_inputs: 'Modify Inputs'
-  },
+
 
   // STS Adult Cardiac Surgery Risk Calculator - COMPLETE TRANSLATION
   sts: {
@@ -2110,217 +1007,7 @@ export default {
     other: 'Other'
     },
 
-  prevent: {
-    // Core information
-    title: 'AHA PREVENT™ Calculator',
-    subtitle: 'Next-Generation Cardiovascular Risk Assessment • CKM Health Integration',
-    description: 'Revolutionary risk prediction incorporating cardiovascular-kidney-metabolic (CKM) health factors. Enhanced with social determinants of health for comprehensive 10-year and 30-year risk assessment.',
-    
-    // Alert section
-    alert_title: 'American Heart Association PREVENT™',
-    alert_description: 'Revolutionary risk prediction incorporating cardiovascular-kidney-metabolic (CKM) health factors. Enhanced with social determinants of health for comprehensive 10-year and 30-year risk assessment.',
-    alert_badge: 'AHA 2023 - CKM-Enhanced Prediction',
-    
-    // Progress steps
-    step_demographics: 'Demographics',
-    step_clinical: 'Clinical',
-    step_lab_values: 'Lab Values',
-    step_ckm_e: 'CKM-E',
-    
-    // Step navigation titles and descriptions
-    step_1_title: 'Personal Information',
-    step_1_description: 'Basic demographic and anthropometric data',
-    step_2_title: 'Laboratory Values',
-    step_2_description: 'Cholesterol profile and biomarkers',
-    step_3_title: 'Clinical Factors',
-    step_3_description: 'Blood pressure and medical history',
-    step_4_title: 'Enhanced Factors',
-    step_4_description: 'Optional CKM-E parameters (Optional)',
-    step_5_title: 'Risk Assessment',
-    step_5_description: 'Comprehensive cardiovascular risk analysis',
-    
-    // Progress indicators
-    progress_complete: 'Complete',
-    progress_of_steps: 'of 4 steps completed',
-    
-    // Step 1: Demographics
-    demographics_title: 'Patient Demographics',
-    demographics_description: 'Basic demographic information for risk assessment',
-    age_label: 'Age',
-    age_placeholder: '45',
-    age_help: 'Age in years (30-79 for PREVENT)',
-    sex_label: 'Sex',
-    sex_placeholder: 'Select sex...',
-    sex_male: 'Male',
-    sex_female: 'Female',
-    race_label: 'Race/Ethnicity',
-    race_placeholder: 'Select race/ethnicity...',
-    race_white: 'White',
-    race_black: 'Black/African American',
-    race_hispanic: 'Hispanic/Latino',
-    race_asian: 'Asian',
-    race_other: 'Other',
-    height_label: 'Height',
-    height_placeholder: '170',
-    weight_label: 'Weight',
-    weight_placeholder: '80',
-    
-    // Step 2: Clinical Assessment
-    clinical_title: 'Clinical Assessment',
-    clinical_description: 'Blood pressure and clinical risk factors',
-    systolic_bp_label: 'Systolic Blood Pressure',
-    systolic_bp_placeholder: '120',
-    diastolic_bp_label: 'Diastolic Blood Pressure',
-    diastolic_bp_placeholder: '80',
-    clinical_risk_factors_title: 'Clinical Risk Factors',
-    on_hypertension_meds_label: 'On Hypertension Medications',
-    on_hypertension_meds_description: 'Currently taking blood pressure medications',
-    antihypertensive_meds_label: 'Antihypertensive Medications',
-    antihypertensive_meds_description: 'Currently taking blood pressure medications',
-    on_statin_label: 'On Statin Therapy',
-    on_statin_description: 'Currently taking statin medications',
-    diabetes_label: 'Diabetes Mellitus',
-    diabetes_description: 'Type 1 or Type 2 diabetes',
-    current_smoker_label: 'Current Smoker',
-    current_smoker_description: 'Currently smoking tobacco',
-    serum_creatinine_label: 'Serum Creatinine',
-    serum_creatinine_placeholder: '1.0',
-    
-    // Step 3: Laboratory Assessment
-    lab_title: 'Laboratory Assessment',
-    lab_description: 'Lipid profile and cholesterol measurements',
-    total_cholesterol_label: 'Total Cholesterol',
-    total_cholesterol_placeholder: '200',
-    hdl_cholesterol_label: 'HDL Cholesterol',
-    hdl_cholesterol_placeholder: '50',
-    ldl_cholesterol_label: 'LDL Cholesterol',
-    ldl_cholesterol_placeholder: '130',
-    
-    // Step 4: CKM-E Enhanced Factors
-    ckm_e_title: 'CKM-E Enhanced Factors',
-    ckm_e_description: 'Cardiovascular-Kidney-Metabolic health enhancement factors',
-    hba1c_label: 'HbA1c',
-    hba1c_placeholder: '6.5',
-    egfr_label: 'eGFR',
-    egfr_placeholder: '90',
-    uacr_label: 'UACR',
-    uacr_placeholder: '15',
-    sdi_label: 'Social Deprivation Index',
-    sdi_placeholder: '0.3',
-    
-    // CKM-E Information
-    ckm_e_info_title: 'CKM-E Enhancement Information',
-    egfr_info: 'Estimated glomerular filtration rate (kidney function marker)',
-    uacr_info: 'Urine albumin-to-creatinine ratio (kidney damage marker)',
-    sdi_info: 'Social Deprivation Index (social determinants of health)',
-    
-    // Navigation buttons
-    next_clinical_factors: 'Next: Clinical Factors',
-    next_laboratory_values: 'Next: Laboratory Values',
-    next_ckm_e_factors: 'Next: CKM-E Factors',
-    back_button: 'Back',
-    calculate_prevent_risk: 'Calculate PREVENT Risk',
-    
-    // Results section
-    results_title: 'AHA PREVENT™ Risk Analysis',
-    ckm_e_enhanced_title: 'CKM-E Enhanced Assessment',
-    ckm_e_enhanced_description: 'Enhanced cardiovascular-kidney-metabolic factors detected - comprehensive monitoring recommended',
-    
-    // Risk predictions
-    ten_year_predictions_title: '10-Year Risk Predictions',
-    thirty_year_predictions_title: '30-Year Risk Predictions',
-    total_cvd: 'Total CVD',
-    ascvd: 'ASCVD',
-    heart_failure: 'Heart Failure',
-    
-    // Risk stratification
-    risk_stratification_title: 'PREVENT Risk Stratification',
-    low_risk: 'Low Risk',
-    low_risk_range: '<5% ASCVD',
-    borderline_risk: 'Borderline',
-    borderline_risk_range: '5-7.5% ASCVD',
-    intermediate_risk: 'Intermediate',
-    intermediate_risk_range: '7.5-20% ASCVD',
-    high_risk: 'High Risk',
-    high_risk_range: '≥20% ASCVD',
-    
-    // Clinical recommendations
-    clinical_recommendations_title: 'Clinical Management Recommendations',
-    
-    // Algorithm validation
-    algorithm_title: 'AHA PREVENT™ Model',
-    algorithm_description: '✓ AHA 2023 Guidelines • CKM-Enhanced • Machine Learning Validated • 30-Year Predictions',
-    algorithm_2023_title: 'AHA PREVENT™ 2023 Algorithm',
-    algorithm_implementation_description: 'This calculator implements the official American Heart Association PREVENT™ equations (2023):',
-    algorithm_feature_1: 'Derived from over 6 million diverse individuals',
-    algorithm_feature_2: 'Calculates 10-year risks for ASCVD, Heart Failure, and Total CVD',
-    algorithm_feature_3: 'For ages 30-59: Also provides 30-year risk estimates',
-    algorithm_feature_4: 'Includes novel risk factors (HbA1C, UACR, SDI) for enhanced assessment',
-    algorithm_feature_5: 'BMI and eGFR calculated using validated equations',
-    
-    // Action buttons
-    new_assessment: 'New Assessment',
-    modify_inputs: 'Modify Inputs',
-    
-    // Footer
-    footer_description: 'Based on AHA PREVENT™ equations with CKM health factors • For educational purposes only',
-    footer_guidelines: 'AHA 2023 Guidelines',
-    
-    // Validation messages
-    validation_age: 'Age is required',
-    validation_age_range: 'Age must be between 30-79 years for PREVENT',
-    validation_sex: 'Sex is required',
-    validation_race: 'Race/ethnicity is required',
-    validation_total_cholesterol: 'Total cholesterol is required',
-    validation_total_cholesterol_range: 'Total cholesterol must be between 100-400 mg/dL',
-    validation_hdl_cholesterol: 'HDL cholesterol is required',
-    validation_hdl_cholesterol_range: 'HDL cholesterol must be between 20-100 mg/dL',
-    validation_systolic_bp: 'Systolic BP is required',
-    validation_systolic_bp_range: 'Systolic BP must be between 90-200 mmHg',
-    
-    // Units
-    unit_years: 'years',
-    unit_mg_dl: 'mg/dL',
-    unit_mmhg: 'mmHg',
-    unit_ml_min: 'mL/min/1.73m²',
-    unit_mg_g: 'mg/g',
-    unit_score: 'score',
-    unit_cm: 'cm',
-    unit_kg: 'kg',
-    unit_percent: '%',
-    
-    // Risk categories and prevention strategies
-    risk_category: 'Risk category',
-    prevention_strategy: 'Prevention strategy',
-    standard_prevention: 'Standard cardiovascular prevention approach',
-    comprehensive_ckm: 'Comprehensive CKM health approach with enhanced monitoring',
-    
-    // Recommendations content
-    rec_continue_lifestyle: 'Continue lifestyle optimization',
-    rec_reassess: 'Reassess in 4-6 years',
-    rec_risk_enhancers: 'Risk enhancers assessment recommended',
-    rec_cac_scoring: 'Consider CAC scoring if uncertain',
-    rec_lifestyle_therapy: 'Lifestyle therapy essential',
-    rec_statin_therapy: 'Statin therapy recommended',
-    rec_cac_refinement: 'Consider CAC scoring for refinement',
-    rec_high_intensity_statin: 'High-intensity statin therapy recommended',
-    rec_additional_therapies: 'Consider additional therapies (ezetimibe, PCSK9i)',
-    rec_aggressive_lifestyle: 'Aggressive lifestyle modification',
-    rec_ckm_e_monitoring: 'CKM-E factors present - enhanced monitoring needed',
-    
-    // Chart visualization
-    ten_year_risk_estimates: '10-Year Risk Estimates',
-    thirty_year_risk_estimates: '30-Year Risk Estimates',
-    risk_by_age_description: 'Risk estimates by age for individuals with the same risk factors',
-    age_years: 'Age (years)',
-    risk_percentage: 'Risk (%)',
-    age: 'Age',
-    years: 'years',
-    risk_insights: 'Risk Insights',
-    current_age: 'Current Age',
-    year_total_risk: 'Year Total Risk',
-    risk_increase_decade: 'Risk Increase/Decade'
-  },
+
 
   // Ensure other calculator IDs referenced in Calculators.tsx for cardiology also have title/subtitle
 }; 

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Calculator, Info, Heart, AlertTriangle, Activity, TrendingUp, User, Target, 
   Stethoscope, Clock, Pill, CheckCircle, AlertCircle, XCircle, Lightbulb, 
@@ -19,6 +20,7 @@ interface StagingData {
 
 interface CalculationResult {
   stage: 'A' | 'B' | 'C' | 'D';
+  title: string;
   description: string;
   recommendations: string[];
   nextSteps: string[];
@@ -34,7 +36,8 @@ const AnimatedCheckbox: React.FC<{
   index: number;
 }> = ({ label, checked, onChange, description, icon: Icon, index }) => {
   const [isHovered, setIsHovered] = useState(false);
-  
+  const { t } = useTranslation();
+
   return (
     <div 
       className={`group relative p-6 rounded-2xl border-2 transition-all duration-500 ease-out cursor-pointer transform hover:scale-[1.02] hover:-translate-y-1 ${
@@ -125,6 +128,7 @@ const StageSection: React.FC<{
   icon: React.ComponentType<{ className?: string }>;
 }> = ({ stage, title, description, children, isVisible, color, icon: Icon }) => {
   const [isExpanded, setIsExpanded] = useState(true);
+  const { t } = useTranslation();
   
   if (!isVisible) return null;
   
@@ -227,6 +231,7 @@ const CalculatorButton: React.FC<{
   children: React.ReactNode;
 }> = ({ onClick, disabled = false, className = '', variant = 'primary', size = 'md', children }) => {
   const [isPressed, setIsPressed] = useState(false);
+  const { t } = useTranslation();
   
   const baseClasses = "relative overflow-hidden font-semibold rounded-2xl transition-all duration-300 transform active:scale-95 focus:outline-none focus:ring-4 focus:ring-offset-2";
   
@@ -248,7 +253,7 @@ const CalculatorButton: React.FC<{
       className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 hover:-translate-y-1'} ${className}`}
       onMouseDown={() => setIsPressed(true)}
       onMouseUp={() => setIsPressed(false)}
-      onMouseLeave={() => setIsPressed(false)}
+      onBlur={() => setIsPressed(false)}
     >
       {/* Background animation */}
       <div className={`absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300`} />
@@ -269,109 +274,69 @@ const CalculatorButton: React.FC<{
 const ResultCard: React.FC<{
   result: CalculationResult;
 }> = ({ result }) => {
+  const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
   
   useEffect(() => {
     setIsVisible(true);
   }, []);
   
-  const stageColors = {
-    A: { bg: 'from-emerald-500 to-teal-500', ring: 'ring-emerald-500/20' },
-    B: { bg: 'from-amber-500 to-orange-500', ring: 'ring-amber-500/20' },
-    C: { bg: 'from-orange-500 to-red-500', ring: 'ring-orange-500/20' },
-    D: { bg: 'from-red-500 to-pink-500', ring: 'ring-red-500/20' }
+  const colorClasses = {
+    low: 'from-emerald-400 to-teal-400',
+    intermediate: 'from-amber-400 to-orange-400',
+    high: 'from-red-500 to-pink-500',
   };
   
-  const stageColor = stageColors[result.stage];
+  const Icon = {
+    A: Target,
+    B: UserCheck,
+    C: Activity,
+    D: AlertTriangle,
+  }[result.stage];
   
   return (
-    <div className={`relative overflow-hidden transition-all duration-1000 ease-out ${
-      isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
-    }`}>
-      {/* Main result card */}
-      <div className="relative rounded-3xl bg-gradient-to-br from-white via-white to-gray-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 border-2 border-gray-200/60 dark:border-gray-700/60 shadow-2xl backdrop-blur-xl overflow-hidden">
-        {/* Animated background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-purple-50/30 to-pink-50/50 dark:from-blue-950/20 dark:via-purple-950/10 dark:to-pink-950/20" />
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/10 via-purple-400/10 to-pink-400/10 rounded-full blur-3xl" />
-        
-        {/* Header section */}
-        <div className="relative p-10">
-          <div className="text-center">
-            {/* Stage badge */}
-            <div className="inline-flex items-center justify-center mb-8">
-              <div className={`relative w-24 h-24 rounded-3xl bg-gradient-to-r ${stageColor.bg} shadow-2xl ${stageColor.ring} ring-8 flex items-center justify-center`}>
-                <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-white/20 to-transparent" />
-                <span className="text-4xl font-bold text-white relative z-10">{result.stage}</span>
-                <div className="absolute inset-0 rounded-3xl shadow-inner" />
-              </div>
-            </div>
-            
-            {/* Title */}
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-              Heart Failure Stage {result.stage}
-            </h2>
-            
-            {/* Description */}
-            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
-              {result.description}
-            </p>
+    <div className={`relative overflow-hidden w-full max-w-4xl mx-auto rounded-3xl border-2 border-gray-200/20 dark:border-gray-700/50 bg-gradient-to-br from-gray-50/80 via-white/80 to-gray-50/80 dark:from-gray-800/80 dark:via-gray-900/80 dark:to-gray-800/80 p-8 shadow-2xl backdrop-blur-lg animate-in fade-in zoom-in-95`}>
+      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-500/5 via-transparent to-pink-500/5" />
+      <div className="relative">
+        <div className="flex items-center space-x-6 mb-6">
+          <div className={`flex-shrink-0 w-20 h-20 rounded-2xl bg-gradient-to-r ${colorClasses[result.riskLevel]} text-white flex items-center justify-center shadow-lg`}>
+            <span className="text-4xl font-bold">{result.stage}</span>
+          </div>
+          <div>
+            <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">{result.title}</h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400 mt-1">{result.description}</p>
           </div>
         </div>
-        
-        {/* Content grid */}
-        <div className="relative px-10 pb-10">
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Recommendations */}
-            <div className="relative rounded-2xl bg-gradient-to-br from-white/70 to-white/50 dark:from-gray-800/70 dark:to-gray-800/50 backdrop-blur-sm border border-white/50 dark:border-gray-700/50 p-8 shadow-xl">
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="p-3 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 shadow-lg">
-                  <Lightbulb className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  Clinical Recommendations
-                </h3>
-              </div>
-              <div className="space-y-4">
-                {result.recommendations.map((rec, index) => (
-                  <div 
-                    key={index}
-                    className="flex items-start space-x-3 animate-in slide-in-from-left-8 fade-in"
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    <div className="p-2 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 shadow-lg flex-shrink-0 mt-0.5">
-                      <CheckCircle2 className="w-4 h-4 text-white" />
-                    </div>
-                    <span className="text-gray-700 dark:text-gray-300 leading-relaxed">{rec}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Next steps */}
-            <div className="relative rounded-2xl bg-gradient-to-br from-white/70 to-white/50 dark:from-gray-800/70 dark:to-gray-800/50 backdrop-blur-sm border border-white/50 dark:border-gray-700/50 p-8 shadow-xl">
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="p-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg">
-                  <Target className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  Next Steps
-                </h3>
-              </div>
-              <div className="space-y-4">
-                {result.nextSteps.map((step, index) => (
-                  <div 
-                    key={index}
-                    className="flex items-start space-x-3 animate-in slide-in-from-right-8 fade-in"
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    <div className="p-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg flex-shrink-0 mt-0.5">
-                      <ArrowRight className="w-4 h-4 text-white" />
-                    </div>
-                    <span className="text-gray-700 dark:text-gray-300 leading-relaxed">{step}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 flex items-center">
+              <Pill className="mr-3 text-blue-500" />
+              <span>{t('heartFailureStaging.results.recommendations.title')}</span>
+            </h3>
+            <ul className="space-y-3">
+              {result.recommendations.map((rec, i) => (
+                <li key={i} className="flex items-start">
+                  <CheckCircle className="flex-shrink-0 w-5 h-5 text-green-500 mt-1 mr-3" />
+                  <span className="text-gray-700 dark:text-gray-300">{rec}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 flex items-center">
+              <TrendingUp className="mr-3 text-purple-500" />
+              <span>{t('heartFailureStaging.results.nextSteps.title')}</span>
+            </h3>
+            <ul className="space-y-3">
+              {result.nextSteps.map((step, i) => (
+                <li key={i} className="flex items-start">
+                  <ArrowRight className="flex-shrink-0 w-5 h-5 text-purple-500 mt-1 mr-3" />
+                  <span className="text-gray-700 dark:text-gray-300">{step}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
@@ -379,8 +344,9 @@ const ResultCard: React.FC<{
   );
 };
 
-const HeartFailureStaging: React.FC = () => {
-  const [formData, setFormData] = useState<StagingData>({
+const HeartFailureStagingCalculator: React.FC = () => {
+  const { t } = useTranslation();
+  const [stagingData, setStagingData] = useState<StagingData>({
     stageA_riskFactors: false,
     stageA_cardiotoxins: false,
     stageA_genetic: false,
@@ -392,145 +358,80 @@ const HeartFailureStaging: React.FC = () => {
   });
 
   const [result, setResult] = useState<CalculationResult | null>(null);
-  const [showResult, setShowResult] = useState(false);
-  const [isCalculating, setIsCalculating] = useState(false);
-  const [animationStep, setAnimationStep] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setAnimationStep(1), 100);
-    return () => clearTimeout(timer);
-  }, []);
+  const handleCheckboxChange = (field: keyof StagingData, value: boolean) => {
+    setStagingData(prev => ({ ...prev, [field]: value }));
+  };
 
   const calculateStage = (): CalculationResult => {
-    let riskLevel: 'low' | 'intermediate' | 'high';
-    
-    if (formData.stageD_advanced) {
-      riskLevel = 'high';
+    if (stagingData.stageD_advanced) {
       return {
         stage: 'D',
-        description: 'Advanced heart failure with refractory symptoms despite guideline-directed medical therapy requiring specialized interventions',
-        recommendations: [
-          'Advanced heart failure therapies and specialized care coordination',
-          'Mechanical circulatory support evaluation with heart team consultation',
-          'Heart transplantation evaluation at qualified center',
-          'Palliative care consultation for symptom management',
-          'Specialized heart failure center referral for comprehensive care',
-          'Clinical trial consideration for experimental therapies'
-        ],
-        nextSteps: [
-          'Immediate advanced heart failure specialist consultation',
-          'Comprehensive hemodynamic and functional assessment',
-          'Multidisciplinary heart team evaluation',
-          'End-of-life planning and advanced directive discussions'
-        ],
-        riskLevel
+        title: t('heartFailureStaging.results.stageD.title'),
+        description: t('heartFailureStaging.results.stageD.description'),
+        recommendations: t('heartFailureStaging.results.stageD.recommendations', { returnObjects: true }) as string[],
+        nextSteps: t('heartFailureStaging.results.stageD.nextSteps', { returnObjects: true }) as string[],
+        riskLevel: 'high',
       };
     }
-
-    if (formData.stageC_symptoms) {
-      riskLevel = 'high';
+    if (stagingData.stageC_symptoms) {
       return {
         stage: 'C',
-        description: 'Symptomatic heart failure with structural heart disease requiring guideline-directed medical therapy',
-        recommendations: [
-          'Comprehensive guideline-directed medical therapy optimization',
-          'ACE inhibitor/ARB/ARNI therapy at maximum tolerated dose',
-          'Evidence-based beta-blocker therapy initiation and titration',
-          'Diuretics for optimal volume management and symptom control',
-          'Device therapy evaluation (ICD/CRT) per current guidelines',
-          'Regular monitoring and medication optimization'
-        ],
-        nextSteps: [
-          'Cardiology referral for specialized heart failure management',
-          'Comprehensive echocardiographic evaluation and monitoring',
-          'Laboratory monitoring and medication adjustment',
-          'Patient education and self-care management training',
-          'Device therapy consideration and electrophysiology consultation'
-        ],
-        riskLevel
+        title: t('heartFailureStaging.results.stageC.title'),
+        description: t('heartFailureStaging.results.stageC.description'),
+        recommendations: t('heartFailureStaging.results.stageC.recommendations', { returnObjects: true }) as string[],
+        nextSteps: t('heartFailureStaging.results.stageC.nextSteps', { returnObjects: true }) as string[],
+        riskLevel: 'intermediate',
       };
     }
-
-    if (formData.stageB_structural || formData.stageB_filling || formData.stageB_biomarkers) {
-      riskLevel = 'intermediate';
+    if (stagingData.stageB_structural || stagingData.stageB_filling || stagingData.stageB_biomarkers) {
       return {
         stage: 'B',
-        description: 'Structural heart disease without signs or symptoms of heart failure requiring preventive therapy',
-        recommendations: [
-          'ACE inhibitor or ARB therapy for cardiac protection',
-          'Beta-blocker therapy if prior MI or reduced ejection fraction',
-          'Treatment of underlying cardiovascular conditions',
-          'Comprehensive risk factor modification program',
-          'Regular echocardiographic monitoring for progression',
-          'Symptom surveillance and patient education'
-        ],
-        nextSteps: [
-          'Cardiology evaluation for structural heart disease management',
-          'Annual or biannual echocardiogram monitoring',
-          'Optimal medical therapy initiation and titration',
-          'Patient education on heart failure symptoms recognition',
-          'Aggressive risk factor management and lifestyle modification'
-        ],
-        riskLevel
+        title: t('heartFailureStaging.results.stageB.title'),
+        description: t('heartFailureStaging.results.stageB.description'),
+        recommendations: t('heartFailureStaging.results.stageB.recommendations', { returnObjects: true }) as string[],
+        nextSteps: t('heartFailureStaging.results.stageB.nextSteps', { returnObjects: true }) as string[],
+        riskLevel: 'low',
       };
     }
-
-    if (formData.stageA_riskFactors || formData.stageA_cardiotoxins || formData.stageA_genetic) {
-      riskLevel = 'low';
+    if (stagingData.stageA_riskFactors || stagingData.stageA_cardiotoxins || stagingData.stageA_genetic) {
       return {
         stage: 'A',
-        description: 'At high risk for heart failure development but without structural heart disease or symptoms',
-        recommendations: [
-          'Optimal hypertension management per current guidelines',
-          'Comprehensive diabetes management with target HbA1c <7%',
-          'Evidence-based lipid management and statin therapy',
-          'Smoking cessation counseling and support programs',
-          'Regular aerobic exercise and weight management',
-          'Alcohol moderation and dietary sodium restriction'
-        ],
-        nextSteps: [
-          'Primary care optimization with cardiovascular risk focus',
-          'Comprehensive risk factor modification program',
-          'Patient education on cardiovascular health',
-          'Regular monitoring with annual assessments',
-          'Baseline echocardiogram if multiple high-risk factors present'
-        ],
-        riskLevel
+        title: t('heartFailureStaging.results.stageA.title'),
+        description: t('heartFailureStaging.results.stageA.description'),
+        recommendations: t('heartFailureStaging.results.stageA.recommendations', { returnObjects: true }) as string[],
+        nextSteps: t('heartFailureStaging.results.stageA.nextSteps', { returnObjects: true }) as string[],
+        riskLevel: 'low',
       };
     }
-
-    riskLevel = 'low';
+    // Default case, though should not be reached if at least one checkbox is ticked
     return {
       stage: 'A',
-      description: 'Low risk for heart failure development with focus on primary prevention',
-      recommendations: [
-        'Maintain healthy lifestyle with regular physical activity',
-        'Regular cardiovascular health screening and monitoring',
-        'Blood pressure monitoring and management',
-        'Healthy diet with emphasis on fruits, vegetables, and whole grains'
-      ],
-      nextSteps: [
-        'Continue routine preventive care',
-        'Annual health maintenance and screening',
-        'Lifestyle counseling and education',
-        'Regular follow-up with primary care provider'
-      ],
-      riskLevel
+      title: t('heartFailureStaging.results.stageA.title'),
+      description: t('heartFailureStaging.results.stageA.description'),
+      recommendations: t('heartFailureStaging.results.stageA.recommendations', { returnObjects: true }) as string[],
+      nextSteps: t('heartFailureStaging.results.stageA.nextSteps', { returnObjects: true }) as string[],
+      riskLevel: 'low',
     };
   };
 
   const handleCalculate = async () => {
-    setIsCalculating(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    const calculationResult = calculateStage();
-    setResult(calculationResult);
-    setShowResult(true);
-    setIsCalculating(false);
+    setIsLoading(true);
+    setResult(null);
+    await new Promise(res => setTimeout(res, 1200));
+    const finalResult = calculateStage();
+    setResult(finalResult);
+    setIsLoading(false);
+    // Scroll to result
+    const resultElement = document.getElementById('result-card');
+    if (resultElement) {
+      resultElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   };
 
   const handleReset = () => {
-    setFormData({
+    setStagingData({
       stageA_riskFactors: false,
       stageA_cardiotoxins: false,
       stageA_genetic: false,
@@ -541,499 +442,207 @@ const HeartFailureStaging: React.FC = () => {
       stageD_advanced: false,
     });
     setResult(null);
-    setShowResult(false);
   };
 
-  const hasStageA = formData.stageA_riskFactors || formData.stageA_cardiotoxins || formData.stageA_genetic;
-  const hasStageB = formData.stageB_structural || formData.stageB_filling || formData.stageB_biomarkers;
+  const isAnyCheckboxChecked = Object.values(stagingData).some(v => v);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:via-blue-950/20 dark:to-purple-950/20 py-12 px-4 sm:px-6 lg:px-8">
-      {/* Background elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-400/10 to-pink-400/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-emerald-400/5 via-blue-400/5 to-purple-400/5 rounded-full blur-3xl" />
-      </div>
-
-      <div className="relative max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 md:p-8 font-sans bg-gray-50/50 dark:bg-gray-900/90 text-gray-800 dark:text-gray-200 min-h-screen">
+      <div className="max-w-7xl mx-auto">
+        
         {/* Header */}
-        <div className={`text-center mb-16 transition-all duration-1000 ease-out ${
-          animationStep >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}>
-          <div className="inline-flex items-center justify-center p-6 rounded-3xl bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 shadow-2xl shadow-blue-500/25 mb-8">
-            <Heart className="w-12 h-12 text-white mr-4" />
-            <Sparkles className="w-8 h-8 text-white" />
-          </div>
-          
-          <h1 className="text-6xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
-            Heart Failure Staging Calculator
+        <header className="text-center mb-12">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 pb-2">
+            {t('heartFailureStaging.title')}
           </h1>
-          
-          <p className="text-2xl text-gray-600 dark:text-gray-400 max-w-4xl mx-auto leading-relaxed">
-            Advanced ACC/AHA classification system for precise heart failure staging with comprehensive clinical guidance
+          <p className="mt-4 text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            {t('heartFailureStaging.description')}
           </p>
-          
-          {/* Feature badges */}
-          <div className="flex flex-wrap justify-center gap-4 mt-8">
-            {[
-              { icon: Award, text: "ACC/AHA Guidelines" },
-              { icon: Shield, text: "Clinical Accuracy" },
-              { icon: Brain, text: "AI-Enhanced" },
-              { icon: Zap, text: "Real-time Analysis" }
-            ].map((badge, index) => (
-              <div 
-                key={index}
-                className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-lg animate-in fade-in slide-in-from-bottom-4"
-                style={{ animationDelay: `${600 + index * 100}ms` }}
-              >
-                <badge.icon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{badge.text}</span>
-              </div>
-            ))}
-          </div>
+        </header>
+
+        {/* Staging Sections */}
+        <div className="space-y-8">
+          <StageSection 
+            stage="A" 
+            title={t('heartFailureStaging.sections.stageA.title')}
+            description={t('heartFailureStaging.sections.stageA.description')}
+            isVisible={true}
+            color="green"
+            icon={Target}
+          >
+            <AnimatedCheckbox 
+              label={t('heartFailureStaging.questions.stageA_riskFactors.label')}
+              checked={stagingData.stageA_riskFactors} 
+              onChange={(c) => handleCheckboxChange('stageA_riskFactors', c)} 
+              description={t('heartFailureStaging.questions.stageA_riskFactors.description')}
+              icon={Heart}
+              index={0}
+            />
+             <AnimatedCheckbox 
+              label={t('heartFailureStaging.questions.stageA_cardiotoxins.label')}
+              checked={stagingData.stageA_cardiotoxins} 
+              onChange={(c) => handleCheckboxChange('stageA_cardiotoxins', c)} 
+              description={t('heartFailureStaging.questions.stageA_cardiotoxins.description')}
+              icon={Pill}
+              index={1}
+            />
+            <AnimatedCheckbox 
+              label={t('heartFailureStaging.questions.stageA_genetic.label')}
+              checked={stagingData.stageA_genetic} 
+              onChange={(c) => handleCheckboxChange('stageA_genetic', c)} 
+              description={t('heartFailureStaging.questions.stageA_genetic.description')}
+              icon={Brain}
+              index={2}
+            />
+          </StageSection>
+
+          <StageSection 
+            stage="B" 
+            title={t('heartFailureStaging.sections.stageB.title')}
+            description={t('heartFailureStaging.sections.stageB.description')}
+            isVisible={stagingData.stageA_riskFactors || stagingData.stageA_cardiotoxins || stagingData.stageA_genetic}
+            color="yellow"
+            icon={UserCheck}
+          >
+            <AnimatedCheckbox 
+              label={t('heartFailureStaging.questions.stageB_structural.label')}
+              checked={stagingData.stageB_structural} 
+              onChange={(c) => handleCheckboxChange('stageB_structural', c)}
+              description={t('heartFailureStaging.questions.stageB_structural.description')}
+              icon={Stethoscope}
+              index={3}
+            />
+            <AnimatedCheckbox 
+              label={t('heartFailureStaging.questions.stageB_filling.label')}
+              checked={stagingData.stageB_filling} 
+              onChange={(c) => handleCheckboxChange('stageB_filling', c)}
+              description={t('heartFailureStaging.questions.stageB_filling.description')}
+              icon={Zap}
+              index={4}
+            />
+            <AnimatedCheckbox 
+              label={t('heartFailureStaging.questions.stageB_biomarkers.label')}
+              checked={stagingData.stageB_biomarkers} 
+              onChange={(c) => handleCheckboxChange('stageB_biomarkers', c)}
+              description={t('heartFailureStaging.questions.stageB_biomarkers.description')}
+              icon={Award}
+              index={5}
+            />
+          </StageSection>
+
+          <StageSection 
+            stage="C" 
+            title={t('heartFailureStaging.sections.stageC.title')}
+            description={t('heartFailureStaging.sections.stageC.description')}
+            isVisible={stagingData.stageB_structural || stagingData.stageB_filling || stagingData.stageB_biomarkers}
+            color="orange"
+            icon={Activity}
+          >
+            <AnimatedCheckbox 
+              label={t('heartFailureStaging.questions.stageC_symptoms.label')}
+              checked={stagingData.stageC_symptoms} 
+              onChange={(c) => handleCheckboxChange('stageC_symptoms', c)}
+              description={t('heartFailureStaging.questions.stageC_symptoms.description')}
+              icon={AlertCircle}
+              index={6}
+            />
+          </StageSection>
+
+          <StageSection 
+            stage="D" 
+            title={t('heartFailureStaging.sections.stageD.title')}
+            description={t('heartFailureStaging.sections.stageD.description')}
+            isVisible={stagingData.stageC_symptoms}
+            color="red"
+            icon={AlertTriangle}
+          >
+            <AnimatedCheckbox 
+              label={t('heartFailureStaging.questions.stageD_advanced.label')}
+              checked={stagingData.stageD_advanced} 
+              onChange={(c) => handleCheckboxChange('stageD_advanced', c)}
+              description={t('heartFailureStaging.questions.stageD_advanced.description')}
+              icon={XCircle}
+              index={7}
+            />
+          </StageSection>
         </div>
 
-        {!showResult ? (
-          <div className="space-y-12">
-            {/* Stage A */}
-            <StageSection
-              stage="A"
-              title="Risk Factors Assessment"
-              description="At high risk for HF but without structural heart disease or symptoms"
-              isVisible={true}
-              color="green"
-              icon={CheckCircle}
-            >
-              {[
-                {
-                  label: "Patient with history of hypertension, cardiovascular disease, diabetes, or obesity",
-                  checked: formData.stageA_riskFactors,
-                  onChange: (checked: boolean) => setFormData({ ...formData, stageA_riskFactors: checked }),
-                  description: "Common cardiovascular risk factors that predispose to heart failure development",
-                  icon: TrendingUp
-                },
-                {
-                  label: "Patient using cardiotoxins",
-                  checked: formData.stageA_cardiotoxins,
-                  onChange: (checked: boolean) => setFormData({ ...formData, stageA_cardiotoxins: checked }),
-                  description: "Chemotherapy agents or radiation therapy with known cardiotoxic effects",
-                  icon: Pill
-                },
-                {
-                  label: "Patient with genetic variant for cardiomyopathy or family history of cardiomyopathy",
-                  checked: formData.stageA_genetic,
-                  onChange: (checked: boolean) => setFormData({ ...formData, stageA_genetic: checked }),
-                  description: "Hereditary predisposition to heart failure and cardiomyopathy",
-                  icon: User
-                }
-              ].map((item, index) => (
-                <AnimatedCheckbox key={index} {...item} index={index} />
-              ))}
-            </StageSection>
+        {/* Action Buttons */}
+        <div className="mt-12 text-center">
+          <CalculatorButton
+            onClick={handleCalculate}
+            disabled={!isAnyCheckboxChecked || isLoading}
+            size="lg"
+            variant="primary"
+          >
+            {isLoading ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                {t('heartFailureStaging.calculatingButton')}
+              </>
+            ) : (
+              <>
+                <Sparkles className="mr-3 h-6 w-6" />
+                {t('heartFailureStaging.calculateButton')}
+              </>
+            )}
+          </CalculatorButton>
 
-            {/* Stage B */}
-            <StageSection
-              stage="B"
-              title="Structural Disease Assessment"
-              description="Structural heart disease without signs or symptoms of HF"
-              isVisible={hasStageA}
-              color="yellow"
-              icon={AlertCircle}
+          {isAnyCheckboxChecked && !isLoading && (
+            <CalculatorButton
+              onClick={handleReset}
+              className="ml-4"
+              variant="secondary"
+              size="lg"
             >
-              {[
-                {
-                  label: "Patient with structural heart disease",
-                  checked: formData.stageB_structural,
-                  onChange: (checked: boolean) => setFormData({ ...formData, stageB_structural: checked }),
-                  description: "Reduced LVEF, wall motion abnormalities, LV hypertrophy, or significant valvular disease",
-                  icon: Heart
-                },
-                {
-                  label: "Patient with evidence of increased filling pressures",
-                  checked: formData.stageB_filling,
-                  onChange: (checked: boolean) => setFormData({ ...formData, stageB_filling: checked }),
-                  description: "Invasive hemodynamic measurements or noninvasive imaging evidence of elevated pressures",
-                  icon: Activity
-                },
-                {
-                  label: "Patient with increased natriuretic peptide levels or persistently elevated cardiac troponin",
-                  checked: formData.stageB_biomarkers,
-                  onChange: (checked: boolean) => setFormData({ ...formData, stageB_biomarkers: checked }),
-                  description: "Elevated BNP/NT-proBNP or persistent troponin elevation in absence of competing diagnoses",
-                  icon: Target
-                }
-              ].map((item, index) => (
-                <AnimatedCheckbox key={index} {...item} index={index} />
-              ))}
-            </StageSection>
+              {t('heartFailureStaging.resetButton')}
+            </CalculatorButton>
+          )}
+        </div>
 
-            {/* Stage C */}
-            <StageSection
-              stage="C"
-              title="Symptomatic HF Assessment"
-              description="Structural heart disease with prior or current symptoms of HF"
-              isVisible={hasStageB}
-              color="orange"
-              icon={AlertTriangle}
-            >
-              <AnimatedCheckbox
-                label="Patient with current or previous signs/symptoms of heart failure"
-                checked={formData.stageC_symptoms}
-                onChange={(checked: boolean) => setFormData({ ...formData, stageC_symptoms: checked })}
-                description="Shortness of breath, dyspnea on exertion, fatigue, reduced exercise tolerance, or fluid retention"
-                icon={Stethoscope}
-                index={0}
-              />
-            </StageSection>
-
-            {/* Stage D */}
-            <StageSection
-              stage="D"
-              title="Advanced HF Assessment"
-              description="Refractory HF requiring specialized interventions"
-              isVisible={formData.stageC_symptoms}
-              color="red"
-              icon={XCircle}
-            >
-              <AnimatedCheckbox
-                label="Patient with marked heart failure symptoms that interfere with daily life and with recurrent hospitalizations despite attempts to optimize guideline-directed medical therapy"
-                checked={formData.stageD_advanced}
-                onChange={(checked: boolean) => setFormData({ ...formData, stageD_advanced: checked })}
-                description="Advanced heart failure requiring specialized care, mechanical support, or transplant evaluation"
-                icon={Clock}
-                index={0}
-              />
-            </StageSection>
-
-            {/* Calculate Button */}
-            <div className="flex justify-center pt-12">
-              <CalculatorButton
-                onClick={handleCalculate}
-                disabled={isCalculating}
-                size="lg"
-                className="min-w-[300px]"
-              >
-                {isCalculating ? (
-                  <>
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white" />
-                    <span>Analyzing Heart Failure Stage...</span>
-                  </>
-                ) : (
-                  <>
-                    <Calculator className="w-6 h-6" />
-                    <span>Calculate Heart Failure Stage</span>
-                    <Sparkles className="w-5 h-5" />
-                  </>
-                )}
-              </CalculatorButton>
-            </div>
+        {/* Result Card */}
+        {result && !isLoading && (
+          <div id="result-card" className="mt-16">
+            <ResultCard result={result} />
           </div>
-        ) : (
-          result && (
-            <div className="space-y-16">
-              <ResultCard result={result} />
-              
-              {/* Creator Insights Section */}
-              <div className="relative rounded-3xl bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950/30 dark:via-teal-950/30 dark:to-cyan-950/30 border-2 border-emerald-200/60 dark:border-emerald-800/60 backdrop-blur-xl overflow-hidden animate-in slide-in-from-bottom-8 fade-in">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-transparent to-white/30 dark:from-gray-900/50 dark:to-gray-900/30" />
-                <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-emerald-400/20 to-transparent rounded-full blur-3xl" />
-                
-                <div className="relative p-10">
-                  <div className="flex items-center space-x-6 mb-8">
-                    <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 shadow-2xl">
-                      <UserCheck className="w-10 h-10 text-white" />
-                    </div>
-                    <div>
-                      <h2 className="text-4xl font-bold text-emerald-900 dark:text-emerald-100 mb-2">
-                        Creator Insights
-                      </h2>
-                      <p className="text-xl text-emerald-700 dark:text-emerald-300">
-                        Expert guidance from leading heart failure specialists
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-white/70 dark:bg-gray-800/70 rounded-2xl p-8 backdrop-blur-sm border border-white/50 dark:border-gray-700/50 shadow-xl">
-                    <div className="flex items-start space-x-6">
-                      <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 shadow-lg flex-shrink-0">
-                        <UserCheck className="w-8 h-8 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
-                          Dr. Sharon Hunt, MD
-                        </h3>
-                        <p className="text-lg text-emerald-700 dark:text-emerald-300 font-semibold mb-4">
-                          Stanford University School of Medicine | Heart Failure Specialist
-                        </p>
-                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-                          Dr. Hunt is a renowned cardiologist and Professor of Cardiovascular Medicine at Stanford University. 
-                          She has dedicated her career to advancing heart failure care and has been instrumental in developing 
-                          evidence-based staging systems that improve patient outcomes through early detection and intervention.
-                        </p>
-                        <a 
-                          href="https://pubmed.ncbi.nlm.nih.gov/?term=hunt+s%5Bauthor%5D+AND+heart+failure"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center space-x-2 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-semibold transition-colors duration-300"
-                        >
-                          <BookOpen className="w-5 h-5" />
-                          <span>View Publications on PubMed</span>
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Evidence & Staging Criteria Section */}
-              <div className="relative rounded-3xl bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/30 dark:via-indigo-950/30 dark:to-purple-950/30 border-2 border-blue-200/60 dark:border-blue-800/60 backdrop-blur-xl overflow-hidden animate-in slide-in-from-bottom-8 fade-in">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-transparent to-white/30 dark:from-gray-900/50 dark:to-gray-900/30" />
-                <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-blue-400/20 to-transparent rounded-full blur-3xl" />
-                
-                <div className="relative p-10">
-                  <div className="flex items-center space-x-6 mb-8">
-                    <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-500 shadow-2xl">
-                      <BookOpen className="w-10 h-10 text-white" />
-                    </div>
-                    <div>
-                      <h2 className="text-4xl font-bold text-blue-900 dark:text-blue-100 mb-2">
-                        Evidence & Staging Criteria
-                      </h2>
-                      <p className="text-xl text-blue-700 dark:text-blue-300">
-                        ACC/AHA 2022 Heart Failure Guidelines - Complete Staging Framework
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="grid gap-6">
-                    {[
-                      {
-                        stage: 'A',
-                        title: 'At Risk for Heart Failure',
-                        color: 'emerald',
-                        criteria: [
-                          'Hypertension, atherosclerotic cardiovascular disease, diabetes mellitus, or metabolic syndrome',
-                          'History of cardiotoxic drug therapy or radiation',
-                          'Genetic variant associated with cardiomyopathy or strong family history of cardiomyopathy'
-                        ]
-                      },
-                      {
-                        stage: 'B',
-                        title: 'Pre-Heart Failure',
-                        color: 'amber',
-                        criteria: [
-                          'Structural heart disease strongly associated with HF development',
-                          'Evidence of increased filling pressures (invasive or noninvasive)',
-                          'Persistently elevated natriuretic peptide levels or cardiac troponin'
-                        ]
-                      },
-                      {
-                        stage: 'C',
-                        title: 'Symptomatic Heart Failure',
-                        color: 'orange',
-                        criteria: [
-                          'Current or previous symptoms of HF with underlying structural heart disease',
-                          'Shortness of breath, fatigue, or reduced exercise tolerance',
-                          'Evidence of fluid retention or hemodynamic compromise'
-                        ]
-                      },
-                      {
-                        stage: 'D',
-                        title: 'Advanced Heart Failure',
-                        color: 'red',
-                        criteria: [
-                          'Marked HF symptoms that interfere with daily life despite maximal medical therapy',
-                          'Recurrent hospitalizations or inability to be safely discharged',
-                          'Consideration for heart transplantation, mechanical circulatory support, or palliative care'
-                        ]
-                      }
-                    ].map((stage, index) => {
-                      const colorClasses = {
-                        emerald: 'from-emerald-500 to-teal-500',
-                        amber: 'from-amber-500 to-orange-500',
-                        orange: 'from-orange-500 to-red-500',
-                        red: 'from-red-500 to-pink-500'
-                      };
-                      
-                      return (
-                        <div key={stage.stage} className="bg-white/70 dark:bg-gray-800/70 rounded-2xl p-6 backdrop-blur-sm border border-white/50 dark:border-gray-700/50 shadow-xl animate-in slide-in-from-left-8 fade-in" style={{ animationDelay: `${index * 150}ms` }}>
-                          <div className="flex items-start space-x-4">
-                            <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${colorClasses[stage.color as keyof typeof colorClasses]} shadow-lg flex items-center justify-center flex-shrink-0`}>
-                              <span className="text-xl font-bold text-white">{stage.stage}</span>
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">
-                                Stage {stage.stage}: {stage.title}
-                              </h3>
-                              <ul className="space-y-2">
-                                {stage.criteria.map((criterion, idx) => (
-                                  <li key={idx} className="flex items-start space-x-2">
-                                    <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-                                    <span className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">{criterion}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  
-                  <div className="mt-8 p-6 bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl border border-blue-200/50 dark:border-blue-800/50">
-                    <p className="text-sm text-blue-800 dark:text-blue-300 leading-relaxed">
-                      <strong>Reference:</strong> 2022 AHA/ACC/HFSA Guideline for the Management of Heart Failure. 
-                      Circulation. 2022;145(18):e895-e1032. This classification system enables early intervention 
-                      and risk stratification to prevent progression and improve outcomes.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Management Recommendations Section */}
-              <div className="relative rounded-3xl bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 dark:from-purple-950/30 dark:via-pink-950/30 dark:to-rose-950/30 border-2 border-purple-200/60 dark:border-purple-800/60 backdrop-blur-xl overflow-hidden animate-in slide-in-from-bottom-8 fade-in">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-transparent to-white/30 dark:from-gray-900/50 dark:to-gray-900/30" />
-                <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-purple-400/20 to-transparent rounded-full blur-3xl" />
-                
-                <div className="relative p-10">
-                  <div className="flex items-center space-x-6 mb-8">
-                    <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 shadow-2xl">
-                      <Stethoscope className="w-10 h-10 text-white" />
-                    </div>
-                    <div>
-                      <h2 className="text-4xl font-bold text-purple-900 dark:text-purple-100 mb-2">
-                        Management Recommendations
-                      </h2>
-                      <p className="text-xl text-purple-700 dark:text-purple-300">
-                        Stage-specific therapeutic strategies and clinical interventions
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="grid gap-6">
-                    {[
-                      {
-                        stage: 'A',
-                        title: 'Risk Factor Management',
-                        color: 'emerald',
-                        icon: Shield,
-                        recommendations: [
-                          'Aggressive hypertension control (target <130/80 mmHg)',
-                          'Diabetes management with HbA1c target <7%',
-                          'Lipid optimization with high-intensity statin therapy',
-                          'Smoking cessation counseling and pharmacotherapy',
-                          'Regular aerobic exercise (150 min/week moderate intensity)',
-                          'Weight management and sodium restriction (<2g/day)'
-                        ]
-                      },
-                      {
-                        stage: 'B',
-                        title: 'Structural Heart Disease Prevention',
-                        color: 'amber',
-                        icon: Heart,
-                        recommendations: [
-                          'ACE inhibitor or ARB (Class I recommendation)',
-                          'Beta-blocker if prior MI or reduced LVEF',
-                          'Continue all Stage A interventions',
-                          'Regular echocardiographic monitoring',
-                          'Statins for atherosclerotic cardiovascular disease',
-                          'Avoid potentially cardiotoxic medications'
-                        ]
-                      },
-                      {
-                        stage: 'C',
-                        title: 'Guideline-Directed Medical Therapy',
-                        color: 'orange',
-                        icon: Pill,
-                        recommendations: [
-                          'ACE inhibitor/ARB/ARNI at maximum tolerated dose',
-                          'Evidence-based beta-blocker therapy',
-                          'Diuretics for volume management',
-                          'Aldosterone antagonist if appropriate',
-                          'Device therapy evaluation (ICD/CRT)',
-                          'Sodium-glucose cotransporter 2 inhibitor consideration'
-                        ]
-                      },
-                      {
-                        stage: 'D',
-                        title: 'Advanced Heart Failure Management',
-                        color: 'red',
-                        icon: AlertTriangle,
-                        recommendations: [
-                          'Mechanical circulatory support evaluation',
-                          'Heart transplantation assessment',
-                          'Palliative care consultation',
-                          'Inotropic therapy consideration',
-                          'Clinical trial enrollment',
-                          'End-of-life planning and advanced directives'
-                        ]
-                      }
-                    ].map((stage, index) => {
-                      const colorClasses = {
-                        emerald: 'from-emerald-500 to-teal-500',
-                        amber: 'from-amber-500 to-orange-500',
-                        orange: 'from-orange-500 to-red-500',
-                        red: 'from-red-500 to-pink-500'
-                      };
-                      
-                      return (
-                        <div key={stage.stage} className="bg-white/70 dark:bg-gray-800/70 rounded-2xl p-6 backdrop-blur-sm border border-white/50 dark:border-gray-700/50 shadow-xl animate-in slide-in-from-right-8 fade-in" style={{ animationDelay: `${index * 150}ms` }}>
-                          <div className="flex items-start space-x-4">
-                            <div className={`p-3 rounded-xl bg-gradient-to-r ${colorClasses[stage.color as keyof typeof colorClasses]} shadow-lg flex-shrink-0`}>
-                              <stage.icon className="w-6 h-6 text-white" />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">
-                                Stage {stage.stage}: {stage.title}
-                              </h3>
-                              <ul className="space-y-2">
-                                {stage.recommendations.map((rec, idx) => (
-                                  <li key={idx} className="flex items-start space-x-2">
-                                    <ArrowRight className="w-4 h-4 text-purple-600 dark:text-purple-400 mt-0.5 flex-shrink-0" />
-                                    <span className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">{rec}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  
-                  <div className="mt-8 p-6 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl border border-purple-200/50 dark:border-purple-800/50">
-                    <div className="flex items-start space-x-3">
-                      <Star className="w-5 h-5 text-purple-600 dark:text-purple-400 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-purple-800 dark:text-purple-300 leading-relaxed">
-                        <strong>Clinical Note:</strong> All recommendations should be individualized based on patient 
-                        characteristics, comorbidities, and clinical judgment. Regular monitoring and medication 
-                        optimization are essential for optimal outcomes at every stage.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                <CalculatorButton
-                  onClick={handleReset}
-                  variant="secondary"
-                  size="lg"
-                >
-                  <Info className="w-5 h-5" />
-                  <span>New Assessment</span>
-                </CalculatorButton>
-              </div>
-            </div>
-          )
         )}
+
+        {/* Educational Content */}
+        <div className="mt-20 max-w-5xl mx-auto">
+          <div className="p-8 bg-white/50 dark:bg-gray-800/50 rounded-2xl shadow-xl backdrop-blur-md border border-gray-200/50 dark:border-gray-700/50">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+              <BookOpen className="mr-3 text-indigo-500"/>
+              <span>{t('heartFailureStaging.evidence.title')}</span>
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              {t('heartFailureStaging.evidence.description')}
+            </p>
+            <a 
+              href="https://www.ahajournals.org/doi/10.1161/CIR.0000000000001063" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500 inline-flex items-center transition-transform hover:translate-x-1"
+            >
+              {t('heartFailureStaging.evidence.link')}
+              <ExternalLink className="ml-2 w-4 h-4"/>
+            </a>
+          </div>
+        </div>
+        
+        {/* Footer */}
+        <footer className="mt-16 text-center text-gray-500 dark:text-gray-500 text-sm">
+          <p>&copy; {new Date().getFullYear()} {t('common.appName')}. {t('common.allRightsReserved')}</p>
+          <p className="mt-1">{t('common.calculatorDisclaimer')}</p>
+        </footer>
       </div>
     </div>
   );
 };
 
-export default HeartFailureStaging;
-export { HeartFailureStaging }; 
+const SuspendedHeartFailureStagingCalculator = () => (
+  <Suspense fallback={<div className="h-screen w-full flex items-center justify-center bg-gray-100 dark:bg-gray-900"><p className="text-lg">Loading Calculator...</p></div>}>
+    <HeartFailureStagingCalculator />
+  </Suspense>
+);
+
+export default SuspendedHeartFailureStagingCalculator; 
