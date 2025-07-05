@@ -2530,7 +2530,7 @@ export const MAGGICCalculator: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+        <div className="space-y-8 mt-8">
           {/* Enhanced Evidence Appraisal Section */}
           <motion.div
             initial={{ opacity: 0 }}
